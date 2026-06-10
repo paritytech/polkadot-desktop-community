@@ -13,7 +13,7 @@
 [![TypeScript](https://img.shields.io/badge/typescript-strict-3178C6?style=flat-square&logo=typescript)](https://www.typescriptlang.org)
 [![Polkadot](https://img.shields.io/badge/polkadot-ecosystem-E6007A?style=flat-square&logo=polkadot)](https://polkadot.com)
 
-<img src="docs/screenshots/hero-banner.png" alt="Polkadot Desktop — a decentralized web browser for Polkadot showing the browse page with product listings" width="800">
+<img src="docs/screenshots/hero-banner2.png" alt="Polkadot Desktop — a decentralized web browser for Polkadot showing the browse page with product listings" width="800">
 
 </div>
 
