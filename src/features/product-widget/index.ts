@@ -1,0 +1,1 @@
+export { productWidgetFeature } from './feature';

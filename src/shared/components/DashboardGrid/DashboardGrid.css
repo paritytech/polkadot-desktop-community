@@ -1,0 +1,73 @@
+@reference 'tailwindcss';
+
+/* Electron <webview> captures pointer events; host may never receive mouseup and drag never completes. */
+.react-grid-layout:has(.react-grid-item.react-draggable-dragging) webview {
+  pointer-events: none;
+}
+
+.react-grid-layout:has(.react-grid-item.resizing) webview {
+  pointer-events: none;
+}
+
+.react-grid-layout .react-grid-placeholder,
+.react-grid-placeholder {
+  @apply rounded-xl opacity-100;
+  border: 2px dashed rgba(128, 128, 128, 0.5);
+  background-color: rgba(128, 128, 128, 0.18);
+}
+
+.dashboard-swap-overlay {
+  @apply rounded-xl;
+  position: absolute;
+  pointer-events: none;
+  z-index: 3;
+  border: 2px dashed rgba(128, 128, 128, 0.5);
+  background-color: rgba(128, 128, 128, 0.18);
+}
+
+.react-grid-item button,
+.react-grid-item [role='button'] {
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.react-grid-item.react-draggable-dragging {
+  cursor: grabbing !important;
+}
+
+.react-grid-item.react-draggable-dragging [data-folder='true'] {
+  border: none;
+}
+
+.react-grid-item > .react-resizable-handle.react-resizable-handle-se {
+  display: none;
+}
+
+.react-grid-item > .react-resizable-handle.react-resizable-handle-s {
+  opacity: 1;
+  width: 100%;
+  height: 16px;
+  bottom: -8px;
+  left: 0;
+  right: 0;
+  margin: 0;
+  transform: none;
+  cursor: s-resize;
+  background: none;
+}
+
+.react-grid-item > .react-resizable-handle.react-resizable-handle-s::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 40px;
+  height: 6px;
+  background: rgb(180, 180, 180);
+  border: none;
+  border-radius: 3px;
+}
+
+.react-grid-item > .react-resizable-handle.react-resizable-handle-s:hover::after {
+  background: rgb(150, 150, 150);
+}

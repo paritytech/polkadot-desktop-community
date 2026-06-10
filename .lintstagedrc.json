@@ -1,0 +1,4 @@
+{
+  "src/**/*.{ts,tsx}": "npm run types:files src/index.tsx globals.d.ts vite-env.d.ts main/preload.ts",
+  "*.{js,ts,tsx}": ["npm run fmt:generic --check","npm run lint:generic"]
+}

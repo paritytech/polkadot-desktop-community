@@ -1,0 +1,4 @@
+# Cloudflare Pages SPA routing support
+# This file ensures all routes are handled by index.html for client-side routing
+/*    /index.html   200
+

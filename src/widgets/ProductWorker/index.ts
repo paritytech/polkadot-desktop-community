@@ -1,0 +1,1 @@
+export { ProductWorker } from './ProductWorker';

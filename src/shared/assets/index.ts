@@ -1,0 +1,9 @@
+export { default as ChatIcon } from './images/chat.svg?jsx';
+export { default as CoinIcon } from './images/coin.svg?jsx';
+export { default as DocumentsIcon } from './images/documents.svg?jsx';
+export { default as DollarIcon } from './images/dollar.svg?jsx';
+export { default as LogoIcon } from './images/logo.svg?jsx';
+export { default as LogoIconSmall } from './images/logo-icon.svg?jsx';
+export { default as MoneyIcon } from './images/money.svg?jsx';
+export { default as ShoppingBagIcon } from './images/shoppingbag.svg?jsx';
+export { default as TicketIcon } from './images/ticket.svg?jsx';

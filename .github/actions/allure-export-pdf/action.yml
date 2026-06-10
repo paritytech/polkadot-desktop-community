@@ -1,0 +1,162 @@
+name: Allure Export PDF
+description: Export Allure TestOps launch as PDF report. Requires launch ID, endpoint, and token. Outputs the path to the downloaded PDF file.
+inputs:
+  launch-id:
+    description: Allure TestOps launch ID to export.
+    required: true
+  allure-endpoint:
+    description: Allure TestOps API endpoint URL.
+    required: true
+  allure-token:
+    description: Allure API token for authentication.
+    required: true
+  report-name:
+    description: Display name for the PDF report.
+    required: false
+    default: "Allure Test Report"
+  output-filename:
+    description: Output filename for the PDF. Path relative to workspace root.
+    required: false
+    default: allure-report.pdf
+  render-images:
+    description: Include images in the PDF.
+    required: false
+    default: true
+  render-text:
+    description: Include text in the PDF.
+    required: false
+    default: true
+  skip-scenario:
+    description: Skip scenario details in the PDF.
+    required: false
+    default: true
+  with-page-numbers:
+    description: Add page numbers to the PDF.
+    required: false
+    default: true
+  poll-interval-seconds:
+    description: Seconds to wait between status checks.
+    required: false
+    default: 10
+  max-wait-attempts:
+    description: Maximum number of status check attempts before timeout.
+    required: false
+    default: 10
+
+outputs:
+  pdf-path:
+    description: Path to the downloaded PDF file (empty if failed or skipped).
+    value: ${{ steps.export-pdf.outputs.pdf-path }}
+  success:
+    description: Whether the PDF was exported successfully (true/false).
+    value: ${{ steps.export-pdf.outputs.success }}
+
+runs:
+  using: composite
+  steps:
+    - name: Get JWT token for Allure API
+      id: get-jwt
+      shell: bash
+      run: |
+        JWT_RESPONSE=$(curl -s -X POST "${{ inputs.allure-endpoint }}/api/uaa/oauth/token" \
+          -H "Content-Type: application/x-www-form-urlencoded" \
+          -d "grant_type=apitoken&scope=openid&token=${{ inputs.allure-token }}")
+
+        JWT_TOKEN=$(echo "$JWT_RESPONSE" | jq -r '.access_token')
+
+        if [ -z "$JWT_TOKEN" ] || [ "$JWT_TOKEN" = "null" ]; then
+          echo "❌ Failed to get JWT token"
+          echo "$JWT_RESPONSE"
+          exit 1
+        fi
+
+        echo "token=${JWT_TOKEN}" >> $GITHUB_OUTPUT
+        echo "✅ JWT token acquired"
+
+    - name: Export PDF report from Allure TestOps
+      id: export-pdf
+      shell: bash
+      run: |
+        LAUNCH_ID="${{ inputs.launch-id }}"
+
+        if [ -z "$LAUNCH_ID" ]; then
+          echo "⚠️ No launch ID provided, skipping PDF export"
+          echo "pdf-path=" >> $GITHUB_OUTPUT
+          echo "success=false" >> $GITHUB_OUTPUT
+          exit 0
+        fi
+
+        REPORT_NAME="${{ inputs.report-name }}"
+        OUTPUT_FILE="${{ inputs.output-filename }}"
+        RENDER_IMAGES="${{ inputs.render-images }}"
+        RENDER_TEXT="${{ inputs.render-text }}"
+        SKIP_SCENARIO="${{ inputs.skip-scenario }}"
+        WITH_PAGE_NUMBERS="${{ inputs.with-page-numbers }}"
+        POLL_INTERVAL="${{ inputs.poll-interval-seconds }}"
+        MAX_ATTEMPTS="${{ inputs.max-wait-attempts }}"
+
+        EXPORT_RESPONSE=$(curl -s -X POST \
+          "${{ inputs.allure-endpoint }}/api/export/launch/pdf" \
+          -H "Authorization: Bearer ${{ steps.get-jwt.outputs.token }}" \
+          -H "Content-Type: application/json" \
+          -d "{
+            \"launchId\": ${LAUNCH_ID},
+            \"name\": \"${REPORT_NAME}\",
+            \"renderImages\": ${RENDER_IMAGES},
+            \"renderText\": ${RENDER_TEXT},
+            \"skipScenario\": ${SKIP_SCENARIO},
+            \"withPageNumbers\": ${WITH_PAGE_NUMBERS}
+          }")
+
+        EXPORT_REQUEST_ID=$(echo "$EXPORT_RESPONSE" | jq -r '.id')
+
+        if [ -z "$EXPORT_REQUEST_ID" ] || [ "$EXPORT_REQUEST_ID" = "null" ]; then
+          echo "❌ Failed to request PDF export"
+          echo "$EXPORT_RESPONSE"
+          echo "pdf-path=" >> $GITHUB_OUTPUT
+          echo "success=false" >> $GITHUB_OUTPUT
+          exit 1
+        fi
+
+        echo "✅ PDF export requested: ${EXPORT_REQUEST_ID}"
+
+        echo "⏳ Waiting for PDF generation..."
+        ATTEMPT=0
+
+        while [ $ATTEMPT -lt $MAX_ATTEMPTS ]; do
+          STATUS_RESPONSE=$(curl -s -X GET \
+            "${{ inputs.allure-endpoint }}/api/export/${EXPORT_REQUEST_ID}" \
+            -H "Authorization: Bearer ${{ steps.get-jwt.outputs.token }}")
+
+          STATUS=$(echo "$STATUS_RESPONSE" | jq -r '.status')
+
+          echo "  Status: ${STATUS} (attempt $((ATTEMPT + 1))/${MAX_ATTEMPTS})"
+
+          if [ "$STATUS" = "ready" ]; then
+            echo "✅ PDF generation completed"
+            break
+          fi
+
+          sleep $POLL_INTERVAL
+          ATTEMPT=$((ATTEMPT + 1))
+        done
+
+        if [ $ATTEMPT -eq $MAX_ATTEMPTS ]; then
+          echo "❌ PDF generation timeout"
+          echo "pdf-path=" >> $GITHUB_OUTPUT
+          echo "success=false" >> $GITHUB_OUTPUT
+          exit 1
+        fi
+
+        curl -s -X GET \
+          "${{ inputs.allure-endpoint }}/api/export/download/${EXPORT_REQUEST_ID}" \
+          -H "Authorization: Bearer ${{ steps.get-jwt.outputs.token }}" \
+          -o "$OUTPUT_FILE"
+
+        echo "✅ PDF downloaded: ${OUTPUT_FILE}"
+
+        FILE_SIZE=$(stat -c%s "$OUTPUT_FILE" 2>/dev/null || stat -f%z "$OUTPUT_FILE" 2>/dev/null)
+        echo "  File size: ${FILE_SIZE} bytes"
+
+        echo "pdf-path=${OUTPUT_FILE}" >> $GITHUB_OUTPUT
+        echo "success=true" >> $GITHUB_OUTPUT

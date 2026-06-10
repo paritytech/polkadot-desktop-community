@@ -1,0 +1,15 @@
+# Cloudflare Pages configuration
+# This file is used for Cloudflare Pages deployment
+
+name = "polkadot-desktop"
+compatibility_date = "2025-12-12"
+
+[assets]
+directory = "./release/build"
+
+[env.production]
+name = "polkadot-desktop"
+
+[env.preview]
+name = "polkadot-desktop-preview"
+

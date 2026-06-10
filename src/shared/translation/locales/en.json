@@ -1,0 +1,972 @@
+{
+  "common": {
+    "action": {
+      "back": "Back",
+      "moreDetails": "More details",
+      "hideDetails": "Hide details",
+      "cancel": "Cancel",
+      "allow": "Allow",
+      "skip": "Skip (Dev only)",
+      "sign": "Sign",
+      "signing": "Signing...",
+      "reply": "Reply",
+      "copyText": "Copy Text",
+      "forward": "Forward",
+      "select": "Select",
+      "delete": "Delete",
+      "add": "Add",
+      "search": "Search...",
+      "writeMessage": "Write a message...",
+      "retry": "Retry",
+      "disconnect": "Disconnect",
+      "all": "All",
+      "electronics": "Electronics",
+      "fashion": "Fashion",
+      "downloadLogs": "Download Logs"
+    },
+    "label": {
+      "signer": "Signer",
+      "chain": "Chain",
+      "method": "Method",
+      "arguments": "Arguments",
+      "callData": "Call data",
+      "message": "Message"
+    },
+    "status": {
+      "loading": "Loading...",
+      "noProductFound": "No product found",
+      "unknownUser": "Unknown user",
+      "online": "online",
+      "live": "Live",
+      "daysLeft": "{count} Days left"
+    },
+    "error": {
+      "somethingWentWrong": "Oops! Something Went Wrong",
+      "tryAgain": "Please try again or come back later",
+      "logsHelpText": "Sharing logs with developers will help resolve this issue"
+    },
+    "aria": {
+      "openFullscreen": "Open fullscreen",
+      "reloadWidget": "Reload widget",
+      "close": "Close"
+    },
+    "cancel": "Cancel"
+  },
+  "feature": {
+    "browser": {
+      "addressPlaceholder": "Enter .dot address",
+      "navigationBackAria": "Go back",
+      "navigationForwardAria": "Go forward",
+      "addressWelcome": "Welcome to Polkadot! Enter .dot address here",
+      "addressFavorites": "Favorites",
+      "suggestionSeparator": "—",
+      "removeFromDashboard": "Remove product from dashboard",
+      "addressSuggestions": "All apps",
+      "addressNoResults": "No apps found",
+      "recentlyVisited": "Recently Opened",
+      "recentlyOpened": "Recently opened",
+      "clearRecent": "Clear",
+      "recents": {
+        "header": "Recent"
+      },
+      "recentClearedTitle": "Recently opened tabs has been successfully cleared",
+      "undoLabel": "Undo {seconds}s",
+      "ramUsage": "RAM usage: {value}",
+      "ramUsageUnavailable": "RAM usage: —",
+      "newTab": "New tab",
+      "newTabPrompt": "Enter .dot address",
+      "closeTab": "Close tab",
+      "signTransaction": "Sign transaction",
+      "signingRequestTitle": "{call} signing request",
+      "operationTitle": {
+        "utilityBatchAll": "Utility Batch All",
+        "utilityBatch": "Utility Batch",
+        "utilityForceBatch": "Utility Force Batch"
+      },
+      "batchBehavior": {
+        "revertOnError": "Included transactions revert on error",
+        "executeUntilError": "Included transactions execute until error",
+        "ignoreErrors": "Included transactions ignore errors"
+      },
+      "signMessageRequestTitle": "Raw Message signing request",
+      "rawMessageNotReadableCaption": "This message can't be displayed in a readable format",
+      "copyMessage": "Copy message",
+      "account": "Account",
+      "network": "Network",
+      "networkFee": "Network fee",
+      "transactionDetailsTitle": "Transaction details",
+      "copyArguments": "Copy arguments",
+      "copyCallData": "Copy call data",
+      "signingByAppAccount": "Signing by App account with index {index}",
+      "copyAccountAddress": "Copy account address",
+      "polkadotAppHint": "To sign a transaction, please open the Polkadot App",
+      "polkadotAppRawMessageHint": "To sign this message, please open the Polkadot App",
+      "continueToSign": "Continue",
+      "signPolkadotAppTitle": "Sign Transaction",
+      "signPolkadotAppLine1": "Open the Polkadot app on your device,",
+      "signPolkadotAppLine2": "then tap Sign or Reject",
+      "signPolkadotAppDeviceLabel": "Polkadot App",
+      "signPolkadotAppSignButton": "Sign",
+      "signPolkadotAppRejectButton": "Reject",
+      "signPolkadotAppValidFor": "Valid for {time}",
+      "signingTimedOutTitle": "Signing request timed out",
+      "signingTimedOutBody": "Request was not completed in time",
+      "transactionSigningRejected": "Transaction Signing Cancelled",
+      "transactionSigned": "Transaction Signed",
+      "messageSigned": "Message Signed",
+      "signingFailedTitle": "Failed to sign the transaction",
+      "signingFailedBody": "Something went wrong. Open Details for more information.",
+      "signingErrorToastDetails": "Details",
+      "signingErrorDetailsLabel": "Details",
+      "signingErrorCopyDetails": "Copy error details",
+      "havingTroubleSigning": "Having trouble with confirmation on Mobile?",
+      "noAllowanceErrorTitle": "Account is not ready yet",
+      "noAllowanceErrorDescription": "We are setting up your account. Please try again in a moment.",
+      "statementStoreErrorTitle": "Statement store error",
+      "feeUnavailable": "—",
+      "customChainSigningWarning": "Transaction details are unavailable for this custom chain. Review the raw call data before signing.",
+      "storeDataRequest": "Store Data Request",
+      "storeDataDescription": "Product wants to store data ({size}) on the Bulletin Chain.",
+      "storeDataDeny": "Deny",
+      "webVersionNotification": "You are using the web version of the app. Please use the desktop version for interacting with the Products.",
+      "findPlaceholder": "Find in page",
+      "findCount": "{current}/{total}",
+      "findNoResults": "No results",
+      "findNext": "Next match",
+      "findPrevious": "Previous match",
+      "findClose": "Close find bar",
+      "zoomIn": "Zoom in",
+      "zoomOut": "Zoom out",
+      "zoomReset": "Reset zoom",
+      "zoomPercent": "{percent}%"
+    },
+    "userManager": {
+      "connectionStatus": {
+        "connected": "Connected",
+        "reconnecting": "Reconnecting…",
+        "offline": "You are offline",
+        "noConnection": "Not connected — click to sign in"
+      },
+      "aria": {
+        "account": "Account",
+        "connectAccount": "Connect account"
+      },
+      "banner": {
+        "connectedTitle": "Connected to {networkName}",
+        "connectedSubtitle": "Desktop paired with Mobile",
+        "reconnectingTitle": "Reconnecting to {networkName}…",
+        "reconnectingSubtitle": "Attempting to reach the node again",
+        "offlineTitle": "You're offline",
+        "offlineSubtitle": "Check internet connection and try again",
+        "noConnectionTitle": "Not connected",
+        "noConnectionSubtitle": "Log in to pair your account"
+      },
+      "popover": {
+        "settings": "Settings"
+      }
+    },
+    "chat": {
+      "proceedInChat": {
+        "menuItem": "Proceed in Chat",
+        "tooltip": "Proceed in Chat",
+        "dialog": {
+          "title": "Proceed in Chat",
+          "description": "This will create a room, and you'll be able to continue interacting with this product in the chat.",
+          "confirm": "Proceed in Chat"
+        },
+        "toast": {
+          "successTitle": "The {name} product room has been successfully created in the chat",
+          "existsTitle": "{name} already has a chat room",
+          "errorTitle": "Couldn't create the chat room",
+          "openChat": "Open chat"
+        }
+      },
+      "title": "Chat",
+      "unreadMessagesAria": "Unread messages",
+      "category": "COMMUNICATIONS",
+      "replyToYourself": "Reply to yourself",
+      "replyTo": "Reply to {name}",
+      "noConversations": "No conversations yet",
+      "startNewChat": "Start a new conversation",
+      "searchPlaceholder": "Search conversations...",
+      "search": "Search",
+      "noResults": "No results found for \"{query}\"",
+      "results": "Results ({count})",
+      "recent": "Recent",
+      "clear": "Clear",
+      "contacts": "Contacts",
+      "noMessages": "No Messages Yet",
+      "thisIsChat": "This is a chat",
+      "noResultsFound": "No results found",
+      "noResultsDescription": "We couldn't find anything matching your search. Try different keywords.",
+      "quickChat": "Quick Chat",
+      "viewMore": "View More",
+      "sendMessageToBegin": "Send a message to begin the conversation",
+      "noChatsYet": "No chats yet",
+      "yourChatWillAppear": "Your chat will appear here",
+      "yourChatsWillAppear": "Your chats will appear here",
+      "noChatSelected": "No chat selected",
+      "selectChatToView": "Select a chat to view the conversation",
+      "editMessage": "Edit",
+      "editingMessage": "Editing message",
+      "edited": "(edited)",
+      "editHistory": "Edit History",
+      "currentMessage": "Current",
+      "viewEditHistory": "View Edit History",
+      "originalMessage": "Original",
+      "leaveChat": "Leave chat",
+      "blockUser": "Block user",
+      "unblockUser": "Unblock user",
+      "blockedNotice": "You won't receive any messages or requests until you unblock {name}.",
+      "unblock": "Unblock",
+      "transfer": {
+        "youSent": "You Sent",
+        "sent": "Sent",
+        "received": "Received",
+        "coinage": {
+          "submitting": "Submitting",
+          "sending": "Sending",
+          "sent": "Sent",
+          "delivered": "Delivered",
+          "claimed": "Claimed",
+          "currencyLabel": "CASH"
+        }
+      },
+      "call": {
+        "title": {
+          "incomingVoice": "Incoming Voice Call",
+          "outgoingVoice": "Outgoing Voice Call",
+          "incomingVideo": "Incoming Video Call",
+          "outgoingVideo": "Outgoing Video Call",
+          "ongoingVoice": "Ongoing Voice Call",
+          "ongoingVideo": "Ongoing Video Call",
+          "voice": "Voice Call",
+          "video": "Video Call",
+          "missedVoice": "Missed Voice Call",
+          "missedVideo": "Missed Video Call",
+          "canceledVoice": "Canceled Voice Call",
+          "canceledVideo": "Canceled Video Call"
+        },
+        "subtitle": {
+          "openToCall": "Open Mobile App to call",
+          "openToReturn": "Open Mobile App to return",
+          "openToCallBack": "Open Mobile App to call back",
+          "openToCallAgain": "Open Mobile App to call again"
+        }
+      }
+    },
+    "productActionsMenu": {
+      "trigger": "Product actions",
+      "openSettings": "Open settings"
+    },
+    "onboarding": {
+      "logoText": "Products for people",
+      "mainText": "Login to Explore Polkadot",
+      "description": "Use your camera to Log in",
+      "phoneHint": "This will open the Polkadot App",
+      "errorTitle": "Authentication Error",
+      "error": "Something went wrong during authentication",
+      "errorNoFreeSlotsTitle": "Limit Reached",
+      "errorNoFreeSlotsDescription": "You can't add more than 8 devices. Disconnect one of the devices in Polkadot App to add a new one.",
+      "loggingInToast": "Logging in... Just a moment",
+      "completingPairing": "Completing pairing…",
+      "connection": {
+        "offline": {
+          "title": "You're offline",
+          "subtitle": "Check internet connection and try again"
+        },
+        "reaching": {
+          "title": "Reconnecting to Polkadot…",
+          "subtitle": "Attempting to reach the node again"
+        },
+        "restored": {
+          "title": "Reconnecting to Polkadot…",
+          "subtitle": "Internet connection restored"
+        },
+        "accountSetup": {
+          "title": "Your account is still being set up",
+          "subtitle": "Please try again later"
+        }
+      }
+    },
+    "signingBotAutopair": {
+      "title": "Signing Bot",
+      "statusIdle": "Ready to connect",
+      "statusConnecting": "Checking bot...",
+      "statusPairing": "Pairing via bot...",
+      "statusPaired": "Paired as \"{user}\"",
+      "statusError": "Pairing failed",
+      "botUrlLabel": "Bot URL",
+      "botReachable": "Bot reachable",
+      "botUnreachable": "Bot unreachable",
+      "tokenLabel": "Token",
+      "usernameLabel": "Username",
+      "connectingButton": "Pairing...",
+      "connectButton": "Connect to Bot",
+      "connected": "Connected",
+      "waitingQr": "Waiting for QR payload..."
+    },
+    "dashboard": {
+      "title": "Dashboard",
+      "addToDashboard": "Add to dashboard",
+      "toolbar": {
+        "ariaLabel": "Dashboard actions",
+        "pagesLabel": "Dashboard pages",
+        "switchToPage": "Switch to page {number}"
+      },
+      "menu": {
+        "addToFavorites": "Add to Favorites",
+        "removeFromFavorites": "Remove from Favorites",
+        "toast": {
+          "addedToFavorites": "{productName} has been successfully added to Favorites",
+          "removedFromFavorites": "{productName} has been removed from Favorites"
+        }
+      },
+      "addWidget": {
+        "title": "Add Widget",
+        "sizeAndType": "Size & Type",
+        "selectWidget": "Select a widget from the list",
+        "noWidgetsAvailable": "No widgets available.",
+        "noSearchResults": "No widgets match your search.",
+        "loading": "Loading widgets…",
+        "loadFailed": "Could not load widgets. Try again later.",
+        "createFolder": "New Folder",
+        "createFolderDescription": "Create a new folder with this widget",
+        "addToFavorites": "Add to Favorites",
+        "addedToFavoritesButton": "Added to Favorites",
+        "done": "Done",
+        "add": "Add",
+        "open": "Open",
+        "searchPlaceholder": "Enter .dot address to find apps",
+        "searchAriaLabel": "Search apps",
+        "cards": {
+          "product": {
+            "title": "Product widget",
+            "description": "Quick access widget from Dashboard"
+          },
+          "chat": {
+            "title": "Chat widget",
+            "description": "Quick access to your chats"
+          },
+          "favorites": {
+            "title": "Favorites",
+            "description": "Folder for your favorite product shortcuts"
+          }
+        },
+        "toast": {
+          "widgetAddedProduct": "{widgetTitle} {sizeLabel} widget has been successfully added to Dashboard",
+          "addedToFavorites": "{productName} has been successfully added to Favorites",
+          "widgetAddFailed": "Could not add widget. Try again or open the dashboard to adjust an existing widget.",
+          "favoritesAddFailed": "Could not add to Favorites. Try again.",
+          "viewAction": "View"
+        }
+      },
+      "domainNotFound": "Domain not found",
+      "favorites": {
+        "title": "Favorites",
+        "removeFolder": "Remove Folder",
+        "removeProduct": "Remove Widget",
+        "empty": "No favorites yet"
+      },
+      "empty": {
+        "title": "Product widgets will appear here.",
+        "description": "Add your first one to get started."
+      },
+      "widgetMenu": {
+        "sizeLabel": "Size",
+        "sizeSmall": "Small",
+        "sizeMedium": "Medium",
+        "sizeLarge": "Large",
+        "sizeHorizontal": "Horizontal",
+        "cleanup": "Cleanup Dashboard",
+        "removeWidget": "Remove Widget"
+      }
+    },
+    "ticketApp": {
+      "title": "Ticket App",
+      "category": "EVENTS",
+      "daysLeft": "Days left",
+      "upcoming": "UPCOMING EVENTS",
+      "entryTicket": "Entry Ticket"
+    },
+    "shopping": {
+      "title": "Mark3t",
+      "category": "SHOPPING",
+      "totalSaved": "Total Saved",
+      "thisMonth": "This Month"
+    },
+    "hackm3": {
+      "title": "Hackm3",
+      "category": "DOCUMENTS",
+      "online": "{count} online",
+      "live": "Live",
+      "docs": "Docs",
+      "shared": "Shared"
+    },
+    "user": {
+      "welcomeBack": "Welcome back",
+      "logOut": "Log out",
+      "logIn": "Log in"
+    },
+    "settings": {
+      "title": "Settings",
+      "testnetEndpoints": "Testnet Endpoints",
+      "endpointStable": "Stable",
+      "group": {
+        "preferences": "Preferences",
+        "privacy": "Privacy & Security",
+        "development": "Development"
+      }
+    },
+    "themeToggle": {
+      "title": "Appearance",
+      "appearance": "Theme",
+      "description": "Select a theme to change the app's appearance",
+      "light": "Light",
+      "dark": "Dark",
+      "system": "System"
+    },
+    "updateCheck": {
+      "title": "Update",
+      "channel": {
+        "title": "Update channel",
+        "stable": "Stable",
+        "experimental": "Experimental",
+        "stableHint": "Verified builds. Recommended for everyday use.",
+        "experimentalHint": "Latest builds straight from development. May be unstable."
+      },
+      "checkForUpdates": "Check for updates",
+      "checking": "Checking for updates…",
+      "upToDate": "You're up to date",
+      "upToDateHint": "The latest version is already installed",
+      "downloading": "Downloading update…",
+      "downloadingPercent": "{percent}%",
+      "readyToInstall": "Update ready to install",
+      "readyToInstallHint": "Restart the app to apply the update",
+      "installNow": "Restart now",
+      "notNow": "Later",
+      "error": "Update failed",
+      "errorHint": "Please try again or contact the development team",
+      "close": "Close",
+      "updateAvailable": "Update available",
+      "updateAvailableHint": "Version {version} is ready to install",
+      "installFailed": "Update failed",
+      "installFailedHint": "Please contact the development team",
+      "dismiss": "Dismiss",
+      "install": "Install"
+    },
+    "productSettings": {
+      "title": "Apps",
+      "subtitle": "Apps you've interacted with",
+      "searchPlaceholder": "Search by name or .dot address",
+      "searchAriaLabel": "Search apps by name or .dot address",
+      "clearCache": "Clear Cache",
+      "forgetApp": "Forget App",
+      "requestedPermissions": "Requested permissions",
+      "noPermissions": "No permissions requested",
+      "toast": {
+        "appReset": "{productName} has been reset",
+        "cacheCleared": "{productName} cache cleared"
+      },
+      "clearCacheDialog": {
+        "title": "Clear {productName} Cache?",
+        "description": "Cached data will be removed from this device. This includes temporary files and locally stored content."
+      },
+      "forgetDialog": {
+        "title": "Forget {productName}?",
+        "description": "This will clear all site data and reset permissions for {productName}. The tab stays open; everything will reload fresh next time you open it."
+      },
+      "webDomains": {
+        "dialogTitle": "Manage Web Domains Access for {productName} — {modality}"
+      },
+      "appPermission": {
+        "title": "{productName} {permission} Access",
+        "description": "These settings control {permission} access for {productName} app and its individual modes",
+        "resetToDefault": "Reset to Default",
+        "noDomainsRequested": "No domains requested yet"
+      },
+      "aliasPermission": {
+        "label": "Alias",
+        "description": "Manage cross-app alias access for this app",
+        "contextsLabel": "Alias contexts",
+        "contextsDescription": "Manage access per alias context",
+        "noContextsRequested": "No alias contexts requested yet",
+        "dialogTitle": "Manage Alias Context Access for {productName} App"
+      }
+    },
+    "productPermissions": {
+      "permissionRequest": {
+        "productKindLabel": "Product",
+        "closeDialog": "Close",
+        "title": "Allow Access to {label}?",
+        "deny": "Don't Allow",
+        "allowOnce": "Allow Once",
+        "allowAlways": "Always Allow",
+        "domainsLabel": "Domains",
+        "permission": {
+          "Camera": "Camera",
+          "Microphone": "Microphone",
+          "Bluetooth": "Bluetooth",
+          "Location": "Location",
+          "Notifications": "Notifications",
+          "Clipboard": "Clipboard",
+          "OpenUrl": "Open External URL",
+          "Biometrics": "Biometrics",
+          "Files": "Files",
+          "Remote": "Web Domains",
+          "WebRtc": "WebRTC",
+          "ChainSubmit": "Transaction Submit",
+          "PreimageSubmit": "Preimage Submit",
+          "StatementSubmit": "Statement Submit",
+          "UserIdentity": "Identity"
+        },
+        "reason": {
+          "Camera": "Used for features like video calls, QR scanning and media capture",
+          "Microphone": "Used for features like voice calls, messaging and audio recording",
+          "Bluetooth": "Used for connecting to nearby devices and data transfer",
+          "Location": "Used for location-based services and content personalization",
+          "Notifications": "Used to send you updates, alerts and important information",
+          "Clipboard": "Used for copying and pasting content you choose to share",
+          "OpenUrl": "Used to open external links in your default browser",
+          "Biometrics": "Used for features that require verifying your identity",
+          "Files": "Used for features like uploading, downloading and managing files",
+          "Remote": "Used to make requests to the following domains",
+          "WebRtc": "Used for real-time communication features like voice and video calls",
+          "ChainSubmit": "Used to broadcast signed transactions to any Substrate chain",
+          "PreimageSubmit": "Used to submit preimage data to the bulletin chain",
+          "StatementSubmit": "Used to submit statements to the statement store",
+          "UserIdentity": "Access to your primary username is required for identification. You can manage this later in Settings."
+        }
+      },
+      "remotePermissionRequest": {
+        "title": "Remote Permission Request",
+        "description": "is requesting remote access to {permission}.",
+        "deny": "Deny"
+      },
+      "externalBlockedToast": "Blocked network request to {origin}. Change in App Permissions.",
+      "settings": {
+        "heading": "Permissions",
+        "subheading": "View and manage the permissions granted to this app",
+        "remoteHeading": "Remote Permissions",
+        "remoteSubheading": "Permissions for accessing remote network features"
+      }
+    },
+    "customChains": {
+      "title": "Custom chains",
+      "addSection": "Add chain",
+      "registeredSection": "Registered chains",
+      "endpointLabel": "WebSocket endpoint",
+      "endpointPlaceholder": "ws://localhost:9944",
+      "nameLabel": "Name (optional)",
+      "namePlaceholder": "Auto-detected from node",
+      "addButton": "Add chain",
+      "addingButton": "Connecting…",
+      "emptyState": "No custom chains added. Connect to a local Substrate node or custom hosted chain.",
+      "errors": {
+        "invalidUrlTitle": "Invalid URL",
+        "invalidUrlDescription": "Must be a ws:// or wss:// URL",
+        "duplicateBuiltinTitle": "Already registered",
+        "duplicateBuiltinDescription": "This chain is already a built-in chain",
+        "duplicateCustomTitle": "Already registered",
+        "duplicateCustomDescription": "This chain is already in your custom chains",
+        "connectionFailedTitle": "Connection failed",
+        "unknownError": "Unknown error"
+      },
+      "addedToastTitle": "Chain added",
+      "addedToastDescription": "{name} ({genesisHash})",
+      "removeChainAriaLabel": "Remove {name}"
+    },
+    "permissionSettings": {
+      "navItem": "Permissions",
+      "heading": "Permissions",
+      "subheading": "Review and manage app access to features and data",
+      "categoryHeading": "{name}:",
+      "appCount": "{count, plural, =0 {No apps} one {# app} other {# apps}}",
+      "category": {
+        "device": "Device & System Access",
+        "onchain": "On-Chain Actions",
+        "service": "Access to Services"
+      },
+      "status": {
+        "ask": "Ask (Default)",
+        "granted": "Allowed",
+        "denied": "Denied"
+      },
+      "detail": {
+        "rulesTitle": "Rules & Safeguards",
+        "appsLabel": "Apps:",
+        "noApps": "No apps have requested this permission",
+        "allowedFor": "Allowed for {modalities}",
+        "appSubtitle": "{baseName} • {allowed}"
+      },
+      "permission": {
+        "Clipboard": {
+          "label": "Clipboard",
+          "description": "Used for copying and pasting content you choose to share",
+          "rule": {
+            "1": "Access only after explicit user action (e.g., paste)",
+            "2": "No background reading",
+            "3": "Data is not stored or transmitted without permission",
+            "4": "Access limited to active session"
+          }
+        },
+        "Microphone": {
+          "label": "Microphone",
+          "description": "Used for features like voice calls, messaging and audio recording",
+          "rule": {
+            "1": "Push-to-talk or explicit recording trigger",
+            "2": "No background listening",
+            "3": "Visual indicator when active",
+            "4": "Access only through host mediation"
+          }
+        },
+        "Camera": {
+          "label": "Camera",
+          "description": "Used for features like video calls, QR scanning and media capture",
+          "rule": {
+            "1": "Access only when you actively use the camera",
+            "2": "No background recording",
+            "3": "Visual indicator when the camera is active",
+            "4": "No data is stored or shared without your permission"
+          }
+        },
+        "Notifications": {
+          "label": "Notifications",
+          "description": "Used to send you updates, alerts and important information",
+          "rule": {
+            "1": "No excessive or spam notifications",
+            "2": "No access to sensitive data through notifications"
+          }
+        },
+        "Bluetooth": {
+          "label": "Bluetooth",
+          "description": "Used for connecting to nearby devices and data transfer",
+          "rule": {
+            "1": "Access only to nearby devices",
+            "2": "No background connections without your interaction",
+            "3": "No access to sensitive data without permission"
+          }
+        },
+        "Location": {
+          "label": "Location",
+          "description": "Used for location-based services and content personalization",
+          "rule": {
+            "1": "Location is not used in the background",
+            "2": "Location is used only when needed for specific features",
+            "3": "Location data is not stored or shared without permission"
+          }
+        },
+        "Biometrics": {
+          "label": "Biometrics",
+          "description": "Used for features that require verifying your identity",
+          "rule": {
+            "1": "Used only after your explicit authentication (e.g., Face ID or Touch ID)",
+            "2": "Biometric data is never accessed or stored by this product",
+            "3": "Authentication is handled securely by your device",
+            "4": "Used only for unlocking or approving actions"
+          }
+        },
+        "OpenExternalUrl": {
+          "label": "Open External URL",
+          "description": "Used to open external links in your default browser",
+          "rule": {
+            "1": "Links are opened only after your interaction",
+            "2": "No automatic redirects or background actions",
+            "3": "Only explicitly requested URLs are opened",
+            "4": "No data is shared without your permission"
+          }
+        },
+        "ExternalRequest": {
+          "label": "Web Domains",
+          "description": "Used to make HTTP requests to the following domains",
+          "rule": {
+            "1": "Requests are limited to specified domains only",
+            "2": "No automatic data sharing without user action",
+            "3": "All requests go through host mediation",
+            "4": "No access to local or sensitive data by default"
+          }
+        },
+        "WebRtc": {
+          "label": "WebRTC",
+          "description": "Used for real-time communication features like voice and video calls",
+          "rule": {
+            "1": "Used only during active communication",
+            "2": "No background connections without your interaction",
+            "3": "Direct connections are established only when needed",
+            "4": "May expose your IP address during use"
+          }
+        },
+        "ChainSubmit": {
+          "label": "Chain Submit",
+          "description": "Used to broadcast signed transactions to any Substrate chain",
+          "rule": {
+            "1": "Only signed transactions can be submitted",
+            "2": "No transactions are created or modified automatically",
+            "3": "Submission happens only after your confirmation",
+            "4": "No access to your private keys or sensitive data"
+          }
+        },
+        "PreimageSubmit": {
+          "label": "Preimage Submit",
+          "description": "Used to submit preimage data to the bulletin chain",
+          "rule": {
+            "1": "Only signed transactions can be submitted",
+            "2": "Submission happens only after your confirmation",
+            "3": "Data is submitted exactly as provided, without modification",
+            "4": "No access to your private keys or sensitive data"
+          }
+        },
+        "StatementSubmit": {
+          "label": "Statement Submit",
+          "description": "Used to submit statements to the statement store",
+          "rule": {
+            "1": "Only signed transactions can be submitted",
+            "2": "No transactions are created or modified automatically",
+            "3": "Submission happens only after your confirmation",
+            "4": "No access to your private keys or sensitive data"
+          }
+        },
+        "UserIdentity": {
+          "label": "Identity",
+          "description": "Primary username disclosure",
+          "rule": {
+            "1": "Reveals your primary username to the product",
+            "2": "Used only for identification purposes",
+            "3": "No other personal data is shared",
+            "4": "You can revoke access later in Settings"
+          }
+        },
+        "Files": {
+          "label": "Files",
+          "description": "Used for features like uploading, downloading and managing files",
+          "rule": {
+            "1": "Access only to files you explicitly select",
+            "2": "No background access to your files",
+            "3": "Files are not modified without your action",
+            "4": "No files are shared without your permission"
+          }
+        }
+      }
+    },
+    "statementStoreNetwork": {
+      "title": "Testnet endpoint",
+      "changeNetworkDialog": {
+        "title": "Change testnet endpoint and log out?",
+        "description": "Switching the endpoint will log you out and reload the app. You will need to sign in again.",
+        "confirm": "Change endpoint"
+      },
+      "options": {
+        "endpointStable": "Stable"
+      }
+    },
+    "offlineAccess": {
+      "menu": {
+        "enable": "Enable offline access",
+        "remove": "Remove offline use",
+        "update": "Update app version"
+      },
+      "enableDescription": "This will store the current app version for use without internet connection.",
+      "enableConfirm": "Enable offline access",
+      "removeDescription": "Removing offline use will fetch the latest version on next open.",
+      "removeConfirm": "Remove offline use",
+      "updateDescription": "A newer version is available. Update the pinned version to the latest.",
+      "updateConfirm": "Update version",
+      "section": {
+        "title": "Offline Access",
+        "description": "Keep this app working without internet.",
+        "enable": "Enable offline access",
+        "remove": "Remove offline use"
+      },
+      "enableDialog": {
+        "title": "Enable offline access",
+        "description": "This will store the current app version for use without internet connection",
+        "confirm": "Enable"
+      },
+      "removeDialog": {
+        "title": "Remove offline access",
+        "description": "This will disconnect you from {name} and you won't be able to use the app without an internet connection. You can enable this setting later at any time.",
+        "confirm": "Remove"
+      },
+      "updateDialog": {
+        "title": "Update app version for {version}",
+        "description": "This will store the app version {version} for use without internet",
+        "confirm": "Update"
+      },
+      "toast": {
+        "enabled": "{name} is now available offline",
+        "removed": "Offline use removed for {name}",
+        "updated": "{name} updated to the latest version",
+        "noVersion": "Product is not currently running",
+        "error": "Could not change offline access",
+        "updateError": "Could not update version"
+      },
+      "status": {
+        "preparing": "Preparing offline access…",
+        "ready": "Available offline",
+        "failed": "Offline download failed",
+        "retry": "Retry"
+      }
+    }
+  },
+  "widget": {
+    "permission": {
+      "modality": {
+        "app": {
+          "label": "App",
+          "description": "Manage {permission} access for {productName} in full-screen mode"
+        },
+        "widget": {
+          "label": "Widgets",
+          "description": "Manage {permission} access for {productName} widgets on the Dashboard"
+        }
+      }
+    },
+    "rateLimiter": {
+      "description": "{limiterType} limit is reached",
+      "types": {
+        "rpc": "RPC",
+        "featureSupport": "Feature support",
+        "navigation": "Navigation",
+        "localStorageRead": "Local storage read",
+        "localStorageWrite": "Local storage write",
+        "pushNotification": "Push notification",
+        "pushNotificationCancel": "Push notification cancel",
+        "permissions": "Permissions",
+        "legacyAccounts": "Legacy accounts",
+        "identityAccount": "Identity account",
+        "productAccounts": "Product accounts",
+        "alias": "Alias",
+        "entropy": "Entropy",
+        "login": "Login",
+        "preimage": "Preimage"
+      }
+    },
+    "webview": {
+      "error": {
+        "domainResolve": "Can't find product.",
+        "fetchingFailed": "Can't fetch product.",
+        "loadFailed": "Failed to load: {description} ({code})"
+      },
+      "loading": {
+        "reaching": "Reaching out {identifier}",
+        "reachingGeneric": "Reaching out"
+      },
+      "crash": {
+        "title": "Product stopped working",
+        "subtitle": "Try reloading the page.",
+        "reload": "Reload",
+        "advanced": "Show details",
+        "reason": "Reason: {reason}",
+        "exitCode": "Exit code: {code}"
+      },
+      "unresponsive": {
+        "title": "Page isn't responding",
+        "subtitle": "It may recover on its own, or you can reload now.",
+        "reload": "Reload",
+        "advanced": "Show details"
+      },
+      "degraded": {
+        "title": "Product is responding slowly",
+        "reload": "Reload",
+        "dismiss": "Dismiss"
+      }
+    },
+    "productContainerBinding": {
+      "aliasPermission": {
+        "title": "Allow access to your alias in {requestedIdentifier}?",
+        "subtitle": "Used to link your identity account across apps",
+        "requestingProduct": "Requesting product",
+        "requestedContext": "Requested context",
+        "warning": "By allowing this, you enable this app to recognize you and track your activity in another app",
+        "deny": "Don't Allow",
+        "allowOnce": "Allow Once",
+        "allowAlways": "Always Allow"
+      },
+      "allocationRequest": {
+        "title": "Allowance request",
+        "description": "{productName} requests resource allocation",
+        "requestedResources": "Requested resources",
+        "polkadotAppHint": "Prepare to approve in the Polkadot App",
+        "grantAccess": "Continue",
+        "pending": "Allocating...",
+        "polkadotAppLine1": "Open the Polkadot app on your mobile,",
+        "polkadotAppLine2": "then Approve or Reject it",
+        "polkadotAppApproveButton": "Approve",
+        "allocationRejected": "Allowance request cancelled",
+        "smartContractDetailsIntro": "Following accounts will sign contract calls automatically:",
+        "appAccountWithIndex": "App account with index {index}",
+        "copyAccountAddress": "Copy account address",
+        "resource": {
+          "StatementStoreAllowance": "Post statements on your behalf",
+          "BulletinAllowance": "Publish to Bulletin chain on your behalf",
+          "SmartContractAllowance": "Sign smart-contract calls automatically",
+          "AutoSigning": "Sign transactions automatically"
+        }
+      },
+      "permissionDenied": {
+        "appSettings": "App settings",
+        "systemDeviceSettings": "Device settings",
+        "Camera": {
+          "title": "Camera Access Required",
+          "description": "Used for features like video calls, QR scanning and media capture"
+        },
+        "Microphone": {
+          "title": "Microphone Access Required",
+          "description": "Used for features like voice calls, messaging and audio recording"
+        },
+        "Bluetooth": {
+          "title": "Bluetooth Access Required",
+          "description": "Used for connecting to nearby devices and data transfer"
+        },
+        "Location": {
+          "title": "Location Access Required",
+          "description": "Used for location-based services and content personalization"
+        },
+        "Notifications": {
+          "title": "Notification Access Required",
+          "description": "Used to send you updates, alerts and important information"
+        },
+        "Biometrics": {
+          "title": "Biometrics Access Required",
+          "description": "Used for features that require verifying your identity"
+        },
+        "Clipboard": {
+          "title": "Clipboard Access Required",
+          "description": "Used for copying and pasting content you choose to share"
+        },
+        "Files": {
+          "title": "Disk Access Required",
+          "description": "Used for features like uploading, downloading and managing files"
+        },
+        "OpenUrl": {
+          "title": "External Link Access Required",
+          "description": "Used to open external links in your default browser"
+        },
+        "ExternalRequest": {
+          "title": "Web Domains Access Required",
+          "description": "Used to make requests to the following domains"
+        },
+        "TransactionSubmit": {
+          "title": "Chain Submit Access Required",
+          "description": "Used to broadcast signed transactions to any Substrate chain"
+        },
+        "ChainSubmit": {
+          "title": "Chain Submit Access Required",
+          "description": "Used to broadcast signed transactions to any Substrate chain"
+        },
+        "PreimageSubmit": {
+          "title": "Preimage Submit Access Required",
+          "description": "Used to submit preimage data to the bulletin chain"
+        },
+        "StatementSubmit": {
+          "title": "Statement Submit Access Required",
+          "description": "Used to submit statements to the statement store"
+        },
+        "fallback": {
+          "title": "Access Required",
+          "description": "Enable access in App Settings."
+        }
+      }
+    }
+  }
+}

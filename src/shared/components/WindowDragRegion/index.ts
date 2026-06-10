@@ -1,0 +1,1 @@
+export { WindowDragRegion } from './WindowDragRegion';

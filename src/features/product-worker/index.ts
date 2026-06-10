@@ -1,0 +1,1 @@
+export { productWorkerFeature } from './feature';

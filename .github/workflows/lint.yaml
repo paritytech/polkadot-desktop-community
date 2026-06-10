@@ -1,0 +1,31 @@
+name: Lint code
+
+on:
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Node
+        uses: ./.github/actions/setup-node
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check by typescript
+        run: npm run types
+
+      - name: Check by formatter
+        run: npm run fmt:check
+
+      - name: Check by linter
+        run: TIMING=1 npm run lint

@@ -1,0 +1,52 @@
+# dependencies
+node_modules
+
+# testing
+/.coverage
+/coverage
+coverage.txt
+junit.xml
+.features-gen
+
+# production
+/build
+/dist
+/release
+
+# misc
+.DS_Store
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.eslintcache
+.playwright-mcp
+.swc
+.vscode
+.idea
+.tanstack
+.astro
+tsconfig.*.json
+
+npm-debug.log*
+schema.graphql
+
+*-results.json
+test-results
+playwright-report
+playwright/.cache
+allure-results
+allure-report
+src/dev-dist
+
+.cursor
+.claude/settings.local.json
+.claude/worktrees
+.worktrees
+.env
+docs/superpowers
+docs/_reviews
+docs/_plans
+
+# nix
+result

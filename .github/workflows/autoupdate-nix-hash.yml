@@ -1,0 +1,40 @@
+name: Auto-update Nix hash
+
+on:
+  pull_request:
+
+permissions:
+  contents: write
+
+jobs:
+  autoupdate-nix-hash:
+    name: Auto-update npmDepsHash
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.head_ref }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: cachix/install-nix-action@v31
+        with:
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+          extra_nix_config: "experimental-features = nix-command flakes"
+
+      - uses: ./.github/actions/setup-node
+
+      - name: Update npmDepsHash
+        run: node scripts/update-nix-deps.js
+
+      - name: Commit updated flake.nix
+        run: |
+          if git diff --quiet flake.nix; then
+            echo "npmDepsHash is already up-to-date, nothing to commit"
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add flake.nix
+            git commit -m "chore: update npmDepsHash"
+            git push
+          fi

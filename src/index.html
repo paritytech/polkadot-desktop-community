@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; connect-src 'self' https: wss: http://localhost:* data:; img-src 'self' data: blob: https://raw.githubusercontent.com; media-src 'self' blob:; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-src 'self' polkadot: http://localhost:*;">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="theme-color" content="#7b29ff"/>
+  <meta name="title" content="Polkadot Desktop"/>
+  <meta name="description"
+        content="Enterprise desktop wallet for Polkadot supporting multisigs, staking, light clients and more"/>
+
+  <title>Polkadot Desktop</title>
+
+  <!-- FAVICONS -->
+  <link rel="icon" type="image/png" href="/favicon.png" />
+
+  <script type="module" src="index.tsx" defer></script>
+</head>
+<body style="app-region: drag;">
+<div id="app" class="h-full overflow-hidden"></div>
+</body>
+</html>

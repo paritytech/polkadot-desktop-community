@@ -1,0 +1,1 @@
+export { signingBotAutopairFeature } from './feature';

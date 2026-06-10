@@ -1,0 +1,7 @@
+{
+  "name": "Polkadot Desktop",
+  "short_name": "Browser",
+  "display": "standalone",
+  "start_url": "/",
+  "scope": "/"
+}

@@ -1,0 +1,1 @@
+export { offlineAccessFeature } from './feature';

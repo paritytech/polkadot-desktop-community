@@ -1,0 +1,15 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>lifecycle-probe</title>
+  </head>
+  <body>
+    <h1>lifecycle-probe</h1>
+    <script>
+      // Intentionally does nothing on load.
+      // The test drives all storage reads/writes via evaluateInWebview().
+      console.info('LIFECYCLE_PROBE_READY');
+    </script>
+  </body>
+</html>

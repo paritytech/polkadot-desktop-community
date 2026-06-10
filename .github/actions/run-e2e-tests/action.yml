@@ -1,0 +1,164 @@
+name: Run E2E tests
+description: Parametrized E2E test runner (artifact or in-repo build, optional Allure)
+inputs:
+  artifact-name:
+    description: Name of the build artifact to download. Leave empty if app is built in workflow.
+    required: false
+    default: ''
+  playwright-browsers:
+    description: Playwright browsers to install (e.g. chromium, firefox, webkit).
+    required: false
+    default: chromium
+  test-command:
+    description: Command to run tests.
+    required: false
+    default: 'npm run test:e2e'
+  launch-name:
+    description: Name of the launch.
+    required: false
+    default: "E2E Tests - Build #${{ github.run_number }}"
+  bot-token:
+    description: Signing bot API token for auth tests (passed as BOT_TOKEN env var at runtime).
+    required: false
+    default: ''
+  bot-url:
+    description: Signing bot base URL for auth tests (passed as BOT_URL env var at runtime).
+    required: false
+    default: ''
+
+outputs:
+  allure-launch-id:
+    description: Allure launch ID
+    value: ${{ steps.export-launch-info.outputs.launch-id }}
+  allure-launch-url:
+    description: Allure launch URL
+    value: ${{ steps.export-launch-info.outputs.launch-url }}
+  allure-job-run-url:
+    description: Allure job run URL
+    value: ${{ steps.export-launch-info.outputs.job-run-url }}
+  platform:
+    description: Platform where tests ran
+    value: ${{ steps.export-launch-info.outputs.platform }}
+
+runs:
+  using: composite
+  steps:
+    - name: Download build output
+      if: inputs.artifact-name != ''
+      uses: actions/download-artifact@v6
+      with:
+        name: ${{ inputs.artifact-name }}
+        path: release/build
+
+    - name: Get Playwright version
+      id: pw-version
+      shell: bash
+      run: echo "version=$(npx playwright --version | awk '{print $2}')" >> $GITHUB_OUTPUT
+
+    - name: Cache Playwright browsers
+      id: pw-cache
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.cache/ms-playwright
+          ~/AppData/Local/ms-playwright
+        key: playwright-${{ runner.os }}-${{ steps.pw-version.outputs.version }}-${{ inputs.playwright-browsers }}
+
+    - name: Install Playwright browsers
+      if: steps.pw-cache.outputs.cache-hit != 'true'
+      shell: bash
+      run: npx playwright install ${{ inputs.playwright-browsers }}
+
+    - name: Install Playwright system deps and start virtual display (Linux)
+      if: runner.os == 'Linux'
+      shell: bash
+      run: |
+        npx playwright install-deps ${{ inputs.playwright-browsers }}
+        Xvfb :99 -screen 0 1280x1024x24 &
+        echo "DISPLAY=:99" >> $GITHUB_ENV
+
+    # electron@42 has no postinstall, and its Node installers don't finish
+    # reliably on hosted runners, so fetch the release asset with blocking shell
+    # tools. The cache avoids re-downloading and dodges release-CDN 502s on reruns.
+    - name: Cache Electron binary zip
+      uses: actions/cache@v4
+      with:
+        path: .electron-cache
+        key: electron-zip-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('package-lock.json') }}
+
+    - name: Install Electron binary
+      shell: bash
+      run: |
+        set -eu
+        VERSION=$(node -p "require('electron/package.json').version")
+        case "${RUNNER_OS}-${RUNNER_ARCH}" in
+          Linux-X64)    ASSET=linux-x64;    BIN=electron;;
+          Linux-ARM64)  ASSET=linux-arm64;  BIN=electron;;
+          macOS-X64)    ASSET=darwin-x64;   BIN="Electron.app/Contents/MacOS/Electron";;
+          macOS-ARM64)  ASSET=darwin-arm64; BIN="Electron.app/Contents/MacOS/Electron";;
+          Windows-X64)  ASSET=win32-x64;    BIN=electron.exe;;
+          *) echo "Unsupported runner ${RUNNER_OS}-${RUNNER_ARCH}"; exit 1;;
+        esac
+        DEST=node_modules/electron
+        ZIP=".electron-cache/electron-v${VERSION}-${ASSET}.zip"
+        mkdir -p .electron-cache
+        if [ ! -s "$ZIP" ]; then
+          curl -fSL --retry 8 --retry-all-errors --retry-delay 5 --retry-max-time 300 --connect-timeout 30 \
+            "https://github.com/electron/electron/releases/download/v${VERSION}/electron-v${VERSION}-${ASSET}.zip" \
+            -o "$ZIP"
+        fi
+        rm -rf "${DEST}/dist"
+        mkdir -p "${DEST}/dist"
+        if [ "$RUNNER_OS" = "Windows" ]; then
+          7z x -y -o"${DEST}/dist" "$ZIP" >/dev/null
+        else
+          unzip -q -o "$ZIP" -d "${DEST}/dist"
+        fi
+        printf '%s' "$BIN" > "${DEST}/path.txt"
+        test -e "${DEST}/dist/${BIN}"
+        echo "Electron binary ready: ${DEST}/dist/${BIN}"
+
+    - name: Install allurectl
+      uses: allure-framework/setup-allurectl@v1
+      with:
+        allure-endpoint: ${{ env.ALLURE_ENDPOINT }}
+        allure-token: ${{ env.ALLURE_TOKEN }}
+        allure-project-id: ${{ env.ALLURE_PROJECT_ID }}
+
+    - name: Run E2E tests (Allure)
+      shell: bash
+      run: |
+        cd "$GITHUB_WORKSPACE"
+        allurectl watch -- ${{ inputs.test-command }}
+      env:
+        E2E_TEST: true
+        CI: true
+        BOT_TOKEN: ${{ inputs.bot-token }}
+        BOT_URL: ${{ inputs.bot-url }}
+        ALLURE_LAUNCH_NAME: ${{ inputs.launch-name }}
+        ALLURE_LAUNCH_TAGS: "branch:${{ github.ref_name }}"
+
+    - name: Export Allure launch info
+      id: export-launch-info
+      if: always()
+      shell: bash
+      run: |
+        # Export allurectl environment variables
+        export $(allurectl job-run env)
+
+        # Set as output for next steps/jobs
+        echo "ALLURE_LAUNCH_ID=${ALLURE_LAUNCH_ID}" >> $GITHUB_ENV
+        echo "ALLURE_LAUNCH_URL=${ALLURE_LAUNCH_URL}" >> $GITHUB_ENV
+        echo "ALLURE_JOB_RUN_URL=${ALLURE_JOB_RUN_URL}" >> $GITHUB_ENV
+
+        # Set as action outputs
+        echo "launch-id=${ALLURE_LAUNCH_ID}" >> $GITHUB_OUTPUT
+        echo "launch-url=${ALLURE_LAUNCH_URL}" >> $GITHUB_OUTPUT
+        echo "job-run-url=${ALLURE_JOB_RUN_URL}" >> $GITHUB_OUTPUT
+        echo "platform=${{ runner.os }}" >> $GITHUB_OUTPUT
+
+        echo "✅ Launch info captured:"
+        echo "  Launch ID: ${ALLURE_LAUNCH_ID}"
+        echo "  Launch URL: ${ALLURE_LAUNCH_URL}"
+        echo "  Job Run URL: ${ALLURE_JOB_RUN_URL}"
+

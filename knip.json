@@ -1,0 +1,46 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  "entry": [
+    "src/**/index.{ts,tsx}",
+    "main/index.ts",
+    "main/preload.ts"
+  ],
+  "project": [
+    "src/**/*.{js,ts,tsx}",
+    "main/**/*.{js,ts,tsx}"
+  ],
+  "ignoreDependencies": [
+    "@electron/notarize",
+    "@fontsource/inter",
+    "@svgr/plugin-svgo",
+    "@tailwindcss/language-server",
+    "@types/react-grid-layout",
+    "allure-commandline",
+    "babel-plugin-react-compiler",
+    "electron-react-devtools",
+    "eslint-module-utils",
+    "eslint-plugin-i18n-json",
+    "eslint-plugin-json",
+    "favicons",
+    "pretty-quick",
+    "react-refresh",
+    "sharp"
+  ],
+  "playwright": true,
+  "storybook": true,
+  "tailwind": true,
+  "typescript": true,
+  "vitest": {
+    "config": "./vitest.config.ts"
+  },
+  "vite": {
+    "config": [
+      "./vite.config.renderer.ts",
+      "./vite.config.main.ts",
+      "./vite.config.preload.ts"
+    ]
+  },
+  "prettier": true,
+  "eslint": true,
+  "lint-staged": true
+}

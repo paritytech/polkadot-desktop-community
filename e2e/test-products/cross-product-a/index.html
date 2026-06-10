@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Cross-Product A</title>
+</head>
+<body>
+  <h1>Product A</h1>
+  <p>This product writes markers to localStorage and IndexedDB for cross-product isolation testing.</p>
+  <script>
+    // Write markers to browser-level storage
+    localStorage.setItem('secret', 'product-a-data');
+    localStorage.setItem('product-id', 'product-a');
+    sessionStorage.setItem('secret', 'product-a-session');
+    document.cookie = 'secret=product-a-cookie; path=/';
+
+    // Write to IndexedDB
+    var request = indexedDB.open('cross-product-test', 1);
+    request.onupgradeneeded = function (e) {
+      var db = e.target.result;
+      db.createObjectStore('data', { keyPath: 'key' });
+    };
+    request.onsuccess = function (e) {
+      var db = e.target.result;
+      var tx = db.transaction('data', 'readwrite');
+      tx.objectStore('data').put({ key: 'secret', value: 'product-a-idb' });
+      tx.oncomplete = function () {
+        db.close();
+        console.info('CROSS_PRODUCT_A_READY');
+      };
+    };
+  </script>
+</body>
+</html>

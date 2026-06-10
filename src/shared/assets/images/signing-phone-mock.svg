@@ -1,0 +1,71 @@
+<svg width="234" height="309" viewBox="0 0 234 309" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <g clip-path="url(#signingPhoneMockClip0)">
+    <path
+      d="M40 0.75H194C215.677 0.75 233.25 18.3228 233.25 40V308.25H0.75V40C0.75 18.3228 18.3228 0.75 40 0.75Z"
+      fill="url(#signingPhoneMockPaint0)"
+      stroke="#E0E0E0"
+      stroke-width="1.5"
+    />
+    <rect y="188" width="234" height="121" fill="url(#signingPhoneMockPaint1)" />
+    <g clip-path="url(#signingPhoneMockClip1)">
+      <path
+        d="M85 112C85 103.163 92.1634 96 101 96H133C141.837 96 149 103.163 149 112V144C149 152.837 141.837 160 133 160H101C92.1634 160 85 152.837 85 144V112Z"
+        fill="url(#signingPhoneMockPaint2)"
+      />
+      <path
+        d="M85 112C85 103.163 92.1634 96 101 96H133C141.837 96 149 103.163 149 112V144C149 152.837 141.837 160 133 160H101C92.1634 160 85 152.837 85 144V112Z"
+        fill="url(#signingPhoneMockPaint3)"
+      />
+      <path
+        d="M123.196 143.055C125.511 143.055 127.261 143.765 127.673 145.061C128.316 147.119 125.351 149.893 121.048 151.254C116.745 152.622 112.732 152.054 112.082 149.996C111.48 148.067 114.048 145.509 117.916 144.075L118.707 143.797C120.296 143.294 121.839 143.055 123.196 143.055Z"
+        fill="white"
+      />
+      <path
+        d="M101.836 131.424C103.914 131.424 106.204 132.256 108.146 133.901C111.812 137.004 112.848 141.823 110.462 144.661C108.076 147.5 103.162 147.28 99.4959 144.177C95.9443 141.171 94.8613 136.555 96.9667 133.689L97.1863 133.417C98.3054 132.082 99.9905 131.424 101.836 131.424Z"
+        fill="white"
+      />
+      <path
+        d="M137.494 130.192C137.59 130.192 137.675 130.205 137.752 130.244C138.781 130.722 138.162 134.289 136.355 138.205C134.555 142.119 132.254 144.905 131.218 144.43C130.182 143.953 130.806 140.385 132.607 136.469C134.272 132.85 136.368 130.193 137.494 130.192Z"
+        fill="white"
+      />
+      <path
+        d="M105.11 110.807C106.692 110.807 108.21 111.303 109.413 112.341C112.487 114.986 112.404 120.142 109.233 123.845C106.056 127.554 100.994 128.412 97.9196 125.76C94.8454 123.116 94.9285 117.961 98.0988 114.258C100.028 112.007 102.653 110.807 105.11 110.807Z"
+        fill="white"
+      />
+      <path
+        d="M131.951 111.762C133.263 111.763 135.379 114.497 136.883 118.238C138.517 122.296 138.813 125.999 137.552 126.508C136.285 127.018 133.938 124.148 132.305 120.09C130.671 116.04 130.368 112.331 131.634 111.82C131.737 111.782 131.842 111.762 131.951 111.762Z"
+        fill="white"
+      />
+      <path
+        d="M117.234 104C118.559 104 120.025 104.245 121.498 104.761C125.872 106.29 128.689 109.606 127.802 112.173C126.914 114.741 122.65 115.586 118.276 114.058C113.903 112.529 111.086 109.213 111.972 106.646C112.558 104.943 114.63 104 117.234 104Z"
+        fill="white"
+      />
+    </g>
+    <rect x="120" y="246" width="100" height="30" rx="8" fill="#D8D8D8" />
+    <rect x="11" y="246" width="100" height="30" rx="8" fill="#F1F1F1" />
+  </g>
+  <defs>
+    <linearGradient id="signingPhoneMockPaint0" x1="117" y1="0" x2="117" y2="309" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="black" stop-opacity="0.04" />
+      <stop offset="1" stop-color="black" stop-opacity="0" />
+    </linearGradient>
+    <linearGradient id="signingPhoneMockPaint1" x1="117" y1="188" x2="117" y2="309" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="white" stop-opacity="0" />
+      <stop offset="1" stop-color="white" />
+    </linearGradient>
+    <linearGradient id="signingPhoneMockPaint2" x1="149" y1="160" x2="85" y2="96" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#D43079" />
+      <stop offset="1" stop-color="#F93C90" />
+    </linearGradient>
+    <linearGradient id="signingPhoneMockPaint3" x1="149" y1="160" x2="85" y2="96" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="black" />
+      <stop offset="1" stop-color="#3F3F3F" />
+    </linearGradient>
+    <clipPath id="signingPhoneMockClip0">
+      <path d="M0 40C0 17.9086 17.9086 0 40 0H194C216.091 0 234 17.9086 234 40V309H0V40Z" fill="white" />
+    </clipPath>
+    <clipPath id="signingPhoneMockClip1">
+      <rect width="64" height="64" fill="white" transform="translate(85 96)" />
+    </clipPath>
+  </defs>
+</svg>

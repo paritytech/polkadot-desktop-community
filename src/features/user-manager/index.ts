@@ -1,0 +1,1 @@
+export { userManagerFeature } from './feature';

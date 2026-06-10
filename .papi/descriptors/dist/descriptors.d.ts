@@ -1,0 +1,11 @@
+export declare const Dot: Record<string, object>;
+export declare const Dot_ah: Record<string, object>;
+export declare const Dot_ppl: Record<string, object>;
+export declare const Ksm: Record<string, object>;
+export declare const Ksm_ah: Record<string, object>;
+export declare const Ksm_ppl: Record<string, object>;
+export declare const Dot_col: Record<string, object>;
+export declare const Wnd: Record<string, object>;
+export declare const Wnd_ah: Record<string, object>;
+export declare const Paseo: Record<string, object>;
+export declare const Bulletin_paseo: Record<string, object>;

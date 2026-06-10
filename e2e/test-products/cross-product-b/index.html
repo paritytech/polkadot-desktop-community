@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Cross-Product B</title>
+</head>
+<body>
+  <h1>Product B</h1>
+  <p>This product reads markers that Product A wrote, verifying cross-product storage isolation.</p>
+  <script>
+    var results = {};
+
+    // Read localStorage
+    results.localStorage = localStorage.getItem('secret');
+    results.localStorageProductId = localStorage.getItem('product-id');
+
+    // Read sessionStorage
+    results.sessionStorage = sessionStorage.getItem('secret');
+
+    // Read cookie
+    var cookies = document.cookie;
+    var match = cookies.match(/secret=([^;]*)/);
+    results.cookie = match ? match[1] : null;
+
+    // Read IndexedDB
+    var request = indexedDB.open('cross-product-test', 1);
+    request.onupgradeneeded = function (e) {
+      // DB doesn't exist in this partition — isolation works
+      var db = e.target.result;
+      db.createObjectStore('data', { keyPath: 'key' });
+    };
+    request.onsuccess = function (e) {
+      var db = e.target.result;
+      try {
+        var tx = db.transaction('data', 'readonly');
+        var getReq = tx.objectStore('data').get('secret');
+        getReq.onsuccess = function () {
+          results.indexedDB = getReq.result ? getReq.result.value : null;
+          db.close();
+          console.info('CROSS_PRODUCT_B_RESULTS::' + JSON.stringify(results));
+        };
+        getReq.onerror = function () {
+          results.indexedDB = null;
+          db.close();
+          console.info('CROSS_PRODUCT_B_RESULTS::' + JSON.stringify(results));
+        };
+      } catch (err) {
+        results.indexedDB = null;
+        results.indexedDBError = err.message;
+        db.close();
+        console.info('CROSS_PRODUCT_B_RESULTS::' + JSON.stringify(results));
+      }
+    };
+    request.onerror = function () {
+      results.indexedDB = null;
+      results.indexedDBError = 'open failed';
+      console.info('CROSS_PRODUCT_B_RESULTS::' + JSON.stringify(results));
+    };
+  </script>
+</body>
+</html>

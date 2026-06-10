@@ -1,0 +1,1 @@
+export { ProductIcon } from './ProductIcon';

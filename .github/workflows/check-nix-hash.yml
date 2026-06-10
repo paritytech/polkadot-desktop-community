@@ -1,0 +1,30 @@
+name: Check Nix hash
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  check-nix-hash:
+    name: Check nix hash is up-to-date
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: cachix/install-nix-action@v31
+        with:
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+          extra_nix_config: "experimental-features = nix-command flakes"
+
+      - name: Check npmDepsHash
+        run: |
+          nix build '.#packages.x86_64-linux.default.npmDeps' 2>nix_output || true
+
+          if grep -q "hash mismatch" nix_output; then
+            EXPECTED=$(grep "got:" nix_output | sed "s/[ \t]*got:[ \t]*//")
+            echo "::error::npmDepsHash in flake.nix is outdated. Update it to: $EXPECTED"
+            exit 1
+          fi
+
+          cat nix_output
