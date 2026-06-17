@@ -37,7 +37,11 @@ function computeFeedUrl(channel: UpdateChannel): string {
 export function setupAutoUpdater(mainWindow: BrowserWindow | null) {
   mainWindowRef = mainWindow;
   const isAutoUpdateSupported = checkAutoUpdateSupported();
-  const isSupported = !ENVIRONMENT.IS_DEV && (isAutoUpdateSupported || app.isPackaged);
+  // Without a configured feed URL there is nothing to point the updater at, and
+  // setFeedURL would parse an invalid relative URL and throw during startup. Honor
+  // the documented contract (empty AUTO_UPDATE_URL = auto-update disabled).
+  const hasFeedUrl = UPDATE_SERVER_URL_BASE.trim().length > 0;
+  const isSupported = !ENVIRONMENT.IS_DEV && hasFeedUrl && (isAutoUpdateSupported || app.isPackaged);
   const store = new Store({
     defaults: {
       [AUTO_UPDATE_ENABLED]: isSupported,
