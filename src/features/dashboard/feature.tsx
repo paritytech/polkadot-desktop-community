@@ -100,6 +100,7 @@ dashboardCardSDK(dashboardFeature, {
         card={props.card}
         width={props.width}
         height={props.height}
+        layoutRules={FOLDER_LAYOUT_RULES}
         isMenuOpen={props.isMenuOpen}
         onMenuOpenChange={open => props.onMenuOpenChange(props.menuId, open)}
         onResizeCard={props.onResizeCard}
@@ -115,7 +116,6 @@ dashboardCardSDK(dashboardFeature, {
       </DashboardCardChrome>
     );
   },
-  layout: payload => (payload.kind === 'folder' ? FOLDER_LAYOUT_RULES : null),
   metadata: payload => (payload.kind === 'folder' ? FOLDER_METADATA : null),
   addable: entries => [...entries, favoritesAddableEntry],
 });

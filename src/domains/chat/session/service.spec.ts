@@ -25,6 +25,16 @@ describe('chatMessageService.isSyncCarrier', () => {
     expect(chatMessageService.isSyncCarrier(content)).toBe(true);
   });
 
+  it('marks token as a sync carrier (peer push token — never user-visible)', () => {
+    const content: MessageContent = {
+      type: 'token',
+      token: 'ab'.repeat(16),
+      platform: 'Android',
+    };
+
+    expect(chatMessageService.isSyncCarrier(content)).toBe(true);
+  });
+
   it('does not mark user-facing content as a sync carrier', () => {
     const visible: MessageContent[] = [
       { type: 'text', text: 'hi' },

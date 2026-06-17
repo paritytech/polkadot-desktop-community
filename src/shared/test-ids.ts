@@ -21,7 +21,7 @@ export const TEST_IDS = {
   // Top Bar
   quickChatButton: 'quick-chat-button',
   quickChatPopover: 'quick-chat-popover',
-  quickChatViewMoreButton: 'quick-chat-view-more-button',
+  quickChatExpandButton: 'quick-chat-expand-button',
 
   // Onboarding network selector
   networkButton: 'network-button',
@@ -78,6 +78,8 @@ export const TEST_IDS = {
   chatRoomList: 'chat-room-list',
   chatMessageInput: 'chat-message-input',
   chatSendButton: 'chat-send-button',
+  chatMediaPlaceholder: 'chat-media-placeholder',
+  chatMediaPlaceholderBlurhash: 'chat-media-placeholder-blurhash',
 
   // Chat — P2P contact search (PB-217)
   chatSearchToggleButton: 'chat-search-toggle-button',

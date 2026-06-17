@@ -21,7 +21,12 @@ test.describe('Sandbox Lifecycle — forgetAndReset', { tag: ['@security'] }, ()
     const probePath = path.resolve(__dirname, '../../test-products/lifecycle-probe');
     const files = readProductFiles(probePath);
 
-    await injectAndLoadProduct(window, productId, files);
+    // Use the app's real partition format (sandbox-app-<id>) so the webview lives in the
+    // same partition that clearProductSandboxData targets — otherwise the wipe clears a
+    // partition that was never configured and the marker survives.
+    const partition = `sandbox-app-${encodeURIComponent(productId)}`;
+
+    await injectAndLoadProduct(window, productId, files, partition);
     await evaluateInWebview(window, `localStorage.setItem('wipe-marker', 'pre-wipe')`);
 
     const before = await evaluateInWebview<string | null>(window, `localStorage.getItem('wipe-marker')`);
@@ -36,7 +41,7 @@ test.describe('Sandbox Lifecycle — forgetAndReset', { tag: ['@security'] }, ()
 
     // clearProductSandboxData also evicts the archive cache, so we must re-save it
     // before the webview can serve the page again.
-    await injectAndLoadProduct(window, productId, files);
+    await injectAndLoadProduct(window, productId, files, partition);
 
     const after = await evaluateInWebview<string | null>(window, `localStorage.getItem('wipe-marker')`);
     expect(after).toBeNull();

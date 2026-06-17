@@ -17,7 +17,9 @@ A product is an application or set of applications resolvable through dotNS (Pol
 
 These skills (under `.claude/skills/`) carry the project's procedural rules. They are part of the contract — don't reimplement guidance they own.
 
-- `architecture` — **entry point for any decision-driven code change.** Orchestrates `code-placement`, `domain-development`, and `feature-development` in the correct order; run it first, always.
+> **Required plugin dependency:** the `superpowers` plugin (`superpowers@claude-plugins-official`) is declared in `.claude/settings.json` so the whole team/CI gets it.
+
+- `architecture` — **entry point for any decision-driven code change, and orchestrator of the full lifecycle** (frame → place → brainstorm → approve → plan → implement → review → fix). Orchestrates `code-placement`, `domain-development`, `feature-development`; delegates brainstorming + plan-writing + implementation to `superpowers`; gates implementation on plan approval; hard-stops on mid-flight plan deviations; and runs `reviewer` as the mandatory post-implementation gate. Run it first, always.
 - `code-placement` — fires first when the target layer is uncertain (domain / aggregate / feature / widget / shared). Entry point for "where does this go?".
 - `domain-development` — fires when working in `src/domains/`. Points at `docs/code/domain-development.md`.
 - `feature-development` — fires when working in `src/features/` or `src/routes/` files that host features. Points at `docs/code/feature-development.md`.

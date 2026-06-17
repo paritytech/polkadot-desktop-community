@@ -5,10 +5,11 @@ import * as v from 'valibot';
 import { createStreamResource } from '@/shared/resource';
 import { dotNsService } from '../dotns/service';
 
+import { type PermissionModality } from './constants';
 import { productPermissionsDatabase } from './repository';
 import { productPermissionsSchema } from './schemas';
 import { permissionsService } from './service';
-import { type DevicePermission, type ProductPermissions, type RemotePermission } from './types';
+import { type DevicePermission, type DevicePermissionType, type ProductPermissions, type RemotePermission } from './types';
 
 // Parse one persisted row, dropping it (→ null) if it fails validation rather than
 // erroring the whole stream. A single corrupt or forward-incompatible row must not
@@ -122,4 +123,51 @@ export function resetPermissionToDefault({
 // `isSameBaseName`, not the primary key.
 export async function deleteProductPermissions(productId: string): Promise<void> {
   await productPermissionsDatabase.table.filter(row => dotNsService.isSameBaseName(row.productId, productId)).delete();
+}
+
+// Session-scoped device-permission grants. "Allow once" must open the native
+// getUserMedia gate (bootstrap.onDevicePermissionRequest) for the current product
+// session WITHOUT persisting a durable 'granted'. This in-memory store is that
+// channel — never persisted, consulted only by the native device gate, and cleared
+// by the widget when the product binding unmounts or remounts (close / reload).
+// Mirrors the in-memory pattern of broker.ts (ephemeral permission coordination).
+const transientDeviceGrants = new Set<string>();
+
+type TransientDeviceGrantParams = {
+  productId: string;
+  permission: DevicePermissionType;
+  modality: PermissionModality;
+};
+
+function transientDeviceGrantKey({ productId, permission, modality }: TransientDeviceGrantParams): string {
+  return `${productId}\0${permission}\0${modality}`;
+}
+
+export function grantTransientDevicePermission(params: TransientDeviceGrantParams): void {
+  transientDeviceGrants.add(transientDeviceGrantKey(params));
+}
+
+export function getTransientDevicePermissionGranted(params: TransientDeviceGrantParams): boolean {
+  return transientDeviceGrants.has(transientDeviceGrantKey(params));
+}
+
+export function clearTransientDevicePermissionGrants({
+  productId,
+  modality,
+}: {
+  productId: string;
+  modality: PermissionModality;
+}): void {
+  const prefix = `${productId}\0`;
+  const suffix = `\0${modality}`;
+  for (const key of transientDeviceGrants) {
+    if (key.startsWith(prefix) && key.endsWith(suffix)) {
+      transientDeviceGrants.delete(key);
+    }
+  }
+}
+
+// Test-only: drop all transient grants. Mirrors broker.ts's _resetRemotePermissionBroker.
+export function _resetTransientDevicePermissionGrants(): void {
+  transientDeviceGrants.clear();
 }

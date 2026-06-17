@@ -13,9 +13,9 @@ import { type CodecType } from 'scale-ts';
 /* eslint-disable boundaries/dependencies -- direct sub-path imports avoid pulling
    wasm-loading transitive deps (rosterSubscriber → attestationService → verifiablejs)
    into the vitest sandbox; same workaround as collector.ts */
-import { mapSdkContent } from '@/domains/chat/p2p/contentMappers';
-import { stampMessage, stampRoom } from '@/domains/chat/p2p/listChanged';
 import { p2pChatDatabase } from '@/domains/chat/p2p/repository';
+import { p2pService } from '@/domains/chat/p2p/service';
+import { chatContentService } from '@/domains/chat/p2p/session-transport/service';
 import { chatMessageService } from '@/domains/chat/session/service';
 import { type ChatMessage, type ChatMessageStatus } from '@/domains/chat/session/types';
 import { contactRepository } from '@/domains/contact/identity/repository';
@@ -109,7 +109,7 @@ export async function applySyncEntities(entities: SyncEntity[], ctx: ApplierCont
         if (!existingRoom) {
           const now = Date.now();
           await p2pChatDatabase.rooms.put(
-            stampRoom({
+            p2pService.stampRoom({
               sessionId: ss58,
               peerId: ss58,
               peerUsername: info.username,
@@ -122,7 +122,7 @@ export async function applySyncEntities(entities: SyncEntity[], ctx: ApplierCont
         } else if (existingRoom.userId !== ctx.ownUserId) {
           // Repair rooms left over from a previous bootstrap that wrote the
           // wrong `userId` — without this the chat-list hook can't see them.
-          await p2pChatDatabase.rooms.update(ss58, stampRoom({ ...existingRoom, userId: ctx.ownUserId }));
+          await p2pChatDatabase.rooms.update(ss58, p2pService.stampRoom({ ...existingRoom, userId: ctx.ownUserId }));
         }
 
         // Any pending incoming chat request from this peer is now redundant —
@@ -174,7 +174,7 @@ export async function applySyncEntities(entities: SyncEntity[], ctx: ApplierCont
           const existingContactAdded = await p2pChatDatabase.messages.get(contactAddedId);
           if (!existingContactAdded) {
             await p2pChatDatabase.messages.put(
-              stampMessage({
+              p2pService.stampMessage({
                 messageId: contactAddedId,
                 sessionId: ss58,
                 peer: { type: 'p2p', accountId: ctx.ownUserId, name: '' },
@@ -188,7 +188,7 @@ export async function applySyncEntities(entities: SyncEntity[], ctx: ApplierCont
             const existingWelcome = await p2pChatDatabase.messages.get(req.requestId);
             if (!existingWelcome) {
               await p2pChatDatabase.messages.put(
-                stampMessage({
+                p2pService.stampMessage({
                   messageId: req.requestId,
                   sessionId: ss58,
                   peer: { type: 'p2p', accountId: ss58, name: req.peerUsername ?? '' },
@@ -275,7 +275,7 @@ export async function applySyncEntities(entities: SyncEntity[], ctx: ApplierCont
           if (wireContent.tag === 'deviceAdded') {
             const existing = await contactRepository.get(peerSs58);
             if (!existing) {
-              console.info('[DEVICE-TRACE] applier RECV deviceAdded but contact unknown peer=%s — skipping', peerSs58);
+              console.debug('[DEVICE-TRACE] applier RECV deviceAdded but contact unknown peer=%s — skipping', peerSs58);
               continue;
             }
             const incoming: Device = {
@@ -283,7 +283,7 @@ export async function applySyncEntities(entities: SyncEntity[], ctx: ApplierCont
               encryptionPublicKey: toHex(wireContent.value.encryptionPublicKey),
             };
             const without = existing.devices.filter(d => d.statementAccountId !== incoming.statementAccountId);
-            console.info(
+            console.debug(
               '[DEVICE-TRACE] applier RECV deviceAdded via sibling-MDS:\n  peerSs58(contact)=%s\n  incoming.stmtAcct=%s\n  incoming.encPub=%s\n  existing.devices BEFORE=%o\n  existing.devices AFTER=[…, incoming] (replace-by-stmtAcct, %d → %d devices)',
               peerSs58,
               incoming.statementAccountId,
@@ -300,7 +300,7 @@ export async function applySyncEntities(entities: SyncEntity[], ctx: ApplierCont
             const { requestId, device } = wireContent.value;
             const existing = await contactRepository.get(peerSs58);
             if (!existing) {
-              console.info('[DEVICE-TRACE] applier RECV deviceChatAccepted but contact unknown peer=%s — skipping', peerSs58);
+              console.debug('[DEVICE-TRACE] applier RECV deviceChatAccepted but contact unknown peer=%s — skipping', peerSs58);
               continue;
             }
             const incoming: Device = {
@@ -308,7 +308,7 @@ export async function applySyncEntities(entities: SyncEntity[], ctx: ApplierCont
               encryptionPublicKey: toHex(device.encryptionPublicKey),
             };
             const without = existing.devices.filter(d => d.statementAccountId !== incoming.statementAccountId);
-            console.info(
+            console.debug(
               '[DEVICE-TRACE] applier RECV deviceChatAccepted via sibling-MDS:\n  peerSs58(contact)=%s\n  requestId=%s\n  incoming.stmtAcct=%s\n  incoming.encPub=%s\n  existing.devices BEFORE=%o\n  AFTER=[…, incoming] (%d → %d devices)',
               peerSs58,
               requestId,
@@ -339,7 +339,7 @@ export async function applySyncEntities(entities: SyncEntity[], ctx: ApplierCont
             if (!existingAccepted) {
               const room = await p2pChatDatabase.rooms.where('peerId').equals(peerSs58).first();
               await p2pChatDatabase.messages.put(
-                stampMessage({
+                p2pService.stampMessage({
                   messageId: acceptedId,
                   sessionId: room?.sessionId ?? peerSs58,
                   peer: { type: 'p2p', accountId: peerSs58, name: room?.peerUsername ?? peerSs58 },
@@ -387,7 +387,7 @@ export async function applySyncEntities(entities: SyncEntity[], ctx: ApplierCont
           console.warn('[applier] Messages: %s tag=%s peer=%s — no local room, dropping', messageId, wireContent.tag, peerSs58);
           continue;
         }
-        const localContent = mapSdkContent(wireContent);
+        const localContent = chatContentService.mapSdkContent(wireContent);
         if (!localContent) {
           console.warn('[applier] Messages: %s tag=%s — mapSdkContent returned null, dropping', messageId, wireContent.tag);
           continue;
@@ -400,7 +400,7 @@ export async function applySyncEntities(entities: SyncEntity[], ctx: ApplierCont
           content: localContent,
           status: statusFromWire(m.status),
         };
-        await p2pChatDatabase.messages.put(stampMessage(localMessage));
+        await p2pChatDatabase.messages.put(p2pService.stampMessage(localMessage));
       }
     } else if (entity.tag === 'Devices') {
       for (const d of entity.value) {

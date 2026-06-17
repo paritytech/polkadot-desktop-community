@@ -6,10 +6,16 @@ import { createFeature } from '@/shared/feature';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { cnTw } from '@/shared/utils';
-import { type DashboardCardLayoutRules, type DashboardCardPayload } from '@/domains/application';
-import { productService, usePersistedProductById } from '@/domains/product';
+import {
+  type DashboardCardLayoutRules,
+  type DashboardCardPayload,
+  type WidgetSizeHints,
+  dashboardLayoutService,
+} from '@/domains/application';
+import { productService, useDisplayedProduct, usePersistedProductById } from '@/domains/product';
 import { onProductRefreshRequestedSideEffect, useProductRefreshing } from '@/aggregates/product-loading';
 import {
+  type CardRenderProps,
   DashboardCardChrome,
   dashboardCardSDK,
   widgetTopbarActionButtonClass,
@@ -34,7 +40,7 @@ function productIdOf(payload: DashboardCardPayload): string | null {
   return (payload as ProductWidgetPayload).productId;
 }
 
-const PRODUCT_WIDGET_LAYOUT_RULES: DashboardCardLayoutRules = {
+const PRODUCT_WIDGET_FALLBACK_LAYOUT_RULES: DashboardCardLayoutRules = {
   minH: 4,
   maxH: 8,
   minW: 1,
@@ -44,29 +50,47 @@ const PRODUCT_WIDGET_LAYOUT_RULES: DashboardCardLayoutRules = {
   defaultSize: 'ICON',
 };
 
+function productWidgetLayoutRules(dimensions: WidgetSizeHints | undefined): DashboardCardLayoutRules {
+  if (!dimensions) return PRODUCT_WIDGET_FALLBACK_LAYOUT_RULES;
+
+  const rules = dashboardLayoutService.sizeHintsToLayoutRules(dimensions);
+  // Invalid manifest dimensions: the widget can no longer be added, but one may
+  // already be on the dashboard — lock it to its current size (the header menu
+  // shows only that size, non-switchable).
+  if (!rules) return { ...PRODUCT_WIDGET_FALLBACK_LAYOUT_RULES, lockSizeToCurrent: true };
+
+  return rules;
+}
+
+const ProductWidgetContent = (props: CardRenderProps) => {
+  const productId = productIdOf(props.card.payload);
+  // Resolve committed-or-chain so the size menu reflects the manifest even for
+  // products that aren't committed to the DB. The resolved rules are passed to
+  // `DashboardCardChrome` via the `layoutRules` prop below.
+  const { data: product } = useDisplayedProduct(productId);
+
+  if (productId === null) return null;
+  if (props.height === 1) return <ProductShortcutCard productId={productId} />;
+
+  return (
+    <DashboardCardChrome
+      card={props.card}
+      width={props.width}
+      height={props.height}
+      layoutRules={productWidgetLayoutRules(product?.executables.widget?.dimensions)}
+      isMenuOpen={props.isMenuOpen}
+      onMenuOpenChange={open => props.onMenuOpenChange(props.menuId, open)}
+      onResizeCard={props.onResizeCard}
+      onRemoveCard={props.onRemoveCard}
+      onCleanupCards={props.onCleanupCards}
+    >
+      {isElectron() ? <ProductWidgetBody productId={productId} /> : <WebFallback />}
+    </DashboardCardChrome>
+  );
+};
+
 dashboardCardSDK(productWidgetFeature, {
-  content: props => {
-    const productId = productIdOf(props.card.payload);
-    if (productId === null) return null;
-    if (props.height === 1) return <ProductShortcutCard productId={productId} />;
-
-    return (
-      <DashboardCardChrome
-        card={props.card}
-        width={props.width}
-        height={props.height}
-        isMenuOpen={props.isMenuOpen}
-        onMenuOpenChange={open => props.onMenuOpenChange(props.menuId, open)}
-        onResizeCard={props.onResizeCard}
-        onRemoveCard={props.onRemoveCard}
-        onCleanupCards={props.onCleanupCards}
-      >
-        {isElectron() ? <ProductWidgetBody productId={productId} /> : <WebFallback />}
-      </DashboardCardChrome>
-    );
-  },
-
-  layout: payload => (payload.kind === PRODUCT_WIDGET_KIND ? PRODUCT_WIDGET_LAYOUT_RULES : null),
+  content: props => <ProductWidgetContent {...props} />,
 
   metadata: payload => {
     const productId = productIdOf(payload);

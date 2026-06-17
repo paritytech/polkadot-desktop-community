@@ -71,6 +71,26 @@ artifact may import and who may import it — the dependency-rule counterpart to
 
 ---
 
+## Container-root orchestration (the `$usecase/`-is-domain-root-only gap)
+
+Multi-source orchestration belongs in `$usecase/` — but `$usecase/` exists **only at the domain root**, not inside a sub-module
+(container). When a container sub-module (e.g. `chat/p2p`) owns heavy, sub-module-specific cross-source orchestration or
+process-wide infra, none of the canonical *leaf* file kinds fit it, and lifting it to the domain-root `$usecase/` would pollute the
+whole domain with that sub-module's internals.
+
+Resolution — keep it as a **named container-root file** and frame it in the container's `README.md`. This is a deliberate,
+documented exemption, not a stray file. It applies only when **all** hold:
+
+- the logic is genuine multi-source orchestration (a lifecycle/factory composing ≥2 sources) or process-wide infra (a registry/budget singleton);
+- it is specific to this container, so domain-root `$usecase/` is the wrong home;
+- no canonical leaf kind (`service`/`resource`/`gateway`/`repository`) fits without distorting that kind's contract.
+
+The README must name each such file and say why it's exempt. Effect-orchestration that subscribes to resources and drives a
+side-effect channel (e.g. firing OS notifications) is the same class. Do **not** invent ad-hoc names (`manager.ts`, `helpers.ts`)
+for ordinary logic to dodge a canonical home — this carve-out is for orchestration/infra that legitimately has none.
+
+---
+
 ## React-binding hooks
 
 All React bindings use two hooks from `@/shared/hooks`:

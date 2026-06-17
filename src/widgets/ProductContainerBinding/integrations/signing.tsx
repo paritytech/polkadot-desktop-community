@@ -4,6 +4,7 @@ import { useSession } from '@novasamatech/host-papp-react-ui';
 import { toast, toastSuccess } from '@novasamatech/tr-ui';
 import { AlertCircle } from 'lucide-react';
 import { ResultAsync } from 'neverthrow';
+import { fromHex } from 'polkadot-api/utils';
 import { type RefObject, useEffect, useState } from 'react';
 import * as v from 'valibot';
 
@@ -16,8 +17,11 @@ import { accountId, accountService } from '@/domains/network';
 import { dotNsService, productAccountService } from '@/domains/product';
 import { type CreateTransactionResult, type SigningResult } from '../types';
 import { CreateTransactionModal } from '../ui/CreateTransactionModal';
+import { CreateTransactionWithLegacyAccountModal } from '../ui/CreateTransactionWithLegacyAccountModal';
 import { SignPayloadModal } from '../ui/SignPayloadModal';
+import { SignPayloadWithLegacyAccountModal } from '../ui/SignPayloadWithLegacyAccountModal';
 import { SignRawModal } from '../ui/SignRawModal';
+import { SignRawWithLegacyAccountModal } from '../ui/SignRawWithLegacyAccountModal';
 import { SigningErrorDetailsDialog } from '../ui/SigningErrorDetailsDialog';
 import { type SigningErrorState, buildSigningErrorState } from '../ui/signingErrorDetail';
 
@@ -79,8 +83,9 @@ export function useSigning(container: Container, identifier: string, contextGene
         err instanceof SigningErr ? err : new SigningErr.Unknown({ reason: toError(err).message }),
       ).andThen(r => r);
 
-    const cleanupSignPayload = container.handleSignPayload(({ account, payload }, { ok, err }) => {
+    const cleanupSignPayload = container.handleSignPayload(({ account: rawAccount, payload }, { ok, err }) => {
       const id = nextSigningId();
+      const account = productAccountService.normalizeProductAccountId(rawAccount);
       sLog(id, 'handleSignPayload invoked', { identifier, account, genesisHash: payload.genesisHash });
       const activeSession = sessionRef();
       if (!activeSession) {
@@ -133,8 +138,9 @@ export function useSigning(container: Container, identifier: string, contextGene
     });
 
     const cleanupCreateTransaction = container.handleCreateTransaction((params, { ok, err }) => {
-      const { signer, genesisHash, callData, extensions, txExtVersion } = params;
+      const { signer: rawSigner, genesisHash, callData, extensions, txExtVersion } = params;
       const id = nextSigningId();
+      const signer = productAccountService.normalizeProductAccountId(rawSigner);
       sLog(id, 'handleCreateTransaction invoked', { identifier, signer, genesisHash: toHex(genesisHash) });
       const activeSession = sessionRef();
       if (!activeSession) {
@@ -186,8 +192,9 @@ export function useSigning(container: Container, identifier: string, contextGene
       });
     });
 
-    const cleanupSignRaw = container.handleSignRaw(({ account, payload }, { ok, err }) => {
+    const cleanupSignRaw = container.handleSignRaw(({ account: rawAccount, payload }, { ok, err }) => {
       const id = nextSigningId();
+      const account = productAccountService.normalizeProductAccountId(rawAccount);
       sLog(id, 'handleSignRaw invoked', { identifier, account });
       const activeSession = sessionRef();
       if (!activeSession) {
@@ -240,7 +247,16 @@ export function useSigning(container: Container, identifier: string, contextGene
       });
     });
 
-    // TODO remove implementation, it should use real legacy accounts (that are not implemented)
+    // Decode SS58 signer → 32-byte raw AccountId. The host-papp legacy SDK calls
+    // (signRawLegacy / createTransactionLegacy added in triangle-js-sdks PR #218)
+    // expect `account: AccountId(32)`, while host-api delivers `signer` as an
+    // address string for raw/payload variants. createTransactionWithLegacyAccount
+    // already gets bytes from host-api so no decode there.
+    const legacyAccountFromSigner = (signer: string): { address: string; bytes: Uint8Array } => {
+      const accountIdHex = accountService.toAccountId({ type: 'ss58', value: signer });
+      return { address: signer, bytes: fromHex(accountIdHex) };
+    };
+
     const cleanupSignPayloadWithLegacyAccount = container.handleSignPayloadWithLegacyAccount(
       ({ signer, payload }, { ok, err }) => {
         const id = nextSigningId();
@@ -251,21 +267,17 @@ export function useSigning(container: Container, identifier: string, contextGene
           return err(new SigningErr.Rejected());
         }
 
-        const possiblePublicKey = productAccountService.deriveProductPublicKey(activeSession.rootAccountId, identifier, 0);
-        const possibleAddress = accountService.toAddress(v.parse(accountId, toHex(possiblePublicKey))).value;
-        if (possibleAddress !== signer) {
-          return err(new SigningErr.Unknown({ reason: "Account can't be derived from product account id" }));
-        }
+        const legacyAccount = legacyAccountFromSigner(signer);
 
         sLog(id, 'queued in signing pool');
         return queueSigning(() => {
           sLog(id, 'opening SignPayloadWithLegacyAccount modal');
           const response = confirm<SigningResult>('signPayloadWithLegacyAccount', ({ resolve, reject }) => {
             return (
-              <SignPayloadModal
+              <SignPayloadWithLegacyAccountModal
                 session={activeSession}
                 payload={payload}
-                productAccountId={[identifier, 0]}
+                account={legacyAccount}
                 productIdentifier={identifier}
                 flowId={id}
                 onResult={resolve}
@@ -302,7 +314,6 @@ export function useSigning(container: Container, identifier: string, contextGene
       },
     );
 
-    // TODO remove implementation, it should use real legacy accounts (that are not implemented)
     const cleanupSignRawWithLegacyAccount = container.handleSignRawWithLegacyAccount(({ signer, payload }, { ok, err }) => {
       const id = nextSigningId();
       sLog(id, 'handleSignRawWithLegacyAccount invoked', { identifier, signer });
@@ -312,21 +323,17 @@ export function useSigning(container: Container, identifier: string, contextGene
         return err(new SigningErr.Rejected());
       }
 
-      const possiblePublicKey = productAccountService.deriveProductPublicKey(activeSession.rootAccountId, identifier, 0);
-      const possibleAddress = accountService.toAddress(v.parse(accountId, toHex(possiblePublicKey))).value;
-      if (possibleAddress !== signer) {
-        return err(new SigningErr.Unknown({ reason: "Account can't be derived from product account id" }));
-      }
+      const legacyAccount = legacyAccountFromSigner(signer);
 
       sLog(id, 'queued in signing pool');
       return queueSigning(() => {
         sLog(id, 'opening SignRawWithLegacyAccount modal');
         const response = confirm<SigningResult>('signRawWithLegacyAccount', ({ resolve, reject }) => {
           return (
-            <SignRawModal
+            <SignRawWithLegacyAccountModal
               session={activeSession}
               payload={payload}
-              productAccountId={[identifier, 0]}
+              account={legacyAccount}
               productIdentifier={identifier}
               contextGenesisHash={contextGenesisHashRef.current}
               flowId={id}
@@ -359,12 +366,72 @@ export function useSigning(container: Container, identifier: string, contextGene
       });
     });
 
+    const cleanupCreateTransactionWithLegacyAccount = container.handleCreateTransactionWithLegacyAccount(
+      (params, { ok, err }) => {
+        const { signer, genesisHash, callData, extensions, txExtVersion } = params;
+        const id = nextSigningId();
+        // host-api delivers `signer` as raw 32 bytes for the legacy createTransaction variant.
+        const legacyAccountAddress = accountService.toAddress(v.parse(accountId, toHex(signer))).value;
+        const legacyAccount = { address: legacyAccountAddress, bytes: signer };
+        sLog(id, 'handleCreateTransactionWithLegacyAccount invoked', {
+          identifier,
+          signer: legacyAccountAddress,
+          genesisHash: toHex(genesisHash),
+        });
+        const activeSession = sessionRef();
+        if (!activeSession) {
+          sLog(id, 'rejected — no active session');
+          return err(new CreateTransactionErr.Rejected());
+        }
+
+        sLog(id, 'queued in signing pool');
+        return queueSigning(() => {
+          sLog(id, 'opening CreateTransactionWithLegacyAccount modal');
+          const response = confirm<CreateTransactionResult>('createTransactionWithLegacyAccount', ({ resolve, reject }) => {
+            return (
+              <CreateTransactionWithLegacyAccountModal
+                session={activeSession}
+                transaction={{ genesisHash, callData, extensions, txExtVersion }}
+                account={legacyAccount}
+                productIdentifier={identifier}
+                flowId={id}
+                onResult={resolve}
+                onCancel={reject}
+              />
+            );
+          });
+
+          return ResultAsync.fromPromise(response, e => e)
+            .andTee(() => {
+              sLog(id, 'modal resolved with signed transaction');
+              toastSuccess({ title: t('feature.browser.transactionSigned') });
+            })
+            .andThen(result => {
+              sLog(id, 'sending ok() to product');
+              try {
+                const r = ok(result.signedTransaction);
+                sLog(id, 'ok() sent successfully');
+                return r;
+              } catch (e) {
+                sLog(id, 'ok() THREW (transport likely disposed)', { error: e instanceof Error ? e.message : String(e) });
+                throw e;
+              }
+            })
+            .orTee(error => {
+              sLog(id, 'flow failed', { error: error instanceof Error ? error.message : String(error) });
+              showSigningErrorToast(error);
+            });
+        });
+      },
+    );
+
     return () => {
       cleanupSignPayload();
       cleanupCreateTransaction();
       cleanupSignRaw();
       cleanupSignPayloadWithLegacyAccount();
       cleanupSignRawWithLegacyAccount();
+      cleanupCreateTransactionWithLegacyAccount();
       abortController.abort();
     };
   }, [identifier, container, t, confirm, contextGenesisHashRef, sessionRef]);

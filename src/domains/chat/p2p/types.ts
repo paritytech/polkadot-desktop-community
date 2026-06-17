@@ -14,52 +14,10 @@ export type P2PPeer = {
   name: string;
 };
 
-export type P2PRoom = {
-  sessionId: string;
-  peerId: string;
-  peerUsername: string;
-  peerP256PublicKey: string;
-  userId: string;
-  createdAt: number;
-  peerPushToken?: string;
-  peerPlatform?: 'Android' | 'iOS';
-  // Mirrors Android's Contact.isBlocked. Optional + defaulted to false so existing
-  // Dexie rows from before this field was added decode as unblocked without a
-  // schema bump (the field is not indexed).
-  isBlocked?: boolean;
-  lastUpdate: number;
-};
-
-export type P2PChatRequest = {
-  requestId: string;
-  peerId: string;
-  peerUsername?: string;
-  direction: 'incoming' | 'outgoing';
-  // 'removed' is a tombstone written by `removeSession` so a stale on-chain
-  // request can't resurface after the user wipes a chat. UI lists filter to
-  // 'pending'/'accepted'/'declined' as before.
-  status: 'pending' | 'accepted' | 'declined' | 'removed';
-  welcomeMessage?: string;
-  timestamp: number;
-  channelTopic?: string;
-  userId: string;
-  pushToken?: string;
-  pushPlatform?: 'Android' | 'iOS';
-  /**
-   * Hex-encoded P-256 (uncompressed, 65 bytes) public key the sender device
-   * uses for ECDH-derived per-device key wrapping. Populated only on V2 chat
-   * requests; absent for V1 single-device requests.
-   */
-  senderDevicePubKey?: string;
-  /**
-   * Hex-encoded sr25519 (32 bytes) statementAccountId of the sender device —
-   * the `RemoteModel.proof.signer` of the V2 chat request. Populated only on
-   * V2 chat requests. Used as `Contact.devices[].statementAccountId` and as
-   * the `RequestDeviceInfo.statementAccountId` key in MultiRequest envelopes.
-   */
-  senderDeviceStatementAccountId?: string;
-  lastUpdate: number;
-};
+// Persisted-entity types are derived from their Dexie-boundary schemas —
+// the schema is the source of truth; re-exported here so module-internal
+// consumers keep importing entity types from `types.ts`.
+export type { P2PChatRequest, P2PRoom } from './schemas';
 
 export type MessageContentCodecType = CodecType<typeof MessageContentCodec>;
 

@@ -5,7 +5,7 @@ import { useTheme } from '@novasamatech/tr-ui';
 import { RouterProvider } from '@tanstack/react-router';
 import { useEffect, useState } from 'react';
 
-import { ConfirmationProvider, FallbackScreen } from '@/shared/components';
+import { ConfirmationProvider, FallbackScreen, Web3SummitEndedScreen } from '@/shared/components';
 import { useBodyLockTracer, useResetAppData, useScrollLockGuard } from '@/shared/hooks';
 import { usePappProvider } from '@/domains/application';
 import { clearAllOutboxRecords } from '@/domains/chat';
@@ -13,7 +13,7 @@ import { userIdentity$ } from '@/domains/sso';
 import { RemotePermissionPromptHost } from '@/widgets/Permission';
 
 import { PageLoadingState } from './PageLoadingState';
-import { bootstrap } from './bootstrap';
+import { type BootstrapOutcome, bootstrap } from './bootstrap';
 import { router } from './router';
 
 const version = process.env['VERSION'];
@@ -27,7 +27,7 @@ const bootstrapPromise = bootstrap();
 
 export const App = () => {
   const { mode } = useTheme();
-  const [bootstrapReady, setBootstrapReady] = useState(false);
+  const [bootstrapOutcome, setBootstrapOutcome] = useState<BootstrapOutcome | null>(null);
   const [bootstrapFailed, setBootstrapFailed] = useState(false);
   const pappProvider = usePappProvider();
   // The SDK-owned device + user identity live in `polkadot_*` localStorage,
@@ -45,7 +45,7 @@ export const App = () => {
 
   useEffect(() => {
     bootstrapPromise
-      .then(() => setBootstrapReady(true))
+      .then(outcome => setBootstrapOutcome(outcome))
       .catch((error: unknown) => {
         // Config is fetched from Remote Config with no bundled fallback — if it's
         // unavailable (offline fresh install, missing creds, first-fetch failure)
@@ -59,7 +59,11 @@ export const App = () => {
     return <FallbackScreen />;
   }
 
-  if (!bootstrapReady || !pappProvider) {
+  if (bootstrapOutcome?.status === 'w3s-ended') {
+    return <Web3SummitEndedScreen />;
+  }
+
+  if (bootstrapOutcome?.status !== 'ready' || !pappProvider) {
     return <PageLoadingState />;
   }
 

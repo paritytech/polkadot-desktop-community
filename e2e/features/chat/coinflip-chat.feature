@@ -10,6 +10,7 @@ Feature: CoinFlip Chat
   Scenario: User adds CoinFlip widget to dashboard and sends a chat message
     When the user opens "coinflipgame03.dot" in a new tab
     And the user adds the current tab to favorites as a "Large" widget
+    And the user starts a chat with the product
     And the user navigates to the dashboard
     And the "Coin Flip" chat session appears in the chat widget
     And the user selects the "Coin Flip" chat session in the chat widget

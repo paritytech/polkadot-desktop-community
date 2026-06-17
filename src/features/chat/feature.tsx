@@ -1,7 +1,7 @@
-import { AppIcon } from '@novasamatech/tr-ui';
 import { Maximize2, MessageCircle } from 'lucide-react';
 import { FormattedMessage } from 'react-intl';
 
+import LastChatsIcon from '@/shared/assets/images/header/last-chats.svg?jsx';
 import { createFeature } from '@/shared/feature';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
@@ -36,15 +36,11 @@ chatFeature.inject(topBarTrailingSlot, {
   render: () => <ChatHeaderButton />,
 });
 
-const CHAT_TOPBAR_ICON = (
-  <AppIcon size="sm" alt="">
-    <MessageCircle className="size-4" aria-hidden />
-  </AppIcon>
-);
+const CHAT_TOPBAR_ICON = <LastChatsIcon className="size-6" aria-hidden />;
 
 /** Icon slot content for add-widget sidebar/modal — parent components constrain size. */
 const CHAT_ADD_WIDGET_ICON = <MessageCircle className="size-full" aria-hidden />;
-const CHAT_LABEL = <FormattedMessage id="feature.chat.title" />;
+const CHAT_LABEL = <FormattedMessage id="feature.chat.widgetTitle" />;
 
 const chatAddableEntry: AddableDashboardCard = {
   kind: CHAT_CARD_KIND,
@@ -92,6 +88,7 @@ dashboardCardSDK(chatFeature, {
         card={props.card}
         width={props.width}
         height={props.height}
+        layoutRules={CHAT_CARD_LAYOUT_RULES}
         isMenuOpen={props.isMenuOpen}
         onMenuOpenChange={open => props.onMenuOpenChange(props.menuId, open)}
         onResizeCard={props.onResizeCard}
@@ -102,7 +99,6 @@ dashboardCardSDK(chatFeature, {
       </DashboardCardChrome>
     );
   },
-  layout: payload => (payload.kind === CHAT_CARD_KIND ? CHAT_CARD_LAYOUT_RULES : null),
   metadata: payload => (payload.kind === CHAT_CARD_KIND ? { icon: CHAT_TOPBAR_ICON, label: CHAT_LABEL } : null),
   actions: ({ payload }) => (payload.kind === CHAT_CARD_KIND ? <ChatFullscreenAction /> : null),
   addable: entries => [...entries, chatAddableEntry],

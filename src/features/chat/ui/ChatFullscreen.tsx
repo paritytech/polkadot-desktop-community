@@ -1,21 +1,20 @@
 import { Button, DropdownMenu } from '@novasamatech/tr-ui';
-import { ChevronLeft, Ellipsis, MessageSquare, MessagesSquare, Search, Timer, Trash2 } from 'lucide-react';
+import { ChevronLeft, Ellipsis, MessageSquare, MessagesSquare, Plus, Search, Timer, Trash2, X } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
+import LastChatsIcon from '@/shared/assets/images/header/last-chats.svg?jsx';
 import { widgetSpanWidthCss } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { cnTw } from '@/shared/utils';
+import { type P2PChatRequest, useP2PRequests, useProductSessions } from '@/domains/chat';
 import {
-  type P2PChatRequest,
   useAcceptRequest,
   useCancelOutgoingRequest,
   useDeclineRequest,
   useP2PChatManager,
-  useP2PRequests,
   useP2PSessions,
-  useProductSessions,
-} from '@/domains/chat';
+} from '@/aggregates/p2p-chat';
 
 import { ContactSearch } from './ContactSearch';
 import { Avatar } from './partials/Avatar';
@@ -180,21 +179,16 @@ const ListHeader = ({ onNewChat, showSearch }: { onNewChat: VoidFunction; showSe
     <div className="shrink-0 bg-bg-surface-container p-2">
       <div className="flex w-full items-center gap-2">
         <div className="flex flex-1 items-center gap-2">
-          <div className="flex size-6 shrink-0 items-center justify-center rounded-md bg-bg-illustration-dark">
-            <MessageSquare className="size-3.5 text-fg-primary-inverted" />
-          </div>
-          <span className="shrink-0 text-sm leading-5 font-semibold text-fg-primary">{t('feature.chat.title')}</span>
+          <LastChatsIcon className="size-6 shrink-0" aria-hidden />
+          <span className="shrink-0 text-sm leading-5 font-semibold text-fg-primary">{t('feature.chat.widgetTitle')}</span>
         </div>
         <button
           data-testid={TEST_IDS.chatSearchToggleButton}
-          className={cnTw(
-            'flex size-7 items-center justify-center rounded-full transition-colors hover:bg-bg-selection-container-hover',
-            showSearch && 'bg-bg-selection-container-active',
-          )}
+          className="flex size-7 items-center justify-center rounded-full transition-colors hover:bg-bg-selection-container-hover"
           onMouseDown={showSearch ? e => e.stopPropagation() : undefined}
           onClick={onNewChat}
         >
-          <Search className="size-4 text-fg-secondary" />
+          {showSearch ? <X className="size-4 text-fg-secondary" /> : <Plus className="size-4 text-fg-secondary" />}
         </button>
       </div>
     </div>
@@ -358,8 +352,6 @@ const OutgoingPendingRoom = ({ request, onRemove }: { request: P2PChatRequest; o
           <div className="flex min-w-0 flex-1 items-center gap-2 pr-4">
             <div className="flex min-w-0 flex-1 flex-col items-start justify-center">
               <span className="w-full min-w-0 truncate text-base leading-6 font-semibold text-fg-primary">{name}</span>
-              {/* eslint-disable-next-line formatjs/no-literal-string-in-jsx */}
-              <span className="w-full truncate text-sm leading-[18px] text-fg-secondary">last seen recently</span>
             </div>
             <div className="flex shrink-0 items-center">
               <DropdownMenu>

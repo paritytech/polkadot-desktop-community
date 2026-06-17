@@ -128,10 +128,6 @@ export const MessageContextMenu = ({
                 <div className="flex min-w-0 flex-1 items-center">
                   <span className="text-sm leading-5 font-normal text-[#0a0a0a]">{t('common.action.reply')}</span>
                 </div>
-                <div className="flex items-center justify-center">
-                  {/* eslint-disable-next-line formatjs/no-literal-string-in-jsx */}
-                  <span className="text-xs leading-4 text-[#737373]">⌘[</span>
-                </div>
               </button>
               {isEditable && (
                 <button
@@ -164,10 +160,6 @@ export const MessageContextMenu = ({
               >
                 <div className="flex min-w-0 flex-1 items-center">
                   <span className="text-sm leading-5 font-normal text-[#0a0a0a]">{t('common.action.copyText')}</span>
-                </div>
-                <div className="flex items-center justify-center">
-                  {/* eslint-disable-next-line formatjs/no-literal-string-in-jsx */}
-                  <span className="text-xs leading-4 text-[#737373]">⌘C</span>
                 </div>
               </button>
             </div>

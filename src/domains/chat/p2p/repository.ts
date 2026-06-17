@@ -140,3 +140,20 @@ export function createOutboxStorage(userId: string, peerId: string): OutboxPort 
     clear: () => clearOutboxRecord(userId, peerId),
   };
 }
+
+// ── Changed-since queries ───────────────────────────────────────────────
+// device-sync's collector uses these to gather entities whose `lastUpdate`
+// advanced past the last sync watermark. Write-side callers bump
+// `lastUpdate` via `p2pService.stamp*` so mutations stay visible to sync.
+
+export function listMessagesChangedSince(timestamp: number): Promise<ChatMessage[]> {
+  return p2pChatDatabase.messages.where('lastUpdate').above(timestamp).toArray();
+}
+
+export function listRoomsChangedSince(timestamp: number): Promise<P2PRoom[]> {
+  return p2pChatDatabase.rooms.where('lastUpdate').above(timestamp).toArray();
+}
+
+export function listRequestsChangedSince(timestamp: number): Promise<P2PChatRequest[]> {
+  return p2pChatDatabase.requests.where('lastUpdate').above(timestamp).toArray();
+}

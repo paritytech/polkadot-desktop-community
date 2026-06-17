@@ -53,7 +53,7 @@ export function createPeerConnection(params: PeerConnectionParams): PeerConnecti
   const dataChannelOpen$ = new Subject<RTCDataChannel>();
   const connectionState$ = new BehaviorSubject<RTCPeerConnectionState>(pc.connectionState);
 
-  console.info('WEBRTC [pc#%d] created role=%s label=%s', pcId, params.role, params.dataChannelLabel);
+  console.debug('WEBRTC [pc#%d] created role=%s label=%s', pcId, params.role, params.dataChannelLabel);
 
   pc.addEventListener('icecandidate', ev => {
     if (ev.candidate) {
@@ -62,7 +62,7 @@ export function createPeerConnection(params: PeerConnectionParams): PeerConnecti
       // Null candidate = end-of-candidates. Marks the moment local ICE
       // gathering finishes — a long gap before `connected` points at the
       // remote side or TURN, not our gathering.
-      console.info('WEBRTC [pc#%d] ICE gathering complete (null candidate)', pcId);
+      console.debug('WEBRTC [pc#%d] ICE gathering complete (null candidate)', pcId);
     }
   });
 
@@ -70,7 +70,7 @@ export function createPeerConnection(params: PeerConnectionParams): PeerConnecti
   // new → connecting → connected → disconnected → failed → closed. Without
   // this the subject mutates silently and we can't see a channel flap.
   pc.addEventListener('connectionstatechange', () => {
-    console.info('WEBRTC [pc#%d] connection state -> %s', pcId, pc.connectionState);
+    console.debug('WEBRTC [pc#%d] connection state -> %s', pcId, pc.connectionState);
     connectionState$.next(pc.connectionState);
   });
 
@@ -78,17 +78,17 @@ export function createPeerConnection(params: PeerConnectionParams): PeerConnecti
   // ICE failure (no usable candidate pair) vs signaling stuck (no answer) vs
   // gathering stuck (no local candidates). Cheap and only fire on transitions.
   pc.addEventListener('iceconnectionstatechange', () => {
-    console.info('WEBRTC [pc#%d] ICE connection state -> %s', pcId, pc.iceConnectionState);
+    console.debug('WEBRTC [pc#%d] ICE connection state -> %s', pcId, pc.iceConnectionState);
   });
   pc.addEventListener('icegatheringstatechange', () => {
-    console.info('WEBRTC [pc#%d] ICE gathering state -> %s', pcId, pc.iceGatheringState);
+    console.debug('WEBRTC [pc#%d] ICE gathering state -> %s', pcId, pc.iceGatheringState);
   });
   pc.addEventListener('signalingstatechange', () => {
-    console.info('WEBRTC [pc#%d] signaling state -> %s', pcId, pc.signalingState);
+    console.debug('WEBRTC [pc#%d] signaling state -> %s', pcId, pc.signalingState);
   });
 
   function wireChannel(channel: RTCDataChannel): void {
-    console.info(
+    console.debug(
       'WEBRTC [pc#%d] data channel attached label=%s id=%s state=%s',
       pcId,
       channel.label,
@@ -107,21 +107,21 @@ export function createPeerConnection(params: PeerConnectionParams): PeerConnecti
       console.error('WEBRTC [pc#%d] data channel ERROR: %s', pcId, detail);
     });
     channel.addEventListener('close', () => {
-      console.info('WEBRTC [pc#%d] data channel CLOSE %d', pcId, channel.id ?? -1);
+      console.debug('WEBRTC [pc#%d] data channel CLOSE %d', pcId, channel.id ?? -1);
     });
     channel.addEventListener('closing', () => {
-      console.info('WEBRTC [pc#%d] data channel CLOSING %d', pcId, channel.id ?? -1);
+      console.debug('WEBRTC [pc#%d] data channel CLOSING %d', pcId, channel.id ?? -1);
     });
     if (channel.readyState === 'open') {
       // Already open by the time we attached the listener — surface immediately.
       // Skip the `open` listener: it would fire a second time on the same
       // channel and spawn a duplicate sync state machine downstream.
-      console.info('WEBRTC [pc#%d] data channel was already OPEN at wire-time %d', pcId, channel.id ?? -1);
+      console.debug('WEBRTC [pc#%d] data channel was already OPEN at wire-time %d', pcId, channel.id ?? -1);
       dataChannelOpen$.next(channel);
       return;
     }
     channel.addEventListener('open', () => {
-      console.info('WEBRTC [pc#%d] data channel OPEN %d', pcId, channel.id ?? -1);
+      console.debug('WEBRTC [pc#%d] data channel OPEN %d', pcId, channel.id ?? -1);
       dataChannelOpen$.next(channel);
     });
   }
@@ -165,7 +165,7 @@ export function createPeerConnection(params: PeerConnectionParams): PeerConnecti
     signalingState: () => pc.signalingState,
     connectionState$: connectionState$.asObservable(),
     close: () => {
-      console.info('WEBRTC [pc#%d] close() — connection=%s signaling=%s', pcId, pc.connectionState, pc.signalingState);
+      console.debug('WEBRTC [pc#%d] close() — connection=%s signaling=%s', pcId, pc.connectionState, pc.signalingState);
       pc.close();
       connectionState$.complete();
     },

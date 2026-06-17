@@ -2,10 +2,13 @@ export { commandsService } from './commands/service';
 export { type SubmitErrorInfo, useSubmitError } from './statement-store/hooks';
 export type { Command } from './commands/types';
 export { failActivePeopleChain, lazyClient, setActivePeopleChain, statementStoreAdapter } from './statement-store/service';
+export { type StatementSubmitParams, signAndSubmitStatement } from './statement-store/submitStatement';
 export { type Environment, type EnvironmentId, SETTINGS_STORAGE_KEY, environmentService } from './environment';
 export { environmentUseCase } from './$usecase/environment';
 export { useActiveEnvironment, useEnvironment } from './$usecase/environment.hooks';
 
+export { web3SummitGateService } from './web3summit-gate/service';
+export { type Web3SummitGateMode, web3SummitGateModeSchema } from './web3summit-gate/schemas';
 export { usePappProvider } from './papp-provider/hooks';
 export { watchHostPappSessionTeardown } from './papp-provider/sessionTeardown';
 export { hydrateUserIdentity, loadDeviceIdentity, loadUserIdentity } from './papp-provider/identity';
@@ -24,6 +27,7 @@ export type {
   DashboardLayout,
   FolderCardPayload,
   FolderItemPositions,
+  WidgetSizeHints,
   WidgetSizeIconVariant,
   WidgetSizeKey,
 } from './dashboard-layout/types';
@@ -37,6 +41,7 @@ export {
   MAX_GRID_ROWS,
   MAX_WIDGET_HEIGHT,
   MAX_WIDGET_WIDTH,
+  WIDGET_VARIANT_GRID_SIZE,
 } from './dashboard-layout/constants';
 export { dashboardLayoutService } from './dashboard-layout/service';
 export { useDashboardLayouts, useFavoriteProductIds, useSetMainActivePage } from './dashboard-layout/hooks';

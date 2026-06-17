@@ -14,10 +14,13 @@ export const DashboardTabBinding = () => {
     dashboardUseCase.cleanupOrphanDashboardTab();
   }, [tabs]);
 
+  // Sync route → dashboard tab only when entering /dashboard. Do not depend on `tabs`:
+  // adding a new-tab while still on /dashboard would re-select dashboard and block
+  // BrowserTabBinding from navigating to /new-tab/$id.
   useEffect(() => {
     if (!onDashboardRoute) return;
     dashboardUseCase.selectDashboardTab();
-  }, [onDashboardRoute, tabs]);
+  }, [onDashboardRoute]);
 
   return null;
 };

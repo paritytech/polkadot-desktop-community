@@ -18,6 +18,7 @@ import { useTranslation } from '@/shared/translation';
 import { toError } from '@/shared/utils';
 import {
   type PermissionModality,
+  type RemotePermissionRequest,
   aliasPermissionService,
   dotNsService,
   permissionsService,
@@ -82,12 +83,14 @@ export function useAccounts(container: Container, identifier: string, modality: 
       rateLimiterGetLegacyAccounts.schedule(() => ok([])),
     );
 
-    const cleanupAccountGet = container.handleAccountGet(([dotNsIdentifier, derivationIndex], { ok, err }) => {
+    const cleanupAccountGet = container.handleAccountGet((productAccountId, { ok, err }) => {
       return rateLimiterProductAccounts.schedule(() => {
         const session = sessionRef();
         if (!session) {
           return err(new RequestCredentialsErr.NotConnected(undefined));
         }
+
+        const [dotNsIdentifier, derivationIndex] = productAccountService.normalizeProductAccountId(productAccountId);
 
         if (!dotNsService.isProductIdentifier(dotNsIdentifier)) {
           return err(new RequestCredentialsErr.DomainNotValid(undefined));
@@ -99,13 +102,14 @@ export function useAccounts(container: Container, identifier: string, modality: 
       });
     });
 
-    const userIdentityRequest = { tag: 'UserIdentity' as const };
+    const userIdentityRequest: RemotePermissionRequest = { tag: 'UserIdentity' };
     const userIdentityStatusBridge = createPermissionStatusBridge();
 
-    const getUserIdentityStatus = () =>
-      userIdentityStatusBridge.getStatus('UserIdentity', () =>
+    const getUserIdentityStatus = () => {
+      return userIdentityStatusBridge.getStatus('UserIdentity', () =>
         permissionsService.getRemotePermissionRequestStatus(productPermissionsRef(), userIdentityRequest, modality),
       );
+    };
 
     const persistUserIdentityPermission = (status: Parameters<typeof permissionsService.buildRemotePermissionsToStore>[1]) =>
       firstValueFrom(
@@ -117,7 +121,7 @@ export function useAccounts(container: Container, identifier: string, modality: 
         userIdentityStatusBridge.setOverride('UserIdentity', status);
       });
 
-    const clearGetRoot = container.handleGetUserId((_, { ok, err }) =>
+    const clearGetUserId = container.handleGetUserId((_, { ok, err }) =>
       rateLimiterGetIdentityAccount.schedule(() => {
         const account = sessionRef();
         if (!account) {
@@ -183,12 +187,14 @@ export function useAccounts(container: Container, identifier: string, modality: 
       return subscribeSession(session => send(session ? 'connected' : 'disconnected'));
     });
 
-    const cleanupGetAlias = container.handleAccountGetAlias((productAccountId, { err }) =>
+    const cleanupGetAlias = container.handleAccountGetAlias((rawProductAccountId, { err }) =>
       rateLimiterGetAlias.schedule(() => {
         const session = sessionRef();
         if (!session) {
           return err(new RequestCredentialsErr.NotConnected(undefined));
         }
+
+        const productAccountId = productAccountService.normalizeProductAccountId(rawProductAccountId);
 
         if (!dotNsService.isProductIdentifier(productAccountId[0])) {
           return err(new RequestCredentialsErr.DomainNotValid(undefined));
@@ -291,7 +297,7 @@ export function useAccounts(container: Container, identifier: string, modality: 
       cleanupConnectionStatus();
       cleanupGetAlias();
       cleanupRequestResourceAllocation();
-      clearGetRoot();
+      clearGetUserId();
       rateLimiterGetLegacyAccounts.destroy();
       rateLimiterGetIdentityAccount.destroy();
       rateLimiterProductAccounts.destroy();

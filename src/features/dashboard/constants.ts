@@ -1,5 +1,5 @@
 import { GRID_MARGIN } from '@/shared/components';
-import { type WidgetSizeIconVariant } from '@/domains/application';
+import { type WidgetSizeIconVariant, WIDGET_VARIANT_GRID_SIZE } from '@/domains/application';
 
 import { type WidgetSize } from './types';
 
@@ -15,13 +15,14 @@ export {
   MAX_WIDGET_WIDTH,
 } from '@/domains/application';
 
-// Canonical map from a widget-size variant to its grid dimensions and i18n label.
-// Consumed by the widget menu and the add-widget modal so the mapping has a single source.
+// Maps each widget-size variant to its grid dimensions (the canonical footprint
+// owned by the domain) and i18n label. Consumed by the widget menu and the
+// add-widget modal so the mapping has a single source.
 export const WIDGET_SIZE_CONFIG: Record<WidgetSizeIconVariant, { size: WidgetSize; labelKey: string }> = {
-  small: { size: { w: 1, h: 2 }, labelKey: 'feature.dashboard.widgetMenu.sizeSmall' },
-  medium: { size: { w: 1, h: 4 }, labelKey: 'feature.dashboard.widgetMenu.sizeMedium' },
-  large: { size: { w: 1, h: 8 }, labelKey: 'feature.dashboard.widgetMenu.sizeLarge' },
-  horizontal: { size: { w: 2, h: 4 }, labelKey: 'feature.dashboard.widgetMenu.sizeHorizontal' },
+  small: { size: WIDGET_VARIANT_GRID_SIZE.small, labelKey: 'feature.dashboard.widgetMenu.sizeSmall' },
+  medium: { size: WIDGET_VARIANT_GRID_SIZE.medium, labelKey: 'feature.dashboard.widgetMenu.sizeMedium' },
+  large: { size: WIDGET_VARIANT_GRID_SIZE.large, labelKey: 'feature.dashboard.widgetMenu.sizeLarge' },
+  horizontal: { size: WIDGET_VARIANT_GRID_SIZE.horizontal, labelKey: 'feature.dashboard.widgetMenu.sizeHorizontal' },
 };
 
 // Available widget sizes

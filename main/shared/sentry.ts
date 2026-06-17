@@ -1,9 +1,12 @@
 import { version } from '~config';
 import * as Sentry from '@sentry/electron/main';
 
+import { ENVIRONMENT } from './constants/environment';
 import { getUpdateChannel } from './update-channel';
 
 export function initSentry(): void {
+  if (ENVIRONMENT.IS_PROD) return;
+
   const dsn = process.env['SENTRY_DSN'];
   if (!dsn) return;
 

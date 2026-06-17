@@ -1,13 +1,19 @@
-import { Button, Dialog, toastError, toastWithAction } from '@novasamatech/tr-ui';
-import { useNavigate } from '@tanstack/react-router';
+import { Button, Dialog, toastError, toastSuccess } from '@novasamatech/tr-ui';
 import { Loader } from 'lucide-react';
-import { memo, useCallback, useState } from 'react';
+import { memo, useCallback, useMemo, useState } from 'react';
 
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
-import { productChatService, useCreateProductRoom, useCurrentUserPeer, useProductRooms } from '@/domains/chat';
+import {
+  productChatService,
+  useCreateProductRoom,
+  useCurrentUserPeer,
+  useDeclaredProductRooms,
+  useProductRooms,
+} from '@/domains/chat';
 import { useDisplayedProduct } from '@/domains/product';
 import { ProductDialogHeader } from '@/widgets/ProductDialogHeader';
+import { useOpenProductChatRoom } from '../hooks/useOpenProductChatRoom';
 
 type Props = {
   productId: string;
@@ -17,17 +23,20 @@ type Props = {
 
 const DialogInner = ({ productId, onClose }: { productId: string; onClose: VoidFunction }) => {
   const { t } = useTranslation();
-  const navigate = useNavigate();
   const { data: product } = useDisplayedProduct(productId);
   const { data: peer } = useCurrentUserPeer();
-  const { data: rooms } = useProductRooms(productId);
+  const { data: persistedRooms } = useProductRooms(productId);
+  const { data: declaredRooms } = useDeclaredProductRooms(productId);
   const { run, pending } = useCreateProductRoom();
+  const openChatRoom = useOpenProductChatRoom();
   const [submitting, setSubmitting] = useState(false);
 
   const name = product?.displayName ?? productId;
   const isPending = pending || submitting;
-  // The product's first chat room (worker-declared). Null until its rooms load.
-  const roomId = rooms.at(0)?.roomId ?? null;
+  const roomId = useMemo(
+    () => persistedRooms.at(0)?.roomId ?? declaredRooms.at(0)?.roomId ?? null,
+    [persistedRooms, declaredRooms],
+  );
 
   const handleConfirm = useCallback(() => {
     if (!peer || isPending || !roomId) return;
@@ -44,18 +53,11 @@ const DialogInner = ({ productId, onClose }: { productId: string; onClose: VoidF
           return;
         }
         const sessionId = productChatService.getSessionId(productId, roomId, userId);
-        const title =
-          result.status === 'Exists'
-            ? t('feature.chat.proceedInChat.toast.existsTitle', { name })
-            : t('feature.chat.proceedInChat.toast.successTitle', { name });
+        if (result.status === 'New') {
+          toastSuccess({ title: t('feature.chat.proceedInChat.toast.successTitle', { name }) });
+        }
         onClose();
-        toastWithAction({
-          title,
-          action: {
-            label: t('feature.chat.proceedInChat.toast.openChat'),
-            onClick: () => navigate({ to: '/chat/{-$chatId}', params: { chatId: sessionId } }),
-          },
-        });
+        openChatRoom(sessionId);
       },
       error: () => {
         toastError({ title: t('feature.chat.proceedInChat.toast.errorTitle') });
@@ -63,7 +65,7 @@ const DialogInner = ({ productId, onClose }: { productId: string; onClose: VoidF
       },
       complete: () => setSubmitting(false),
     });
-  }, [peer, isPending, roomId, run, productId, name, onClose, navigate, t]);
+  }, [peer, isPending, roomId, run, productId, name, onClose, openChatRoom, t]);
 
   return (
     <Dialog.Content aria-describedby={undefined} variant="default">

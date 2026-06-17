@@ -39,22 +39,13 @@ import { type DeviceIdentity, type UserIdentity, isValidEncryptionPublicKey } fr
 import { deviceSyncRepository } from '@/domains/device-sync/repository';
 import { type ChatMessage, type MessageContent } from '../session/types';
 
-import {
-  type AcceptSignal,
-  type IdentityChannelEvent,
-  postChatMessageOnDeviceChannel,
-  postChatMessageOnIdentityChannel,
-  subscribeToIdentityChannelV2,
-} from './acceptSignalV2';
-import { getCurrentDay } from './chatRequestTopics';
-import { computePaginationTopicV2 } from './chatRequestTopicsV2';
-import { type ValidatedRequestV2, sendChatRequestV2, subscribeToIncomingRequestsV2 } from './chatRequestV2';
 import { type V2ChatPeerSession, createChatPeerSessionV2, isMessageTooLargeError } from './chatSessionV2';
-import { mapSdkContent, mapUiContentToSdk } from './contentMappers';
-import { computeSharedSecret } from './keys';
-import { createPeerResolver } from './peerResolver';
-import { sendPushNotification } from './pushNotification';
+import { pushNotificationGateway } from './notifications/gateway';
+import { peerGateway } from './peer/gateway';
+import { peerSearchService } from './peer/service';
 import { clearOutboxRecord, createOutboxStorage, p2pChatDatabase } from './repository';
+import { type ValidatedRequestV2, chatRequestGateway } from './requests/gateway';
+import { chatRequestTopicService } from './requests/service';
 import {
   createP2PMessage,
   createP2PRoom,
@@ -67,6 +58,10 @@ import {
   updateP2PMessageStatus,
   upsertP2PRequest,
 } from './resource';
+import { p2pService } from './service';
+import { transportGateway } from './session-transport/gateway';
+import { chatContentService } from './session-transport/service';
+import { type AcceptSignal, type IdentityChannelEvent } from './session-transport/types';
 import { trackedSubscribeStatements } from './subscription-registry';
 import { type P2PChatManager, type P2PChatRequest, type SearchResult } from './types';
 
@@ -200,7 +195,7 @@ export const createP2PChatManagerV2 = async (params: P2PChatManagerV2Params): Pr
     }
   };
 
-  const resolver = await createPeerResolver(lazyClient, environmentService.getActiveId());
+  const resolver = await peerGateway.createPeerResolver(lazyClient, environmentService.getActiveId());
   const seenMessageIds = new Set<string>();
   const seenRequestIds = new Set<string>();
   const activeSessions = new Map<string, V2ChatPeerSession>();
@@ -277,7 +272,7 @@ export const createP2PChatManagerV2 = async (params: P2PChatManagerV2Params): Pr
     const pushCtx = pushContexts.get(peerId);
     if (!pushCtx || pushNotifiedIds.has(messageId)) return;
     pushNotifiedIds.add(messageId);
-    const sdkContent = mapUiContentToSdk(row.content);
+    const sdkContent = chatContentService.mapUiContentToSdk(row.content);
     if (!sdkContent) return;
     const room = await p2pChatDatabase.rooms
       .where('peerId')
@@ -285,19 +280,21 @@ export const createP2PChatManagerV2 = async (params: P2PChatManagerV2Params): Pr
       .first()
       .catch(() => undefined);
     if (!room?.peerPushToken) return;
-    await sendPushNotification({
-      deviceToken: room.peerPushToken,
-      peerPlatform: room.peerPlatform,
-      sharedSecret: pushCtx.sharedSecret,
-      encryption: pushCtx.encryption,
-      localAccountId: pushCtx.ownAccountId,
-      remoteAccountId: pushCtx.peerAccountId,
-      messageId,
-      timestamp: row.timestamp,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/consistent-type-assertions -- mapUiContentToSdk widens to {tag,value}; the push codec narrows on encode
-      content: sdkContent as any,
-      environmentId: environmentService.getActiveId(),
-    }).catch(() => {});
+    await pushNotificationGateway
+      .sendPushNotification({
+        deviceToken: room.peerPushToken,
+        peerPlatform: room.peerPlatform,
+        sharedSecret: pushCtx.sharedSecret,
+        encryption: pushCtx.encryption,
+        localAccountId: pushCtx.ownAccountId,
+        remoteAccountId: pushCtx.peerAccountId,
+        messageId,
+        timestamp: row.timestamp,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/consistent-type-assertions -- mapUiContentToSdk widens to {tag,value}; the push codec narrows on encode
+        content: sdkContent as any,
+        environmentId: environmentService.getActiveId(),
+      })
+      .catch(() => {});
   };
 
   const recreateSessionForPeer = async (peerSs58: string) => {
@@ -309,6 +306,29 @@ export const createP2PChatManagerV2 = async (params: P2PChatManagerV2Params): Pr
     const room = await p2pChatDatabase.rooms.where('peerId').equals(peerSs58).first();
     if (!room) return;
     await manager.startSession(peerSs58, room.peerUsername ?? peerSs58).catch(() => {});
+  };
+
+  // Roster mutation from a peer's session content — apply to the peer Contact,
+  // then rebuild the per-device session so its live subscription reflects the
+  // new roster (see the deviceAdded/deviceRemoved handlers below for the why).
+  const applyPeerDeviceAdded = async (peerSs58: string, incoming: Device) => {
+    const existing = await contactRepository.get(peerSs58);
+    if (existing) {
+      const without = existing.devices.filter(d => d.statementAccountId !== incoming.statementAccountId);
+      await contactRepository.upsert({ ...existing, devices: [...without, incoming] });
+    }
+    await recreateSessionForPeer(peerSs58);
+  };
+
+  const applyPeerDeviceRemoved = async (peerSs58: string, removedStatementAccountIdHex: string) => {
+    const existing = await contactRepository.get(peerSs58);
+    if (existing) {
+      await contactRepository.upsert({
+        ...existing,
+        devices: existing.devices.filter(d => d.statementAccountId !== removedStatementAccountIdHex),
+      });
+    }
+    await recreateSessionForPeer(peerSs58);
   };
 
   // ── Identity-channel listener (per-peer, long-running) ──────────────────
@@ -467,7 +487,7 @@ export const createP2PChatManagerV2 = async (params: P2PChatManagerV2Params): Pr
       toHex(peerIdentityChatPublicKey).slice(0, 18) + '…',
     );
 
-    const unsub = subscribeToIdentityChannelV2(
+    const unsub = transportGateway.subscribeToIdentityChannelV2(
       {
         ownIdentityChatPrivateKey: userIdentity.identityChatPrivateKey,
         ownIdentityAccountId: userIdentity.identitySr25519PublicKey,
@@ -559,8 +579,10 @@ export const createP2PChatManagerV2 = async (params: P2PChatManagerV2Params): Pr
         realDeviceStatementAccountIdHex,
       ).catch(() => {});
       // Fire-and-forget startSession — needs the contact-roster to exist (above),
-      // but doesn't need to complete before the audit pump.
-      void manager.startSession(peerAccountId, peerUsername).catch(() => {});
+      // but doesn't need to complete before the audit pump. Captured so the
+      // sibling fanout below can sequence after it (single start, no second
+      // concurrent call) and route the roster updates through the live session.
+      const sessionStarted = manager.startSession(peerAccountId, peerUsername).catch(() => {});
 
       // Persist `deviceChatAccepted` as a chat-message row so device-sync
       // collector picks it up and replicates the acceptor's device info to
@@ -653,6 +675,9 @@ export const createP2PChatManagerV2 = async (params: P2PChatManagerV2Params): Pr
       if (userIdentity.identityChatPrivateKey) {
         const ownStmtAcctHex = toHex(device.statementAccountPublicKey);
         void (async () => {
+          // Sequence after the single session start above so the fanout routes
+          // through the live session (no second concurrent startSession call).
+          await sessionStarted;
           const siblings = await listShippableSiblings(ownStmtAcctHex);
           console.info(
             '[DEVICE-TRACE] matcher FANOUT START: %d sibling(s) to ship to peer=%s on device-channel; siblings=%o',
@@ -660,42 +685,21 @@ export const createP2PChatManagerV2 = async (params: P2PChatManagerV2Params): Pr
             peerAccountId,
             siblings.map(s => ({ stmtAcct: s.statementAccountId, encPub: s.encryptionPublicKey })),
           );
-          for (const sibling of siblings) {
-            console.info(
-              '[DEVICE-TRACE] matcher FANOUT one sibling -> peer:\n  peerId(B)=%s\n  carrying SIBLING.stmtAcct=%s\n  carrying SIBLING.encPub=%s',
-              peerAccountId,
-              sibling.statementAccountId,
-              sibling.encryptionPublicKey,
-            );
-            // Use device-channel for sibling roster fanout — matches mobile
-            // semantics (Android `communicationSessions.main`, iOS per-peer-device
-            // subscription). Bootstrap `deviceChatAccepted` is what mobile uses
-            // to learn our device; after that they listen on per-device topics,
-            // not the identity-channel.
-            await postChatMessageOnDeviceChannel({
-              ownIdentityChatPrivateKey: userIdentity.identityChatPrivateKey!,
-              peerIdentityAccountId,
-              peerIdentityChatPublicKey,
-              peerDeviceEncryptionPublicKey: acceptorDevice.encryptionPublicKey,
-              ownDeviceStatementAccountId: device.statementAccountPublicKey,
-              ownDeviceEncryptionPrivateKey: device.encryptionPrivateKey,
-              signerDeviceSeed: device.statementAccountSeed,
-              statementStore,
-              chatMessageContent: {
-                tag: 'deviceAdded',
-                value: {
-                  statementAccountId: fromHex(sibling.statementAccountId),
-                  encryptionPublicKey: fromHex(sibling.encryptionPublicKey),
-                },
-              },
-            }).catch(err =>
-              console.warn(
-                '[p2p-managerV2] matcher fanout: post sibling deviceAdded failed sibling=%s: %s',
-                sibling.statementAccountId,
-                err,
-              ),
-            );
-          }
+          // Route through the live session (one statement, one allocator) — see
+          // shipSiblingDeviceAddedThroughSession. Device-channel matches mobile
+          // semantics (Android `communicationSessions.main`, iOS per-peer-device
+          // subscription); bootstrap `deviceChatAccepted` stays on the
+          // identity-channel.
+          await shipSiblingDeviceAddedThroughSession(peerAccountId, siblings, {
+            ownIdentityChatPrivateKey: userIdentity.identityChatPrivateKey!,
+            peerIdentityAccountId,
+            peerIdentityChatPublicKey,
+            peerDeviceEncryptionPublicKey: acceptorDevice.encryptionPublicKey,
+            ownDeviceStatementAccountId: device.statementAccountPublicKey,
+            ownDeviceEncryptionPrivateKey: device.encryptionPrivateKey,
+            signerDeviceSeed: device.statementAccountSeed,
+            statementStore,
+          });
         })();
       }
 
@@ -724,7 +728,7 @@ export const createP2PChatManagerV2 = async (params: P2PChatManagerV2Params): Pr
   const isV2Validated = (r: object): r is ValidatedRequestV2 =>
     'senderDevicePubKey' in r && r.senderDevicePubKey instanceof Uint8Array;
 
-  const addIncomingRequest: Parameters<typeof subscribeToIncomingRequestsV2>[1] = validated => {
+  const addIncomingRequest: Parameters<typeof chatRequestGateway.subscribeToIncomingRequestsV2>[1] = validated => {
     if (seenRequestIds.has(validated.requestId)) {
       console.info('[p2p-managerV2] addIncomingRequest: dup requestId=%s (in-memory seen), skipping', validated.requestId);
       return;
@@ -789,6 +793,58 @@ export const createP2PChatManagerV2 = async (params: P2PChatManagerV2Params): Pr
       .catch(() => {});
   };
 
+  // Ship each sibling's `deviceAdded` to `peerId` on the per-peer-device
+  // channel THROUGH the live session, so all N siblings ride ONE statement on
+  // the session's single (account, channel) slot and draw from the session's
+  // shared expiry allocator. The previous per-sibling
+  // `postChatMessageOnDeviceChannel` one-shots each minted a FRESH allocator on
+  // the SAME channel: they raced on expiry priority (`ExpiryTooLow` churn) and
+  // mutually evicted (one statement per channel — only the last sibling
+  // survived for an offline peer).
+  //
+  // The CALLER owns session start — both sites already do it (matcher fires it
+  // at the accept handler, `acceptRequest` awaits it before the fanout). This
+  // helper must NOT call `startSession` itself: its re-entry guard is
+  // idempotent only AFTER completion, so a second concurrent call races the
+  // first (both pass the guard before either sets `activeSessions`) and creates
+  // a duplicate, orphaned session. It just reads the started session and routes
+  // through it. Falls back to the one-shot only when no session is present
+  // (start failed / not yet up) — there the one-shot is the sole writer on the
+  // channel, so there is no contention to dedup.
+  const shipSiblingDeviceAddedThroughSession = async (
+    peerId: string,
+    siblings: { statementAccountId: string; encryptionPublicKey: string }[],
+    fallback: Omit<Parameters<typeof transportGateway.postChatMessageOnDeviceChannel>[0], 'chatMessageContent'>,
+  ): Promise<void> => {
+    const session = activeSessions.get(peerId);
+
+    for (const sibling of siblings) {
+      // Annotate via the session's own send-content type so the `deviceAdded`
+      // literal is checked against the union without an `as const` assertion.
+      const chatMessageContent: Parameters<V2ChatPeerSession['send']>[0] = {
+        tag: 'deviceAdded',
+        value: {
+          statementAccountId: fromHex(sibling.statementAccountId),
+          encryptionPublicKey: fromHex(sibling.encryptionPublicKey),
+        },
+      };
+      console.info(
+        '[DEVICE-TRACE] sibling fanout -> peer=%s via=%s\n  carrying SIBLING.stmtAcct=%s\n  carrying SIBLING.encPub=%s',
+        peerId,
+        session ? 'session' : 'one-shot',
+        sibling.statementAccountId,
+        sibling.encryptionPublicKey,
+      );
+      await (
+        session
+          ? session.send(chatMessageContent)
+          : transportGateway.postChatMessageOnDeviceChannel({ ...fallback, chatMessageContent })
+      ).catch(err =>
+        console.warn('[p2p-managerV2] sibling fanout: deviceAdded failed sibling=%s: %s', sibling.statementAccountId, err),
+      );
+    }
+  };
+
   // ── Manager object ──────────────────────────────────────────────────────
 
   const manager: P2PChatManager = {
@@ -797,7 +853,10 @@ export const createP2PChatManagerV2 = async (params: P2PChatManagerV2Params): Pr
     },
 
     async searchPeers(query: string): Promise<SearchResult[]> {
-      return resolver.searchUsers(query);
+      const results = await resolver.searchUsers(query);
+
+      // Drop the current user — self-chats are not a supported flow.
+      return peerSearchService.excludeSelfFromSearchResults(results, userId);
     },
 
     async startSession(peerId: string, peerUsername: string) {
@@ -858,7 +917,7 @@ export const createP2PChatManagerV2 = async (params: P2PChatManagerV2Params): Pr
       // User-level shared secret used for outgoing push-notification encryption
       // + pushId derivation. Same on every device of either user, so the mobile
       // receiver derives an identical secret regardless of which sibling sent.
-      const pushSharedSecret = computeSharedSecret(userIdentity.identityChatPrivateKey, peerIdentityChatPubKey);
+      const pushSharedSecret = p2pService.computeSharedSecret(userIdentity.identityChatPrivateKey, peerIdentityChatPubKey);
       pushContexts.set(peerId, {
         sharedSecret: pushSharedSecret,
         encryption: createEncryption(pushSharedSecret),
@@ -882,22 +941,39 @@ export const createP2PChatManagerV2 = async (params: P2PChatManagerV2Params): Pr
           if (seenMessageIds.has(messageId)) return;
           seenMessageIds.add(messageId);
 
-          // Push token from peer — persist on Room for outgoing notifications, don't display.
-          // `iOSVoIP` tokens are for CallKit wake-ups; desktop never initiates calls
-          // (no dataChannelOffer producer), so they're useless here — drop them so they
-          // don't overwrite the regular `'Android' | 'iOS'` value on `peerPlatform`.
+          // Push token from peer. Two writes, no display:
+          //   1. Denormalise onto the Room (`peerPushToken`) — what THIS device
+          //      reads to attach a push to its own outgoing messages.
+          //   2. Keep the statement as a chat-message row so `device-sync`
+          //      replicates the token to our other paired devices (Android
+          //      parity: `Token` is a chat statement; the sibling's applier
+          //      writes it into its own `rooms.peerPushToken`). Without (2) a
+          //      sibling that only learned the contact via sync can't push.
+          // Original `messageId`/`timestamp` are kept so siblings see the
+          // authentic statement; `isSyncCarrier` hides it from every surface.
+          // `iOSVoIP` tokens are CallKit wake-ups; desktop never initiates calls
+          // (no dataChannelOffer producer), so drop them rather than overwrite
+          // the regular `'Android' | 'iOS'` value on `peerPlatform`.
           if (content.tag === 'token') {
             const tokenValue = content.value;
             const platform = tokenValue.platform;
             if (platform !== 'Android' && platform !== 'iOS') return;
             const tokenHex = typeof tokenValue.token === 'string' ? tokenValue.token.replace(/^0x/, '') : '';
-            if (tokenHex) {
-              p2pChatDatabase.rooms
-                .where('peerId')
-                .equals(peerId)
-                .modify({ peerPushToken: tokenHex, peerPlatform: platform })
-                .catch(() => {});
-            }
+            if (!tokenHex) return;
+            p2pChatDatabase.rooms
+              .where('peerId')
+              .equals(peerId)
+              .modify({ peerPushToken: tokenHex, peerPlatform: platform })
+              .catch(() => {});
+            const tokenMsg: ChatMessage = {
+              messageId,
+              sessionId: peerId,
+              peer,
+              timestamp,
+              content: { type: 'token', token: tokenHex, platform },
+              status: { direction: 'incoming', state: 'seen' },
+            };
+            writeMessage(tokenMsg).catch(() => {});
             return;
           }
 
@@ -910,45 +986,32 @@ export const createP2PChatManagerV2 = async (params: P2PChatManagerV2Params): Pr
           //   Android emits `deviceChatAccepted @20` exclusively.
           if (content.tag === 'chatAccepted' || content.tag === 'deviceChatAccepted') return;
 
-          // Device roster mutations (V2 multi-device) — apply to peer Contact.
+          // Device roster mutations (V2 multi-device) — apply to peer Contact,
+          // then REBUILD the per-device session so its live subscription reflects
+          // the new roster. A bare dispose (the previous behavior) tore down the
+          // subscription opened microseconds earlier on accept and never rebuilt
+          // it, so the peer's next message had no live subscription to land on and
+          // was lost until a sibling relayed it. Mirror the identity-channel
+          // handler, which recreates. Await the roster write first so the rebuilt
+          // session reads the updated devices; manager-level seenMessageIds dedups
+          // the re-read roster message on rebuild, so this can't loop.
           if (content.tag === 'deviceAdded') {
             const { statementAccountId, encryptionPublicKey } = content.value;
-            void contactRepository.get(peerId).then(existing => {
-              if (!existing) return;
-              const incoming: Device = {
-                statementAccountId: toHex(statementAccountId),
-                encryptionPublicKey: toHex(encryptionPublicKey),
-              };
-              const without = existing.devices.filter(d => d.statementAccountId !== incoming.statementAccountId);
-              return contactRepository.upsert({ ...existing, devices: [...without, incoming] });
-            });
-            const sess = activeSessions.get(peerId);
-            if (sess) {
-              sess.dispose();
-              activeSessions.delete(peerId);
-            }
+            const incoming: Device = {
+              statementAccountId: toHex(statementAccountId),
+              encryptionPublicKey: toHex(encryptionPublicKey),
+            };
+            void applyPeerDeviceAdded(peerId, incoming);
             return;
           }
 
           if (content.tag === 'deviceRemoved') {
             const { statementAccountId } = content.value;
-            const removedHex = toHex(statementAccountId);
-            void contactRepository.get(peerId).then(existing => {
-              if (!existing) return;
-              return contactRepository.upsert({
-                ...existing,
-                devices: existing.devices.filter(d => d.statementAccountId !== removedHex),
-              });
-            });
-            const sess = activeSessions.get(peerId);
-            if (sess) {
-              sess.dispose();
-              activeSessions.delete(peerId);
-            }
+            void applyPeerDeviceRemoved(peerId, toHex(statementAccountId));
             return;
           }
 
-          const mapped = mapSdkContent(content);
+          const mapped = chatContentService.mapSdkContent(content);
           if (!mapped) return;
 
           const newMsg: ChatMessage = {
@@ -1054,7 +1117,7 @@ export const createP2PChatManagerV2 = async (params: P2PChatManagerV2Params): Pr
       if (!session) throw new Error(`[p2p-managerV2] No active session for peer ${peerId}`);
 
       const defaultNodeEndpoint = (await environmentUseCase.getActive()).bulletinHopEndpoints?.[0] ?? '';
-      const sdkContent = mapUiContentToSdk(content, defaultNodeEndpoint);
+      const sdkContent = chatContentService.mapUiContentToSdk(content, defaultNodeEndpoint);
       if (!sdkContent) throw new Error(`[p2p-managerV2] Unsupported content type: ${content.type}`);
 
       // Pre-allocate the identity so the message can be persisted BEFORE we
@@ -1125,7 +1188,7 @@ export const createP2PChatManagerV2 = async (params: P2PChatManagerV2Params): Pr
             `The peer may not have completed user-identity registration.`,
         );
       }
-      const { requestId, channelTopic } = await sendChatRequestV2({
+      const { requestId, channelTopic } = await chatRequestGateway.sendChatRequestV2({
         recipientAccountId: peerAccountIdBytes,
         recipientChatPubKey,
         senderIdentityAccountId: userIdentity.identitySr25519PublicKey,
@@ -1356,6 +1419,32 @@ export const createP2PChatManagerV2 = async (params: P2PChatManagerV2Params): Pr
         }
       }
 
+      // Persist the requester's push token as a `token` chat-message row so
+      // device-sync replicates it to our other paired devices. Here B's token
+      // arrived as a `RequestContentV2.pushToken` *field* (not a standalone
+      // `token` statement), so — unlike the live-session path — there is no
+      // original statement to keep; synthesize one with a deterministic id. The
+      // Room's `peerPushToken` (set at room creation above) already covers THIS
+      // device's own push-send; this row is purely for the siblings, which would
+      // otherwise learn the contact via `ChatsAdded` but never B's token and so
+      // never push. `isSyncCarrier` hides it from every visible surface.
+      if (request.pushToken && (request.pushPlatform === 'Android' || request.pushPlatform === 'iOS')) {
+        const tokenId = `token-req:${request.requestId}`;
+        const existingTokenRow = await p2pChatDatabase.messages.get(tokenId);
+        if (!existingTokenRow) {
+          const tokenMsg: ChatMessage = {
+            messageId: tokenId,
+            sessionId: request.peerId,
+            peer: { type: 'p2p', accountId: request.peerId, name: request.peerId },
+            timestamp: Date.now(),
+            content: { type: 'token', token: request.pushToken, platform: request.pushPlatform },
+            status: { direction: 'incoming', state: 'seen' },
+          };
+          seenMessageIds.add(tokenMsg.messageId);
+          await writeMessage(tokenMsg).catch(() => {});
+        }
+      }
+
       // Start the long-running identity-channel listener for this contact so we
       // pick up the peer's PApp `DeviceAdded`/`DeviceRemoved` fan-out as their
       // device topology changes.
@@ -1408,26 +1497,28 @@ export const createP2PChatManagerV2 = async (params: P2PChatManagerV2Params): Pr
           toHex(device.statementAccountPublicKey),
           toHex(device.encryptionPublicKey),
         );
-        await postChatMessageOnIdentityChannel({
-          ownIdentityChatPrivateKey: userIdentity.identityChatPrivateKey,
-          ownIdentityAccountId: userIdentity.identitySr25519PublicKey,
-          peerIdentityChatPublicKey: fromHex(peerChatPubKeyHex),
-          peerIdentityAccountId: AccountIdCodec().enc(request.peerId),
-          ownDeviceStatementAccountId: device.statementAccountPublicKey,
-          ownDeviceEncryptionPrivateKey: device.encryptionPrivateKey,
-          signerDeviceSeed: device.statementAccountSeed,
-          statementStore,
-          chatMessageContent: {
-            tag: 'deviceChatAccepted',
-            value: {
-              requestId: request.requestId,
-              device: {
-                statementAccountId: device.statementAccountPublicKey,
-                encryptionPublicKey: device.encryptionPublicKey,
+        await transportGateway
+          .postChatMessageOnIdentityChannel({
+            ownIdentityChatPrivateKey: userIdentity.identityChatPrivateKey,
+            ownIdentityAccountId: userIdentity.identitySr25519PublicKey,
+            peerIdentityChatPublicKey: fromHex(peerChatPubKeyHex),
+            peerIdentityAccountId: AccountIdCodec().enc(request.peerId),
+            ownDeviceStatementAccountId: device.statementAccountPublicKey,
+            ownDeviceEncryptionPrivateKey: device.encryptionPrivateKey,
+            signerDeviceSeed: device.statementAccountSeed,
+            statementStore,
+            chatMessageContent: {
+              tag: 'deviceChatAccepted',
+              value: {
+                requestId: request.requestId,
+                device: {
+                  statementAccountId: device.statementAccountPublicKey,
+                  encryptionPublicKey: device.encryptionPublicKey,
+                },
               },
             },
-          },
-        }).catch(err => console.warn('[p2p-managerV2] failed to post deviceChatAccepted: %s', err));
+          })
+          .catch(err => console.warn('[p2p-managerV2] failed to post deviceChatAccepted: %s', err));
 
         // Fan out `deviceAdded` for each of A's other paired Hosts to B via
         // the same identity-channel. Without this, B's `Contact(A).devices`
@@ -1451,33 +1542,19 @@ export const createP2PChatManagerV2 = async (params: P2PChatManagerV2Params): Pr
             request.peerId,
             siblings.map(s => ({ stmtAcct: s.statementAccountId, encPub: s.encryptionPublicKey })),
           );
-          for (const sibling of siblings) {
-            console.info(
-              '[DEVICE-TRACE] acceptRequest FANOUT one sibling -> peer:\n  peerId(B)=%s\n  carrying SIBLING.stmtAcct=%s\n  carrying SIBLING.encPub=%s',
-              request.peerId,
-              sibling.statementAccountId,
-              sibling.encryptionPublicKey,
-            );
-            await postChatMessageOnDeviceChannel({
-              ownIdentityChatPrivateKey: userIdentity.identityChatPrivateKey,
-              peerIdentityAccountId: peerIdentityAcctId,
-              peerIdentityChatPublicKey: fromHex(peerChatPubKeyHex),
-              peerDeviceEncryptionPublicKey: peerDeviceEncPub,
-              ownDeviceStatementAccountId: device.statementAccountPublicKey,
-              ownDeviceEncryptionPrivateKey: device.encryptionPrivateKey,
-              signerDeviceSeed: device.statementAccountSeed,
-              statementStore,
-              chatMessageContent: {
-                tag: 'deviceAdded',
-                value: {
-                  statementAccountId: fromHex(sibling.statementAccountId),
-                  encryptionPublicKey: fromHex(sibling.encryptionPublicKey),
-                },
-              },
-            }).catch(err =>
-              console.warn('[p2p-managerV2] failed to post sibling deviceAdded sibling=%s: %s', sibling.statementAccountId, err),
-            );
-          }
+          // Route through the live session (started + awaited above) so all
+          // siblings ride ONE statement / ONE allocator — see
+          // shipSiblingDeviceAddedThroughSession.
+          await shipSiblingDeviceAddedThroughSession(request.peerId, siblings, {
+            ownIdentityChatPrivateKey: userIdentity.identityChatPrivateKey,
+            peerIdentityAccountId: peerIdentityAcctId,
+            peerIdentityChatPublicKey: fromHex(peerChatPubKeyHex),
+            peerDeviceEncryptionPublicKey: peerDeviceEncPub,
+            ownDeviceStatementAccountId: device.statementAccountPublicKey,
+            ownDeviceEncryptionPrivateKey: device.encryptionPrivateKey,
+            signerDeviceSeed: device.statementAccountSeed,
+            statementStore,
+          });
         } else {
           console.warn(
             '[p2p-managerV2] acceptRequest: cannot fanout sibling deviceAdded — no peer device info on request (senderDevicePubKey=%s senderDeviceStatementAccountId=%s)',
@@ -1524,7 +1601,7 @@ export const createP2PChatManagerV2 = async (params: P2PChatManagerV2Params): Pr
       // 161-byte handshake responses don't carry it, in which case desktop can
       // still send V2 requests but cannot decrypt incoming ones.
       if (userIdentity.identityChatPrivateKey) {
-        requestUnsub = subscribeToIncomingRequestsV2(
+        requestUnsub = chatRequestGateway.subscribeToIncomingRequestsV2(
           {
             ownAccountId: userIdentity.identitySr25519PublicKey,
             ownChatP256PrivateKey: userIdentity.identityChatPrivateKey,
@@ -1641,12 +1718,16 @@ export const createP2PChatManagerV2 = async (params: P2PChatManagerV2Params): Pr
       // optional). Returns an unsubscribe function.
       probeV2Topic: (senderDeviceAccountIdHex: string) => {
         const senderBytes = fromHex(senderDeviceAccountIdHex.replace(/^0x/, ''));
-        const day = getCurrentDay();
+        const day = chatRequestTopicService.getCurrentDay();
         if (!day) {
           console.warn('[p2pV2Debug] probeV2Topic: clock before chat-request epoch');
           return () => {};
         }
-        const topic = computePaginationTopicV2(senderBytes, userIdentity.identitySr25519PublicKey, day.day);
+        const topic = chatRequestTopicService.computePaginationTopicV2(
+          senderBytes,
+          userIdentity.identitySr25519PublicKey,
+          day.day,
+        );
         return trackedSubscribeStatements(statementStore, { matchAll: [topic] }, () => {});
       },
       wipeChatDb: async () => {

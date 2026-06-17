@@ -1,15 +1,20 @@
 import { Popover } from '@novasamatech/tr-ui';
 import { useNavigate } from '@tanstack/react-router';
-import { ArrowLeft, MessageSquare, SquareDashed } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { type PropsWithChildren, memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useObservable } from 'react-rx';
+import { of } from 'rxjs';
 
+import ChatBubbleOvalLeftIcon from '@/shared/assets/images/header/chat-bubble-oval-left.svg?jsx';
+import MaximizeIcon from '@/shared/assets/images/header/maximize.svg?jsx';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
-import { type ChatSession, useP2PSessions, useProductSessions } from '@/domains/chat';
+import { type ChatSession, useProductSessions } from '@/domains/chat';
 import { browserTabs } from '@/aggregates/browser-tabs';
+import { useP2PSessions } from '@/aggregates/p2p-chat';
 import { CHAT } from '../tabs';
 
+import { formatPeerName } from './helpers/peerName';
 import { Avatar } from './partials/Avatar';
 import { MessageFlow } from './partials/MessageFlow';
 import { MessageInput } from './partials/MessageInput';
@@ -21,6 +26,7 @@ type QuickChatProps = PropsWithChildren<{
 }>;
 
 export const QuickChat = memo(({ open, onOpenChange, children }: QuickChatProps) => {
+  const navigate = useNavigate();
   const { data: productSessions } = useProductSessions();
   const { data: p2pSessions } = useP2PSessions();
   const [selectedSession, setSelectedSession] = useState<ChatSession | null>(null);
@@ -31,6 +37,20 @@ export const QuickChat = memo(({ open, onOpenChange, children }: QuickChatProps)
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
   const showList = !selectedSession;
+
+  const handleExpandToFullscreen = useCallback(
+    (sessionId?: string) => {
+      onOpenChange(false);
+      browserTabs.addTab({ id: CHAT, type: CHAT, deeplink: '' }, { persistable: true });
+      browserTabs.selectTab(CHAT);
+      if (sessionId) {
+        void navigate({ to: '/chat/{-$chatId}', params: { chatId: sessionId } });
+      } else {
+        void navigate({ to: '/chat/{-$chatId}' });
+      }
+    },
+    [navigate, onOpenChange],
+  );
 
   const handleBackToList = useCallback(() => {
     setSelectedSession(null);
@@ -62,6 +82,12 @@ export const QuickChat = memo(({ open, onOpenChange, children }: QuickChatProps)
     [selectedSession],
   );
 
+  useEffect(() => {
+    if (open) return;
+    setSelectedSession(null);
+    setSendError(null);
+  }, [open]);
+
   // Radix's non-modal outside-click is document `pointerdown`. That never fires
   // for clicks inside a product iframe, nor for clicks on the toolbar's
   // -webkit-app-region: drag area (the OS steals the event for window drag).
@@ -81,23 +107,32 @@ export const QuickChat = memo(({ open, onOpenChange, children }: QuickChatProps)
   return (
     <Popover open={open} onOpenChange={onOpenChange}>
       <Popover.Trigger asChild>{children}</Popover.Trigger>
-      <Popover.Content>
-        <div data-testid={TEST_IDS.quickChatPopover} className="flex h-105 min-h-0 w-77.5 flex-col overflow-hidden">
+      <Popover.Content variant="flush" sideOffset={8} align="end" alignOffset={8}>
+        <div
+          data-testid={TEST_IDS.quickChatPopover}
+          className="flex h-[550px] w-[356px] flex-col overflow-hidden rounded-xl border border-border-primary bg-bg-surface-container shadow-lg"
+        >
           {showList ? (
-            <ChatList sessions={sessions} onSelect={handleSelectSession} onClose={() => onOpenChange(false)} />
+            <ChatList sessions={sessions} onSelect={handleSelectSession} onExpand={() => handleExpandToFullscreen()} />
           ) : (
-            <>
-              <RoomHeader session={selectedSession} onBack={handleBackToList} />
+            <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
+              <QuickChatPageHeader
+                session={selectedSession}
+                onBack={handleBackToList}
+                onExpand={() => handleExpandToFullscreen(selectedSession?.sessionId)}
+              />
 
-              <MessageFlow session={selectedSession} onReply={() => {}} onEdit={() => {}} />
+              <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
+                <MessageFlow session={selectedSession} onReply={() => {}} onEdit={() => {}} />
+              </div>
 
               {selectedSession && (
-                <div className="shrink-0 p-2">
+                <div className="shrink-0 border-t border-border-primary p-1">
                   {sendError && <p className="px-1 pb-1 text-xs text-fg-error">{sendError}</p>}
                   <MessageInput ref={inputRef} submitAction={handleSendMessage} />
                 </div>
               )}
-            </>
+            </div>
           )}
         </div>
       </Popover.Content>
@@ -105,24 +140,47 @@ export const QuickChat = memo(({ open, onOpenChange, children }: QuickChatProps)
   );
 });
 
-type RoomHeaderProps = {
-  session: ChatSession;
-  onBack: VoidFunction;
+type QuickChatPageHeaderProps = {
+  session?: ChatSession | null;
+  onBack?: VoidFunction;
+  onExpand: VoidFunction;
 };
 
-const RoomHeader = ({ session, onBack }: RoomHeaderProps) => {
-  const sessionName = useObservable(session.name, '');
+const QuickChatPageHeader = ({ session, onBack, onExpand }: QuickChatPageHeaderProps) => {
+  const { t } = useTranslation();
+  const rawSessionName = useObservable(session?.name ?? of(''), '');
+  const sessionName = session ? formatPeerName(rawSessionName, session.roomId) : '';
 
   return (
-    <div className="flex shrink-0 items-center gap-2 border-b border-border-primary bg-bg-surface-container p-2">
+    <div className="flex h-10 shrink-0 items-center gap-2 bg-bg-surface-container p-2">
+      {onBack ? (
+        <>
+          <button
+            className="flex size-7 shrink-0 items-center justify-center rounded-full transition-colors hover:bg-bg-selection-container-hover"
+            aria-label={t('common.action.back')}
+            onClick={onBack}
+          >
+            <ArrowLeft className="size-4 text-fg-secondary" />
+          </button>
+          <Avatar name={sessionName} size="tiny" />
+          <span className="min-w-0 flex-1 truncate text-sm leading-5 font-semibold text-fg-primary">{sessionName}</span>
+        </>
+      ) : (
+        <div className="flex min-w-0 flex-1 items-center gap-2">
+          <div className="flex size-6 shrink-0 items-center justify-center rounded-md bg-bg-illustration-dark">
+            <ChatBubbleOvalLeftIcon className="size-4 text-fg-primary-inverted" aria-hidden />
+          </div>
+          <span className="truncate text-sm leading-5 font-semibold text-fg-primary">{t('feature.chat.quickChat')}</span>
+        </div>
+      )}
       <button
-        className="flex size-8 shrink-0 items-center justify-center rounded-full transition-colors hover:bg-bg-selection-container-hover"
-        onClick={onBack}
+        data-testid={TEST_IDS.quickChatExpandButton}
+        className="flex size-7 shrink-0 items-center justify-center rounded-full transition-colors hover:bg-bg-selection-container-hover"
+        aria-label={t('feature.chat.viewMore')}
+        onClick={onExpand}
       >
-        <ArrowLeft className="size-4 text-fg-secondary" />
+        <MaximizeIcon className="size-4 text-fg-secondary" aria-hidden />
       </button>
-      <Avatar name={sessionName} size="chat-header" />
-      <span className="min-w-0 flex-1 truncate text-base leading-6 font-semibold text-fg-primary">{sessionName}</span>
     </div>
   );
 };
@@ -130,57 +188,19 @@ const RoomHeader = ({ session, onBack }: RoomHeaderProps) => {
 const ChatList = ({
   sessions,
   onSelect,
-  onClose,
+  onExpand,
 }: {
   sessions: ChatSession[];
   onSelect: (session: ChatSession) => void;
-  onClose: VoidFunction;
+  onExpand: VoidFunction;
 }) => {
-  const { t } = useTranslation();
-  const navigate = useNavigate();
-
-  const handleFullscreenClick = () => {
-    onClose();
-    browserTabs.addTab({ id: CHAT, type: CHAT, deeplink: '' }, { persistable: true });
-    browserTabs.selectTab(CHAT);
-    void navigate({ to: '/chat/{-$chatId}' });
-  };
-
   return (
-    <>
-      <div className="flex shrink-0 items-center justify-between border-b border-border-primary bg-bg-surface-container p-2">
-        <div className="flex items-center gap-2">
-          <div className="flex size-6 items-center justify-center rounded-md bg-bg-illustration-dark">
-            <MessageSquare className="size-3.5 text-fg-primary-inverted" />
-          </div>
-          <div className="flex flex-col">
-            <span className="text-sm leading-5 font-semibold text-fg-primary">{t('feature.chat.quickChat')}</span>
-            <span className="text-xs leading-4 font-semibold tracking-[1px] text-fg-tertiary uppercase">
-              {t('feature.chat.category')}
-            </span>
-          </div>
-        </div>
-        <button
-          className="flex size-8 items-center justify-center rounded-full transition-colors hover:bg-bg-selection-container-hover"
-          onClick={handleFullscreenClick}
-        >
-          <SquareDashed className="size-4 text-fg-secondary" />
-        </button>
-      </div>
+    <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
+      <QuickChatPageHeader onExpand={onExpand} />
 
-      <div className="flex-1 overflow-y-auto">
+      <div className="min-h-0 flex-1 overflow-y-auto">
         <RoomList sessions={sessions} selected={null} onSelect={onSelect} />
       </div>
-
-      <div className="shrink-0 border-t border-border-primary">
-        <button
-          data-testid={TEST_IDS.quickChatViewMoreButton}
-          className="flex h-10 w-full items-center justify-center px-4 text-sm leading-5 font-medium text-fg-primary transition-colors hover:text-fg-secondary"
-          onClick={handleFullscreenClick}
-        >
-          {t('feature.chat.viewMore')}
-        </button>
-      </div>
-    </>
+    </div>
   );
 };

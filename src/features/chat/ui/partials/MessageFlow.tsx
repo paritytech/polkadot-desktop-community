@@ -106,7 +106,7 @@ export const MessageFlow = ({ session, onReply, onEdit }: ChatConversationViewPr
 
   return (
     <>
-      <div className="flex-1 overflow-y-auto px-4 py-2">
+      <div className="min-h-0 flex-1 overflow-y-auto px-4 py-2">
         {hasMessages ? (
           <>
             {groupedMessages.map(group => (

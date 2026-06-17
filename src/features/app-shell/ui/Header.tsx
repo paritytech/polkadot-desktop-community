@@ -1,6 +1,5 @@
 import { memo, useEffect, useState } from 'react';
 
-import { WindowDragRegion } from '@/shared/components';
 import { Slot } from '@/shared/di';
 import { getPlatformType, isElectron } from '@/shared/env';
 import { cnTw } from '@/shared/utils';
@@ -21,29 +20,39 @@ export const Header = memo(() => {
   const tintUnfocused = isMac && !isFocused;
 
   return (
-    <WindowDragRegion
-      as="header"
+    // Native OS drag region. Right-clicking it no longer crashes on macOS since
+    // the Electron 42.4.0 fix for the AppKit `sendEvent:` regression (#51576).
+    <header
       className={cnTw(
         'flex w-full shrink-0 flex-col transition-colors duration-200',
         tintUnfocused ? 'bg-general-muted dark:bg-bg-surface-container' : 'bg-bg-surface-container',
       )}
+      style={{ appRegion: 'drag' }}
     >
       <div className="flex h-12 items-center">
         <div className="flex h-full min-w-0 flex-1 basis-0 items-center border-general-border">
           {isMac && !isFullscreen ? <div className="pointer-events-none h-full w-[86px]" /> : null}
           <Slot id={topBarLeadingSlot} />
         </div>
-        <div className="flex min-w-0 flex-1 basis-0 items-center justify-center gap-1 px-4">
-          <Slot id={topBarCenterLeadingSlot} />
+        {/* Three tracks: the address bar sits in the centered middle track while
+            the equal 1fr side tracks keep it window-centered regardless of what
+            the leading/trailing slots hold (e.g. the new-tab button). The middle
+            track mirrors the address bar's own min/max width (min-w-80 / max-w-150). */}
+        <div className="grid min-w-0 flex-1 basis-0 grid-cols-[1fr_minmax(20rem,37.5rem)_1fr] items-center gap-1 px-4">
+          <div className="flex min-w-0 items-center justify-end gap-1">
+            <Slot id={topBarCenterLeadingSlot} />
+          </div>
           <Slot id={topBarCenterSlot} />
-          <Slot id={topBarCenterTrailingSlot} />
+          <div className="flex min-w-0 items-center justify-start gap-1">
+            <Slot id={topBarCenterTrailingSlot} />
+          </div>
         </div>
         <div className="flex h-full min-w-0 flex-1 basis-0 items-center justify-end gap-1 pr-2">
           <Slot id={topBarTrailingSlot} />
         </div>
       </div>
       <Slot id={tabBarSlot} />
-    </WindowDragRegion>
+    </header>
   );
 });
 

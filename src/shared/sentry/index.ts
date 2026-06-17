@@ -1,5 +1,7 @@
 import * as Sentry from '@sentry/browser';
 
+import { isProductionBuild } from '@/shared/env';
+
 /**
  * Initialize Sentry for the renderer with DOM-listener-based instrumentation
  * disabled. Two pieces of Sentry's default browser SDK attach `click` /
@@ -33,6 +35,9 @@ import * as Sentry from '@sentry/browser';
  * benefit from a minimal repro filed against getsentry/sentry-javascript.
  */
 export function initSentry(): void {
+  // No telemetry in production builds. Staging/dev keep Sentry (with DSN).
+  if (isProductionBuild()) return;
+
   const dsn = process.env['SENTRY_DSN'];
   if (!dsn) return;
 

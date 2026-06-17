@@ -26,6 +26,7 @@ export const widgetTopbarActionMenuTriggerClass = cnTw(
 type WidgetMenuProps = {
   sizes: WidgetSizeIconVariant[];
   currentSize: WidgetSize;
+  isSizeLocked?: boolean;
   removeLabel: ReactNode;
   onResize: (size: WidgetSize) => void;
   onRemove: VoidFunction;
@@ -37,6 +38,7 @@ type WidgetMenuProps = {
 export const WidgetMenu = ({
   sizes,
   currentSize,
+  isSizeLocked = false,
   removeLabel,
   onResize,
   onRemove,
@@ -51,6 +53,10 @@ export const WidgetMenu = ({
   const handleOpenChange = controlledOnOpenChange ?? setUncontrolledIsOpen;
 
   const handleResize = (variant: WidgetSizeIconVariant) => () => onResize(WIDGET_SIZE_CONFIG[variant].size);
+
+  // Locked → still show the single current size (checked); otherwise only show
+  // the section when there's a real choice to make.
+  const showSizeSection = isSizeLocked ? sizes.length > 0 : sizes.length > 1;
 
   return (
     <DropdownMenu open={isOpen} onOpenChange={handleOpenChange}>
@@ -68,7 +74,7 @@ export const WidgetMenu = ({
       </span>
       <DropdownMenu.Content align="end">
         <div className="w-52.5">
-          {sizes.length > 1 ? (
+          {showSizeSection ? (
             <>
               <div className="px-2 pt-2 pb-1 text-[12px] leading-4 font-normal tracking-[0.96px] text-text-secondary uppercase">
                 {t('feature.dashboard.widgetMenu.sizeLabel')}
@@ -79,7 +85,11 @@ export const WidgetMenu = ({
                 const isActive = currentSize.w === size.w && currentSize.h === size.h;
 
                 return (
-                  <DropdownMenu.Item key={variant} onClick={handleResize(variant)}>
+                  <DropdownMenu.Item
+                    key={variant}
+                    disabled={isSizeLocked}
+                    onClick={isSizeLocked ? undefined : handleResize(variant)}
+                  >
                     <div className="flex h-8 w-full items-center gap-2 rounded-md">
                       <WidgetSizeIcon variant={variant} className="size-4" />
                       <span className="flex-1 text-sm leading-5 font-medium text-text-primary">{t(labelKey)}</span>

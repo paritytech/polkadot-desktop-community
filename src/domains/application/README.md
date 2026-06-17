@@ -42,6 +42,15 @@ mutation — passes through here.
 - **Legacy SSO migration** — `migrateLegacySsoSessions` walks pre-Papp persisted SSO blobs forward into the current shape.
   One-shot, runs at boot.
 
+### Web3 Summit gate
+
+- **Web3 Summit gate** — A boot-time switch driven by the `w3s_gate_mode` Remote Config parameter that governs how the
+  app behaves during/after the Web3 Summit. `web3SummitGateService` is a pure interpreter of an already-read
+  `Web3SummitGateMode`; reading the parameter (and applying the default) happens at the composition root (`bootstrap.ts`).
+- **Web3SummitGateMode** — The mode union: `VERIFICATION_DISABLED`, `VERIFICATION_ENABLED` (default when absent/invalid),
+  `VERIFICATION_ENABLED_SKIPPABLE`, `W3S_ENDED`. `isW3sEnded` is the only consumed predicate today — when the mode is
+  `W3S_ENDED` the app renders the ended screen instead of booting.
+
 ### Dashboard layout
 
 - **DashboardLayout** — Persistent record describing what cards (products, folders) appear on the home dashboard, their
@@ -50,6 +59,10 @@ mutation — passes through here.
   contain child positions (`FolderItemPositions`).
 - **Widget size** — A `(width, height)` pair from the constrained grid (`MAX_WIDGET_WIDTH`, `MAX_GRID_ROWS`,
   `ALLOWED_WIDGET_HEIGHTS`). Variants like `WidgetSizeIconVariant` drive icon-only fallbacks at small sizes.
+- **Widget size hints** (`WidgetSizeHints`) — the set of sizes a widget declares it supports, as `{ height, width? }`.
+  `dashboardLayoutService.sizeHintsToVariants` / `sizeHintsToLayoutRules` interpret these into this domain's variants and
+  resize bounds. This is the dashboard's own input contract — the product manifest happens to produce a compatible shape, but
+  the `manifest` concept itself stays in `@/domains/product`; features bridge the two.
 - **Cards / folders use cases** — Cross-source flows in `$usecase/cards.ts` and `$usecase/folders.ts` (add, resize,
   remove, favorite, reposition) — they compose the layout repository and the dashboard-layout service.
 
@@ -61,6 +74,7 @@ This domain owns:
 - The command bus (`commandsService`) and the `Command` shape.
 - The Statement Store transport (`statementStoreAdapter`, `lazyClient`) and the submission-error surface.
 - The Papp host provider and its legacy-state migrations.
+- The Web3 Summit gate: the `w3s_gate_mode` interpretation and its default policy.
 - The dashboard layout: schema, persistence, layout service, and the use cases that mutate it.
 
 ## Boundaries

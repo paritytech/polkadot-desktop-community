@@ -15,6 +15,7 @@ vi.mock('@/domains/remote-config', () => {
     dotNsConfig: 'dot_ns_config',
     ipfsGatewayUrl: 'ipfs_gateway_url',
     identityBackendUrl: 'identity_backend_url',
+    w3sGateMode: 'w3s_gate_mode',
   };
 
   const node = url => [{ url, name: 'RPC' }];
@@ -66,6 +67,7 @@ vi.mock('@/domains/remote-config', () => {
     },
     ipfs_gateway_url: 'https://alpha-ipfs.example/ipfs/',
     identity_backend_url: 'https://alpha-identity.example/',
+    w3s_gate_mode: 'VERIFICATION_ENABLED',
   };
 
   const tryGetJson = key => snapshot[key] ?? null;

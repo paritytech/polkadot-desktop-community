@@ -1,11 +1,11 @@
-import { useLocation } from '@tanstack/react-router';
 import { useMemo, useState } from 'react';
 
 import ChatBubbleIcon from '@/shared/assets/images/header/chat-bubble.svg?jsx';
 import { HeaderButton, iconBase } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
-import { useP2PSessions, useProductSessions, useTotalUnreadCount } from '@/domains/chat';
+import { useProductSessions, useTotalUnreadCount } from '@/domains/chat';
+import { useP2PSessions } from '@/aggregates/p2p-chat';
 
 import { QuickChat } from './QuickChat';
 
@@ -14,8 +14,6 @@ const chatIconClassName = `size-4 ${iconBase}`;
 export const ChatHeaderButton = () => {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
-  const location = useLocation();
-  const isChatRoute = location.pathname.startsWith('/chat');
 
   const { data: productSessions } = useProductSessions();
   const { data: p2pSessions } = useP2PSessions();
@@ -25,7 +23,7 @@ export const ChatHeaderButton = () => {
   return (
     <div className="inline-flex items-center" data-testid={TEST_IDS.quickChatButton}>
       <QuickChat open={isOpen} onOpenChange={setIsOpen}>
-        <HeaderButton variant="icon" active={isOpen || isChatRoute}>
+        <HeaderButton variant="icon" active={isOpen}>
           <ChatBubbleIcon className={chatIconClassName} aria-hidden />
           {totalUnread > 0 && (
             <span

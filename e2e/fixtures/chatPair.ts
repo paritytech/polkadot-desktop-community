@@ -19,7 +19,7 @@ import { readPool } from '../setup/bot-user-pool';
 
 import { setupPlatformParameter } from './allure-metadata';
 
-const CHAT_PAIR_ENVIRONMENT_ID: E2eEnvironmentId = 'paseo-next-v2';
+const CHAT_PAIR_ENVIRONMENT_ID: E2eEnvironmentId = 'nightly';
 const CHAT_PAIR_BOT_NETWORK = envToBotNetwork(CHAT_PAIR_ENVIRONMENT_ID);
 
 /**

@@ -1,4 +1,3 @@
-/* eslint-disable formatjs/no-literal-string-in-jsx */
 // @vitest-environment happy-dom
 
 import { cleanup, render } from '@testing-library/react';

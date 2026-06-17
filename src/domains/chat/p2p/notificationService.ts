@@ -1,8 +1,19 @@
-import { liveQuery } from 'dexie';
+/**
+ * Inbound **local OS** notifications: subscribes to the room/message resources
+ * and fires desktop notifications + badge counts for our own unread messages.
+ *
+ * Distinct from the `notifications/` sub-module, which handles **outbound push**
+ * to a peer's mobile device. This is a container-root orchestration primitive
+ * (effect-orchestration over domain resources, no canonical leaf home — see the
+ * `chat/p2p` README); its lifecycle is driven from the aggregate's headless
+ * binding via `notifications/hooks.ts`.
+ */
+
+import { combineLatest, map, of, switchMap } from 'rxjs';
 
 import { isElectron } from '@/shared/env';
 
-import { p2pChatDatabase } from './repository';
+import { p2pMessagesResource, p2pRoomsResource } from './resource';
 
 type NotificationServiceParams = {
   userId: string;
@@ -59,37 +70,41 @@ export const createNotificationService = (params: NotificationServiceParams): No
     navigateToChat(sessionId);
   });
 
-  const subscription = liveQuery(async () => {
-    const rooms = await p2pChatDatabase.rooms.where('userId').equals(userId).toArray();
-    const sessionIds = rooms.map(r => r.sessionId);
+  // Rooms + per-room message streams come from the domain resources (the
+  // validated Dexie read path) — the repository is never queried directly.
+  const emptyUnread = () => new Map<string, { count: number; ids: Set<string>; peerName: string; text: string }>();
 
-    if (sessionIds.length === 0) {
-      return { unreadBySession: new Map<string, { count: number; ids: Set<string>; peerName: string; text: string }>() };
-    }
+  const unread$ = p2pRoomsResource.read$({ userId }).pipe(
+    switchMap(rooms => {
+      if (rooms.length === 0) return of({ unreadBySession: emptyUnread() });
 
-    const messages = await p2pChatDatabase.messages.where('sessionId').anyOf(sessionIds).toArray();
-    const roomMap = new Map(rooms.map(r => [r.sessionId, r]));
-    const unreadBySession = new Map<string, { count: number; ids: Set<string>; peerName: string; text: string }>();
+      return combineLatest(
+        rooms.map(room => p2pMessagesResource.read$({ sessionId: room.sessionId }).pipe(map(messages => ({ room, messages })))),
+      ).pipe(
+        map(perRoom => {
+          const unreadBySession = emptyUnread();
 
-    for (const sessionId of sessionIds) {
-      const unreadMessages = messages.filter(
-        m => m.sessionId === sessionId && m.status.direction === 'incoming' && m.status.state === 'new',
+          for (const { room, messages } of perRoom) {
+            const unreadMessages = messages.filter(m => m.status.direction === 'incoming' && m.status.state === 'new');
+
+            const ids = new Set(unreadMessages.map(m => m.messageId));
+            const latest = unreadMessages.at(-1);
+
+            unreadBySession.set(room.sessionId, {
+              count: unreadMessages.length,
+              ids,
+              peerName: room.peerUsername || room.sessionId.slice(0, 8),
+              text: latest ? extractNotificationText(latest.content) : '',
+            });
+          }
+
+          return { unreadBySession };
+        }),
       );
+    }),
+  );
 
-      const ids = new Set(unreadMessages.map(m => m.messageId));
-      const latest = unreadMessages.at(-1);
-      const room = roomMap.get(sessionId);
-
-      unreadBySession.set(sessionId, {
-        count: unreadMessages.length,
-        ids,
-        peerName: room?.peerUsername ?? sessionId.slice(0, 8),
-        text: latest ? extractNotificationText(latest.content) : '',
-      });
-    }
-
-    return { unreadBySession };
-  }).subscribe({
+  const subscription = unread$.subscribe({
     next({ unreadBySession }) {
       const activeChatId = getActiveChatId();
       let totalUnread = 0;

@@ -457,7 +457,11 @@ is one library with a single `index.ts` public surface. Consumers import from `@
 - `@/shared/di` — slot/pipeline/SDK primitives consumed by `feature.tsx`.
 - `@/shared/translation` — i18n setup and `useTranslation`.
 - `@/shared/dexie` — IndexedDB wrapper consumed by domain `repository.ts`.
-- `@/shared/env` — environment detection (web/Electron).
+- `@/shared/env` — environment detection (web/Electron) and build-mode detection (`isDev`, `isProductionBuild` —
+  the latter reads the `BUILD_MODE` define because the renderer vite config remaps staging to Vite's
+  `production` mode, so `import.meta.env.MODE` alone cannot tell the two apart).
+- `@/shared/logger` — `silenceDebugConsole`, the app-level switch that mutes `console.debug` in production builds
+  (called once from `src/index.tsx`).
 
 ---
 

@@ -8,7 +8,13 @@ vi.mock('./repository', () => ({
 }));
 
 import { productPermissionsDatabase } from './repository';
-import { deleteProductPermissions } from './resource';
+import {
+  _resetTransientDevicePermissionGrants,
+  clearTransientDevicePermissionGrants,
+  deleteProductPermissions,
+  getTransientDevicePermissionGranted,
+  grantTransientDevicePermission,
+} from './resource';
 
 const deleteFn = vi.fn();
 
@@ -37,5 +43,43 @@ describe('deleteProductPermissions', () => {
 
     const predicate = vi.mocked(productPermissionsDatabase.table.filter).mock.calls[0]![0]!;
     expect(predicate(makeRow('other.dot'))).toBe(false);
+  });
+});
+
+describe('transient device permission grants', () => {
+  beforeEach(() => {
+    _resetTransientDevicePermissionGrants();
+  });
+
+  it('is not granted by default', () => {
+    expect(getTransientDevicePermissionGranted({ productId: 'p.dot', permission: 'Camera', modality: 'app' })).toBe(false);
+  });
+
+  it('grants for an exact (productId, permission, modality) key', () => {
+    grantTransientDevicePermission({ productId: 'p.dot', permission: 'Camera', modality: 'app' });
+
+    expect(getTransientDevicePermissionGranted({ productId: 'p.dot', permission: 'Camera', modality: 'app' })).toBe(true);
+  });
+
+  it('isolates by permission, modality, and productId', () => {
+    grantTransientDevicePermission({ productId: 'p.dot', permission: 'Camera', modality: 'app' });
+
+    expect(getTransientDevicePermissionGranted({ productId: 'p.dot', permission: 'Microphone', modality: 'app' })).toBe(false);
+    expect(getTransientDevicePermissionGranted({ productId: 'p.dot', permission: 'Camera', modality: 'widget' })).toBe(false);
+    expect(getTransientDevicePermissionGranted({ productId: 'other.dot', permission: 'Camera', modality: 'app' })).toBe(false);
+  });
+
+  it('clears all of a product+modality grants but leaves other products and modalities', () => {
+    grantTransientDevicePermission({ productId: 'p.dot', permission: 'Camera', modality: 'app' });
+    grantTransientDevicePermission({ productId: 'p.dot', permission: 'Microphone', modality: 'app' });
+    grantTransientDevicePermission({ productId: 'p.dot', permission: 'Camera', modality: 'widget' });
+    grantTransientDevicePermission({ productId: 'other.dot', permission: 'Camera', modality: 'app' });
+
+    clearTransientDevicePermissionGrants({ productId: 'p.dot', modality: 'app' });
+
+    expect(getTransientDevicePermissionGranted({ productId: 'p.dot', permission: 'Camera', modality: 'app' })).toBe(false);
+    expect(getTransientDevicePermissionGranted({ productId: 'p.dot', permission: 'Microphone', modality: 'app' })).toBe(false);
+    expect(getTransientDevicePermissionGranted({ productId: 'p.dot', permission: 'Camera', modality: 'widget' })).toBe(true);
+    expect(getTransientDevicePermissionGranted({ productId: 'other.dot', permission: 'Camera', modality: 'app' })).toBe(true);
   });
 });

@@ -287,7 +287,14 @@ function permissionModalitiesForProduct(
  * requests are enforced against 'app' (see constants.ts / domain README).
  */
 function modalityForKind(kind: ExecutableKind): PermissionModality {
-  return kind === 'widget' ? 'widget' : 'app';
+  switch (kind) {
+    case 'app':
+      return 'app';
+    case 'widget':
+      return 'widget';
+    default:
+      return 'app';
+  }
 }
 
 /**

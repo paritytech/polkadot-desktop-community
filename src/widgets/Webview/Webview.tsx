@@ -299,7 +299,6 @@ export const Webview = memo(
       let onConsoleMessage: ((e: Electron.ConsoleMessageEvent) => void) | null = null;
       if (localhost || dotNsService.isDotDomain(identifier)) {
         onConsoleMessage = e => {
-          // eslint-disable-next-line no-console
           const methods = [console.debug, console.info, console.warn, console.error] as const;
           const log = methods[e.level] ?? console.info;
           log(`[${identifier}]`, e.message);

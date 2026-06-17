@@ -40,6 +40,13 @@ export const isDev = () => {
   return import.meta.env.MODE === 'development';
 };
 
+// True only for `npm run build` (vite --mode production). Reads the BUILD_MODE
+// define instead of import.meta.env.MODE because the renderer vite config remaps
+// staging to Vite's 'production' mode — MODE alone cannot tell the two apart.
+export const isProductionBuild = () => {
+  return process.env['BUILD_MODE'] === 'production';
+};
+
 export const isElectronProd = () => {
   return isElectron() && !isDev();
 };

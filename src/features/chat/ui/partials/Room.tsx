@@ -218,8 +218,6 @@ export const Room = ({ session, onDeleted }: ChatConversationViewProps) => {
           <div className="flex min-w-0 flex-1 items-center gap-2 pr-4">
             <div className="flex min-w-0 flex-1 flex-col items-start justify-center">
               <span className="w-full min-w-0 truncate text-base leading-6 font-semibold text-fg-primary">{sessionName}</span>
-              {/* eslint-disable-next-line formatjs/no-literal-string-in-jsx */}
-              <span className="w-full truncate text-sm leading-[18px] text-fg-secondary">last seen recently</span>
             </div>
             <div className="flex shrink-0 items-center gap-2">
               <Button variant="ghost" size="icon-sm" onClick={handleOpenSearch}>

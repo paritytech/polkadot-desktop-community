@@ -4,6 +4,10 @@ import { TEST_IDS } from '@/shared/test-ids';
 import { type E2eEnvironmentId } from '../helpers/environment';
 import { DEFAULT_TIMEOUT } from '../helpers/timeouts';
 
+// The QR centre logo renders at ~24px; the QR matrix is far larger. Any width above this
+// means the matrix (not just the logo) has rendered.
+const QR_LOGO_MAX_WIDTH = 100;
+
 export class OnboardingPage {
   constructor(private readonly page: Page) {}
 
@@ -55,10 +59,37 @@ export class OnboardingPage {
   }
 
   async getQrDimensions() {
-    const qrContent = this.qrContainer.locator('svg, canvas').first();
-    const box = await qrContent.boundingBox();
+    const content = this.qrContainer.locator('svg, canvas');
 
-    return { width: box?.width ?? 0, height: box?.height ?? 0 };
+    // The QR box contains more than one element: the QR matrix plus the small centre
+    // logo (~24px), and the logo renders a beat BEFORE the matrix. Measuring the
+    // largest element naively races that gap and can pick up the logo. Poll until the
+    // matrix has actually rendered (largest element clearly bigger than the logo),
+    // then return its dimensions for the caller to assert on.
+    let dimensions = { width: 0, height: 0 };
+    await expect
+      .poll(
+        async () => {
+          dimensions = await content.evaluateAll(elements =>
+            elements
+              .map(element => {
+                const rect = element.getBoundingClientRect();
+
+                return { width: rect.width, height: rect.height };
+              })
+              .reduce(
+                (largest, current) => (current.width * current.height > largest.width * largest.height ? current : largest),
+                { width: 0, height: 0 },
+              ),
+          );
+
+          return dimensions.width;
+        },
+        { timeout: DEFAULT_TIMEOUT },
+      )
+      .toBeGreaterThan(QR_LOGO_MAX_WIDTH);
+
+    return dimensions;
   }
 
   async skipOnboarding() {

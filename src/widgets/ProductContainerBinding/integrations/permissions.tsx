@@ -13,6 +13,8 @@ import {
   type DevicePermissionType,
   type PermissionModality,
   type PermissionStatus,
+  clearTransientDevicePermissionGrants,
+  grantTransientDevicePermission,
   permissionsService,
   setDevicePermission,
   setRemotePermissionsBatch,
@@ -193,6 +195,12 @@ export function usePermissions(container: Container, identifier: string, modalit
               }
 
               if (confirmType === 'device') {
+                // Allow-always persists 'granted' (already reaches the native gate);
+                // allow-once persists 'ask', so it needs a session-scoped transient
+                // grant for the native getUserMedia gate to open the device this session.
+                if (decision === 'allow-once' && isDevicePermissionName(permName)) {
+                  grantTransientDevicePermission({ productId: identifier, permission: permName, modality });
+                }
                 return ensureSystemDevicePermission(permName, ok);
               }
 
@@ -276,6 +284,10 @@ export function usePermissions(container: Container, identifier: string, modalit
       cleanupDevicePermission();
       cleanupRemotePermission();
       rateLimiter.destroy();
+      // Session-scoped allow-once grants die with the product session. This cleanup
+      // runs on unmount (product close) and on remount (product reload — the webview
+      // subtree remounts on refresh), so the next device use re-prompts.
+      clearTransientDevicePermissionGrants({ productId: identifier, modality });
     };
   }, [container, identifier, modality]);
 }

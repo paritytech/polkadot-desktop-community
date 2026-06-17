@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { useTranslation } from '@/shared/translation';
 import { cnTw } from '@/shared/utils';
-import { type WidgetSizeIconVariant } from '@/domains/application';
+import { type WidgetSizeIconVariant, dashboardLayoutService } from '@/domains/application';
 import { type Product, productService, resolveProductUseCase } from '@/domains/product';
 import { ProductDialogHeader } from '@/widgets/ProductDialogHeader';
 import { WIDGET_SIZE_CONFIG } from '../../constants';
@@ -12,7 +12,7 @@ import { getProductIcon } from '../../productIcons';
 
 import { getProductWidgetCardCopy } from './productWidgetCardCopy';
 import { useWidgetAddedToast } from './useWidgetAddedToast';
-import { PLACEHOLDER_WIDGET_CARDS, getVariantFromGridSize } from './widgetModalConstants';
+import { PLACEHOLDER_WIDGET_CARDS } from './widgetModalConstants';
 import { AddWidgetModalCard } from './widgetModalParts';
 
 export type AddWidgetModalProductPanelProps = {
@@ -37,18 +37,59 @@ export const AddWidgetModalProductPanel = ({
 
   const isWidgetAlreadyOnDashboard = dashboardWidgetPlacement !== null;
 
-  useEffect(() => {
-    const targetCardId = selectedProduct.baseName === 'chat' ? 'chat-widget' : 'product-widget';
+  // `hasSupportedSizes: false` → manifest declares no supported sizes; the card
+  // still renders but its size picker + Add button become an info block (and the
+  // developer hint is logged below). `null` → nothing to render.
+  const widgetCard = useMemo(() => {
+    const isChat = selectedProduct.baseName === 'chat';
+    const placeholder = PLACEHOLDER_WIDGET_CARDS.find(card => card.id === (isChat ? 'chat-widget' : 'product-widget'));
+    if (!placeholder) return null;
 
+    if (isChat) return { card: placeholder, hasSupportedSizes: true };
+
+    const dimensions = selectedProduct.executables.widget?.dimensions;
+    if (!dimensions) return { card: placeholder, hasSupportedSizes: true };
+
+    const sizeVariants = dashboardLayoutService.sizeHintsToVariants(dimensions);
+    if (sizeVariants.length === 0) return { card: placeholder, hasSupportedSizes: false };
+
+    // Always offer every size declared in the manifest. When the widget is
+    // already on the dashboard the current size is highlighted (see the effect
+    // below) and switching is disabled, but all sizes stay visible.
+    return {
+      card: { ...placeholder, sizeVariants, previewVariant: sizeVariants[0] ?? placeholder.previewVariant },
+      hasSupportedSizes: true,
+    };
+  }, [selectedProduct]);
+
+  useEffect(() => {
+    if (widgetCard && !widgetCard.hasSupportedSizes) {
+      console.error(
+        `The widget doesn't have any supported sizes for adding. If you're developer of this widget please declare: "height": [1] for small, "height": [2] for medium, "height": [4] for large, and "height": [0] && "width": 2 for horizontal in the Manifest widget dimensions.`,
+        selectedProduct.baseName,
+      );
+    }
+  }, [widgetCard, selectedProduct.baseName]);
+
+  useEffect(() => {
+    if (!widgetCard || !widgetCard.hasSupportedSizes) return;
+
+    const { card } = widgetCard;
+
+    // Already on the dashboard → preselect (highlight) the current size; otherwise
+    // default to the first supported size.
     if (dashboardWidgetPlacement) {
-      setSelectedVariants({
-        [targetCardId]: getVariantFromGridSize(dashboardWidgetPlacement.w, dashboardWidgetPlacement.h),
-      });
+      const placementVariant = dashboardLayoutService.getVariantFromGridSize(
+        dashboardWidgetPlacement.w,
+        dashboardWidgetPlacement.h,
+      );
+      const selected = card.sizeVariants.includes(placementVariant) ? placementVariant : (card.sizeVariants[0] ?? 'small');
+      setSelectedVariants({ [card.id]: selected });
       return;
     }
 
-    setSelectedVariants({ [targetCardId]: 'small' });
-  }, [dashboardWidgetPlacement, selectedProduct.baseName]);
+    setSelectedVariants({ [card.id]: card.sizeVariants[0] ?? 'small' });
+  }, [widgetCard, dashboardWidgetPlacement]);
 
   const isProductInFavorites = useMemo(() => {
     return favoriteProductIds.has(selectedProduct.baseName);
@@ -154,28 +195,25 @@ export const AddWidgetModalProductPanel = ({
       <div className="min-h-0 flex-1 overflow-hidden pt-4">
         <ScrollArea>
           <div className="flex flex-col gap-4">
-            {PLACEHOLDER_WIDGET_CARDS.filter(
-              card => card.id === (selectedProduct.baseName === 'chat' ? 'chat-widget' : 'product-widget'),
-            ).map(card => {
-              const selectedVariant = selectedVariants[card.id] ?? card.sizeVariants[0] ?? 'small';
-              const cardCopy =
-                card.id === 'product-widget' ? getProductWidgetCardCopy(selectedProduct, card.descriptionKey, t) : undefined;
-
-              return (
-                <AddWidgetModalCard
-                  key={card.id}
-                  card={card}
-                  copy={cardCopy}
-                  selectedVariant={selectedVariant}
-                  isWidgetAlreadyOnDashboard={isWidgetAlreadyOnDashboard}
-                  onSelectSize={variant => {
-                    setSelectedVariants(prev => ({ ...prev, [card.id]: variant }));
-                  }}
-                  onAdd={() => handleAddWidget(card.id)}
-                  onOpen={handleOpenWidget}
-                />
-              );
-            })}
+            {widgetCard ? (
+              <AddWidgetModalCard
+                key={widgetCard.card.id}
+                card={widgetCard.card}
+                hasSupportedSizes={widgetCard.hasSupportedSizes}
+                copy={
+                  widgetCard.card.id === 'product-widget'
+                    ? getProductWidgetCardCopy(selectedProduct, widgetCard.card.descriptionKey, t)
+                    : undefined
+                }
+                selectedVariant={selectedVariants[widgetCard.card.id] ?? widgetCard.card.sizeVariants[0] ?? 'small'}
+                isWidgetAlreadyOnDashboard={isWidgetAlreadyOnDashboard}
+                onSelectSize={variant => {
+                  setSelectedVariants(prev => ({ ...prev, [widgetCard.card.id]: variant }));
+                }}
+                onAdd={() => handleAddWidget(widgetCard.card.id)}
+                onOpen={handleOpenWidget}
+              />
+            ) : null}
           </div>
         </ScrollArea>
       </div>

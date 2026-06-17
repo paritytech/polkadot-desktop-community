@@ -106,7 +106,12 @@ export async function waitForProbeResults(window: Page, timeoutMs = 60_000): Pro
  * security restrictions (preload injection, node stripping, partition setup)
  * are applied.
  */
-export async function injectAndLoadProduct(window: Page, domain: string, files: Record<string, number[]>) {
+export async function injectAndLoadProduct(
+  window: Page,
+  domain: string,
+  files: Record<string, number[]>,
+  partition: string = `sandbox-${domain}`,
+) {
   // Wait for the preload bridge
   await window.waitForFunction(
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
@@ -134,38 +139,40 @@ export async function injectAndLoadProduct(window: Page, domain: string, files: 
   // Create a raw <webview> element — bypasses React but keeps all sandbox restrictions.
   // Wire did-finish-load / did-fail-load BEFORE appending so we never miss the
   // first event (events queue but listeners must exist when they fire).
-  await window.evaluate(d => {
-    const existing = document.getElementById('test-webview');
-    if (existing) existing.remove();
+  await window.evaluate(
+    ({ d, part }) => {
+      const existing = document.getElementById('test-webview');
+      if (existing) existing.remove();
 
-    const wv = document.createElement('webview');
-    wv.id = 'test-webview';
-    wv.setAttribute('partition', `sandbox-${d}`);
-    wv.setAttribute('src', `polkadot://${d}/`);
-    wv.style.cssText = 'position:fixed;inset:0;width:100%;height:100%;z-index:99999;';
+      const wv = document.createElement('webview');
+      wv.id = 'test-webview';
+      wv.setAttribute('partition', part);
+      wv.setAttribute('src', `polkadot://${d}/`);
+      wv.style.cssText = 'position:fixed;inset:0;width:100%;height:100%;z-index:99999;';
 
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    (wv as any).addEventListener('console-message', (e: any) => {
-      // eslint-disable-next-line no-console
-      const methods = [console.debug, console.info, console.warn, console.error] as const;
-      const log = methods[e.level] ?? console.info;
-      log(`[${d}]`, e.message);
-    });
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    (wv as any).addEventListener('did-finish-load', () => {
       // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-      (wv as any).__loaded = true;
-    });
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    (wv as any).addEventListener('did-fail-load', (e: any) => {
-      // ERR_ABORTED (-3) = user-stop or superseding nav, not a real failure.
-      if (e.errorCode === -3) return;
+      (wv as any).addEventListener('console-message', (e: any) => {
+        const methods = [console.debug, console.info, console.warn, console.error] as const;
+        const log = methods[e.level] ?? console.info;
+        log(`[${d}]`, e.message);
+      });
       // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-      (wv as any).__failed = `${e.errorCode} ${e.errorDescription || ''}`.trim();
-    });
+      (wv as any).addEventListener('did-finish-load', () => {
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+        (wv as any).__loaded = true;
+      });
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+      (wv as any).addEventListener('did-fail-load', (e: any) => {
+        // ERR_ABORTED (-3) = user-stop or superseding nav, not a real failure.
+        if (e.errorCode === -3) return;
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+        (wv as any).__failed = `${e.errorCode} ${e.errorDescription || ''}`.trim();
+      });
 
-    document.body.appendChild(wv);
-  }, domain);
+      document.body.appendChild(wv);
+    },
+    { d: domain, part: partition },
+  );
 
   await window.waitForFunction(
     () => {

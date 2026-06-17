@@ -10,10 +10,10 @@ import { UserPopover } from '../page-objects/UserPopover';
 const { Given, When, Then } = createBdd(test);
 
 function parseEnvironmentId(value: string): E2eEnvironmentId {
-  if (value === 'previewnet' || value === 'paseo-next-v2' || value === 'paseo-review') {
+  if (value === 'nightly' || value === 'unstable') {
     return value;
   }
-  throw new Error(`Unknown environment id: "${value}". Expected previewnet | paseo-next-v2 | paseo-review.`);
+  throw new Error(`Unknown environment id: "${value}". Expected nightly | unstable.`);
 }
 
 Given('the user selects the {string} environment', async ({ electronApp }, environment: string) => {
@@ -81,16 +81,21 @@ When('the user clicks logout', async ({ electronApp }) => {
 });
 
 Then('session data is removed from localStorage', async ({ electronApp }) => {
-  // Wait a moment for the disconnect to process
-  await electronApp.window.waitForTimeout(2_000);
-
-  const pappKeys = await electronApp.window.evaluate(() => Object.keys(localStorage).filter(k => k.startsWith('polkadot_')));
-  expect(pappKeys.length).toBe(0);
+  // Logout disconnects asynchronously and redirects to onboarding; the navigation can
+  // destroy the evaluate execution context mid-call. Retry until the page settles and
+  // localStorage is cleared.
+  await expect(async () => {
+    const pappKeys = await electronApp.window.evaluate(() => Object.keys(localStorage).filter(k => k.startsWith('polkadot_')));
+    expect(pappKeys.length).toBe(0);
+  }).toPass({ timeout: DEFAULT_TIMEOUT });
 });
 
 Then('user secrets are removed from localStorage', async ({ electronApp }) => {
-  const secretKeys = await electronApp.window.evaluate(() => Object.keys(localStorage).filter(k => k.includes('userSecret')));
-  expect(secretKeys.length).toBe(0);
+  // See note above: logout triggers a redirect, so retry across the navigation.
+  await expect(async () => {
+    const secretKeys = await electronApp.window.evaluate(() => Object.keys(localStorage).filter(k => k.includes('userSecret')));
+    expect(secretKeys.length).toBe(0);
+  }).toPass({ timeout: DEFAULT_TIMEOUT });
 });
 
 Then('the user is redirected to onboarding screen', async ({ electronApp }) => {

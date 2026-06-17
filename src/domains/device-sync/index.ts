@@ -7,4 +7,9 @@ export {
 } from './orchestrator';
 export { deviceSyncRepository } from './repository';
 export type { ChatIdValue, DeviceSyncStatus, KnownUserDevice } from './types';
-export { type DeviceSyncWiringDeps, startDeviceSyncIfReady } from './wiring';
+export {
+  type DeviceSyncIdentityStart,
+  type DeviceSyncWiringDeps,
+  startDeviceSyncIfReady,
+  startDeviceSyncOnIdentity,
+} from './wiring';

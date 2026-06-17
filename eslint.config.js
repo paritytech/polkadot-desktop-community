@@ -151,15 +151,6 @@ export default tseslint.config(
     },
   },
 
-  // Test files configuration
-  {
-    files: ['**/*.test.ts', '**/*.test.tsx', '**/*.spec.ts', '**/*.spec.tsx'],
-    rules: {
-      'no-restricted-properties': 'off',
-      'formatjs/no-literal-string-in-jsx': 'off',
-    },
-  },
-
   // TSX files with formatjs (non-test, non-stories)
   {
     files: ['**/*.tsx'],
@@ -265,7 +256,7 @@ export default tseslint.config(
       ],
       'local-rules/enforce-di-naming-convention': ['error'],
 
-      'no-console': ['error', { allow: ['warn', 'error', 'info', 'group', 'groupCollapsed', 'groupEnd', 'table'] }],
+      'no-console': ['error', { allow: ['warn', 'error', 'info', 'group', 'groupCollapsed', 'groupEnd', 'table', 'debug'] }],
 
       // Imports
       '@typescript-eslint/consistent-type-imports': ['error', { prefer: 'type-imports', fixStyle: 'inline-type-imports' }],
@@ -348,6 +339,16 @@ export default tseslint.config(
             'JSXExpressionContainer CallExpression[callee.name="cnTw"][arguments.length=1]>.arguments:first-child[type="Literal"]',
         },
       ],
+    },
+  },
+
+  // Test files configuration
+  {
+    files: ['**/*.test.ts', '**/*.test.tsx', '**/*.spec.ts', '**/*.spec.tsx'],
+    rules: {
+      'no-restricted-properties': 'off',
+      'formatjs/no-literal-string-in-jsx': 'off',
+      '@typescript-eslint/require-await': 'off',
     },
   },
 );

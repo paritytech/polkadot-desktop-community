@@ -59,7 +59,6 @@ describe('series', () => {
     const wrapped = series(targetEvent);
 
     const fx = createEffect(() => {
-      // eslint-disable-next-line @typescript-eslint/require-await
       const generator = async function* () {
         yield 1;
         yield 2;

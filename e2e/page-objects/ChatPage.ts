@@ -101,21 +101,21 @@ export class ChatPage {
 
   /**
    * Navigate to the fullscreen `/chat` route via the QuickChat popover's
-   * "View More" button. Always opens the popover first — the dashboard chat
+   * expand button. Always opens the popover first — the dashboard chat
    * widget is no longer part of the default layout, so there's no fallback
    * surface to reach the fullscreen view from.
    *
    * Retries once: a product alias-permission AlertDialog can pop up while the
    * popover is open (Radix modal steals focus → closes the popover), so the
-   * View More button vanishes mid-flight. The catch path re-opens the popover
+   * expand button vanishes mid-flight. The catch path re-opens the popover
    * — by then the dialog is dismissed, alias is granted — and tries again.
    */
   async openFullscreen() {
     const openAndNavigate = async () => {
       await this.openQuickChat();
-      const viewMore = this.page.getByTestId(TEST_IDS.quickChatViewMoreButton);
-      await expect(viewMore).toBeVisible({ timeout: DEFAULT_TIMEOUT });
-      await viewMore.click();
+      const expandButton = this.page.getByTestId(TEST_IDS.quickChatExpandButton);
+      await expect(expandButton).toBeVisible({ timeout: DEFAULT_TIMEOUT });
+      await expandButton.click();
       await expect(this.roomList).toBeVisible({ timeout: DEFAULT_TIMEOUT });
     };
     try {

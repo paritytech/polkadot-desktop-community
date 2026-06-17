@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 
 import { SyncSignalingEnvelopeCodec } from '@/shared/peer-channel';
 /* eslint-disable-next-line boundaries/dependencies -- shared signaling envelope */
-import { StructuredStatementData } from '@/domains/chat/p2p/chatRequestCodec';
+import { StructuredStatementData } from '@/domains/chat/p2p/requests/schemas';
 
 import { type SyncSignalingEnvelope, createDeviceSessionChannel } from './channel';
 import { decryptDeviceSessionPayload, encryptDeviceSessionPayload } from './session';

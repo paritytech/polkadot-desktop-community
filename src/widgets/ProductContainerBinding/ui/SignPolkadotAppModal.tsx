@@ -1,11 +1,14 @@
+import { type UserSession } from '@novasamatech/host-papp';
 import { Button, Dialog, toastError } from '@novasamatech/tr-ui';
 import { Clock } from 'lucide-react';
-import { useCallback, useRef } from 'react';
+import { useCallback, useRef, useState } from 'react';
 
 import SigningPhoneMock from '@/shared/assets/images/signing-phone-mock.svg?jsx';
+import { reloadApp } from '@/shared/env';
 import { useTranslation } from '@/shared/translation';
 import { useSubmitError } from '@/domains/application';
 
+import { HavingTroubleSigningDialog } from './HavingTroubleSigningDialog';
 import { SubmitErrorAlert, signingDialogHeadingClassName, useSigningCountdown } from './signingModalParts';
 
 type PolkadotAppWaitingMode = 'signing' | 'allocation';
@@ -14,37 +17,53 @@ type Props = {
   mode?: PolkadotAppWaitingMode;
   open: boolean;
   lifetimeMs: number | null;
+  productIdentifier: string;
+  session: UserSession;
   onCancel: VoidFunction;
   onTimeout: VoidFunction;
 };
 
-export const SignPolkadotAppModal = ({ mode = 'signing', open, lifetimeMs, onCancel, onTimeout }: Props) => {
+export const SignPolkadotAppModal = ({ mode = 'signing', open, lifetimeMs, session, onCancel, onTimeout }: Props) => {
   const { t } = useTranslation();
   const rejectionToastShownRef = useRef(false);
+  const suppressRejectionToastRef = useRef(false);
+  const [havingTroubleOpen, setHavingTroubleOpen] = useState(false);
   const isAllocation = mode === 'allocation';
   const submitError = useSubmitError(open && !isAllocation);
 
+  // The request is already in flight to the mobile signer once this modal is shown.
+  // Dismissing it without a response must abort the pending request, otherwise the
+  // statement store keeps it and the mobile device is re-triggered on the next open.
+  const abortPendingRequests = useCallback(() => {
+    void session.abortPendingRequests().mapErr(error => {
+      console.warn('[Signing] abortPendingRequests failed', error);
+      return error;
+    });
+  }, [session]);
+
   const dismissWithRejectedToast = useCallback(() => {
-    if (rejectionToastShownRef.current) {
+    if (rejectionToastShownRef.current || suppressRejectionToastRef.current) {
       return;
     }
     rejectionToastShownRef.current = true;
+    abortPendingRequests();
     toastError({
       title: isAllocation
         ? t('widget.productContainerBinding.allocationRequest.allocationRejected')
         : t('feature.browser.transactionSigningRejected'),
     });
     onCancel();
-  }, [isAllocation, onCancel, t]);
+  }, [abortPendingRequests, isAllocation, onCancel, t]);
 
   const handleExpire = useCallback(() => {
+    abortPendingRequests();
     toastError({
       title: t('feature.browser.signingTimedOutTitle'),
       description: t('feature.browser.signingTimedOutBody'),
       duration: 10_000,
     });
     onTimeout();
-  }, [t, onTimeout]);
+  }, [abortPendingRequests, t, onTimeout]);
 
   const countdownDisplay = useSigningCountdown(lifetimeMs, handleExpire);
   const showValidFor = countdownDisplay !== null;
@@ -57,6 +76,21 @@ export const SignPolkadotAppModal = ({ mode = 'signing', open, lifetimeMs, onCan
 
   const handleInteractOutside = (event: { preventDefault: () => void }) => {
     event.preventDefault();
+  };
+
+  const handleHavingTroubleClick = () => {
+    setHavingTroubleOpen(true);
+  };
+
+  const handleHavingTroubleCancel = () => {
+    setHavingTroubleOpen(false);
+  };
+
+  const handleHavingTroubleReload = () => {
+    setHavingTroubleOpen(false);
+    suppressRejectionToastRef.current = true;
+    abortPendingRequests();
+    reloadApp();
   };
 
   return (
@@ -110,14 +144,13 @@ export const SignPolkadotAppModal = ({ mode = 'signing', open, lifetimeMs, onCan
               </div>
             </div>
             <div className="flex min-h-9 justify-center px-4 py-1">
-              <a
-                href="https://polkadot.com/"
-                target="_blank"
-                rel="noopener noreferrer"
+              <button
+                type="button"
                 className="rounded-lg px-4 py-1 text-sm leading-5 font-semibold text-fg-link"
+                onClick={handleHavingTroubleClick}
               >
                 {t('feature.browser.havingTroubleSigning')}
-              </a>
+              </button>
             </div>
           </div>
           <div className="shrink-0 pt-4">
@@ -128,6 +161,11 @@ export const SignPolkadotAppModal = ({ mode = 'signing', open, lifetimeMs, onCan
             </Dialog.Footer>
           </div>
         </div>
+        <HavingTroubleSigningDialog
+          open={havingTroubleOpen}
+          onCancel={handleHavingTroubleCancel}
+          onReload={handleHavingTroubleReload}
+        />
       </Dialog.Content>
     </Dialog>
   );

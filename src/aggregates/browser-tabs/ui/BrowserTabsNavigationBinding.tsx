@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 
 import { useRxState } from '@/shared/rxstate';
+import { userIdentity$ } from '@/domains/sso';
 import { navigationUseCase } from '../navigationUseCase';
 import { browserTabs } from '../state/tabs';
 
@@ -16,6 +17,19 @@ export const BrowserTabsNavigationBinding = () => {
   useEffect(() => {
     navigationUseCase.navigateHomeWhenNoTabs();
   }, [tabs]);
+
+  useEffect(() => {
+    let hadIdentity = userIdentity$.get() !== null;
+
+    const subscription = userIdentity$.value$.subscribe(identity => {
+      if (hadIdentity && identity === null) {
+        browserTabs.selectTab(null);
+      }
+      hadIdentity = identity !== null;
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   return null;
 };

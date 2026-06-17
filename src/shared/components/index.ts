@@ -1,3 +1,4 @@
+export { BlurhashCanvas } from './BlurhashCanvas/BlurhashCanvas';
 export { Box } from './Box/Box';
 export { ConfirmationProvider, useConfirmation } from './Confirmation/Confirmation';
 export {
@@ -30,4 +31,4 @@ export { WidgetLoadingScreen } from './WidgetLoadingScreen/WidgetLoadingScreen';
 export { TabChip, tabIconClassName } from './TabChip/TabChip';
 export { TabHoverTitle } from './TabHoverTitle/TabHoverTitle';
 export { WebSplashScreen } from './WebSplashScreen/WebSplashScreen';
-export { WindowDragRegion } from './WindowDragRegion/WindowDragRegion';
+export { Web3SummitEndedScreen } from './Web3SummitEndedScreen/Web3SummitEndedScreen';

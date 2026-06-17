@@ -27,7 +27,7 @@ Import-direction is ESLint-enforced (see above). These remain because a linter c
 
 ## Domain module structure (`project-structure.md` § Module recursion, § File contracts)
 
-- **major** — A non-canonical file under a domain module (anything other than `index`/`types`/`service`/`resource`/`hooks`/`gateway`/`repository`/`schemas`/`constants`/`bootstrap`/`README`, plus `$usecase/` files and co-located tests). *(The PreToolUse hook blocks new ones; flag any that slipped in.)*
+- **major** — A non-canonical file under a domain module (anything other than `index`/`types`/`service`/`resource`/`hooks`/`gateway`/`repository`/`schemas`/`constants`/`bootstrap`/`README`, plus `$usecase/` files and co-located tests). *(The PreToolUse hook blocks new ones; flag any that slipped in.)* **Exempt:** a named container-root orchestration/infra primitive that the container `README.md` explicitly frames per `code-placement.md` § Container-root orchestration (the `$usecase/`-is-domain-root-only gap) — don't re-flag a documented one.
 - **major** — A leaf module (no sub-modules) carrying its own `index.ts`. Only containers and the domain root have one.
 - **major** — `bootstrap.ts` or `$usecase/` placed inside a sub-module instead of the domain root.
 - **minor** — A container nested 3+ levels deep — usually signals a domain should be extracted.

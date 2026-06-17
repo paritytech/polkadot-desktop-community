@@ -50,7 +50,12 @@
       "reloadWidget": "Reload widget",
       "close": "Close"
     },
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "web3summitEnded": {
+      "ariaLabel": "Web3 Summit ended",
+      "title": "Web3 Summit ended",
+      "subtitle": "Stay tuned for more updates"
+    }
   },
   "feature": {
     "browser": {
@@ -92,6 +97,7 @@
       "rawMessageNotReadableCaption": "This message can't be displayed in a readable format",
       "copyMessage": "Copy message",
       "account": "Account",
+      "accountAddress": "Account address",
       "network": "Network",
       "networkFee": "Network fee",
       "transactionDetailsTitle": "Transaction details",
@@ -120,6 +126,12 @@
       "signingErrorDetailsLabel": "Details",
       "signingErrorCopyDetails": "Copy error details",
       "havingTroubleSigning": "Having trouble with confirmation on Mobile?",
+      "havingTroubleSigningDialog": {
+        "title": "Having trouble with confirmation?",
+        "description": "Reload app and try performing this operation again. If it doesn't help — please, try to logout and login again",
+        "troubleshootingGuide": "Troubleshooting Guide",
+        "reload": "Reload"
+      },
       "noAllowanceErrorTitle": "Account is not ready yet",
       "noAllowanceErrorDescription": "We are setting up your account. Please try again in a moment.",
       "statementStoreErrorTitle": "Statement store error",
@@ -182,6 +194,7 @@
         }
       },
       "title": "Chat",
+      "widgetTitle": "Last chats",
       "unreadMessagesAria": "Unread messages",
       "category": "COMMUNICATIONS",
       "replyToYourself": "Reply to yourself",
@@ -202,6 +215,7 @@
       "quickChat": "Quick Chat",
       "viewMore": "View More",
       "sendMessageToBegin": "Send a message to begin the conversation",
+      "mediaMobileOnly": "This message can only be viewed in the mobile app",
       "noChatsYet": "No chats yet",
       "yourChatWillAppear": "Your chat will appear here",
       "yourChatsWillAppear": "Your chats will appear here",
@@ -337,6 +351,7 @@
         "done": "Done",
         "add": "Add",
         "open": "Open",
+        "noSupportedSizes": "The widget doesn't have supported sizes for adding.",
         "searchPlaceholder": "Enter .dot address to find apps",
         "searchAriaLabel": "Search apps",
         "cards": {
@@ -515,7 +530,7 @@
           "Files": "Files",
           "Remote": "Web Domains",
           "WebRtc": "WebRTC",
-          "ChainSubmit": "Transaction Submit",
+          "ChainSubmit": "Chain Submit",
           "PreimageSubmit": "Preimage Submit",
           "StatementSubmit": "Statement Submit",
           "UserIdentity": "Identity"

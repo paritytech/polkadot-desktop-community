@@ -4,7 +4,6 @@ export {
   addableDashboardCardsPipeline,
   dashboardCardActionsSlot,
   dashboardCardContentTransformer,
-  dashboardCardLayoutTransformer,
   dashboardCardMetadataTransformer,
   dashboardCardSDK,
 } from './di';

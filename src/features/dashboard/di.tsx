@@ -9,10 +9,6 @@ export const dashboardCardContentTransformer = createTransformer<CardRenderProps
   name: 'dashboardCardContent',
 });
 
-export const dashboardCardLayoutTransformer = createTransformer<DashboardCardPayload, DashboardCardLayoutRules>({
-  name: 'dashboardCardLayout',
-});
-
 export const dashboardCardMetadataTransformer = createTransformer<DashboardCardPayload, DashboardCardMetadata>({
   name: 'dashboardCardMetadata',
 });
@@ -57,7 +53,6 @@ export const addableDashboardCardsPipeline = createPipeline<AddableDashboardCard
 export const dashboardCardSDK = createSDK({
   required: {
     content: dashboardCardContentTransformer,
-    layout: dashboardCardLayoutTransformer,
   },
   optional: {
     metadata: dashboardCardMetadataTransformer,

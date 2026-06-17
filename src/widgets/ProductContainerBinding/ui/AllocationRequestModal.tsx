@@ -142,7 +142,15 @@ export const AllocationRequestModal = memo(({ productIdentifier, resources, sess
 
   if (step === 'polkadotApp') {
     return (
-      <SignPolkadotAppModal mode="allocation" open lifetimeMs={SIGNING_TIMEOUT_MS} onCancel={onReject} onTimeout={onReject} />
+      <SignPolkadotAppModal
+        mode="allocation"
+        open
+        lifetimeMs={SIGNING_TIMEOUT_MS}
+        productIdentifier={productIdentifier}
+        session={session}
+        onCancel={onReject}
+        onTimeout={onReject}
+      />
     );
   }
 

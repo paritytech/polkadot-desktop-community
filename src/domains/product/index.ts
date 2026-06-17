@@ -90,6 +90,8 @@ export {
   useSetRemotePermissionsBatch,
 } from './permissions/hooks';
 export {
+  clearTransientDevicePermissionGrants,
+  grantTransientDevicePermission,
   resetPermissionToDefault,
   setDevicePermission,
   setRemotePermission,

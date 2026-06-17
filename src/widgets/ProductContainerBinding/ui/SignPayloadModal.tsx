@@ -19,11 +19,11 @@ import { withSigningTimeout } from '../withSigningTimeout';
 
 import { SignPolkadotAppModal } from './SignPolkadotAppModal';
 import {
-  JsonWithHighlightedKeys,
   SigningAccountDetailsSection,
   SigningPolkadotAppHint,
   SigningProductHeader,
   SigningReviewFooter,
+  TxArgumentsJson,
   calcSigningLifetimeMs,
   humanizeCallSegment,
   normalizeCallSegment,
@@ -52,6 +52,7 @@ export const SignPayloadModal = memo(
       console.info(`${tag} modal mounted`);
       return () => console.info(`${tag} modal unmounted`);
     }, [tag]);
+    const { t } = useTranslation();
     const derivationPath = `${productAccountId[0]}/${productAccountId[1]}`;
 
     const derivedAddress = useMemo(() => {
@@ -62,7 +63,6 @@ export const SignPayloadModal = memo(
       );
       return accountService.toAddress(v.parse(accountId, toHex(publicKey))).value;
     }, [session, productAccountId]);
-    const { t } = useTranslation();
     const { data: chains } = useAllChainsMap();
     const { status: peopleChainStatus } = usePeopleChainStatus();
 
@@ -76,19 +76,21 @@ export const SignPayloadModal = memo(
 
     const sign = () => {
       const startedAt = Date.now();
-      console.info(`${tag} sign() started — calling session.signPayload`, { derivedAddress, genesisHash: payload.genesisHash });
+      console.info(`${tag} sign() started — calling session.signPayload`, {
+        derivedAddress,
+        genesisHash: payload.genesisHash,
+      });
       setPending(true);
-      withSigningTimeout(
-        session.signPayload({
-          ...payload,
-          productAccountId,
-          method: payload.method,
-          assetId: payload.assetId,
-          mode: payload.mode,
-          withSignedTransaction: payload.withSignedTransaction,
-          metadataHash: payload.metadataHash,
-        }),
-      )
+      const signFlow = session.signPayload({
+        ...payload,
+        productAccountId,
+        method: payload.method,
+        assetId: payload.assetId,
+        mode: payload.mode,
+        withSignedTransaction: payload.withSignedTransaction,
+        metadataHash: payload.metadataHash,
+      });
+      withSigningTimeout(signFlow)
         .andTee(() => {
           console.info(`${tag} response received from remote signer in ${Date.now() - startedAt}ms`);
           setPending(false);
@@ -284,6 +286,8 @@ export const SignPayloadModal = memo(
         <SignPolkadotAppModal
           open
           lifetimeMs={lifetimeMs}
+          productIdentifier={productIdentifier}
+          session={session}
           onCancel={() => onCancel(new SigningErr.Rejected())}
           onTimeout={() => onCancel(new SigningErr.Rejected())}
         />
@@ -381,7 +385,10 @@ export const SignPayloadModal = memo(
                 </>
               ) : (
                 <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-8 overflow-y-auto pt-14 pr-1">
-                  <SigningAccountDetailsSection accountIndex={productAccountId[1]} address={derivedAddress} />
+                  <SigningAccountDetailsSection
+                    label={t('feature.browser.signingByAppAccount', { index: productAccountId[1] })}
+                    address={derivedAddress}
+                  />
                   <section className="flex flex-col gap-3">
                     <div className="flex items-center justify-between gap-3">
                       <span className="text-base leading-6 text-text-secondary">{t('common.label.arguments')}</span>
@@ -392,7 +399,7 @@ export const SignPayloadModal = memo(
                       </Copy>
                     </div>
                     <div className={signingDetailCodeBlockClassName}>
-                      <JsonWithHighlightedKeys text={argumentsJson} />
+                      <TxArgumentsJson value={tx?.decodedCall.value.value} />
                     </div>
                   </section>
                   <section className="flex flex-col gap-3">

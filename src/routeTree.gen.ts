@@ -14,6 +14,7 @@ import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as SettingsIndexRouteImport } from './routes/settings.index'
+import { Route as SettingsDevelopmentRouteImport } from './routes/settings.development'
 import { Route as SettingsAppearanceRouteImport } from './routes/settings.appearance'
 import { Route as NewTabIdRouteImport } from './routes/new-tab.$id'
 import { Route as ChatChar123ChatIdChar125RouteImport } from './routes/chat.{-$chatId}'
@@ -55,6 +56,11 @@ const SettingsIndexRoute = SettingsIndexRouteImport.update({
   path: '/',
   getParentRoute: () => SettingsRoute,
 } as any)
+const SettingsDevelopmentRoute = SettingsDevelopmentRouteImport.update({
+  id: '/development',
+  path: '/development',
+  getParentRoute: () => SettingsRoute,
+} as any)
 const SettingsAppearanceRoute = SettingsAppearanceRouteImport.update({
   id: '/appearance',
   path: '/appearance',
@@ -73,21 +79,21 @@ const ChatChar123ChatIdChar125Route =
   } as any)
 const SettingsDevelopmentUpdateChannelRoute =
   SettingsDevelopmentUpdateChannelRouteImport.update({
-    id: '/development/update-channel',
-    path: '/development/update-channel',
-    getParentRoute: () => SettingsRoute,
+    id: '/update-channel',
+    path: '/update-channel',
+    getParentRoute: () => SettingsDevelopmentRoute,
   } as any)
 const SettingsDevelopmentNetworkRoute =
   SettingsDevelopmentNetworkRouteImport.update({
-    id: '/development/network',
-    path: '/development/network',
-    getParentRoute: () => SettingsRoute,
+    id: '/network',
+    path: '/network',
+    getParentRoute: () => SettingsDevelopmentRoute,
   } as any)
 const SettingsDevelopmentCustomChainsRoute =
   SettingsDevelopmentCustomChainsRouteImport.update({
-    id: '/development/custom-chains',
-    path: '/development/custom-chains',
-    getParentRoute: () => SettingsRoute,
+    id: '/custom-chains',
+    path: '/custom-chains',
+    getParentRoute: () => SettingsDevelopmentRoute,
   } as any)
 const ProductIdChar123RouteChar125Route =
   ProductIdChar123RouteChar125RouteImport.update({
@@ -152,6 +158,7 @@ export interface FileRoutesByFullPath {
   '/chat/{-$chatId}': typeof ChatChar123ChatIdChar125Route
   '/new-tab/$id': typeof NewTabIdRoute
   '/settings/appearance': typeof SettingsAppearanceRoute
+  '/settings/development': typeof SettingsDevelopmentRouteWithChildren
   '/settings/': typeof SettingsIndexRoute
   '/product/$id/{-$route}': typeof ProductIdChar123RouteChar125Route
   '/settings/development/custom-chains': typeof SettingsDevelopmentCustomChainsRoute
@@ -173,6 +180,7 @@ export interface FileRoutesByTo {
   '/chat/{-$chatId}': typeof ChatChar123ChatIdChar125Route
   '/new-tab/$id': typeof NewTabIdRoute
   '/settings/appearance': typeof SettingsAppearanceRoute
+  '/settings/development': typeof SettingsDevelopmentRouteWithChildren
   '/settings': typeof SettingsIndexRoute
   '/product/$id/{-$route}': typeof ProductIdChar123RouteChar125Route
   '/settings/development/custom-chains': typeof SettingsDevelopmentCustomChainsRoute
@@ -194,6 +202,7 @@ export interface FileRoutesById {
   '/chat/{-$chatId}': typeof ChatChar123ChatIdChar125Route
   '/new-tab/$id': typeof NewTabIdRoute
   '/settings/appearance': typeof SettingsAppearanceRoute
+  '/settings/development': typeof SettingsDevelopmentRouteWithChildren
   '/settings/': typeof SettingsIndexRoute
   '/product/$id/{-$route}': typeof ProductIdChar123RouteChar125Route
   '/settings/development/custom-chains': typeof SettingsDevelopmentCustomChainsRoute
@@ -218,6 +227,7 @@ export interface FileRouteTypes {
     | '/chat/{-$chatId}'
     | '/new-tab/$id'
     | '/settings/appearance'
+    | '/settings/development'
     | '/settings/'
     | '/product/$id/{-$route}'
     | '/settings/development/custom-chains'
@@ -239,6 +249,7 @@ export interface FileRouteTypes {
     | '/chat/{-$chatId}'
     | '/new-tab/$id'
     | '/settings/appearance'
+    | '/settings/development'
     | '/settings'
     | '/product/$id/{-$route}'
     | '/settings/development/custom-chains'
@@ -259,6 +270,7 @@ export interface FileRouteTypes {
     | '/chat/{-$chatId}'
     | '/new-tab/$id'
     | '/settings/appearance'
+    | '/settings/development'
     | '/settings/'
     | '/product/$id/{-$route}'
     | '/settings/development/custom-chains'
@@ -321,6 +333,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsIndexRouteImport
       parentRoute: typeof SettingsRoute
     }
+    '/settings/development': {
+      id: '/settings/development'
+      path: '/development'
+      fullPath: '/settings/development'
+      preLoaderRoute: typeof SettingsDevelopmentRouteImport
+      parentRoute: typeof SettingsRoute
+    }
     '/settings/appearance': {
       id: '/settings/appearance'
       path: '/appearance'
@@ -344,24 +363,24 @@ declare module '@tanstack/react-router' {
     }
     '/settings/development/update-channel': {
       id: '/settings/development/update-channel'
-      path: '/development/update-channel'
+      path: '/update-channel'
       fullPath: '/settings/development/update-channel'
       preLoaderRoute: typeof SettingsDevelopmentUpdateChannelRouteImport
-      parentRoute: typeof SettingsRoute
+      parentRoute: typeof SettingsDevelopmentRoute
     }
     '/settings/development/network': {
       id: '/settings/development/network'
-      path: '/development/network'
+      path: '/network'
       fullPath: '/settings/development/network'
       preLoaderRoute: typeof SettingsDevelopmentNetworkRouteImport
-      parentRoute: typeof SettingsRoute
+      parentRoute: typeof SettingsDevelopmentRoute
     }
     '/settings/development/custom-chains': {
       id: '/settings/development/custom-chains'
-      path: '/development/custom-chains'
+      path: '/custom-chains'
       fullPath: '/settings/development/custom-chains'
       preLoaderRoute: typeof SettingsDevelopmentCustomChainsRouteImport
-      parentRoute: typeof SettingsRoute
+      parentRoute: typeof SettingsDevelopmentRoute
     }
     '/product/$id/{-$route}': {
       id: '/product/$id/{-$route}'
@@ -429,6 +448,21 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface SettingsDevelopmentRouteChildren {
+  SettingsDevelopmentCustomChainsRoute: typeof SettingsDevelopmentCustomChainsRoute
+  SettingsDevelopmentNetworkRoute: typeof SettingsDevelopmentNetworkRoute
+  SettingsDevelopmentUpdateChannelRoute: typeof SettingsDevelopmentUpdateChannelRoute
+}
+
+const SettingsDevelopmentRouteChildren: SettingsDevelopmentRouteChildren = {
+  SettingsDevelopmentCustomChainsRoute: SettingsDevelopmentCustomChainsRoute,
+  SettingsDevelopmentNetworkRoute: SettingsDevelopmentNetworkRoute,
+  SettingsDevelopmentUpdateChannelRoute: SettingsDevelopmentUpdateChannelRoute,
+}
+
+const SettingsDevelopmentRouteWithChildren =
+  SettingsDevelopmentRoute._addFileChildren(SettingsDevelopmentRouteChildren)
+
 interface SettingsPrivacyAppsProductIdRouteChildren {
   SettingsPrivacyAppsProductIdPermissionIdRoute: typeof SettingsPrivacyAppsProductIdPermissionIdRoute
   SettingsPrivacyAppsProductIdIndexRoute: typeof SettingsPrivacyAppsProductIdIndexRoute
@@ -467,10 +501,8 @@ const SettingsPrivacyPermissionsPermissionIdRouteWithChildren =
 
 interface SettingsRouteChildren {
   SettingsAppearanceRoute: typeof SettingsAppearanceRoute
+  SettingsDevelopmentRoute: typeof SettingsDevelopmentRouteWithChildren
   SettingsIndexRoute: typeof SettingsIndexRoute
-  SettingsDevelopmentCustomChainsRoute: typeof SettingsDevelopmentCustomChainsRoute
-  SettingsDevelopmentNetworkRoute: typeof SettingsDevelopmentNetworkRoute
-  SettingsDevelopmentUpdateChannelRoute: typeof SettingsDevelopmentUpdateChannelRoute
   SettingsPrivacyAppsProductIdRoute: typeof SettingsPrivacyAppsProductIdRouteWithChildren
   SettingsPrivacyPermissionsPermissionIdRoute: typeof SettingsPrivacyPermissionsPermissionIdRouteWithChildren
   SettingsPrivacyAppsIndexRoute: typeof SettingsPrivacyAppsIndexRoute
@@ -479,10 +511,8 @@ interface SettingsRouteChildren {
 
 const SettingsRouteChildren: SettingsRouteChildren = {
   SettingsAppearanceRoute: SettingsAppearanceRoute,
+  SettingsDevelopmentRoute: SettingsDevelopmentRouteWithChildren,
   SettingsIndexRoute: SettingsIndexRoute,
-  SettingsDevelopmentCustomChainsRoute: SettingsDevelopmentCustomChainsRoute,
-  SettingsDevelopmentNetworkRoute: SettingsDevelopmentNetworkRoute,
-  SettingsDevelopmentUpdateChannelRoute: SettingsDevelopmentUpdateChannelRoute,
   SettingsPrivacyAppsProductIdRoute:
     SettingsPrivacyAppsProductIdRouteWithChildren,
   SettingsPrivacyPermissionsPermissionIdRoute:

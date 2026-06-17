@@ -106,7 +106,7 @@ export function startSignaler(params: SignalerParams): SignalerHandle {
     onResetRequest?.();
   }
 
-  console.info('WEBRTC [signaler] start role=%s offerId=%s', role, currentOfferId ?? '<pending>');
+  console.debug('WEBRTC [signaler] start role=%s offerId=%s', role, currentOfferId ?? '<pending>');
 
   if (role === 'initiator') {
     void sendOffer(currentOfferId!);
@@ -123,7 +123,7 @@ export function startSignaler(params: SignalerParams): SignalerHandle {
         // Acceptor before it adopted an Offer — nothing to correlate with.
         // The PC only gathers after applyRemoteOffer, by which point we've
         // already set currentOfferId, so this is effectively unreachable.
-        console.info('WEBRTC [signaler] candidate gathered before offerId set — dropping');
+        console.debug('WEBRTC [signaler] candidate gathered before offerId set — dropping');
         return;
       }
       const candidatesBlob = MinimalCandidatesVecCodec.enc([minimal]);
@@ -140,7 +140,7 @@ export function startSignaler(params: SignalerParams): SignalerHandle {
       const offer = await pc.createOffer();
       const setupBytes = encodeMinimalSetup(offer.sdp ?? '');
       await session.send({ offerId, message: { tag: 'Offer', value: { sdp: setupBytes } } });
-      console.info('WEBRTC [signaler] Offer sent (initiator) offerId=%s', offerId);
+      console.debug('WEBRTC [signaler] Offer sent (initiator) offerId=%s', offerId);
     } catch (err) {
       console.error('WEBRTC [signaler] sendOffer failed: %s', err instanceof Error ? err.message : String(err));
     }
@@ -150,7 +150,7 @@ export function startSignaler(params: SignalerParams): SignalerHandle {
     const answer = await pc.createAnswer();
     const setupBytes = encodeMinimalSetup(answer.sdp ?? '');
     await session.send({ offerId, message: { tag: 'Answer', value: { sdp: setupBytes } } });
-    console.info('WEBRTC [signaler] Answer sent (acceptor) offerId=%s', offerId);
+    console.debug('WEBRTC [signaler] Answer sent (acceptor) offerId=%s', offerId);
   }
 
   // Apply a batch of remote ICE candidates, surviving individual failures — a
@@ -178,10 +178,10 @@ export function startSignaler(params: SignalerParams): SignalerHandle {
       // Spec §5.4: dispose iff the envelope's offerId matches our current
       // active offerId. Otherwise ignore (stale / already replaced).
       if (currentOfferId !== null && envelope.offerId === currentOfferId) {
-        console.info('WEBRTC [signaler] Reconnected for current offerId=%s — requesting reset', envelope.offerId);
+        console.debug('WEBRTC [signaler] Reconnected for current offerId=%s — requesting reset', envelope.offerId);
         requestReset();
       } else {
-        console.info(
+        console.debug(
           'WEBRTC [signaler] Reconnected offerId=%s ignored (current=%s)',
           envelope.offerId,
           currentOfferId ?? '<none>',
@@ -201,7 +201,7 @@ export function startSignaler(params: SignalerParams): SignalerHandle {
         // so trickle candidates can never be tagged with a later offer's id.
         currentOfferId = envelope.offerId;
         onAcceptedOfferId?.(envelope.offerId);
-        console.info('WEBRTC [signaler] Offer received (acceptor) — adopted offerId=%s, answering', envelope.offerId);
+        console.debug('WEBRTC [signaler] Offer received (acceptor) — adopted offerId=%s, answering', envelope.offerId);
         const { setupSdp, candidates } = decodeMinimalSetup(content.value.sdp);
         await pc.applyRemoteOffer({ type: 'offer', sdp: setupSdp });
         // An external respawn may have closed us during applyRemoteOffer; don't
@@ -217,7 +217,7 @@ export function startSignaler(params: SignalerParams): SignalerHandle {
         // A duplicate of the attempt we already adopted (statement-store replay
         // under a fresh requestId). Never re-apply — setRemoteDescription on a
         // non-stable PC tears down in-flight DTLS.
-        console.info('WEBRTC [signaler] Offer dropped (duplicate of adopted offerId=%s)', envelope.offerId);
+        console.debug('WEBRTC [signaler] Offer dropped (duplicate of adopted offerId=%s)', envelope.offerId);
         return;
       }
 
@@ -226,7 +226,7 @@ export function startSignaler(params: SignalerParams): SignalerHandle {
       // it still reports 'connected' (ICE hasn't timed out yet). Re-adopting in
       // place can't work (the PC can't be rebuilt here), so request a reset and
       // let the orchestrator respawn a fresh PC that adopts the new Offer.
-      console.info(
+      console.debug(
         'WEBRTC [signaler] Offer for new offerId=%s (current=%s) — peer restarted, requesting reset',
         envelope.offerId,
         currentOfferId,
@@ -242,13 +242,17 @@ export function startSignaler(params: SignalerParams): SignalerHandle {
       // subscribers; if it's for a previous Offer, drop it. This single check
       // replaces the old rollback-and-reapply dance.
       if (envelope.offerId !== currentOfferId) {
-        console.info('WEBRTC [signaler] Answer dropped — offerId=%s != current=%s', envelope.offerId, currentOfferId ?? '<none>');
+        console.debug(
+          'WEBRTC [signaler] Answer dropped — offerId=%s != current=%s',
+          envelope.offerId,
+          currentOfferId ?? '<none>',
+        );
         return;
       }
       const signalingState = pc.signalingState();
-      console.info('WEBRTC [signaler] Answer received (initiator) signaling=%s offerId=%s', signalingState, envelope.offerId);
+      console.debug('WEBRTC [signaler] Answer received (initiator) signaling=%s offerId=%s', signalingState, envelope.offerId);
       if (signalingState !== 'have-local-offer') {
-        console.info('WEBRTC [signaler] Answer ignored — signaling=%s (expected have-local-offer)', signalingState);
+        console.debug('WEBRTC [signaler] Answer ignored — signaling=%s (expected have-local-offer)', signalingState);
         return;
       }
       const { setupSdp, candidates } = decodeMinimalSetup(content.value.sdp);
@@ -262,7 +266,7 @@ export function startSignaler(params: SignalerParams): SignalerHandle {
 
     if (content.tag === 'Candidates') {
       if (envelope.offerId !== currentOfferId) {
-        console.info(
+        console.debug(
           'WEBRTC [signaler] Candidates dropped — offerId=%s != current=%s',
           envelope.offerId,
           currentOfferId ?? '<none>',

@@ -8,7 +8,7 @@ export const NewTabContent = ({ isActive }: Props) => {
   const { t } = useTranslation();
   return (
     <TabChip
-      icon={<PlaceholderIcon className={tabIconClassName} aria-hidden />}
+      placeholder={<PlaceholderIcon className={tabIconClassName} aria-hidden />}
       isActive={isActive}
       label={t('feature.browser.newTab')}
     />

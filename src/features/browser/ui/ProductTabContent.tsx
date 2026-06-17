@@ -1,7 +1,6 @@
 import PlaceholderIcon from '@/shared/assets/images/header/placeholder.svg?jsx';
 import { TabChip, tabIconClassName } from '@/shared/components';
-import { dotNsService, useDisplayedProduct } from '@/domains/product';
-import { ProductIcon } from '@/widgets/ProductIcon';
+import { dotNsService, useDisplayedProduct, useProductIcon } from '@/domains/product';
 
 type Props = { id: string; setDeeplink: (deeplink: string) => void; isActive: boolean };
 
@@ -13,17 +12,15 @@ export const ProductTabContent = ({ id, isActive }: Props) => {
   // AddressBar. Reading only the installed list would leave a not-yet-installed tab
   // without an icon/name even though it resolves fine elsewhere.
   const { data: product } = useDisplayedProduct(id);
+  const { data: iconUrl } = useProductIcon(product?.icon ?? null);
   const label = dotNsService.toDisplayName(product?.displayName ?? id);
 
+  // A resolved icon shows always; products without one render the label alone
+  // (centered) and only fall back to the placeholder in the collapsed icon-only state.
   return (
     <TabChip
-      icon={
-        <ProductIcon
-          icon={product?.icon}
-          className={tabIconClassName}
-          fallback={<PlaceholderIcon className={tabIconClassName} aria-hidden />}
-        />
-      }
+      icon={iconUrl ? <img src={iconUrl} alt="" className={tabIconClassName} /> : undefined}
+      placeholder={iconUrl ? undefined : <PlaceholderIcon className={tabIconClassName} aria-hidden />}
       isActive={isActive}
       label={label}
     />

@@ -5,11 +5,21 @@ import {
   DEFAULT_RESIZE_HANDLES,
   FAVORITES_FOLDER_ID,
   FOLDER_MIN_HEIGHT,
+  HEIGHT_HINT_TO_VARIANT,
+  HORIZONTAL_HEIGHT_MARKER,
   MAX_GRID_ROWS,
   MAX_WIDGET_HEIGHT,
   MAX_WIDGET_WIDTH,
+  SIZE_VARIANT_ORDER,
+  WIDGET_VARIANT_GRID_SIZE,
 } from './constants';
-import { type DashboardCard, type FolderCardPayload } from './types';
+import {
+  type DashboardCard,
+  type DashboardCardLayoutRules,
+  type FolderCardPayload,
+  type WidgetSizeHints,
+  type WidgetSizeIconVariant,
+} from './types';
 
 type LayoutRect = { i: string; x: number; y: number; w: number; h: number };
 
@@ -563,7 +573,67 @@ function removeCardFromPages(
   return { pages: nextPages, activePageIndex: nextActiveIndex, changed: true };
 }
 
+// Maps a widget's declared size hints to the supported size variants, primarily
+// driven by `height`. `width` is optional and only gates horizontal. Returns an
+// empty array when the hints don't map to ANY valid variant (e.g. pixel values
+// like `{ height: [400], width: 360 }`) — callers treat that as invalid and
+// reject the widget.
+//
+//   { height: [1, 2, 4] }                  → ['small', 'medium', 'large'] (width ignored)
+//   { height: [0], width: 2 }              → ['horizontal']
+//   { height: [0, 1, 2, 4], width: 2 }     → all four sizes
+//
+// Horizontal requires BOTH a `0` in `height` and `width === 2`; width alone (or
+// a `0` without width 2) does not add it.
+function sizeHintsToVariants(hints: WidgetSizeHints): WidgetSizeIconVariant[] {
+  const variants = new Set<WidgetSizeIconVariant>();
+
+  for (const height of hints.height) {
+    const variant = HEIGHT_HINT_TO_VARIANT[height];
+    if (variant) variants.add(variant);
+  }
+
+  if (hints.height.includes(HORIZONTAL_HEIGHT_MARKER) && hints.width === MAX_WIDGET_WIDTH) {
+    variants.add('horizontal');
+  }
+
+  return SIZE_VARIANT_ORDER.filter(variant => variants.has(variant));
+}
+
+// Returns null when the hints are invalid (no supported variant) — the caller
+// falls back to its own default rules.
+function sizeHintsToLayoutRules(hints: WidgetSizeHints): DashboardCardLayoutRules | null {
+  const menuSizes = sizeHintsToVariants(hints);
+  if (menuSizes.length === 0) return null;
+
+  // Derive the resize bounds from the footprints of the offered variants, so the
+  // min/max envelope can never exclude a size the menu lets the user pick (e.g.
+  // offering `horizontal` (h=4) while `maxH` stayed at 2).
+  const sizes = menuSizes.map(variant => WIDGET_VARIANT_GRID_SIZE[variant]);
+  const widths = sizes.map(size => size.w);
+  const heights = sizes.map(size => size.h);
+
+  return {
+    minH: Math.min(...heights),
+    maxH: Math.max(...heights),
+    minW: Math.min(...widths),
+    maxW: Math.max(...widths),
+    menuSizes,
+  };
+}
+
+function getVariantFromGridSize(w: number, h: number): WidgetSizeIconVariant {
+  if (w === 2 && h === 4) return 'horizontal';
+  if (h === 8) return 'large';
+  if (h === 4) return 'medium';
+  if (h === 2) return 'small';
+  return 'small';
+}
+
 export const dashboardLayoutService = {
+  sizeHintsToVariants,
+  sizeHintsToLayoutRules,
+  getVariantFromGridSize,
   asFolder,
   isFolderCard,
   isProductWidgetCard,

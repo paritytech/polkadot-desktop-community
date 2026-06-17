@@ -29,7 +29,9 @@ Most rules below are enforced by ESLint (`eslint.config.js`) — `npm run lint` 
 
 - No `for..in` — use `for..of`.
 - No `.forEach(arrow)` — use `for..of`.
-- No `console.log`.
+- No `console.log`. Console levels: `console.debug` is the verbose-diagnostics level (e.g. WebRTC traces) — it is
+  silenced app-wide in production builds at startup (`silenceDebugConsole` from `@/shared/logger`, wired in
+  `src/index.tsx`); `console.info` / `warn` / `error` are meaningful output and stay in every build.
 - Non-UI files: `function` declarations.
 - React components: arrow functions.
 

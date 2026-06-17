@@ -6,6 +6,7 @@ import { Subject } from 'rxjs';
 import { type Chain, chainRegistry } from '@/domains/network';
 
 import { createReconnectAwareSubscribe } from './reconnectAwareSubscribe';
+import { shouldSurfaceSubmitError } from './submitErrorGate';
 
 // The people chain comes from Remote Config (async), but the provider and
 // reconnect listener are sync. Since the renderer can issue queries before
@@ -113,7 +114,7 @@ export const statementStoreAdapter: Adapter = {
     return getBaseAdapter()
       .submitStatement(statement)
       .mapErr(e => {
-        submitError$.next(e);
+        if (shouldSurfaceSubmitError(e)) submitError$.next(e);
         return e;
       });
   },

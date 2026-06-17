@@ -283,4 +283,75 @@ describe('startDeviceSyncOrchestrator', () => {
     await new Promise(r => setTimeout(r, 200));
     expect(liveRtcCount).toBe(countWhileRunning);
   });
+
+  it('does not spawn or submit when the start signal is already aborted (superseded mid-flight)', async () => {
+    const controller = new AbortController();
+    controller.abort();
+    const postStatement = vi.fn(async () => {});
+
+    const handle = await startDeviceSyncOrchestrator({
+      ownDevice: {
+        statementAccountId: new Uint8Array(32).fill(0x01),
+        encryptionPrivateKey: OWN_ENC_PRIV,
+        encryptionPublicKey: OWN_ENC_PUB,
+      },
+      fetchInitialPeers: () =>
+        Promise.resolve([
+          {
+            statementAccountId: new Uint8Array(32).fill(0x02),
+            encryptionPublicKey: PEER_ENC_PUB,
+          },
+        ]),
+      subscribeStatementTopic: () => new Subject<{ topic: Uint8Array; data: Uint8Array; signer: Uint8Array }>().asObservable(),
+      postStatement,
+      resolveConsumerInfo: () => Promise.resolve(null),
+      ownUserId: '5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty',
+      iceConfig: {},
+      signal: controller.signal,
+    });
+
+    // A superseded start seeds the repository but never spawns a connection or
+    // submits signaling — so it can't race a newer orchestrator on the account.
+    expect(liveRtcCount).toBe(0);
+    expect(postStatement).not.toHaveBeenCalled();
+
+    handle.stop();
+  });
+
+  it('tears down a running orchestrator when the start signal aborts after spawn', async () => {
+    const controller = new AbortController();
+
+    const handle = await startDeviceSyncOrchestrator({
+      ownDevice: {
+        statementAccountId: new Uint8Array(32).fill(0x01),
+        encryptionPrivateKey: OWN_ENC_PRIV,
+        encryptionPublicKey: OWN_ENC_PUB,
+      },
+      fetchInitialPeers: () =>
+        Promise.resolve([
+          {
+            statementAccountId: new Uint8Array(32).fill(0x02),
+            encryptionPublicKey: PEER_ENC_PUB,
+          },
+        ]),
+      subscribeStatementTopic: () => new Subject<{ topic: Uint8Array; data: Uint8Array; signer: Uint8Array }>().asObservable(),
+      postStatement: async () => {},
+      resolveConsumerInfo: () => Promise.resolve(null),
+      ownUserId: '5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty',
+      iceConfig: {},
+      handshakeTimeoutMs: 80,
+      signal: controller.signal,
+    });
+
+    expect(liveRtcCount).toBe(1);
+
+    // Aborting tears the spawned connection down and stops respawn timers — no
+    // further PCs are built (equivalent to handle.stop()).
+    controller.abort();
+    const countAtAbort = liveRtcCount;
+    await new Promise(r => setTimeout(r, 200));
+    expect(liveRtcCount).toBe(countAtAbort);
+
+    handle.stop();
+  });
 });

@@ -5,9 +5,9 @@ import { Loader, Smartphone } from 'lucide-react';
 import { useCallback, useEffect, useMemo } from 'react';
 
 import PolkadotLogo from '@/shared/assets/images/logo.svg?jsx';
-import { Spinner, WindowDragRegion } from '@/shared/components';
+import { Spinner } from '@/shared/components';
 import { Slot } from '@/shared/di';
-import { reloadApp } from '@/shared/env';
+import { isProductionBuild, reloadApp } from '@/shared/env';
 import { useRxState } from '@/shared/rxstate';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
@@ -132,7 +132,10 @@ export const OnboardingScreen = () => {
   };
 
   return (
-    <WindowDragRegion className="flex min-h-screen w-screen flex-col items-center justify-center overflow-y-auto bg-bg-surface-nested pt-6 pb-2">
+    <div
+      className="flex min-h-screen w-screen flex-col items-center justify-center overflow-y-auto bg-bg-surface-nested pt-6 pb-2"
+      style={{ appRegion: 'drag' }}
+    >
       <div className="mb-4 w-full max-w-300 px-6 empty:hidden" style={{ appRegion: 'no-drag' }}>
         <Slot id={onboardingTopSlot} props={{ qrPayload, environmentId: settings.environmentId }} />
       </div>
@@ -158,32 +161,34 @@ export const OnboardingScreen = () => {
         </div>
 
         <div className="flex w-full max-w-100.5 flex-col items-center gap-2">
-          <div className="h-17 w-full rounded-3xl border border-general-border bg-bg-surface-container p-3.75 shadow-[0px_1px_2px_0px_rgba(0,0,0,0.16)]">
-            <div className="flex h-9 items-center rounded-[10px] bg-bg-surface-nested p-1">
-              {environments.map(env => {
-                const isActive = settings.environmentId === env.id;
+          {!isProductionBuild() && environments.length > 1 && (
+            <div className="h-17 w-full rounded-3xl border border-general-border bg-bg-surface-container p-3.75 shadow-[0px_1px_2px_0px_rgba(0,0,0,0.16)]">
+              <div className="flex h-9 items-center rounded-[10px] bg-bg-surface-nested p-1">
+                {environments.map(env => {
+                  const isActive = settings.environmentId === env.id;
 
-                return (
-                  <button
-                    key={env.id}
-                    data-testid={`${TEST_IDS.networkButton}-${env.id}`}
-                    className={cnTw(
-                      'h-7 flex-1 rounded-md px-2 text-sm font-medium transition',
-                      isActive
-                        ? 'bg-bg-action-primary-inverted text-fg-primary shadow-[0px_1px_3px_0px_rgba(0,0,0,0.1),0px_1px_2px_-1px_rgba(0,0,0,0.1)]'
-                        : 'bg-transparent text-fg-secondary',
-                      !isActive && !isNetworkSelectionDisabled && 'hover:text-fg-primary',
-                      isNetworkSelectionDisabled && 'cursor-not-allowed opacity-50',
-                    )}
-                    disabled={isNetworkSelectionDisabled}
-                    onClick={() => handleEnvironmentChange(env.id)}
-                  >
-                    {env.name}
-                  </button>
-                );
-              })}
+                  return (
+                    <button
+                      key={env.id}
+                      data-testid={`${TEST_IDS.networkButton}-${env.id}`}
+                      className={cnTw(
+                        'h-7 flex-1 rounded-md px-2 text-sm font-medium transition',
+                        isActive
+                          ? 'bg-bg-action-primary-inverted text-fg-primary shadow-[0px_1px_3px_0px_rgba(0,0,0,0.1),0px_1px_2px_-1px_rgba(0,0,0,0.1)]'
+                          : 'bg-transparent text-fg-secondary',
+                        !isActive && !isNetworkSelectionDisabled && 'hover:text-fg-primary',
+                        isNetworkSelectionDisabled && 'cursor-not-allowed opacity-50',
+                      )}
+                      disabled={isNetworkSelectionDisabled}
+                      onClick={() => handleEnvironmentChange(env.id)}
+                    >
+                      {env.name}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
-          </div>
+          )}
 
           {/* QR Code */}
           <div
@@ -198,15 +203,17 @@ export const OnboardingScreen = () => {
           </div>
         </div>
       </div>
-      <div
-        data-testid={TEST_IDS.onboardingSkip}
-        className="mt-4 flex items-center justify-center space-x-4"
-        style={{ appRegion: 'no-drag' }}
-      >
-        <Button variant="ghost" onClick={() => navigate({ to: '/dashboard' })}>
-          {t('common.action.skip')}
-        </Button>
-      </div>
-    </WindowDragRegion>
+      {!isProductionBuild() && (
+        <div
+          data-testid={TEST_IDS.onboardingSkip}
+          className="mt-4 flex items-center justify-center space-x-4"
+          style={{ appRegion: 'no-drag' }}
+        >
+          <Button variant="ghost" onClick={() => navigate({ to: '/dashboard' })}>
+            {t('common.action.skip')}
+          </Button>
+        </div>
+      )}
+    </div>
   );
 };

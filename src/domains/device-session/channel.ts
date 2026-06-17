@@ -23,7 +23,7 @@ import { SyncSignalingEnvelopeCodec } from '@/shared/peer-channel';
 /* eslint-disable-next-line boundaries/dependencies -- StructuredStatementData
    is the cross-feature signaling envelope (chat/video/sync all use it). It
    lives in the chat module today; lifting it into shared is a follow-up. */
-import { StructuredStatementData } from '@/domains/chat/p2p/chatRequestCodec';
+import { StructuredStatementData } from '@/domains/chat/p2p/requests/schemas';
 
 import { decryptDeviceSessionPayload, encryptDeviceSessionPayload } from './session';
 import { deriveDeviceSessionTopic } from './topics';

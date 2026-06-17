@@ -1,15 +1,16 @@
 import { type ChatMessageStatus, type MessageContent } from './types';
 
 /**
- * `deviceChatAccepted` and `deviceAdded` rows exist only to replicate the
- * peer's device info to the user's other paired devices via `device-sync`.
- * They carry no user-facing content: `getPlainText`/`getMessagePreview` both
- * return '' for them, so they must be excluded from every visible surface
- * (chat bubbles, room-list preview, last-message timestamp) — otherwise they
- * render as an empty bubble and bump the room's last-activity time.
+ * `deviceChatAccepted`, `deviceAdded` and `token` rows exist only to replicate
+ * peer metadata (device info, push token) to the user's other paired devices via
+ * `device-sync`. They carry no user-facing content: `getPlainText`/
+ * `getMessagePreview` both return '' for them, so they must be excluded from
+ * every visible surface (chat bubbles, room-list preview, last-message
+ * timestamp) — otherwise they render as an empty bubble and bump the room's
+ * last-activity time.
  */
 function isSyncCarrier(content: MessageContent): boolean {
-  return content.type === 'deviceChatAccepted' || content.type === 'deviceAdded';
+  return content.type === 'deviceChatAccepted' || content.type === 'deviceAdded' || content.type === 'token';
 }
 
 const OUTGOING_STATE_RANK: Record<string, number> = { new: 0, sent: 1, delivered: 2 };

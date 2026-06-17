@@ -167,7 +167,7 @@ Then('the webview pathname ends with {string}', async ({ electronApp }, suffix: 
  * Read window.location.pathname from the link-tests webview, including when it
  * is backgrounded (parent container has display:none). Filters webviews by
  * their `partition` attribute, which the host sets to
- * `sandbox-<encoded-identifier>` — that's the only stable signal that survives
+ * `sandbox-app-<encoded-identifier>` (buildSandboxPartition) — that's the only stable signal that survives
  * `<aria-hidden="true">` flips and lets us pick the right tab when the
  * dashboard has remote-widget webviews of its own.
  */
@@ -179,7 +179,7 @@ async function readBackgroundedPathname(window: Page, identifier: string): Promi
       getAttribute: (name: string) => string | null;
     };
 
-    const expectedPartition = `sandbox-${encodeURIComponent(id)}`;
+    const expectedPartition = `sandbox-app-${encodeURIComponent(id)}`;
     const all = Array.from(document.querySelectorAll<Wv>('webview'));
     const candidates = all.filter(wv => wv.getAttribute('partition') === expectedPartition);
     if (candidates.length === 0) return null;
@@ -210,7 +210,7 @@ async function fireBackgroundedPushState(window: Page, identifier: string, path:
         getAttribute: (name: string) => string | null;
       };
 
-      const expectedPartition = `sandbox-${encodeURIComponent(id)}`;
+      const expectedPartition = `sandbox-app-${encodeURIComponent(id)}`;
       const all = Array.from(document.querySelectorAll<Wv>('webview'));
       const target = all.find(wv => wv.getAttribute('partition') === expectedPartition);
       if (!target) throw new Error(`No webview with partition ${expectedPartition}`);

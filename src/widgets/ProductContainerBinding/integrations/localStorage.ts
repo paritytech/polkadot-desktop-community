@@ -19,6 +19,8 @@ export function useLocalStorage(container: Container, identifier: string) {
   useEffect(() => {
     const getProductName = () => productRef()?.baseName ?? identifier;
     const rateLimiterLocalStorageRead = createDefaultRateLimiter({
+      maxQueuedRequests: 100,
+      strategy: 'queue',
       onRateLimited: createOnRateLimited(identifier, getProductName, 'localStorageRead', tRef()),
       mapErr: reason => new StorageErr.Unknown({ reason }),
     });
@@ -27,29 +29,29 @@ export function useLocalStorage(container: Container, identifier: string) {
       mapErr: reason => new StorageErr.Unknown({ reason }),
     });
 
-    const cleanupRead = container.handleLocalStorageRead((key, { ok, err }) =>
-      rateLimiterLocalStorageRead.schedule(() =>
+    const cleanupRead = container.handleLocalStorageRead((key, { ok, err }) => {
+      return rateLimiterLocalStorageRead.schedule(() =>
         fromPromise(productLocalStorageRepository.readEntry(identifier, key), e => e)
           .andThen(value => ok(value))
           .orElse(() => err(new StorageErr.Unknown({ reason: 'Failed to read from storage' }))),
-      ),
-    );
+      );
+    });
 
-    const cleanupWrite = container.handleLocalStorageWrite(([key, value], { ok, err }) =>
-      rateLimiterLocalStorageWrite.schedule(() =>
+    const cleanupWrite = container.handleLocalStorageWrite(([key, value], { ok, err }) => {
+      return rateLimiterLocalStorageWrite.schedule(() =>
         fromPromise(productLocalStorageRepository.writeEntry(identifier, key, value), e => e)
           .andThen(() => ok(undefined))
           .orElse(() => err(new StorageErr.Unknown({ reason: 'Failed to write to storage' }))),
-      ),
-    );
+      );
+    });
 
-    const cleanupClear = container.handleLocalStorageClear((key, { ok, err }) =>
-      rateLimiterLocalStorageWrite.schedule(() =>
+    const cleanupClear = container.handleLocalStorageClear((key, { ok, err }) => {
+      return rateLimiterLocalStorageWrite.schedule(() =>
         fromPromise(productLocalStorageRepository.clearEntry(identifier, key), e => e)
           .andThen(() => ok(undefined))
           .orElse(() => err(new StorageErr.Unknown({ reason: 'Failed to clear storage' }))),
-      ),
-    );
+      );
+    });
 
     return () => {
       cleanupRead();

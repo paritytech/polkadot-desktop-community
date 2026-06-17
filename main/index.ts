@@ -18,7 +18,6 @@ import {
 } from './factories/protocol';
 import { setAutoUpdaterMainWindow, setupAutoUpdater } from './factories/updater';
 import { createWindow } from './factories/window';
-import { setupWindowDrag } from './factories/window-drag';
 import { setupNotifications } from './notifications';
 import { setupSandbox } from './sandbox';
 import { ENVIRONMENT } from './shared/constants/environment';
@@ -74,8 +73,6 @@ runAppSingleInstance(async () => {
   setupWindowCrashRecovery(mainWindow);
   setupPowerMonitor(mainWindow);
   setupAutoUpdater(mainWindow);
-  // Registered once; the closure tracks the current window across re-creations.
-  setupWindowDrag(() => mainWindow);
 
   // Windows / Linux cold start: the deep-link URL is already in process.argv.
   // processDeepLink will store the route for the renderer to pull on mount.

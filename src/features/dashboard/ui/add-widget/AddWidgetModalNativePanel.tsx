@@ -2,14 +2,14 @@ import { ScrollArea, toast } from '@novasamatech/tr-ui';
 import { useEffect, useMemo, useState } from 'react';
 
 import { useTranslation } from '@/shared/translation';
-import { type DashboardCard, type WidgetSizeIconVariant } from '@/domains/application';
+import { type DashboardCard, type WidgetSizeIconVariant, dashboardLayoutService } from '@/domains/application';
 import { ProductDialogHeader } from '@/widgets/ProductDialogHeader';
 import { WIDGET_SIZE_CONFIG } from '../../constants';
 import { type AddableDashboardCard } from '../../di';
 
 import { findNativeDashboardPlacement } from './addWidgetList';
 import { useWidgetAddedToast } from './useWidgetAddedToast';
-import { type WidgetCardDefinition, getVariantFromGridSize } from './widgetModalConstants';
+import { type WidgetCardDefinition } from './widgetModalConstants';
 import { AddWidgetModalCard } from './widgetModalParts';
 
 export type AddWidgetModalNativePanelProps = {
@@ -46,7 +46,7 @@ export const AddWidgetModalNativePanel = ({
 
     if (dashboardPlacement) {
       setSelectedVariants({
-        [targetCardId]: getVariantFromGridSize(dashboardPlacement.w, dashboardPlacement.h),
+        [targetCardId]: dashboardLayoutService.getVariantFromGridSize(dashboardPlacement.w, dashboardPlacement.h),
       });
       return;
     }

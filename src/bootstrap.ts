@@ -3,7 +3,7 @@ import { AccountId } from '@polkadot-api/substrate-bindings';
 
 import { AUTOTEST_ENABLED, E2E_TEST_ENABLED } from '@/shared/autotest';
 import { deleteLegacyDatabases } from '@/shared/database';
-import { isDev, isElectron, isWeb } from '@/shared/env';
+import { isDev, isElectron, isProductionBuild, isWeb } from '@/shared/env';
 import { registerFeatures } from '@/shared/feature';
 import {
   environmentService,
@@ -15,12 +15,25 @@ import {
   migrateLegacySsoSessions,
   setActivePeopleChain,
   watchHostPappSessionTeardown,
+  web3SummitGateModeSchema,
+  web3SummitGateService,
 } from '@/domains/application';
-import { createPeerResolver } from '@/domains/chat/p2p/peerResolver';
-import { type ConsumerInfoLookup, createDeviceSyncTransport, startDeviceSyncIfReady } from '@/domains/device-sync';
+import { peerGateway } from '@/domains/chat/p2p/peer/gateway';
+import {
+  type ConsumerInfoLookup,
+  createDeviceSyncTransport,
+  startDeviceSyncIfReady,
+  startDeviceSyncOnIdentity,
+} from '@/domains/device-sync';
 import { chainResource, initChainConnectionLifecycle } from '@/domains/network';
 import { bootstrapProduct, offlineCacheUseCase, resolveProductUseCase } from '@/domains/product';
-import { bootstrapRemoteConfig, refreshRemoteConfig, remoteConfigReady } from '@/domains/remote-config';
+import {
+  REMOTE_CONFIG_KEYS,
+  bootstrapRemoteConfig,
+  refreshRemoteConfig,
+  remoteConfigGateway,
+  remoteConfigReady,
+} from '@/domains/remote-config';
 import { userIdentity$ } from '@/domains/sso';
 import { productManagementUseCase } from '@/aggregates/product-management';
 import { appShellFeature } from '@/features/app-shell';
@@ -43,14 +56,17 @@ import { themeToggleFeature } from '@/features/theme-toggle';
 import { updateCheckFeature } from '@/features/update-check';
 import { userManagerFeature } from '@/features/user-manager';
 
+export type BootstrapOutcome = { status: 'ready' } | { status: 'w3s-ended' };
+
 // Idempotency guard: re-mounting <App/> must NOT spawn a second device-sync
 // orchestrator (duplicate state machines → duplicate Updates with id=1..N).
-let bootstrapped = false;
+// Caching the in-flight promise (not just a completed flag) coalesces any
+// re-entry — even mid-flight — onto the single original run.
+let bootstrapPromise: Promise<BootstrapOutcome> | null = null;
 
-export const bootstrap = async () => {
-  if (bootstrapped) return;
-  bootstrapped = true;
+export const bootstrap = (): Promise<BootstrapOutcome> => (bootstrapPromise ??= runBootstrap());
 
+const runBootstrap = async (): Promise<BootstrapOutcome> => {
   // All config comes from Remote Config (no fallback), so await the first
   // fetch/activate before anything reads config.
   bootstrapRemoteConfig({
@@ -62,6 +78,13 @@ export const bootstrap = async () => {
     minimumFetchIntervalMillis: isDev() ? 0 : undefined,
   });
   await remoteConfigReady;
+
+  const gateMode = web3SummitGateService.resolveGateMode(
+    remoteConfigGateway.tryGetString(REMOTE_CONFIG_KEYS.w3sGateMode, web3SummitGateModeSchema),
+  );
+  if (web3SummitGateService.isW3sEnded(gateMode)) {
+    return { status: 'w3s-ended' };
+  }
 
   // Seed the statement-store people chain. On failure, reject its deferred (so
   // pending queries fail fast) and rethrow — App renders the error screen.
@@ -97,7 +120,7 @@ export const bootstrap = async () => {
   // V2 multi-device identity is owned by the SDK (host-papp); the app reads it
   // back via `@/domains/application`. The device-sync/SSO stack is Electron-only.
   if (isElectron()) {
-    const peerResolver = await createPeerResolver(lazyClient, environmentService.getActiveId());
+    const peerResolver = await peerGateway.createPeerResolver(lazyClient, environmentService.getActiveId());
 
     const resolveConsumerInfo: ConsumerInfoLookup = async accountId => {
       const [chatKey, username] = await Promise.all([
@@ -112,69 +135,58 @@ export const bootstrap = async () => {
     // handshake mid-session emits a new userIdentity here, so the orchestrator
     // starts without waiting for an app relaunch. The device identity is only
     // present once paired, so we load it per-identity from the SDK.
-    let currentStop: VoidFunction | null = null;
-    let currentToken = 0;
-    userIdentity$.value$.subscribe(userIdentity => {
-      const token = ++currentToken;
-      if (currentStop) {
-        currentStop();
-        currentStop = null;
-      }
-      if (!userIdentity) return;
+    //
+    // `startDeviceSyncOnIdentity` owns the start/stop sequencing: it tears down
+    // the previous orchestrator before starting the next (even mid-start) and
+    // collapses the hydrate+pair double-emit of the SAME identity — so two
+    // orchestrators (and their two expiry allocators) never race on the same
+    // statement account. This factory keeps only the app-boundary wiring:
+    // device load, transport creation, and env-derived ICE config.
+    startDeviceSyncOnIdentity({
+      identity$: userIdentity$.value$,
+      start: async (userIdentity, signal) => {
+        const device = await loadDeviceIdentity();
+        // A newer identity superseded us while loading the device — drop this
+        // start before it creates a transport/orchestrator that would race.
+        if (signal.aborted) return () => {};
+        if (!device) {
+          console.error('[bootstrap] user identity present but no device identity in the SDK — skipping device-sync');
+          return () => {};
+        }
 
-      void loadDeviceIdentity()
-        .then(device => {
-          // Identity changed (or cleared) while the device load was in flight —
-          // a newer subscription pass owns the world now.
-          if (token !== currentToken) return;
-          if (!device) {
-            console.error('[bootstrap] user identity present but no device identity in the SDK — skipping device-sync');
-            return;
-          }
+        const transport = createDeviceSyncTransport(device.statementAccountSeed);
 
-          const transport = createDeviceSyncTransport(device.statementAccountSeed);
+        // VITE_WEBRTC_TURN_TTL (seconds) overrides the credential lifetime; unset/invalid → NaN → builder default.
+        const turnTtl = Number(import.meta.env['VITE_WEBRTC_TURN_TTL']);
 
-          // VITE_WEBRTC_TURN_TTL (seconds) overrides the credential lifetime; unset/invalid → NaN → builder default.
-          const turnTtl = Number(import.meta.env['VITE_WEBRTC_TURN_TTL']);
-
-          return startDeviceSyncIfReady({
-            device,
-            userIdentity,
-            // Seed with the authorising PApp device captured at handshake; the
-            // full roster lands via `SyncEntity.Devices` once the DC is open.
-            fetchInitialPeers: () =>
-              Promise.resolve([
-                {
-                  statementAccountId: userIdentity.peerDeviceStatementAccountId,
-                  encryptionPublicKey: userIdentity.peerDeviceEncPubKey,
-                },
-              ]),
-            subscribeStatementTopic: transport.subscribeStatementTopic,
-            postStatement: transport.postStatement,
-            resolveConsumerInfo,
-            // Must match the chat manager's `userId` (which is `SS58(device.statementAccountPublicKey)`
-            // for V2 sessions — the V2 session's `localAccount`) so synced rooms land under the same
-            // `P2PRoom.userId` the chat-list hook queries against. Using `identitySr25519PublicKey`
-            // here writes synced rooms with a userId the UI never reads.
-            ownUserId: AccountId().dec(device.statementAccountPublicKey),
-            iceConfig: {
-              turnHost: import.meta.env['VITE_WEBRTC_TURN_HOST'],
-              turnSecret: import.meta.env['VITE_WEBRTC_TURN_SECRET'],
-              turnTtlSeconds: turnTtl > 0 ? turnTtl : undefined,
-            },
-          }).then(stop => {
-            if (token !== currentToken) {
-              // Identity changed (or cleared) while we were starting — drop
-              // this stale handle so the newer subscription owns the world.
-              stop();
-              return;
-            }
-            currentStop = stop;
-          });
-        })
-        .catch((error: unknown) => {
-          console.error('Failed to start device-sync orchestrator:', error);
+        return startDeviceSyncIfReady({
+          device,
+          userIdentity,
+          // Seed with the authorising PApp device captured at handshake; the
+          // full roster lands via `SyncEntity.Devices` once the DC is open.
+          fetchInitialPeers: () =>
+            Promise.resolve([
+              {
+                statementAccountId: userIdentity.peerDeviceStatementAccountId,
+                encryptionPublicKey: userIdentity.peerDeviceEncPubKey,
+              },
+            ]),
+          subscribeStatementTopic: transport.subscribeStatementTopic,
+          postStatement: transport.postStatement,
+          resolveConsumerInfo,
+          // Must match the chat manager's `userId` (which is `SS58(device.statementAccountPublicKey)`
+          // for V2 sessions — the V2 session's `localAccount`) so synced rooms land under the same
+          // `P2PRoom.userId` the chat-list hook queries against. Using `identitySr25519PublicKey`
+          // here writes synced rooms with a userId the UI never reads.
+          ownUserId: AccountId().dec(device.statementAccountPublicKey),
+          iceConfig: {
+            turnHost: import.meta.env['VITE_WEBRTC_TURN_HOST'],
+            turnSecret: import.meta.env['VITE_WEBRTC_TURN_SECRET'],
+            turnTtlSeconds: turnTtl > 0 ? turnTtl : undefined,
+          },
+          signal,
         });
+      },
     });
 
     hydrateUserIdentity().catch((error: unknown) => {
@@ -194,18 +206,16 @@ export const bootstrap = async () => {
     offlineAccessFeature,
     chatFeature,
     settingsFeature,
-    updateCheckFeature,
     productWidgetFeature,
     productWorkerFeature,
     userManagerFeature,
     themeToggleFeature,
     productSettingsFeature,
     permissionSettingsFeature,
-    statementStoreNetworkFeature,
     onboardingFeature,
-    customChainsFeature,
     signingBotAutopairFeature,
     notificationsFeature,
+    ...(isProductionBuild() ? [] : [updateCheckFeature, statementStoreNetworkFeature, customChainsFeature]),
   ]);
 
   // Cancel notifications for products uninstalled while the app was closed.
@@ -229,6 +239,8 @@ export const bootstrap = async () => {
   void offlineCacheUseCase.sweepOrphanedArchives();
 
   persist();
+
+  return { status: 'ready' };
 };
 
 const persist = () => {

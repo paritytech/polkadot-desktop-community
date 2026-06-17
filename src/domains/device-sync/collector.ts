@@ -13,8 +13,7 @@ import { type CodecType } from 'scale-ts';
 
 /* eslint-disable boundaries/dependencies -- direct sub-path imports avoid transitive wasm load (verifiablejs) via @/domains/chat and @/domains/contact roots */
 import { environmentUseCase } from '@/domains/application';
-import { listMessagesChangedSince } from '@/domains/chat/p2p/listChanged';
-import { p2pChatDatabase } from '@/domains/chat/p2p/repository';
+import { listMessagesChangedSince, p2pChatDatabase } from '@/domains/chat/p2p/repository';
 import {
   type ChatMessageStatus,
   type FileAttachment,
@@ -102,6 +101,11 @@ function mapContentToWire(content: MessageContent, defaultEndpoint: string): Wir
       return { tag: 'contactAdded', value: undefined };
     case 'leftChat':
       return { tag: 'leftChat', value: undefined };
+    case 'token':
+      // Peer push token rides device-sync as a `token` Message (Android parity:
+      // no statement-type deny-list — Token passes through). `content.token` is
+      // stored without the `0x` prefix; the wire `Hex` codec wants it prefixed.
+      return { tag: 'token', value: { token: `0x${content.token}`, platform: content.platform } };
     case 'deviceChatAccepted':
       return {
         tag: 'deviceChatAccepted',

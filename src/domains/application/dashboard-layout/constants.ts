@@ -1,6 +1,6 @@
 import { type ResizeHandleAxis } from 'react-grid-layout';
 
-import { type DashboardCard } from './types';
+import { type DashboardCard, type WidgetSizeIconVariant } from './types';
 
 // Layout grid constants
 export const ALLOWED_WIDGET_HEIGHTS = [2, 4, 8];
@@ -8,6 +8,29 @@ export const DEFAULT_RESIZE_HANDLES: ResizeHandleAxis[] = ['s'];
 export const MAX_WIDGET_WIDTH = 2;
 export const MAX_WIDGET_HEIGHT = 8;
 export const MAX_GRID_ROWS = 8;
+
+// Canonical grid footprint for each size variant — the single source of truth
+// shared by the resize menu, the add-widget modal, and the size-hint-derived
+// layout bounds in the service. These are real dashboard grid cells (cols × rows).
+export const WIDGET_VARIANT_GRID_SIZE: Record<WidgetSizeIconVariant, { w: number; h: number }> = {
+  small: { w: 1, h: 2 },
+  medium: { w: 1, h: 4 },
+  large: { w: 1, h: 8 },
+  horizontal: { w: 2, h: 4 },
+};
+
+// A widget's declared `height` hints are size identifiers, NOT grid rows: the
+// widget lists which sizes it supports. `0` opts into horizontal (only valid
+// together with `width === 2`); the rest map to the vertical variants.
+export const HEIGHT_HINT_TO_VARIANT: Record<number, WidgetSizeIconVariant> = {
+  1: 'small',
+  2: 'medium',
+  4: 'large',
+};
+
+export const HORIZONTAL_HEIGHT_MARKER = 0;
+
+export const SIZE_VARIANT_ORDER: WidgetSizeIconVariant[] = ['small', 'medium', 'large', 'horizontal'];
 
 export const DEFAULT_DASHBOARD_WIDGET_PRODUCT_ID = 'browse.dot';
 

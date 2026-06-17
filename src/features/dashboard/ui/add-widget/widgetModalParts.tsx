@@ -66,6 +66,7 @@ export const AddWidgetModalCard = ({
   copy,
   selectedVariant,
   isWidgetAlreadyOnDashboard,
+  hasSupportedSizes = true,
   onSelectSize,
   onAdd,
   onOpen,
@@ -75,6 +76,7 @@ export const AddWidgetModalCard = ({
   copy?: AddWidgetModalCardCopy;
   selectedVariant: WidgetSizeIconVariant;
   isWidgetAlreadyOnDashboard: boolean;
+  hasSupportedSizes?: boolean;
   onSelectSize: (variant: WidgetSizeIconVariant) => void;
   onAdd: VoidFunction;
   onOpen: VoidFunction;
@@ -95,28 +97,36 @@ export const AddWidgetModalCard = ({
           <div className="text-sm leading-[18px] font-normal text-fg-secondary">{description}</div>
         </div>
 
-        <div className="flex w-full items-center justify-between gap-4 pb-0.5">
-          <div className="flex h-9 shrink-0 flex-nowrap items-center gap-1 rounded-[10px] bg-bg-surface-nested p-1">
-            {card.sizeVariants.map(variant => (
-              <ModalSizeChip
-                key={variant}
-                label={t(WIDGET_SIZE_CONFIG[variant].labelKey)}
-                disabled={isWidgetAlreadyOnDashboard}
-                isSelected={selectedVariant === variant}
-                onClick={() => onSelectSize(variant)}
-              />
-            ))}
-          </div>
+        {hasSupportedSizes ? (
+          <div className="flex w-full items-center justify-between gap-4 pb-0.5">
+            <div className="flex h-9 shrink-0 flex-nowrap items-center gap-1 rounded-[10px] bg-bg-surface-nested p-1">
+              {card.sizeVariants.map(variant => (
+                <ModalSizeChip
+                  key={variant}
+                  label={t(WIDGET_SIZE_CONFIG[variant].labelKey)}
+                  disabled={isWidgetAlreadyOnDashboard}
+                  isSelected={selectedVariant === variant}
+                  onClick={() => onSelectSize(variant)}
+                />
+              ))}
+            </div>
 
-          <Button
-            type="button"
-            size="default"
-            aria-label={isWidgetAlreadyOnDashboard ? t('feature.dashboard.addWidget.open') : t('feature.dashboard.addWidget.add')}
-            onClick={isWidgetAlreadyOnDashboard ? onOpen : onAdd}
-          >
-            {isWidgetAlreadyOnDashboard ? t('feature.dashboard.addWidget.open') : t('feature.dashboard.addWidget.add')}
-          </Button>
-        </div>
+            <Button
+              type="button"
+              size="default"
+              aria-label={
+                isWidgetAlreadyOnDashboard ? t('feature.dashboard.addWidget.open') : t('feature.dashboard.addWidget.add')
+              }
+              onClick={isWidgetAlreadyOnDashboard ? onOpen : onAdd}
+            >
+              {isWidgetAlreadyOnDashboard ? t('feature.dashboard.addWidget.open') : t('feature.dashboard.addWidget.add')}
+            </Button>
+          </div>
+        ) : (
+          <div className="flex w-full items-center pb-0.5">
+            <p className="text-sm leading-5 font-normal text-fg-secondary">{t('feature.dashboard.addWidget.noSupportedSizes')}</p>
+          </div>
+        )}
       </div>
     </article>
   );

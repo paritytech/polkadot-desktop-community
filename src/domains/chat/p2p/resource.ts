@@ -1,6 +1,7 @@
 import { liveQuery } from 'dexie';
 import { produce } from 'immer';
 import { Observable, from, map, of, switchMap, take, tap } from 'rxjs';
+import * as v from 'valibot';
 
 import { createStreamResource } from '@/shared/resource';
 /* eslint-disable-next-line boundaries/dependencies -- leaf signal module; importing
@@ -10,9 +11,22 @@ import { signalLocalChange } from '@/domains/device-sync/localChangeSignal';
 import { chatMessageService } from '../session/service';
 import { type ChatMessage } from '../session/types';
 
-import { stampMessage, stampRequest, stampRoom } from './listChanged';
 import { p2pChatDatabase } from './repository';
+import { P2PChatRequestSchema, P2PRoomSchema, PersistedChatMessageSchema } from './schemas';
+import { p2pService } from './service';
 import { type P2PChatRequest, type P2PRoom } from './types';
+
+// Persisted rows read back from Dexie cross a trust boundary — filter out
+// anything that fails its schema instead of letting one corrupt row poison
+// the stream (see `schemas.ts § Persisted Dexie rows`).
+function keepValidRows<T>(rows: T[], schema: v.GenericSchema, table: string): T[] {
+  const valid = rows.filter(row => v.is(schema, row));
+  if (valid.length !== rows.length) {
+    console.warn('[p2p-chat] dropped %d corrupt %s row(s) on read', rows.length - valid.length, table);
+  }
+
+  return valid;
+}
 
 // ── Messages ────────────────────────────────────────────────────────────
 
@@ -28,7 +42,7 @@ export const p2pMessagesResource = createStreamResource<{ sessionId: string }>({
           .where('sessionId')
           .equals(sessionId)
           .toArray()
-          .then(x => x.sort(sortMessages));
+          .then(x => keepValidRows(x, PersistedChatMessageSchema, 'message').sort(sortMessages));
 
       const query = liveQuery(getQuery);
       const subscription = query.subscribe(x => s.next(x));
@@ -58,7 +72,7 @@ export function createP2PMessage(message: ChatMessage): Observable<{ messageId: 
       const status =
         existing && !chatMessageService.shouldUpgradeStatus(existing.status, message.status) ? existing.status : message.status;
 
-      return from(p2pChatDatabase.messages.put(stampMessage({ ...message, status })));
+      return from(p2pChatDatabase.messages.put(p2pService.stampMessage({ ...message, status })));
     }),
     tap(() => signalLocalChange()),
     map(() => ({ messageId: message.messageId })),
@@ -107,7 +121,9 @@ export function markP2PMessagesAsRead({ sessionId }: { sessionId: string }): Obs
           status: m.status.direction === 'incoming' ? { ...m.status, state: 'seen' as const } : m.status,
         })),
     ),
-    switchMap(messages => (messages.length ? from(p2pChatDatabase.messages.bulkPut(messages.map(stampMessage))) : of(null))),
+    switchMap(messages =>
+      messages.length ? from(p2pChatDatabase.messages.bulkPut(messages.map(p2pService.stampMessage))) : of(null),
+    ),
     tap(() => signalLocalChange()),
     map(() => null),
     take(1),
@@ -121,7 +137,12 @@ export const p2pRoomsResource = createStreamResource<{ userId: string }>({
 })
   .subscribe<P2PRoom[]>(({ userId }) => {
     return new Observable<P2PRoom[]>(s => {
-      const getQuery = () => p2pChatDatabase.rooms.where('userId').equals(userId).toArray();
+      const getQuery = () =>
+        p2pChatDatabase.rooms
+          .where('userId')
+          .equals(userId)
+          .toArray()
+          .then(x => keepValidRows(x, P2PRoomSchema, 'room'));
 
       const query = liveQuery(getQuery);
       const subscription = query.subscribe(x => s.next(x));
@@ -157,7 +178,7 @@ export function createP2PRoom(room: P2PRoom): Observable<{ room: P2PRoom; status
         return from([{ room: ex, status: 'Exists' as const }]);
       }
 
-      return from(p2pChatDatabase.rooms.add(stampRoom(room))).pipe(map(() => ({ room, status: 'New' as const })));
+      return from(p2pChatDatabase.rooms.add(p2pService.stampRoom(room))).pipe(map(() => ({ room, status: 'New' as const })));
     }),
     take(1),
   );
@@ -184,7 +205,12 @@ export const p2pRequestsResource = createStreamResource<{ userId: string }>({
 })
   .subscribe<P2PChatRequest[]>(({ userId }) => {
     return new Observable<P2PChatRequest[]>(s => {
-      const getQuery = () => p2pChatDatabase.requests.where('userId').equals(userId).toArray();
+      const getQuery = () =>
+        p2pChatDatabase.requests
+          .where('userId')
+          .equals(userId)
+          .toArray()
+          .then(x => keepValidRows(x, P2PChatRequestSchema, 'request'));
 
       const query = liveQuery(getQuery);
       const subscription = query.subscribe(x => s.next(x));
@@ -205,7 +231,7 @@ export const p2pRequestsResource = createStreamResource<{ userId: string }>({
   .build();
 
 export function upsertP2PRequest(request: P2PChatRequest): Observable<null> {
-  return from(p2pChatDatabase.requests.put(stampRequest(request))).pipe(
+  return from(p2pChatDatabase.requests.put(p2pService.stampRequest(request))).pipe(
     map(() => null),
     take(1),
   );

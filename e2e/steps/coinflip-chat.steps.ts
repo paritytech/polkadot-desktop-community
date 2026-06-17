@@ -6,6 +6,7 @@ import { DEFAULT_TIMEOUT } from '../helpers/timeouts';
 import { BrowserPage } from '../page-objects/BrowserPage';
 import { ChatPage } from '../page-objects/ChatPage';
 import { DashboardPage } from '../page-objects/DashboardPage';
+import { ProductActionsPage } from '../page-objects/ProductActionsPage';
 
 const { When, Then } = createBdd(authenticatedTest);
 
@@ -72,6 +73,17 @@ When('the user adds the current tab to favorites as a {string} widget', async ({
 
   await page.keyboard.press('Escape');
   await expect(dialog).toBeHidden({ timeout: DEFAULT_TIMEOUT });
+});
+
+/**
+ * Establishes the product chat session via the ••• product actions menu's
+ * "Proceed in Chat" action. Product rooms are declared in-memory on worker load
+ * and only persisted — and thus shown in Quick Chat — once the user confirms
+ * this dialog, so the test must perform it explicitly before the session appears.
+ */
+When('the user starts a chat with the product', async ({ authenticatedApp }) => {
+  const actions = new ProductActionsPage(authenticatedApp.window);
+  await actions.proceedInChat();
 });
 
 /**

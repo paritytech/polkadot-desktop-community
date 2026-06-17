@@ -74,7 +74,7 @@ describe('permissionsService.matchesUrlPermission', () => {
 
 describe('getRemotePermissionRequestStatus', () => {
   const base: ProductPermissions = {
-    productId: 'coin-flip.dot',
+    productId: 'my-app.dot',
     devicePermissions: [],
     remotePermissions: [],
   };
@@ -208,7 +208,7 @@ describe('getRemotePermissionRequestStatus', () => {
 
 describe('upsertRemotePermission', () => {
   const base: ProductPermissions = {
-    productId: 'coin-flip.dot',
+    productId: 'my-app.dot',
     devicePermissions: [],
     remotePermissions: [],
   };

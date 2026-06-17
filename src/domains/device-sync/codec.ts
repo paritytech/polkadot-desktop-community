@@ -17,7 +17,7 @@ import { Bytes, Enum, Struct, Vector, _void, u32, u64 } from 'scale-ts';
 // of truth with the 3-variant iOSVoIP Platform); device-sync reuses it so its
 // envelopes decode identically to the live channels.
 // eslint-disable-next-line boundaries/dependencies -- reuse chat's single ChatMessage wire codec; direct sub-path import keeps it wasm-free (same workaround as applier.ts/collector.ts)
-import { ChatMessage as ChatMessageStatementCodec } from '@/domains/chat/p2p/wireChatMessage';
+import { ChatMessage as ChatMessageStatementCodec } from '@/domains/chat/p2p/session-transport/schemas';
 
 const AccountIdCodec = Bytes(32);
 const EncrPublicKeyCodec = Bytes(65);

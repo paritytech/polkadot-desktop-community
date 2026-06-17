@@ -6,7 +6,7 @@ import { type Result, ResultAsync, err } from 'neverthrow';
 // forever. host-papp wraps each call in an internal poolSize:1 queue, so a
 // single hung request also wedges every subsequent signing request. Bound it
 // so the user sees an error instead of an indefinite spinner.
-export const SIGNING_TIMEOUT_MS = 60_000;
+export const SIGNING_TIMEOUT_MS = 240_000;
 
 export const SIGNING_TIMEOUT_MESSAGE = 'Signing request timed out — the remote signer did not respond.';
 

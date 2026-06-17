@@ -31,7 +31,7 @@
 
             inherit nodejs;
 
-            npmDepsHash = "sha256-HukbMdABV7s8A8phYhpv1A23VumHZwBHCJWyIASKdOk=";
+            npmDepsHash = "sha256-eSlSeCH1PVCL9l5HrmPYQm6MeM88oZ6+EPaT3HfiwwA=";
 
             npmDepsFetcherVersion = 2;
             makeCacheWritable = true;

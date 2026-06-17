@@ -1,10 +1,10 @@
 // @vitest-environment happy-dom
 
-import { toastError, toastWithAction } from '@novasamatech/tr-ui';
+import { toastError, toastSuccess } from '@novasamatech/tr-ui';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { of, throwError } from 'rxjs';
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { TranslationProvider } from '@/shared/translation';
 
@@ -14,14 +14,23 @@ vi.mock('@novasamatech/tr-ui', async () => {
   const actual = await vi.importActual<Record<string, unknown>>('@novasamatech/tr-ui');
   return {
     ...actual,
-    toastWithAction: vi.fn(),
     toastError: vi.fn(),
+    toastSuccess: vi.fn(),
   };
 });
 
 const navigateMock = vi.fn();
 vi.mock('@tanstack/react-router', () => ({
   useNavigate: () => navigateMock,
+}));
+
+const addTabMock = vi.fn();
+const selectTabMock = vi.fn();
+vi.mock('@/aggregates/browser-tabs', () => ({
+  browserTabs: {
+    addTab: (...args: unknown[]) => addTabMock(...args),
+    selectTab: (...args: unknown[]) => selectTabMock(...args),
+  },
 }));
 
 const runMock = vi.fn();
@@ -31,7 +40,12 @@ vi.mock('@/domains/chat', () => ({
     data: { type: 'user', accountId: '0xuser' as const, name: 'U' },
     pending: false,
   }),
-  useProductRooms: () => ({ data: [{ roomId: 'coin-flip' }], pending: false, error: null }),
+  useProductRooms: () => ({ data: [], pending: false, error: null }),
+  useDeclaredProductRooms: () => ({
+    data: [{ productId: 'my-app.dot', roomId: 'my-app' }],
+    pending: false,
+    error: null,
+  }),
   productChatService: {
     getSessionId: () => '0xsession',
   },
@@ -41,7 +55,7 @@ vi.mock('@/domains/product', () => ({
   useDisplayedProduct: (productId: string) => ({
     data: {
       baseName: productId,
-      displayName: 'Coin Flip',
+      displayName: 'My App',
       description: '',
       icon: { cid: 'bafy123', format: 'png' },
       executables: {},
@@ -65,7 +79,7 @@ vi.mock('@/domains/product', () => ({
   }),
 }));
 
-const GATED_PRODUCT_ID = 'coinflipgame03.dot';
+const GATED_PRODUCT_ID = 'my-app.dot';
 
 const renderDialog = (open = true) =>
   render(
@@ -75,6 +89,10 @@ const renderDialog = (open = true) =>
   );
 
 describe('ProceedInChatDialog', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
   it('renders nothing when closed', () => {
     const { container } = renderDialog(false);
     expect(container.querySelector('[role="dialog"]')).toBeNull();
@@ -83,12 +101,12 @@ describe('ProceedInChatDialog', () => {
   it('shows the product name and dotNS domain when open', () => {
     renderDialog();
 
-    expect(screen.getByText('Coin Flip')).toBeInTheDocument();
+    expect(screen.getByText('My App')).toBeInTheDocument();
     expect(screen.getByText(GATED_PRODUCT_ID)).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: /proceed in chat/i })).toBeInTheDocument();
   });
 
-  it('calls the mutation, closes the dialog, and shows a toast on success', async () => {
+  it('calls the mutation, shows a success toast, closes the dialog, and navigates on new room creation', async () => {
     const onOpenChange = vi.fn();
     runMock.mockReturnValueOnce(of({ room: { sessionId: '0xsession' }, status: 'New' }));
     render(
@@ -103,15 +121,32 @@ describe('ProceedInChatDialog', () => {
       expect.objectContaining({
         productId: GATED_PRODUCT_ID,
         userId: '0xuser',
-        roomId: 'coin-flip',
+        roomId: 'my-app',
       }),
     );
-    expect(toastWithAction).toHaveBeenCalledWith(
-      expect.objectContaining({
-        action: expect.objectContaining({ label: 'Open chat' }),
-      }),
-    );
+    expect(toastSuccess).toHaveBeenCalledWith({
+      title: 'The My App product room has been successfully created in the chat',
+    });
+    expect(addTabMock).toHaveBeenCalled();
+    expect(selectTabMock).toHaveBeenCalledWith('chat');
+    expect(navigateMock).toHaveBeenCalledWith({
+      to: '/chat/{-$chatId}',
+      params: { chatId: '0xsession' },
+    });
     expect(onOpenChange).toHaveBeenCalledWith(false);
+  });
+
+  it('navigates without a success toast when the room already exists', async () => {
+    runMock.mockReturnValueOnce(of({ room: { sessionId: '0xsession' }, status: 'Exists' }));
+    renderDialog();
+
+    await userEvent.click(screen.getByTestId('proceed-in-chat-dialog-confirm-button'));
+
+    expect(toastSuccess).not.toHaveBeenCalled();
+    expect(navigateMock).toHaveBeenCalledWith({
+      to: '/chat/{-$chatId}',
+      params: { chatId: '0xsession' },
+    });
   });
 
   it('shows a toast error and keeps the dialog open when the mutation stream errors', async () => {

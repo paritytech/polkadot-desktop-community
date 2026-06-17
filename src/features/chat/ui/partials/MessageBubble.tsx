@@ -107,7 +107,9 @@ export const MessageBubble = ({
         )}
         <div className="flex w-full items-end justify-between gap-2">
           <div className="flex min-w-0 flex-1 items-center">
-            <p className="max-w-130 text-base leading-5 whitespace-pre-line">{editedText ?? getPlainText(message.content)}</p>
+            <p className="max-w-130 text-base leading-5 whitespace-pre-line" style={{ wordBreak: 'break-word' }}>
+              {editedText ?? getPlainText(message.content)}
+            </p>
           </div>
           <div className="flex shrink-0 items-end gap-1">
             {isEdited && (

@@ -5,8 +5,8 @@ import { useEffect } from 'react';
 import { RouteErrorFallback } from '@/shared/components';
 import { useSideEffect } from '@/shared/di';
 import { usePappProvider } from '@/domains/application';
-import { P2PChatManagerProvider } from '@/domains/chat';
 import { dotNsService } from '@/domains/product';
+import { P2PChatBinding } from '@/aggregates/p2p-chat';
 import { AppShell } from '@/features/app-shell';
 import { Browser, openDotNsUrlSideEffect } from '@/features/browser';
 import { UpdateCheckProvider } from '@/features/update-check';
@@ -69,7 +69,8 @@ const RootLayout = () => {
       {isOnboarding ? (
         <Outlet />
       ) : (
-        <P2PChatManagerProvider pappProvider={papp}>
+        <>
+          <P2PChatBinding pappProvider={papp} />
           <AppShell>
             <div className="h-full w-full" style={{ display: isProductRoute ? 'none' : undefined }}>
               <Outlet />
@@ -78,7 +79,7 @@ const RootLayout = () => {
               <Browser />
             </div>
           </AppShell>
-        </P2PChatManagerProvider>
+        </>
       )}
     </UpdateCheckProvider>
   );

@@ -102,7 +102,7 @@ const API = {
   exportLogs: (): Promise<{ success: boolean }> => {
     return ipcRenderer.invoke('exportLogs');
   },
-  logRendererConsole: (level: 'info' | 'warn' | 'error', values: unknown[]) => {
+  logRendererConsole: (level: 'debug' | 'info' | 'warn' | 'error', values: unknown[]) => {
     ipcRenderer.send('renderer:console-log', { level, values });
   },
   reload: () => {
@@ -326,17 +326,6 @@ const API = {
     ipcRenderer.invoke('sandbox:visibility', { webContentsId, visible }),
   closeWindow: () => {
     ipcRenderer.send('window:close');
-  },
-  // Custom window dragging — replaces `-webkit-app-region: drag` on macOS, where
-  // right-clicking a native drag region crashes the process (see WindowDragRegion).
-  startWindowDrag: () => {
-    ipcRenderer.send('window:drag-start');
-  },
-  endWindowDrag: () => {
-    ipcRenderer.send('window:drag-end');
-  },
-  toggleMaximizeWindow: () => {
-    ipcRenderer.send('window:toggle-maximize');
   },
   // Fetch through the main process to bypass renderer CORS. Used by push notifications and by
   // product workers (the renderer gates the URL against remote permissions before calling).

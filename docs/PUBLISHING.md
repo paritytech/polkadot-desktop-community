@@ -6,9 +6,9 @@ builds with auto-update support.
 > This repository intentionally ships **no hosted release pipeline**. What follows
 > is a vendor-neutral description of how to configure, build, sign and distribute
 > the app with the scripts included in this repo. Wire it into whichever CI system
-> you prefer (GitHub Actions, GitLab CI, …). The repo keeps two CI workflows for
-> development — `build-pr.yml` (manual PR builds) and `tests_e2e.yml` — both fully
-> parameterized through repository secrets/variables.
+> you prefer (GitHub Actions, GitLab CI, …). The repo keeps only development CI —
+> linting (`lint.yaml`) and unit tests (`tests_unit.yaml`); there is no build,
+> release, or end-to-end pipeline.
 
 ---
 
@@ -18,10 +18,10 @@ All endpoints, keys and toggles are externalised into **environment variables**
 that Vite bakes into the three build targets (`main`, `preload`, `renderer`) at
 build time. Nothing is hardcoded in the source.
 
-| File | Committed? | Purpose |
-|------|-----------|---------|
-| `.env.example` | ✅ yes | The full catalog of variables with placeholder values. |
-| `.env` | ❌ gitignored | Your local values. Copy from `.env.example`. |
+| File           | Committed?    | Purpose                                                |
+| -------------- | ------------- | ------------------------------------------------------ |
+| `.env.example` | ✅ yes        | The full catalog of variables with placeholder values. |
+| `.env`         | ❌ gitignored | Your local values. Copy from `.env.example`.           |
 
 Variables prefixed `VITE_` reach the renderer; the rest are injected into the
 main/preload bundles via `vite.config.*.ts` `define` blocks. Features whose
@@ -37,35 +37,35 @@ Remote Config) — the app builds and runs without any of them.
 
 ### Secrets — set in `.env` or the CI environment
 
-| Variable | Used for | If empty |
-|----------|----------|----------|
-| `SENTRY_DSN` | Sentry crash/issue reporting (baked in at build time) | Crash reporting is disabled by default |
-| `VITE_WEBRTC_TURN_SECRET` | TURN relay credential for device-sync | STUN-only fallback (works on most NATs) |
-| `BOT_TOKEN` | Signing-bot API token for e2e auth tests | Bot-backed e2e projects fail |
+| Variable                  | Used for                                              | If empty                                |
+| ------------------------- | ----------------------------------------------------- | --------------------------------------- |
+| `SENTRY_DSN`              | Sentry crash/issue reporting (baked in at build time) | Crash reporting is disabled by default  |
+| `VITE_WEBRTC_TURN_SECRET` | TURN relay credential for device-sync                 | STUN-only fallback (works on most NATs) |
+| `BOT_TOKEN`               | Signing-bot API token for e2e auth tests              | Bot-backed e2e projects fail            |
 
 ### Signing & distribution — set in the CI environment (not needed for local dev)
 
-| Variable | Used for |
-|----------|----------|
-| `APPLE_ID`, `APPLE_APP_SPECIFIC_PASSWORD`, `APPLE_TEAM_ID` | macOS notarization (`@electron/notarize`, runs during `npm run dist`) |
-| `CERTIFICATE_OSX_APPLICATION`, `CERTIFICATE_PASSWORD` | Base64 `.p12` Developer ID Application certificate + password, imported into the build keychain by `.github/add_cert_in_keychain.sh` |
-| `SENTRY_ORG`, `SENTRY_PROJECT`, `SENTRY_AUTH_TOKEN` | Uploading sourcemaps to Sentry during the build (skipped when unset) |
-| `GITHUB_TOKEN` / `GH_TOKEN` | Fetching release notes for update metadata (`scripts/rewrite-update-metadata.js`) |
+| Variable                                                   | Used for                                                                                                                             |
+| ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `APPLE_ID`, `APPLE_APP_SPECIFIC_PASSWORD`, `APPLE_TEAM_ID` | macOS notarization (`@electron/notarize`, runs during `npm run dist`)                                                                |
+| `CERTIFICATE_OSX_APPLICATION`, `CERTIFICATE_PASSWORD`      | Base64 `.p12` Developer ID Application certificate + password, imported into the build keychain by `.github/add_cert_in_keychain.sh` |
+| `SENTRY_ORG`, `SENTRY_PROJECT`, `SENTRY_AUTH_TOKEN`        | Uploading sourcemaps to Sentry during the build (skipped when unset)                                                                 |
+| `GITHUB_TOKEN` / `GH_TOKEN`                                | Fetching release notes for update metadata (`scripts/rewrite-update-metadata.js`)                                                    |
 
 ### Non-secret config — public values, set per build
 
-| Variable | What it is / where it's used |
-|----------|------------------------------|
-| `VITE_FIREBASE_API_KEY` / `VITE_FIREBASE_PROJECT_ID` / `VITE_FIREBASE_APP_ID` | Firebase Remote Config client identifiers (public, not secrets). Empty = Remote Config disabled and the app has no chain catalog — see section 3. |
-| `VITE_ENVIRONMENTS` | JSON catalog of environment channels (see `.env.example` for the schema). |
-| `VITE_WEBRTC_TURN_HOST`, `VITE_WEBRTC_TURN_TTL` | Your TURN relay host and credential TTL for device-sync. |
-| `SANDBOX_RELAY_ALLOWLIST` | Comma-separated TURN/STUN hostnames sandboxed product webviews may reach without a per-product permission prompt. Empty = no silent allowlist; every relay request goes through the prompt (fail-closed). Distinct from the device-sync TURN variables above — this gates what *products* may dial. |
-| `SANDBOX_IPFS_ALLOWLIST` | Comma-separated IPFS gateway hostnames sandboxed product webviews may GET without a per-product permission prompt. Empty = no silent allowlist; every IPFS fetch goes through the prompt (fail-closed). Set this when products should reach a known public gateway transparently. |
-| `AUTO_UPDATE_URL` | Generic electron-updater feed URL. Empty = auto-update disabled. |
-| `BUILD_SOURCE` | How the build is distributed: `github` (GitHub Releases) or `s3` (static file server behind `AUTO_UPDATE_URL`). Controls whether the in-app updater is enabled. |
-| `LOGGER` | Any non-empty value enables verbose logging in all three targets. |
-| `RENDERER_SOURCE` | `localhost` (dev server) or `filesystem` (built assets); build scripts set it for you. |
-| `BOT_URL` | Signing-bot base URL for e2e tests (`vars.BOT_URL` in CI). |
+| Variable                                                                      | What it is / where it's used                                                                                                                                                                                                                                                                        |
+| ----------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `VITE_FIREBASE_API_KEY` / `VITE_FIREBASE_PROJECT_ID` / `VITE_FIREBASE_APP_ID` | Firebase Remote Config client identifiers (public, not secrets). Empty = Remote Config disabled and the app has no chain catalog — see section 3.                                                                                                                                                   |
+| `VITE_ENVIRONMENTS`                                                           | JSON catalog of environment channels (see `.env.example` for the schema).                                                                                                                                                                                                                           |
+| `VITE_WEBRTC_TURN_HOST`, `VITE_WEBRTC_TURN_TTL`                               | Your TURN relay host and credential TTL for device-sync.                                                                                                                                                                                                                                            |
+| `SANDBOX_RELAY_ALLOWLIST`                                                     | Comma-separated TURN/STUN hostnames sandboxed product webviews may reach without a per-product permission prompt. Empty = no silent allowlist; every relay request goes through the prompt (fail-closed). Distinct from the device-sync TURN variables above — this gates what _products_ may dial. |
+| `SANDBOX_IPFS_ALLOWLIST`                                                      | Comma-separated IPFS gateway hostnames sandboxed product webviews may GET without a per-product permission prompt. Empty = no silent allowlist; every IPFS fetch goes through the prompt (fail-closed). Set this when products should reach a known public gateway transparently.                   |
+| `AUTO_UPDATE_URL`                                                             | Generic electron-updater feed URL. Empty = auto-update disabled.                                                                                                                                                                                                                                    |
+| `BUILD_SOURCE`                                                                | How the build is distributed: `github` (GitHub Releases) or `s3` (static file server behind `AUTO_UPDATE_URL`). Controls whether the in-app updater is enabled.                                                                                                                                     |
+| `LOGGER`                                                                      | Any non-empty value enables verbose logging in all three targets.                                                                                                                                                                                                                                   |
+| `RENDERER_SOURCE`                                                             | `localhost` (dev server) or `filesystem` (built assets); build scripts set it for you.                                                                                                                                                                                                              |
+| `BOT_URL`                                                                     | Signing-bot base URL for e2e tests (`vars.BOT_URL` in CI).                                                                                                                                                                                                                                          |
 
 ---
 
@@ -90,11 +90,11 @@ so for any real deployment Remote Config is effectively required.
 
 ## 4. Build environments
 
-| Command | `NODE_ENV` | App id | Title |
-|---------|-----------|--------|-------|
-| `npm run build` | `production` | `com.polkadot.desktop` | Polkadot Desktop |
-| `npm run build:staging` | `staging` | `com.polkadot.desktop.stage` | Polkadot Desktop Stage |
-| `npm run build:dev` | `development` | — (not packaged) | Polkadot Desktop |
+| Command                 | `NODE_ENV`    | App id                       | Title                  |
+| ----------------------- | ------------- | ---------------------------- | ---------------------- |
+| `npm run build`         | `production`  | `com.polkadot.desktop`       | Polkadot Desktop       |
+| `npm run build:staging` | `staging`     | `com.polkadot.desktop.stage` | Polkadot Desktop Stage |
+| `npm run build:dev`     | `development` | — (not packaged)             | Polkadot Desktop       |
 
 App id, title, protocol scheme (`polkadot:`) and window defaults live in
 `config/index.js`; packaging configuration in `electron-builder.js`. Change the
@@ -175,8 +175,7 @@ A typical release job:
 2. Export the build variables (section 2) from your secret store.
 3. Import the macOS signing certificate into a keychain
    (`.github/add_cert_in_keychain.sh`).
-4. `npm run prod:sequence` per OS/arch (see `.github/actions/build-app` for a
-   reusable composite action that does steps 2–4 for PR builds).
+4. `npm run prod:sequence` per OS/arch.
 5. `node scripts/rewrite-update-metadata.js` over the artifacts.
 6. Upload artifacts + metadata to your update server and/or create a GitHub
    Release.

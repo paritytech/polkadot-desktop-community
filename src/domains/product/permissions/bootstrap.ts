@@ -1,7 +1,7 @@
 import { firstValueFrom } from 'rxjs';
 
 import { requestExternalUrlAccess } from './broker';
-import { productPermissionsResource } from './resource';
+import { getTransientDevicePermissionGranted, productPermissionsResource } from './resource';
 import { permissionsService } from './service';
 
 type BootstrapPermissionsConfig = {
@@ -25,8 +25,13 @@ export function bootstrapPermissions({ promptForUnmatchedRemoteAccess }: Bootstr
   if (typeof window === 'undefined' || !window.App) return;
 
   window.App.onDevicePermissionRequest(async ({ productId, permission, executable }) => {
-    const permissions = await readPermissionsOnce(productId);
     const modality = permissionsService.modalityForKind(executable);
+    // A live "allow once" grant for this session opens the native gate without a
+    // persisted 'granted'. Checked before the persisted lookup (and before any IO).
+    if (getTransientDevicePermissionGranted({ productId, permission, modality })) {
+      return 'granted';
+    }
+    const permissions = await readPermissionsOnce(productId);
     return permissionsService.getDevicePermissionStatus(permissions, permission, modality) ?? 'ask';
   });
 

@@ -5,37 +5,29 @@
  * khash-derived pair topic per direction, `matchAll: [topic]` on subscribe.
  */
 
-import { createExpiry } from '@novasamatech/sdk-statement';
-import { AccountFullError, ExpiryTooLowError, createSr25519Prover } from '@novasamatech/statement-store';
+import {
+  PRIORITY_EPOCH_OFFSET,
+  createExpiryAllocator,
+  createSr25519Prover,
+  signAndSubmitStatement,
+} from '@novasamatech/statement-store';
 import { fromHex, toHex } from 'polkadot-api/utils';
 import { Observable } from 'rxjs';
 
-import { takeExpirySequenceNumber } from '@/shared/utils';
 import { statementStoreAdapter } from '@/domains/application';
 
-// Match the chat send path. Signaling is short-lived (offer/answer/candidates
-// flushed within seconds) but cheap to keep — using a long expiry survives
-// transient chain latency without forcing the caller to re-emit.
+// Legacy receive-side constant: statements written by old clients encode
+// `(submissionSecs + EXPIRY_DURATION_SECS) << 32 | seq`. Kept only to
+// age-filter those statements during the transition (see
+// submissionSecsFromExpiry); new submits use the pinned-high allocator.
 const EXPIRY_DURATION_SECS = 7 * 24 * 60 * 60;
 
 // AccountFull / ExpiryTooLow can clear themselves once existing statements
 // roll off the account's slot window — a short backoff is usually enough.
 // We retry transparently so a single failure on a multi-fragment send (like
-// trickling ICE candidates) doesn't strand the signaler.
+// trickling ICE candidates) doesn't strand the signaler. Non-priority errors
+// (`attempts: 0`) propagate immediately to the orchestrator.
 const RETRY_DELAYS_MS = [500, 1500, 3000];
-
-// Sequence number for the low 32 bits of expiry comes from
-// `takeExpirySequenceNumber` (a process-wide counter in `@/shared/utils`).
-// Device-sync and chat submit with the *same* device key, so a per-module
-// counter would collide across them within the same second; the shared
-// counter keeps every submit's expiry unique regardless of which subsystem
-// queued it.
-
-const sleep = (ms: number): Promise<void> => new Promise(r => setTimeout(r, ms));
-
-function isTransientSubmitError(err: unknown): boolean {
-  return err instanceof AccountFullError || err instanceof ExpiryTooLowError;
-}
 
 export type DeviceSyncTransport = {
   /**
@@ -50,46 +42,96 @@ export type DeviceSyncTransport = {
   subscribeStatementTopic: (topic: Uint8Array) => Observable<{ topic: Uint8Array; data: Uint8Array; signer: Uint8Array }>;
 };
 
+/**
+ * Submission second of a statement, derived from its expiry under either
+ * layout. Pinned-high (current clients): the low word is seconds since the
+ * 2025-11-15 priority epoch — a floor-bumped low word can only make a
+ * statement look NEWER, which errs toward keeping it. Legacy: the high word
+ * is `submissionSecs + EXPIRY_DURATION_SECS`.
+ * Accepted trade-off: a peer whose allocator floor ran far ahead of wall
+ * clock bypasses this age filter entirely (derived submission in the future),
+ * re-admitting replayed signaling from that peer. The symmetric alternative
+ * (drop future-dated too) would permanently silence such a peer's FRESH
+ * signaling instead — strictly worse; replay thrash is transient and
+ * self-corrects via per-channel supersession.
+ */
+export function submissionSecsFromExpiry(expiry: bigint): number {
+  const high = Number(expiry >> 32n);
+  if (high === 0xffff_ffff) return Number((expiry & 0xffff_ffffn) + PRIORITY_EPOCH_OFFSET);
+  return high - EXPIRY_DURATION_SECS;
+}
+
 export function createDeviceSyncTransport(deviceStatementAccountSeed: Uint8Array): DeviceSyncTransport {
   const prover = createSr25519Prover(deviceStatementAccountSeed);
+  // One expiry source for this transport's submits. `signAndSubmitStatement`
+  // draws from it on every attempt and adopts the chain-reported floor
+  // (`error.min`) into it on each priority rejection, so the next retry signs
+  // strictly above the chain minimum.
+  const priority = createExpiryAllocator();
+
+  // Expiry synchronization (the session spec's init step): before the first
+  // submit to a topic, seed the shared allocator's floor from our own statements
+  // already live on it. Signaling from a previous app session survives in the
+  // store (pinned-high expiries never lapse), so a fresh allocator (floor 0)
+  // signs at the wall-clock priority and ties/loses to that surviving statement,
+  // bouncing through priority-rejection retries before it clears (and, before
+  // the SDK's lossless-expiry fix, never clearing at all). Memoized per topic;
+  // raiseFloor is monotonic, so the one shared allocator converges to the max
+  // across every peer's channel.
+  const floorSyncByTopic = new Map<string, Promise<void>>();
+  const syncExpiryFloor = async (topic: Uint8Array): Promise<void> => {
+    const result = await statementStoreAdapter.queryStatements({ matchAll: [topic] });
+    if (result.isErr()) {
+      console.warn('WEBRTC [transport] expiry-floor sync failed for topic=%s: %s', toHex(topic), result.error.message);
+      return;
+    }
+    let maxExpiry = 0n;
+    for (const s of result.value) {
+      if (s.expiry !== undefined && s.expiry > maxExpiry) maxExpiry = s.expiry;
+    }
+    priority.raiseFloor(maxExpiry);
+  };
+  const ensureFloorSynced = (topic: Uint8Array): Promise<void> => {
+    const topicHex = toHex(topic);
+    let pending = floorSyncByTopic.get(topicHex);
+    if (!pending) {
+      pending = syncExpiryFloor(topic);
+      floorSyncByTopic.set(topicHex, pending);
+    }
+    return pending;
+  };
 
   const postStatement = async (topic: Uint8Array, data: Uint8Array, channel: Uint8Array): Promise<void> => {
-    let attempt = 0;
-    while (true) {
-      // Re-sign on every attempt: the expiry value is wall-clock-derived,
-      // and re-signing with a fresh expiry is the only way to recover from
-      // ExpiryTooLow on retry. Each retry also takes a fresh sequence
-      // number, so a same-second retry doesn't repeat the previous bit-
-      // identical expiry that the chain just rejected.
-      const expirationTimestampSecs = Math.floor(Date.now() / 1000) + EXPIRY_DURATION_SECS;
-      const expiry = createExpiry(expirationTimestampSecs, takeExpirySequenceNumber());
-      const unsigned = { expiry, channel: toHex(channel), topics: [toHex(topic)], data };
-      const signed = await prover.generateMessageProof(unsigned);
-      if (signed.isErr()) {
-        console.error('WEBRTC [transport] sign failed for topic=%s: %s', toHex(topic), signed.error.message);
-        throw signed.error;
-      }
+    await ensureFloorSynced(topic);
+    const result = await signAndSubmitStatement({
+      statementStore: statementStoreAdapter,
+      prover,
+      allocator: priority,
+      channel,
+      topics: [topic],
+      data,
+      retry: {
+        attempts: 0, // non-priority errors propagate immediately
+        priorityAttempts: RETRY_DELAYS_MS.length,
+        delaysMs: RETRY_DELAYS_MS,
+        onPriorityError(error) {
+          priority.raiseFloor(error.min);
+        },
+        onRetry({ attempt, delayMs, error }) {
+          console.warn(
+            'WEBRTC [transport] submit transient failure for topic=%s attempt=%d will retry in %dms: %s',
+            toHex(topic),
+            attempt,
+            delayMs,
+            error.message,
+          );
+        },
+      },
+    });
 
-      const submitted = await statementStoreAdapter.submitStatement(signed.value);
-      if (submitted.isOk()) return;
-
-      const err = submitted.error;
-      if (isTransientSubmitError(err) && attempt < RETRY_DELAYS_MS.length) {
-        const delay = RETRY_DELAYS_MS[attempt]!;
-        console.warn(
-          'WEBRTC [transport] submit transient failure for topic=%s attempt=%d will retry in %dms: %s',
-          toHex(topic),
-          attempt,
-          delay,
-          err.message,
-        );
-        attempt += 1;
-        await sleep(delay);
-        continue;
-      }
-
-      console.error('WEBRTC [transport] submit failed for topic=%s: %s', toHex(topic), err.message);
-      throw err;
+    if (result.isErr()) {
+      console.error('WEBRTC [transport] submit failed for topic=%s: %s', toHex(topic), result.error.message);
+      throw result.error;
     }
   };
 
@@ -106,21 +148,12 @@ export function createDeviceSyncTransport(deviceStatementAccountSeed: Uint8Array
         for (const s of statements) {
           if (!s.data || !s.proof) continue;
 
-          // Age-filter: derive submission time from the statement's expiry
-          // and our well-known posting duration (`EXPIRY_DURATION_SECS`).
-          // `expiry = (submissionSecs + durationSecs) << 32 | sequence` (see
-          // sdk-statement `createExpiry`). If both sides post with the same
-          // 7-day duration, a statement older than 30s before our subscribe
-          // shows up here with `submission < subscribedAt - 30`.
-          //
-          // We tolerate up to a ~5-second clock skew between us and the
-          // posting peer by relaxing the threshold to 35s. Anything older
-          // is dropped silently — the peer's retry layer will re-emit a
-          // fresh copy if the message still matters.
+          // Age-filter: see submissionSecsFromExpiry for the per-layout
+          // derivation. 35s = 30s staleness threshold + ~5s clock-skew
+          // tolerance; anything older is dropped silently — the peer's retry
+          // layer re-emits a fresh copy if the message still matters.
           if (s.expiry !== undefined) {
-            const expirySecs = Number(s.expiry >> 32n);
-            const submissionSecs = expirySecs - EXPIRY_DURATION_SECS;
-            const ageSecs = subscribedAtSecs - submissionSecs;
+            const ageSecs = subscribedAtSecs - submissionSecsFromExpiry(s.expiry);
             if (ageSecs > 35) continue;
           }
 

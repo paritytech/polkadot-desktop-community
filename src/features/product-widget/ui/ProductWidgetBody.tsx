@@ -3,7 +3,7 @@ import { memo, useState } from 'react';
 import { WidgetLoadingScreen } from '@/shared/components';
 import { useSideEffect } from '@/shared/di';
 import { useTranslation } from '@/shared/translation';
-import { productService, useExecutableArchive, usePersistedProductById } from '@/domains/product';
+import { productService, useDisplayedProduct, useExecutableArchive } from '@/domains/product';
 import { onProductRefreshRequestedSideEffect } from '@/aggregates/product-loading';
 import { Webview } from '@/widgets/Webview';
 
@@ -18,14 +18,16 @@ type Props = {
 export const ProductWidgetBody = memo(({ productId }: Props) => {
   const { t } = useTranslation();
   const [refreshKey, setRefreshKey] = useState(0);
-  const { data: product } = usePersistedProductById(productId);
-  const { data: content, pending } = useExecutableArchive(product ? { product, kind: 'widget' } : null);
+  const { data: product, pending: productPending } = useDisplayedProduct(productId);
+  const { data: content, pending: executablePending } = useExecutableArchive(product ? { product, kind: 'widget' } : null);
 
   useSideEffect(onProductRefreshRequestedSideEffect, ({ identifier }) => {
     if (productService.refreshTargetIdentifiers(productId, product).has(identifier)) {
       setRefreshKey(prev => prev + 1);
     }
   });
+
+  const pending = productPending || executablePending;
 
   if (!pending && !content) {
     return (

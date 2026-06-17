@@ -1,6 +1,7 @@
 import { Button, Copy, Dialog, ProductHeader } from '@novasamatech/tr-ui';
+import JsonView from '@uiw/react-json-view';
 import { AlertCircle, Copy as CopyIcon } from 'lucide-react';
-import { type ReactNode, memo, useEffect, useRef, useState } from 'react';
+import { type CSSProperties, memo, useEffect, useMemo, useRef, useState } from 'react';
 
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
@@ -14,31 +15,88 @@ export function stringifyTxArguments(value: unknown): string {
   return encoded === undefined ? '{}' : encoded;
 }
 
-const JSON_KEY_RE = /"((?:[^"\\]|\\.)*)"(?=\s*:)/g;
-
-export const JsonWithHighlightedKeys = ({ text }: { text: string }): ReactNode => {
-  const safeText = typeof text === 'string' ? text : '{}';
-  JSON_KEY_RE.lastIndex = 0;
-  const nodes: ReactNode[] = [];
-  let last = 0;
-  let match: RegExpExecArray | null;
-  let i = 0;
-  while ((match = JSON_KEY_RE.exec(safeText)) !== null) {
-    if (match.index > last) {
-      nodes.push(<span key={i++}>{safeText.slice(last, match.index)}</span>);
-    }
-    nodes.push(
-      <span key={i++} className="text-[#728806]">
-        {match[0]}
-      </span>,
-    );
-    last = match.index + match[0].length;
-  }
-  if (last < safeText.length) {
-    nodes.push(<span key={i++}>{safeText.slice(last)}</span>);
-  }
-  return <div className={`${signingDetailMonoTextClassName} break-all whitespace-pre-wrap`}>{nodes}</div>;
+// Replicates the previous hand-rolled look: monospace, olive (#728806) keys, all values in the
+// inherited text colour (monochrome), transparent so it sits on the muted code block.
+const txArgumentsJsonTheme: CSSProperties = {
+  '--w-rjv-font-family': 'inherit',
+  '--w-rjv-color': 'currentColor',
+  '--w-rjv-background-color': 'transparent',
+  '--w-rjv-line-color': 'var(--color-border-secondary)',
+  '--w-rjv-arrow-color': 'currentColor',
+  '--w-rjv-info-color': 'currentColor',
+  '--w-rjv-key-string': '#728806',
+  '--w-rjv-curlybraces-color': 'currentColor',
+  '--w-rjv-colon-color': 'currentColor',
+  '--w-rjv-brackets-color': 'currentColor',
+  '--w-rjv-quotes-color': '#728806',
+  '--w-rjv-quotes-string-color': 'currentColor',
+  '--w-rjv-type-string-color': 'currentColor',
+  '--w-rjv-type-int-color': 'currentColor',
+  '--w-rjv-type-float-color': 'currentColor',
+  '--w-rjv-type-bigint-color': 'currentColor',
+  '--w-rjv-type-boolean-color': 'currentColor',
+  '--w-rjv-type-date-color': 'currentColor',
+  '--w-rjv-type-url-color': 'currentColor',
+  '--w-rjv-type-null-color': 'currentColor',
+  '--w-rjv-type-nan-color': 'currentColor',
+  '--w-rjv-type-undefined-color': 'currentColor',
 };
+
+const isJsonObject = (value: unknown): value is object => typeof value === 'object' && value !== null;
+
+// Number-valued typed arrays only — bigint-valued ones (BigInt64Array/BigUint64Array) don't
+// occur in decoded SCALE call arguments (bigints are plain `bigint`), and excluding them keeps
+// the Array.from() result a clean number[]. Such a value, if ever present, simply renders as-is.
+type NumericTypedArray =
+  | Int8Array
+  | Uint8Array
+  | Uint8ClampedArray
+  | Int16Array
+  | Uint16Array
+  | Int32Array
+  | Uint32Array
+  | Float32Array
+  | Float64Array;
+
+const isNumericTypedArray = (value: unknown): value is NumericTypedArray =>
+  ArrayBuffer.isView(value) &&
+  !(value instanceof DataView) &&
+  !(value instanceof BigInt64Array) &&
+  !(value instanceof BigUint64Array);
+
+// @uiw/react-json-view decides array-vs-object via Array.isArray, so a Uint8Array (or any
+// TypedArray) renders as a {0: …, 1: …} map. Recursively convert typed arrays to plain
+// arrays so they render as arrays instead.
+function normalizeJsonValue(value: unknown): unknown {
+  if (isNumericTypedArray(value)) {
+    return Array.from(value);
+  }
+  if (Array.isArray(value)) {
+    return value.map(normalizeJsonValue);
+  }
+  if (isJsonObject(value)) {
+    return Object.fromEntries(Object.entries(value).map(([key, val]) => [key, normalizeJsonValue(val)]));
+  }
+  return value;
+}
+
+export const TxArgumentsJson = memo(({ value }: { value: unknown }) => {
+  const normalized = useMemo(() => normalizeJsonValue(value), [value]);
+
+  return (
+    <JsonView
+      value={isJsonObject(normalized) ? normalized : {}}
+      style={txArgumentsJsonTheme}
+      className={`${signingDetailMonoTextClassName} break-all`}
+      displayDataTypes={false}
+      displayObjectSize={false}
+      enableClipboard={false}
+      indentWidth={12}
+    />
+  );
+});
+
+TxArgumentsJson.displayName = 'TxArgumentsJson';
 
 export const signingSummarySectionClassName =
   'flex flex-col gap-2 rounded-lg border border-border-secondary bg-bg-surface-container p-3';
@@ -53,19 +111,17 @@ export const signingDetailMonoTextClassName = 'font-mono text-xs leading-4 text-
 export const signingDetailMonoSingleLineClassName = `${signingDetailMonoTextClassName} overflow-x-auto whitespace-nowrap`;
 
 type SigningAccountDetailsSectionProps = {
-  accountIndex: number;
+  label: string;
   address: string;
 };
 
-export const SigningAccountDetailsSection = memo(({ accountIndex, address }: SigningAccountDetailsSectionProps) => {
+export const SigningAccountDetailsSection = memo(({ label, address }: SigningAccountDetailsSectionProps) => {
   const { t } = useTranslation();
 
   return (
     <section className="flex flex-col gap-2">
       <div className="flex items-center justify-between gap-3">
-        <span className="text-base leading-6 text-text-secondary">
-          {t('feature.browser.signingByAppAccount', { index: accountIndex })}
-        </span>
+        <span className="text-base leading-6 text-text-secondary">{label}</span>
         <Copy value={address}>
           <Button type="button" variant="ghost" size="icon" aria-label={t('feature.browser.copyAccountAddress')}>
             <CopyIcon className="size-4" />

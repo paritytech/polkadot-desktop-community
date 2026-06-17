@@ -33,6 +33,10 @@ const config: UserConfigFn = async ({ mode, command }) => {
     // `root` (src/) and no `VITE_*` var loads in the renderer.
     envDir: folders.root,
     define: {
+      // Original CLI mode (development | staging | production). `mode` below is
+      // remapped (staging -> production) for Vite, so import.meta.env.MODE cannot
+      // distinguish a staging build from a production one — this define can.
+      'process.env.BUILD_MODE': JSON.stringify(mode),
       'process.env.PRODUCT_NAME': JSON.stringify(title),
       'process.env.VERSION': JSON.stringify(version),
       'process.env.BUILD_TIME': JSON.stringify(new Date().toISOString()),

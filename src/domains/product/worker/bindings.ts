@@ -7,14 +7,16 @@ import {
 } from '@novasamatech/host-api';
 import { nanoid } from 'nanoid';
 import { type ResultAsync, errAsync, fromPromise } from 'neverthrow';
-import { lastValueFrom } from 'rxjs';
+import { lastValueFrom, map } from 'rxjs';
 
 import {
   type ChatMessage,
   type MessageContent,
+  clearDeclaredProductRooms,
   createMessageInProductRoom,
-  createProductRoom,
+  declaredProductRooms$,
   productChatService,
+  registerDeclaredProductRoom,
 } from '@/domains/chat';
 
 import { guarded } from './guarded';
@@ -48,28 +50,25 @@ function toMessageContent(payload: ProductChatMessage): MessageContent {
 }
 
 export function chatCreateRoomBinding(instance: ProductWorkerInstance, deps: WorkerDeps): VoidFunction {
-  return instance.container.handleChatCreateRoom(({ roomId }, { ok, err }) => {
+  const removeHandler = instance.container.handleChatCreateRoom(({ roomId }, { ok, err }) => {
     const session = deps.getSession();
     if (!session) {
       return err(new ChatRoomRegistrationErr.PermissionDenied());
     }
 
-    const create = createProductRoom({
+    const status = registerDeclaredProductRoom({
       roomId,
       productId: instance.productId,
-      userId: productChatService.getUserId(session),
     });
 
-    const disposedErr = () => new ChatRoomRegistrationErr.Unknown({ reason: 'disposed' });
-    return fromPromise(create, e => e)
-      .andThen(result => {
-        if (!result) {
-          return errAsync(new ChatRoomRegistrationErr.Unknown({ reason: 'commit-failed' }));
-        }
-        return ifAlive(instance, () => ok({ status: result.status }), disposedErr());
-      })
-      .orElse(e => ifAlive(instance, () => err(new ChatRoomRegistrationErr.Unknown({ reason: String(e) })), disposedErr()));
+    return ifAlive(instance, () => ok({ status }), new ChatRoomRegistrationErr.Unknown({ reason: 'disposed' }));
   });
+
+  // Declared rooms only mirror this running worker — drop them when it is disposed.
+  return () => {
+    removeHandler();
+    clearDeclaredProductRooms(instance.productId);
+  };
 }
 
 export function chatBotRegistrationBinding(instance: ProductWorkerInstance): VoidFunction {
@@ -80,8 +79,16 @@ export function chatBotRegistrationBinding(instance: ProductWorkerInstance): Voi
 
 export function chatListSubscribeBinding(instance: ProductWorkerInstance): VoidFunction {
   return instance.container.handleChatListSubscribe((_, send) => {
-    guarded(instance, send)([]);
-    return () => {};
+    const sendG = guarded(instance, send);
+    // BehaviorSubject-backed: replays the current snapshot on subscribe and
+    // re-emits whenever the worker declares a new room, so the list stays live.
+    const subscription = declaredProductRooms$
+      .pipe(map(rooms => rooms.filter(room => room.productId === instance.productId)))
+      .subscribe(rooms => {
+        sendG(rooms.map(room => ({ roomId: room.roomId, participatingAs: 'RoomHost' as const })));
+      });
+
+    return () => subscription.unsubscribe();
   });
 }
 

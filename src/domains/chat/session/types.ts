@@ -41,6 +41,10 @@ export type ImageFileMeta = {
   fileSize: number;
   width: number;
   height: number;
+  // Wolt-spec blurhash string, carried inline in the statement (not over HOP),
+  // so rendering it triggers no one-shot claim. Optional: absent on older
+  // messages and on senders that don't stamp a thumbnail.
+  blurhash?: string;
 };
 
 export type VideoFileMeta = {
@@ -48,6 +52,8 @@ export type VideoFileMeta = {
   mimeType: string;
   fileSize: number;
   duration: number;
+  // See ImageFileMeta.blurhash.
+  blurhash?: string;
 };
 
 export type FileMeta = GeneralFileMeta | ImageFileMeta | VideoFileMeta;
@@ -101,6 +107,26 @@ export type ContactAddedContent = {
 
 export type LeftChatContent = {
   type: 'leftChat';
+};
+
+/**
+ * `token` (chat-content variant #1). The peer's push-notification token,
+ * persisted as a chat-message row so it propagates through `device-sync`
+ * (Messages entity) to the user's other paired devices — the applier writes it
+ * into the sibling's `rooms.peerPushToken`, letting that device send push
+ * notifications to the peer. Mirrors Android, which keeps the received `Token`
+ * statement as a chat message alongside the contact push-token field. Never
+ * user-facing: excluded from every visible surface via
+ * `chatMessageService.isSyncCarrier` (no text/preview → empty bubble otherwise).
+ *
+ * `token` is hex **without** the `0x` prefix, matching `rooms.peerPushToken`
+ * storage. `iOSVoIP` is never stored locally (CallKit-only; desktop can't use
+ * it), so `platform` is the 2-variant `'Android' | 'iOS'`.
+ */
+export type TokenContent = {
+  type: 'token';
+  token: string;
+  platform: 'Android' | 'iOS';
 };
 
 /**
@@ -180,6 +206,7 @@ export type MessageContent =
   | EditContent
   | ContactAddedContent
   | LeftChatContent
+  | TokenContent
   | DeviceChatAcceptedContent
   | DeviceAddedContent
   | TransferContent

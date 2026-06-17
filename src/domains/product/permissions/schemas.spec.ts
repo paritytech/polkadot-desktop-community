@@ -22,7 +22,7 @@ describe('productPermissionsSchema', () => {
 describe('productPermissionsSchema modality', () => {
   it('normalizes entries missing modality to app', () => {
     const parsed = v.parse(productPermissionsSchema, {
-      productId: 'coin-flip.dot',
+      productId: 'my-app.dot',
       devicePermissions: [{ payload: { name: 'Camera' }, status: 'granted' }],
       remotePermissions: [{ payload: { type: 'ChainSubmit' }, status: 'denied' }],
     });
@@ -33,7 +33,7 @@ describe('productPermissionsSchema modality', () => {
 
   it('preserves a stored widget modality', () => {
     const parsed = v.parse(productPermissionsSchema, {
-      productId: 'coin-flip.dot',
+      productId: 'my-app.dot',
       devicePermissions: [{ payload: { name: 'Camera' }, modality: 'widget', status: 'granted' }],
       remotePermissions: [
         { payload: { type: 'Remote', pattern: 'https://api.example.com' }, modality: 'widget', status: 'granted' },
@@ -46,7 +46,7 @@ describe('productPermissionsSchema modality', () => {
 
   it('rejects an unknown modality value', () => {
     const result = v.safeParse(productPermissionsSchema, {
-      productId: 'coin-flip.dot',
+      productId: 'my-app.dot',
       devicePermissions: [{ payload: { name: 'Camera' }, modality: 'pocket', status: 'granted' }],
       remotePermissions: [],
     });

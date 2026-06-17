@@ -6,6 +6,16 @@ export type WidgetSizeKey = 'ICON' | 'HALF' | 'FULL';
 
 export type WidgetSizeIconVariant = 'small' | 'medium' | 'large' | 'horizontal';
 
+// The size hints a widget declares it supports, as fed into the dashboard grid.
+// `height` entries are size identifiers (NOT grid rows); `width` is optional and
+// only gates the horizontal variant. The product manifest produces a structurally
+// compatible shape, but this is the dashboard-layout-owned input contract — the
+// domain interprets these hints into its own `WidgetSizeIconVariant`s.
+export type WidgetSizeHints = {
+  height: number[];
+  width?: number;
+};
+
 // Layout rules govern resize/placement constraints + the resize-menu options
 // for one card. Each card kind contributes these via DI; the dashboard treats
 // the result as opaque from the layout-math side.
@@ -17,6 +27,10 @@ export type DashboardCardLayoutRules = {
   // Options shown in the topbar's size-picker menu. Empty/undefined → menu
   // size section hidden.
   menuSizes?: WidgetSizeIconVariant[];
+  // When true, the card is locked to its current size: the size menu shows only
+  // the current size (checked, non-switchable) and ignores `menuSizes`. Used for
+  // cards whose manifest declares no supported sizes but are already placed.
+  lockSizeToCurrent?: boolean;
   // Hints used by the Add Widget flow (install-time picker, not the resize
   // menu). Optional — only relevant for cards launched via that flow.
   availableSizes?: WidgetSizeKey[];

@@ -14,6 +14,7 @@ The unit of consumption is a **`ChatSession`**: a uniform observable interface t
 - **MessagePeer** — Who a message is from. One of `UserPeer` (an account, optionally pinned), `P2PPeer` (an SS58 account string in a P2P session), or `ProductPeer` (a product instance).
 - **MessageContent** — Tagged union covering `Text`, `RichText` (text + attachments), `Custom` (typed binary payload), `Reaction`, `Reply`, `Edit`, plus lifecycle events (`ContactAdded`, `LeftChat`).
 - **FileAttachment** — `{ identifier, claimTicket, meta }`. The `meta` discriminates `General` / `Image` / `Video`.
+- **blurhash** — the decoded preview string carried by `Image` / `Video` meta. It rides inline in the statement (not over HOP), so rendering it claims nothing. Use **`blurhash`** for the decoded domain string; the raw wire field is **`thumbnail`** (`Option(Bytes)`, the UTF-8 bytes of the blurhash) — say `thumbnail` only when talking about the on-wire bytes, `blurhash` everywhere else.
 
 ### P2P-specific
 

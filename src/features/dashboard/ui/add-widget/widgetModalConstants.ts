@@ -1,5 +1,4 @@
 import { type WidgetSizeIconVariant } from '@/domains/application';
-import { WIDGET_SIZE_CONFIG } from '../../constants';
 
 export type WidgetCardDefinition = {
   id: string;
@@ -9,17 +8,10 @@ export type WidgetCardDefinition = {
   sizeVariants: WidgetSizeIconVariant[];
 };
 
-const isWidgetSizeVariant = (value: string): value is WidgetSizeIconVariant => value in WIDGET_SIZE_CONFIG;
-
-export const getVariantFromGridSize = (w: number, h: number): WidgetSizeIconVariant => {
-  for (const [variant, config] of Object.entries(WIDGET_SIZE_CONFIG)) {
-    if (!isWidgetSizeVariant(variant)) continue;
-    if (config.size.w === w && config.size.h === h) return variant;
-  }
-
-  return 'small';
-};
-
+// TODO: abstract these menu items out via DI instead of hardcoding them here —
+// the way native dashboard cards are contributed through `addableDashboardCardsPipeline`
+// / `dashboardCardSDK` (see `features/dashboard/di.tsx`). Removes the hardcoded
+// 'product-widget' / 'chat-widget' ids and the `isChat` branching downstream.
 export const PLACEHOLDER_WIDGET_CARDS: WidgetCardDefinition[] = [
   {
     id: 'product-widget',

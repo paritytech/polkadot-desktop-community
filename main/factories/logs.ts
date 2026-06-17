@@ -9,9 +9,9 @@ import { ENVIRONMENT } from '../shared/constants/environment';
 
 const MAX_LOG_FILES_TO_KEEP = 10;
 const MAIN_LOG_FILE = 'polkadot-desktop.log';
-type RendererLogLevel = 'info' | 'warn' | 'error';
+type RendererLogLevel = 'debug' | 'info' | 'warn' | 'error';
 const isRendererLogLevel = (value: unknown): value is RendererLogLevel =>
-  value === 'info' || value === 'warn' || value === 'error';
+  value === 'debug' || value === 'info' || value === 'warn' || value === 'error';
 
 type RendererConsolePayload = { level: unknown; values: unknown };
 const isRendererConsolePayload = (value: unknown): value is RendererConsolePayload =>
@@ -103,6 +103,9 @@ function writeRendererLog(level: RendererLogLevel, values: unknown[]): void {
 
   // In staging/prod we rely on electron-log to write + rotate the main file.
   switch (level) {
+    case 'debug':
+      log.debug(message);
+      return;
     case 'info':
       log.info(message);
       return;

@@ -6,9 +6,10 @@ import { createRoot } from 'react-dom/client';
 import { ErrorBoundary } from 'react-error-boundary';
 
 import { ElectronSplashScreen, FallbackScreen, WebSplashScreen } from '@/shared/components';
-import { isElectron, reloadApp } from '@/shared/env';
+import { isElectron, isProductionBuild, reloadApp } from '@/shared/env';
 import { resetFeatureStatuses, updateFeatureStatus } from '@/shared/feature-config';
 import { useBrowserTheme } from '@/shared/hooks';
+import { silenceDebugConsole } from '@/shared/logger';
 import { Sentry, initSentry } from '@/shared/sentry';
 import { TranslationProvider } from '@/shared/translation';
 import { delay } from '@/shared/utils';
@@ -20,6 +21,8 @@ declare module 'react' {
   // eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- module augmentation requires interface
   interface CSSProperties {
     appRegion?: 'drag' | 'no-drag';
+    // Allow CSS custom properties (e.g. theme vars like --w-rjv-*) in inline styles.
+    [customProperty: `--${string}`]: string | number | undefined;
   }
 }
 
@@ -50,6 +53,12 @@ const setupRendererConsoleLogging = () => {
   if (!isElectron() || !window.App?.logRendererConsole) return;
   if (window.__rendererConsoleLoggingInstalled) return;
   window.__rendererConsoleLoggingInstalled = true;
+
+  const originalConsoleDebug = console.debug.bind(console);
+  console.debug = (...values: unknown[]) => {
+    originalConsoleDebug(...values);
+    window.App.logRendererConsole('debug', values);
+  };
 
   const originalConsoleInfo = console.info.bind(console);
   console.info = (...values: unknown[]) => {
@@ -94,6 +103,14 @@ const setupRendererConsoleLogging = () => {
 
 initSentry();
 setupRendererConsoleLogging();
+
+// Production builds mute `console.debug` app-wide — the verbose diagnostics level
+// (WebRTC traces etc.). Modules keep using `console` as usual and don't gate
+// logging themselves. Must run after setupRendererConsoleLogging so muted output
+// doesn't reach the file logs either.
+if (isProductionBuild()) {
+  silenceDebugConsole();
+}
 
 /**
  * All this loading logic can be described like this:

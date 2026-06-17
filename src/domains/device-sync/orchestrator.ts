@@ -39,6 +39,9 @@ export type DeviceSyncOrchestratorParams = {
   /** Handshake budget before a stalled connection is torn down and rebuilt.
    * Defaults to {@link HANDSHAKE_TIMEOUT_MS}; overridable for tests. */
   handshakeTimeoutMs?: number;
+  /** Aborts a superseded start: stops spawning and tears down everything spawned so
+   * far, so an orchestrator the caller has already discarded never keeps submitting. */
+  signal?: AbortSignal;
 };
 
 // Android parity (`DeviceSyncEngine.CONNECT_TIMEOUT`): bound how long a single
@@ -97,7 +100,7 @@ export async function startDeviceSyncOrchestrator(params: DeviceSyncOrchestrator
       ? 'initiator'
       : 'acceptor';
 
-    console.info('WEBRTC [orchestrator] spawn peer=%s role=%s', peer.statementAccountId, role);
+    console.debug('WEBRTC [orchestrator] spawn peer=%s role=%s', peer.statementAccountId, role);
 
     const session = createDeviceSessionChannel({
       ourDeviceEncPriv: params.ownDevice.encryptionPrivateKey,
@@ -127,7 +130,7 @@ export async function startDeviceSyncOrchestrator(params: DeviceSyncOrchestrator
       reconnectSignalSent.add(peer.statementAccountId);
       const persistedOfferId = peer.lastOfferId;
       if (persistedOfferId !== undefined) {
-        console.info(
+        console.debug(
           'WEBRTC [orchestrator] restart recovery peer=%s — sending reconnected(offerId=%s)',
           peer.statementAccountId,
           persistedOfferId,
@@ -156,7 +159,7 @@ export async function startDeviceSyncOrchestrator(params: DeviceSyncOrchestrator
         // Peer asked us (via a matching Reconnected) to dispose this attempt.
         // Clear the persisted offerId (it's dead) and respawn a fresh attempt.
         void deviceSyncRepository.setLastOfferId(peer.statementAccountId, null);
-        console.info('WEBRTC [orchestrator] reset requested by peer=%s — respawning', peer.statementAccountId);
+        console.debug('WEBRTC [orchestrator] reset requested by peer=%s — respawning', peer.statementAccountId);
         respawnPeer('failed');
       },
     });
@@ -181,7 +184,7 @@ export async function startDeviceSyncOrchestrator(params: DeviceSyncOrchestrator
     const dataChannelSub = signaler.dataChannel$.subscribe({
       next: channel => {
         clearTimeout(handshakeTimer);
-        console.info('WEBRTC [orchestrator] data channel ready peer=%s — starting sync state machine', peer.statementAccountId);
+        console.debug('WEBRTC [orchestrator] data channel ready peer=%s — starting sync state machine', peer.statementAccountId);
         const sm = startSyncStateMachine({
           peerStatementAccountId: peer.statementAccountId,
           dataChannel: channel,
@@ -241,12 +244,12 @@ export async function startDeviceSyncOrchestrator(params: DeviceSyncOrchestrator
               console.warn('WEBRTC [orchestrator] still %s after grace peer=%s — respawning', cur, peer.statementAccountId);
               respawnPeer(cur);
             } else {
-              console.info('WEBRTC [orchestrator] recovered to %s within grace peer=%s', cur, peer.statementAccountId);
+              console.debug('WEBRTC [orchestrator] recovered to %s within grace peer=%s', cur, peer.statementAccountId);
             }
           }, 2000);
         } else if (state === 'connected') {
           if (deathTimer !== null) {
-            console.info('WEBRTC [orchestrator] reconnected within grace peer=%s — cancelling respawn', peer.statementAccountId);
+            console.debug('WEBRTC [orchestrator] reconnected within grace peer=%s — cancelling respawn', peer.statementAccountId);
             clearTimeout(deathTimer);
             deathTimer = null;
           }
@@ -264,7 +267,7 @@ export async function startDeviceSyncOrchestrator(params: DeviceSyncOrchestrator
     function respawnPeer(cause: RTCPeerConnectionState): void {
       if (respawning) return;
       respawning = true;
-      console.info('WEBRTC [orchestrator] tearing down peer=%s (cause=%s) and respawning', peer.statementAccountId, cause);
+      console.debug('WEBRTC [orchestrator] tearing down peer=%s (cause=%s) and respawning', peer.statementAccountId, cause);
       for (const c of spawnClosers) {
         try {
           c();
@@ -326,8 +329,28 @@ export async function startDeviceSyncOrchestrator(params: DeviceSyncOrchestrator
   // in parallel saturates the account's per-block submission budget and the
   // chain returns `AccountFullError`, forcing exponential backoff. A small
   // delay between spawns lets the budget recover between Offers.
+  let stopped = false;
+  const stop = (): void => {
+    if (stopped) return;
+    stopped = true;
+    for (const c of closers) c();
+  };
+  // A start superseded by a newer identity is aborted mid-flight: stop spawning
+  // and tear down whatever already spawned, so a discarded orchestrator never
+  // keeps submitting (two live orchestrators on the same account collide on
+  // identical second-resolution expiries). `once` + idempotent `stop` make a
+  // later caller-driven stop a no-op.
+  params.signal?.addEventListener('abort', stop, { once: true });
+  // Aborted during the awaits above (before the listener was attached): the
+  // listener won't fire retroactively, so bail explicitly.
+  if (params.signal?.aborted) {
+    stop();
+    return { stop };
+  }
+
   const SPAWN_INTERVAL_MS = 600;
   for (let i = 0; i < peers.length; i++) {
+    if (params.signal?.aborted) break;
     // One bad peer must not take down sync with every other device: spawn()
     // synchronously derives ECDH topics and can throw on corrupt key material.
     try {
@@ -345,9 +368,5 @@ export async function startDeviceSyncOrchestrator(params: DeviceSyncOrchestrator
     }
   }
 
-  return {
-    stop: () => {
-      for (const c of closers) c();
-    },
-  };
+  return { stop };
 }

@@ -5,6 +5,7 @@ export const REMOTE_CONFIG_KEYS = {
   dotNsConfig: 'dot_ns_config',
   ipfsGatewayUrl: 'ipfs_gateway_url',
   identityBackendUrl: 'identity_backend_url',
+  w3sGateMode: 'w3s_gate_mode',
 } as const;
 
 // Custom signal selecting the RC channel (via `setCustomSignals`). The value is

@@ -47,6 +47,7 @@ src/dev-dist
 docs/superpowers
 docs/_reviews
 docs/_plans
+docs/_verification
 
 # nix
 result

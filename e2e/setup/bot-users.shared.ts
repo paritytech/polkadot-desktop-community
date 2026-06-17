@@ -9,7 +9,7 @@ import { type PoolRole, CHAT_PAIR_POOL_SIZE, readPool, writePool } from './bot-u
  * the fixtures sign in with (`AUTH_ENVIRONMENT_ID` in `authenticated.ts` and
  * `CHAT_PAIR_ENVIRONMENT_ID` in `chatPair.ts`).
  */
-const ENVIRONMENT_ID: E2eEnvironmentId = 'paseo-next-v2';
+const ENVIRONMENT_ID: E2eEnvironmentId = 'nightly';
 const BOT_NETWORK = envToBotNetwork(ENVIRONMENT_ID);
 
 /**

@@ -55,6 +55,7 @@ import {
   DataTooLargeError,
   createAccountId,
   createEncryption,
+  createExpiryAllocator,
   createSessionId,
   createSr25519Prover,
   khash,
@@ -66,26 +67,25 @@ import { type CodecType } from 'scale-ts';
 import { type HexString } from '@/shared/types';
 import { createAsyncTaskPool } from '@/shared/utils';
 
-import { SingleRequest, SingleResponse, StructuredStatementData } from './chatRequestCodec';
-import { computeSharedSecret } from './keys';
-import { aesGcmDecrypt, unwrapOneShotKey } from './multi-device-crypto';
-import { encryptForRecipients, encryptResponseForRecipients } from './multi-device-flow';
-import { signAndSubmitStatement } from './statementSubmit';
+import { multiDeviceService } from './multi-device/service';
+import { SingleRequest, SingleResponse, StructuredStatementData } from './requests/schemas';
+import { p2pService } from './service';
+import { transportGateway } from './session-transport/gateway';
+import { ChatMessage as ChatMessageCodec } from './session-transport/schemas';
 import { trackedSubscribeStatements } from './subscription-registry';
 import { type OutboxPort } from './types';
-import { ChatMessage as ChatMessageCodec } from './wireChatMessage';
 
 const REQUEST_LABEL = new TextEncoder().encode('request');
 const RESPONSE_LABEL = new TextEncoder().encode('response');
 
 /**
  * Budget for the final encrypted statement `data`, in bytes. The Bulletin
- * statement store caps statements around 2KB *total encoded size* (proof +
- * channel + topics + expiry + data); 1700 leaves margin for the non-data
+ * statement store caps statements around 500KB *total encoded size* (proof +
+ * channel + topics + expiry + data); 2KB leaves margin for the non-data
  * fields. `DataTooLargeError.available` is the chain's authoritative number —
  * the safety-net path logs it so this constant can be corrected if it drifts.
  */
-const MAX_STATEMENT_DATA_BYTES = 1700;
+const MAX_STATEMENT_DATA_BYTES = (500 - 2) * 1024;
 
 const MESSAGE_TOO_LARGE_ERROR_NAME = 'MessageTooLargeError';
 
@@ -102,12 +102,6 @@ function createMessageTooLargeError(size: number, budget: number): Error {
 export function isMessageTooLargeError(err: unknown): boolean {
   return err instanceof Error && err.name === MESSAGE_TOO_LARGE_ERROR_NAME;
 }
-
-const equalAccountId = (a: Uint8Array, b: Uint8Array): boolean => {
-  if (a.length !== b.length) return false;
-  for (let i = 0; i < a.length; i++) if (a[i] !== b[i]) return false;
-  return true;
-};
 
 export type V2PeerDevice = {
   /** 32-byte peer device sr25519 (used as the `accountId` input to SessionId on receive, and as the device identifier in MultiDeviceRequest.devicesInfo). */
@@ -212,7 +206,7 @@ export const createChatPeerSessionV2 = (params: V2ChatPeerSessionParams): V2Chat
   // ── Outgoing: K(D(A),B), SessionId(D(A), B) ─────────────────────────────
   // Sender-side ECDH uses our device enc priv key against the peer's
   // identity chat pub key. Both inputs are P-256.
-  const outgoingSharedSecret = computeSharedSecret(ownDeviceEncryptionPrivateKey, peerIdentityChatPublicKey);
+  const outgoingSharedSecret = p2pService.computeSharedSecret(ownDeviceEncryptionPrivateKey, peerIdentityChatPublicKey);
   const outgoingEncryption = createEncryption(outgoingSharedSecret);
 
   const localDevice = { accountId: createAccountId(ownDeviceStatementAccountId), pin: undefined };
@@ -239,6 +233,33 @@ export const createChatPeerSessionV2 = (params: V2ChatPeerSessionParams): V2Chat
   );
 
   const prover = createSr25519Prover(ownDeviceSeed);
+  // One expiry source for this session's submits (requests, acks, drains all
+  // ride this session's outgoing channel). Shared across the session so its
+  // own same-second submits stay strictly increasing and supersede correctly.
+  const expiryAllocator = createExpiryAllocator();
+
+  // Expiry synchronization (the session spec's init step): seed the allocator's
+  // floor from our own statements already live on the outgoing topic. They
+  // survive from a previous app session (pinned-high expiries never lapse), so a
+  // fresh allocator (floor 0) signs at the wall-clock priority and ties/loses to
+  // the surviving statement, bouncing through priority-rejection retries before
+  // it clears. Reads only the plaintext `.expiry` wire field, so — unlike the
+  // SDK's full init() — it works even though our own MultiRequest inner is
+  // unreadable to us. Submits await it once before their first post; raiseFloor
+  // is monotonic, so a statement that lands mid-query keeps the counter ahead.
+  const expiryFloorSynced: Promise<void> = (async () => {
+    const result = await statementStore.queryStatements({ matchAll: [outgoingTopic] });
+    if (result.isErr()) {
+      console.warn('[chat-session-v2] expiry-floor sync failed topic=%s: %s', toHex(outgoingTopic), result.error.message);
+      return;
+    }
+    let maxExpiry = 0n;
+    for (const s of result.value) {
+      if (s.expiry !== undefined && s.expiry > maxExpiry) maxExpiry = s.expiry;
+    }
+    expiryAllocator.raiseFloor(maxExpiry);
+  })();
+
   const seenStatementIds = new Set<string>();
   const seenMessageIds = new Set<string>();
 
@@ -331,14 +352,21 @@ export const createChatPeerSessionV2 = (params: V2ChatPeerSessionParams): V2Chat
   const opPool = createAsyncTaskPool({ poolSize: 1 });
   const enqueueOp = <T>(op: () => Promise<T>): Promise<T> => opPool.call(op);
 
-  const notifySubmitted = () => {
+  // `justSubmitted` is captured BEFORE the submit await at each call site (the
+  // not-yet-notified entries the statement carries). We notify those captured
+  // refs rather than re-filtering `unackedEntries`, because an ACK can land
+  // during the await: the in-memory path delivers to the peer synchronously and
+  // the peer's ACK handler runs off the subscription OUTSIDE the op pool (see
+  // the Response branch in the subscribe handler), removing entries from
+  // `unackedEntries`. Re-deriving here would then drop their `onSent`.
+  const notifySubmitted = (justSubmitted: UnackedEntry[]) => {
     if (disposed) return;
     // Flip + persist BEFORE invoking callbacks: if a callback (push
     // notification, status flip) crashes the app, the persisted `notified`
     // already reflects the submit, so restart can't double-fire it. The
     // inverse failure (persisted true, callback never ran) costs one missing
     // `sent` flip, which the later `delivered` transition supersedes.
-    const pending = unackedEntries.filter(e => !e.notified);
+    const pending = justSubmitted.filter(e => !e.notified);
     if (pending.length === 0) return;
     for (const entry of pending) entry.notified = true;
     persistOutbox();
@@ -346,10 +374,12 @@ export const createChatPeerSessionV2 = (params: V2ChatPeerSessionParams): V2Chat
   };
 
   const sendStatement = async (data: Uint8Array, channel: Uint8Array = outgoingChannel): Promise<void> => {
+    await expiryFloorSynced;
     const outerEnc = outgoingEncryption.encrypt(data);
     if (outerEnc.isErr()) throw outerEnc.error;
-    await signAndSubmitStatement({
+    await transportGateway.signAndSubmitStatement({
       prover,
+      allocator: expiryAllocator,
       statementStore,
       channel,
       topics: outgoingTopic,
@@ -366,7 +396,7 @@ export const createChatPeerSessionV2 = (params: V2ChatPeerSessionParams): V2Chat
   // the trial costs nothing extra.
   const buildEnvelope = (entries: { messageId: string; bytes: Uint8Array }[], requestId: string): Uint8Array => {
     const inner = SingleRequest.enc({ requestId, messages: entries.map(e => e.bytes) });
-    const { data } = encryptForRecipients(
+    const { data } = multiDeviceService.encryptForRecipients(
       inner,
       peerDevices.map(d => ({ statementAccountId: d.statementAccountId, encryptionPublicKey: d.encryptionPublicKey })),
       ownDeviceEncryptionPrivateKey,
@@ -377,8 +407,10 @@ export const createChatPeerSessionV2 = (params: V2ChatPeerSessionParams): V2Chat
   };
 
   const submitEncrypted = async (encrypted: Uint8Array): Promise<void> => {
-    await signAndSubmitStatement({
+    await expiryFloorSynced;
+    await transportGateway.signAndSubmitStatement({
       prover,
+      allocator: expiryAllocator,
       statementStore,
       channel: outgoingChannel,
       topics: outgoingTopic,
@@ -482,6 +514,9 @@ export const createChatPeerSessionV2 = (params: V2ChatPeerSessionParams): V2Chat
       requestCoverage.set(requestId, new Set(unackedEntries.map(e => e.messageId)));
       pruneCoverage();
       persistOutbox();
+      // Snapshot what this submit marks `sent` BEFORE awaiting — an ACK racing
+      // in during the await must not erase these entries' onSent.
+      const justSubmitted = unackedEntries.filter(e => !e.notified);
       try {
         await submitEncrypted(encrypted);
       } catch (err) {
@@ -503,7 +538,7 @@ export const createChatPeerSessionV2 = (params: V2ChatPeerSessionParams): V2Chat
         persistOutbox();
         return;
       }
-      notifySubmitted();
+      notifySubmitted(justSubmitted);
     });
 
   // Post a success ACK for a request we just decoded, so the peer can advance
@@ -513,7 +548,7 @@ export const createChatPeerSessionV2 = (params: V2ChatPeerSessionParams): V2Chat
   const sendAck = async (requestId: string): Promise<void> => {
     if (peerDevices.length === 0) return;
     const inner = SingleResponse.enc({ requestId, responseCode: 0 });
-    const { data } = encryptResponseForRecipients(
+    const { data } = multiDeviceService.encryptResponseForRecipients(
       inner,
       peerDevices.map(d => ({ statementAccountId: d.statementAccountId, encryptionPublicKey: d.encryptionPublicKey })),
       ownDeviceEncryptionPrivateKey,
@@ -596,6 +631,9 @@ export const createChatPeerSessionV2 = (params: V2ChatPeerSessionParams): V2Chat
       requestCoverage.set(requestId, new Set(candidate.map(e => e.messageId)));
       pruneCoverage();
       persistOutbox();
+      // Snapshot what this submit marks `sent` BEFORE awaiting — an ACK racing
+      // in during the await must not erase these entries' onSent.
+      const justSubmitted = unackedEntries.filter(e => !e.notified);
       try {
         await submitEncrypted(encrypted);
       } catch (err) {
@@ -627,7 +665,7 @@ export const createChatPeerSessionV2 = (params: V2ChatPeerSessionParams): V2Chat
         scheduleDrainRetry();
         throw err;
       }
-      notifySubmitted();
+      notifySubmitted(justSubmitted);
       return false;
     });
 
@@ -672,14 +710,14 @@ export const createChatPeerSessionV2 = (params: V2ChatPeerSessionParams): V2Chat
       }
       let oneShotKey: Uint8Array;
       try {
-        oneShotKey = unwrapOneShotKey(ownDeviceEncryptionPrivateKey, peerDeviceEncPub, ownEntry.encryptedKey);
+        oneShotKey = multiDeviceService.unwrapOneShotKey(ownDeviceEncryptionPrivateKey, peerDeviceEncPub, ownEntry.encryptedKey);
       } catch (e) {
         console.warn('[chat-session-v2] MultiRequest per-device unwrap failed', e);
         return null;
       }
       let innerBytes: Uint8Array;
       try {
-        innerBytes = aesGcmDecrypt(oneShotKey, envelope.encryptedRequest);
+        innerBytes = multiDeviceService.aesGcmDecrypt(oneShotKey, envelope.encryptedRequest);
       } catch (e) {
         console.warn('[chat-session-v2] MultiRequest inner AES decrypt failed', e);
         return null;
@@ -715,18 +753,18 @@ export const createChatPeerSessionV2 = (params: V2ChatPeerSessionParams): V2Chat
   ): CodecType<typeof SingleResponse> | null => {
     if (outer.tag === 'MultiResponse') {
       const envelope = outer.value;
-      const ownEntry = envelope.devicesInfo.find(d => equalAccountId(d.statementAccountId, ownDeviceStatementAccountId));
+      const ownEntry = envelope.devicesInfo.find(d => p2pService.bytesEqual(d.statementAccountId, ownDeviceStatementAccountId));
       if (!ownEntry) return null;
       let oneShotKey: Uint8Array;
       try {
-        oneShotKey = unwrapOneShotKey(ownDeviceEncryptionPrivateKey, peerDeviceEncPub, ownEntry.encryptedKey);
+        oneShotKey = multiDeviceService.unwrapOneShotKey(ownDeviceEncryptionPrivateKey, peerDeviceEncPub, ownEntry.encryptedKey);
       } catch (e) {
         console.warn('[chat-session-v2] MultiResponse per-device unwrap failed', e);
         return null;
       }
       let innerBytes: Uint8Array;
       try {
-        innerBytes = aesGcmDecrypt(oneShotKey, envelope.encryptedResponse);
+        innerBytes = multiDeviceService.aesGcmDecrypt(oneShotKey, envelope.encryptedResponse);
       } catch (e) {
         console.warn('[chat-session-v2] MultiResponse inner AES decrypt failed', e);
         return null;
@@ -874,7 +912,7 @@ export const createChatPeerSessionV2 = (params: V2ChatPeerSessionParams): V2Chat
   );
 
   for (const peerDevice of peerDevices) {
-    const incomingSharedSecret = computeSharedSecret(identityChatPrivateKey, peerDevice.encryptionPublicKey);
+    const incomingSharedSecret = p2pService.computeSharedSecret(identityChatPrivateKey, peerDevice.encryptionPublicKey);
     const incomingEncryption = createEncryption(incomingSharedSecret);
 
     const remoteDevice = { accountId: createAccountId(peerDevice.statementAccountId), pin: undefined };

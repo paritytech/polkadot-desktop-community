@@ -8,7 +8,6 @@ export * from './bigint';
 export * from './search';
 export * from './createAsyncTaskPool';
 export * from './createCache';
-export * from './expirySequence';
 export * from './strings';
 export * from './error';
 export * from './visibility';

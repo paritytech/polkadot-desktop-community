@@ -4,7 +4,8 @@ import { type ChangeEvent, useEffect, useMemo, useRef, useState } from 'react';
 
 import { TEST_IDS } from '@/shared/test-ids';
 import { cnTw } from '@/shared/utils';
-import { useContactSearch, useP2PChatManager, useP2PSessions, useSendChatRequest } from '@/domains/chat';
+import { useP2PChatManager, useP2PSessions, useSendChatRequest } from '@/aggregates/p2p-chat';
+import { useContactSearch } from '../hooks/useContactSearch';
 
 import { Avatar } from './partials/Avatar';
 

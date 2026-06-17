@@ -8,7 +8,7 @@ import { OnboardingPage } from '../page-objects/OnboardingPage';
 
 import { test as baseTest } from './base';
 
-const AUTH_ENVIRONMENT_ID: E2eEnvironmentId = 'paseo-next-v2';
+const AUTH_ENVIRONMENT_ID: E2eEnvironmentId = 'nightly';
 
 export type AuthTestFixtures = {
   /**

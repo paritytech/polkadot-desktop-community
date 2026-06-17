@@ -26,9 +26,8 @@ export const PermissionEntriesDialog = ({ open, title, icon, entries, onOpenChan
     <Dialog.Content showCloseButton size="md" aria-describedby={undefined}>
       <Dialog.Header>
         <Dialog.Title>
-          {/* pr-8 keeps the title clear of the absolutely positioned close button;
-              break-words restores whole-word wrapping over the dialog's break-all */}
-          <span className="block pr-8 break-words">{title}</span>
+          {/* pr-8 keeps the title clear of the absolutely positioned close button */}
+          <span className="block pr-8">{title}</span>
         </Dialog.Title>
       </Dialog.Header>
       <ScrollArea>
