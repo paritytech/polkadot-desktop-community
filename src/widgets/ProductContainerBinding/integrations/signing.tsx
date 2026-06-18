@@ -92,8 +92,8 @@ export function useSigning(container: Container, identifier: string, contextGene
         sLog(id, 'rejected — no active session');
         return err(new SigningErr.Rejected());
       }
-      if (account[0] !== identifier || !dotNsService.isProductIdentifier(account[0])) {
-        sLog(id, 'permission denied', { expected: identifier, got: account[0] });
+      if (!dotNsService.isProductIdentifier(account[0])) {
+        sLog(id, 'permission denied — not a product account', { got: account[0] });
         return err(new SigningErr.PermissionDenied());
       }
 
@@ -147,8 +147,8 @@ export function useSigning(container: Container, identifier: string, contextGene
         sLog(id, 'rejected — no active session');
         return err(new CreateTransactionErr.Rejected());
       }
-      if (signer[0] !== identifier || !dotNsService.isProductIdentifier(signer[0])) {
-        sLog(id, 'permission denied', { expected: identifier, got: signer[0] });
+      if (!dotNsService.isProductIdentifier(signer[0])) {
+        sLog(id, 'permission denied — not a product account', { got: signer[0] });
         return err(new CreateTransactionErr.PermissionDenied());
       }
 
@@ -201,8 +201,8 @@ export function useSigning(container: Container, identifier: string, contextGene
         sLog(id, 'rejected — no active session');
         return err(new SigningErr.Rejected());
       }
-      if (account[0] !== identifier || !dotNsService.isProductIdentifier(account[0])) {
-        sLog(id, 'permission denied', { expected: identifier, got: account[0] });
+      if (!dotNsService.isProductIdentifier(account[0])) {
+        sLog(id, 'permission denied — not a product account', { got: account[0] });
         return err(new SigningErr.PermissionDenied());
       }
 
