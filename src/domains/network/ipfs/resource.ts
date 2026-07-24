@@ -10,7 +10,7 @@ import { ipfsGateway } from './gateway';
 export const ipfsRawResource = createQueryResource<{ cid: string; asCar?: boolean }>({
   key: ({ cid, asCar }) => (asCar ? `car:${cid}` : cid),
 })
-  .request<Uint8Array | null>(({ cid, asCar }) => ipfsGateway.fetchRaw(cid, { asCar }))
+  .request<Uint8Array | null>(({ cid, asCar }) => ipfsGateway.fetchRaw(cid, { asCar, backoff: true }))
   .timeout(60_000)
   .cache<Record<string, Uint8Array>>({
     staleAfter: Number.POSITIVE_INFINITY,
