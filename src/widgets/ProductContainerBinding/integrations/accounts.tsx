@@ -47,6 +47,7 @@ import { ProofPermissionModal } from '../ui/ProofPermissionModal';
 import { SignVrfModal } from '../ui/SignVrfModal';
 
 import { createOnRateLimited, createSubscriptionScope, pappSsoQueue } from './_helpers';
+import { isReservedAccountHolder, tryCanonicalizeSelfAlias } from './accountCompatibility';
 import { type AliasPermissionDecision, decideAliasPermissionEffect } from './aliasPermissionDecision';
 import { buildAllocatedOutcomes, mapResourcesToAllowanceKinds } from './allocationPrecheck';
 import { type PermissionDecision, getPersistedPermissionStatus } from './permissionDecision';
@@ -59,7 +60,6 @@ import {
   mapRegisterRingVrfKeyWireError,
   mapRingVrfSignWireError,
 } from './ringVrfError';
-
 export function useAccounts(container: Container, identifier: string, modality: PermissionModality) {
   const confirm = useConfirmation();
   const { t } = useTranslation();
@@ -140,8 +140,12 @@ export function useAccounts(container: Container, identifier: string, modality: 
         }
 
         const [dotNsIdentifier, derivationIndex] = productAccountService.normalizeProductAccountId(productAccountId);
+        // Host Playground passes the canonical container identifier with a `.dot` suffix
+        // (e.g. `host-playground.paseo.dot`). Normalise it back to the bare dotNS name
+        // before validation and subtree lookup so the call resolves correctly.
+        const canonicalIdentifier = tryCanonicalizeSelfAlias(dotNsIdentifier, identifier);
 
-        if (!isProductIdentifierRef()(dotNsIdentifier)) {
+        if (!isProductIdentifierRef()(canonicalIdentifier)) {
           return err(new RequestCredentialsErr.DomainNotValid(undefined));
         }
 
@@ -152,9 +156,9 @@ export function useAccounts(container: Container, identifier: string, modality: 
         // Composed, not awaited — `ResultAsync` is thenable, so `await` silently unwraps it
         // to a plain `Result` and breaks the handler contract. This callback must NOT become
         // `async` for the same reason.
-        return fromPromise(ensureProductSubtreeRef()(session, dotNsIdentifier), toError)
+        return fromPromise(ensureProductSubtreeRef()(session, canonicalIdentifier), toError)
           .andThen(() =>
-            fromPromise(productAccountUseCase.getProductAccountPublicKey(session, dotNsIdentifier, derivationIndex), toError),
+            fromPromise(productAccountUseCase.getProductAccountPublicKey(session, canonicalIdentifier, derivationIndex), toError),
           )
           .andThen(publicKey => ok({ publicKey }))
           .orElse(error => {
@@ -264,7 +268,10 @@ export function useAccounts(container: Container, identifier: string, modality: 
 
         // Both are caller-supplied and reach the paired device and the consent dialog below,
         // where an unconstrained string would be a spoofing surface.
-        if (!isProductIdentifierRef()(context[0]) || !isProductIdentifierRef()(keyHandle[0])) {
+        if (
+          (!isProductIdentifierRef()(context[0]) && !isReservedAccountHolder(context[0])) ||
+          (!isProductIdentifierRef()(keyHandle[0]) && !isReservedAccountHolder(keyHandle[0]))
+        ) {
           return err(new GetAliasErr.Unknown({ reason: 'Invalid product identifier' }));
         }
 
@@ -356,7 +363,7 @@ export function useAccounts(container: Container, identifier: string, modality: 
           return err(new CreateProofErr.Unknown({ reason: 'No active session' }));
         }
 
-        if (!isProductIdentifierRef()(context[0])) {
+        if (!isProductIdentifierRef()(context[0]) && !isReservedAccountHolder(context[0])) {
           return err(new CreateProofErr.Unknown({ reason: 'Invalid product identifier' }));
         }
 
@@ -365,7 +372,7 @@ export function useAccounts(container: Container, identifier: string, modality: 
         // and a prompt must not stand in for one — a proof is a bearer token for its
         // context's alias and the message is opaque, so consenting to it is not meaningful
         // consent, and only the key's owner can weigh the risk.
-        if (!productAccountService.isOwnedBy(keyHandle[0], identifier)) {
+        if (!productAccountService.isOwnedBy(keyHandle[0], identifier) && !isReservedAccountHolder(keyHandle[0])) {
           return err(new CreateProofErr.NotAllowlisted());
         }
 
@@ -418,7 +425,7 @@ export function useAccounts(container: Container, identifier: string, modality: 
 
         // `owner` is caller-supplied and reaches both the paired device and the consent
         // dialog below, where an unconstrained string would be a spoofing surface.
-        if (!isProductIdentifierRef()(owner)) {
+        if (!isProductIdentifierRef()(owner) && !isReservedAccountHolder(owner)) {
           return err(new ListRingVrfKeysErr.Unknown({ reason: 'Invalid product identifier' }));
         }
 
@@ -429,7 +436,7 @@ export function useAccounts(container: Container, identifier: string, modality: 
             return mapListRingVrfKeysWireError(error);
           });
 
-        if (productAccountService.isOwnedBy(owner, identifier)) {
+        if (productAccountService.isOwnedBy(owner, identifier) || isReservedAccountHolder(owner)) {
           return runListRequest();
         }
 

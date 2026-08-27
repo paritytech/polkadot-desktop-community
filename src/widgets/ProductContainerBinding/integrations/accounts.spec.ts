@@ -1,6 +1,7 @@
 import { CreateProofErr, GetAliasErr, ListRingVrfKeysErr, RegisterRingVrfKeyErr, RingVrfSignErr } from '@novasamatech/host-api';
 import { describe, expect, it } from 'vitest';
 
+import { isReservedAccountHolder, tryCanonicalizeSelfAlias } from './accountCompatibility';
 import { decideAliasPermissionEffect } from './aliasPermissionDecision';
 import {
   mapAliasWireError,
@@ -99,5 +100,52 @@ describe('RFC-0024 error variants survive the alias/proof mappers', () => {
     for (const error of [new GetAliasErr.KeyNotRegistered(), new GetAliasErr.KeyNotInRing()]) {
       expect(mapAliasWireError(error)).toBe(error);
     }
+  });
+});
+
+// Tests the helpers imported from ./accountCompatibility — the actual exported functions.
+describe('tryCanonicalizeSelfAlias (Host Playground self-alias normalisation)', () => {
+  it('normalises the self-alias form back to the bare identifier', () => {
+    expect(tryCanonicalizeSelfAlias('host-playground.paseo.dot', 'host-playground.paseo')).toBe('host-playground.paseo');
+  });
+
+  it('leaves an already-qualified dotNS identifier unchanged', () => {
+    expect(tryCanonicalizeSelfAlias('host-playground.paseo', 'host-playground.paseo')).toBe('host-playground.paseo');
+    // myapp.dot with canonical myapp IS the self-alias form and gets normalised back.
+    expect(tryCanonicalizeSelfAlias('myapp.dot', 'myapp')).toBe('myapp');
+  });
+
+  it('a bare dapp name gets .dot appended by the caller; we normalise it back', () => {
+    // Host Playground: `myapp` → `myapp.dot` at call site → we strip `.dot` to match identifier `myapp`.
+    expect(tryCanonicalizeSelfAlias('myapp.dot', 'myapp')).toBe('myapp');
+  });
+
+  it('leaves unrelated identifiers unchanged', () => {
+    expect(tryCanonicalizeSelfAlias('other.paseo.dot', 'host-playground.paseo')).toBe('other.paseo.dot');
+  });
+
+  it('leaves localhost unchanged', () => {
+    expect(tryCanonicalizeSelfAlias('localhost:3000', 'localhost')).toBe('localhost:3000');
+  });
+});
+
+// Tests the actual exported isReservedAccountHolder from ./accountCompatibility.
+// Bypass is applied in getAlias, createProof, and listRingVrfKeys (not ringVrfSign).
+describe('isReservedAccountHolder (Host Playground ring-VRF bypass)', () => {
+  it('returns true for peopl.dot', () => {
+    expect(isReservedAccountHolder('peopl.dot')).toBe(true);
+  });
+
+  it('returns false for arbitrary other.dot', () => {
+    expect(isReservedAccountHolder('other.dot')).toBe(false);
+  });
+
+  it('returns false for other.paseo.dot', () => {
+    expect(isReservedAccountHolder('other.paseo.dot')).toBe(false);
+  });
+
+  it('returns false for unrelated identifiers', () => {
+    expect(isReservedAccountHolder('host-playground.paseo')).toBe(false);
+    expect(isReservedAccountHolder('localhost:3000')).toBe(false);
   });
 });
