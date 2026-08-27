@@ -17,6 +17,7 @@ import { createOnRateLimited } from './integrations/_helpers';
 import { useAccounts } from './integrations/accounts';
 import { useEntropy } from './integrations/entropy';
 import { useLocalStorage } from './integrations/localStorage';
+import { useLocale } from './integrations/locale';
 import { useLogin } from './integrations/login';
 import { useNotifications } from './integrations/notifications';
 import { usePermissions } from './integrations/permissions';
@@ -154,6 +155,7 @@ export const ProductContainerBinding = memo(({ container, identifier, modality }
   useAccounts(container, identifier, modality);
   usePermissions(container, identifier, modality);
   useTheme(container);
+  useLocale(container);
   useLogin(container, identifier);
   useEntropy(container, identifier);
 
