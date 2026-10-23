@@ -183,7 +183,7 @@
     "@typescript/native": "npm:typescript@^7.0.2",
     "@vitejs/plugin-react": "5.2.0",
     "@vitest/coverage-v8": "5.0.1",
-    "@vitest/ui": "5.0.1",
+    "@vitest/ui": "5.0.5",
     "allure-commandline": "2.46.1",
     "allure-playwright": "3.12.2",
     "babel-plugin-react-compiler": "1.0.0",
