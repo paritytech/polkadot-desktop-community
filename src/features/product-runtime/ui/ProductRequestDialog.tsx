@@ -65,8 +65,8 @@ export { useProductRequestDialogContext };
 
 type RootProps = PropsWithChildren<{
   /**
-   * Esc / X / outside click, unless the active step overrides it. Every request fails
-   * closed: dismissing is a denial, never an approval.
+   * Esc / X, unless the active step overrides it. Dismissing never approves; the caller
+   * decides whether it is a denial or no answer at all.
    */
   onDismiss: VoidFunction;
   /** `tall` for the review layouts that scroll; `default` for a single-question prompt. */

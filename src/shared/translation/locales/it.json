@@ -1090,6 +1090,11 @@
           "subtitle": "Consente a questa app di agire con un account che appartiene a un’altra app",
           "warning": "Consentendolo, questa app potrà usare l’account dell’altra app per tuo conto"
         },
+        "identityDisclosure": {
+          "title": "Condividere il tuo nome utente con questa app?",
+          "subtitle": "Questa app vedrà il tuo nome utente principale",
+          "warning": "Consentendolo, questa app potrà riconoscerti dal tuo nome utente"
+        },
         "productSubtree": {
           "title": "Consentire a questa app di accedere al suo account?",
           "subtitle": "Recupera l’account di questa app dal tuo dispositivo associato"
@@ -1166,13 +1171,6 @@
       }
     },
     "productContainerBinding": {
-      "keyListingPermission": {
-        "title": "Consentire l'accesso alle chiavi di {requestedIdentifier}?",
-        "subtitle": "Permette a questa app di scoprire quali chiavi ha registrato un'altra app",
-        "warning": "Consentendolo, questa app saprà per quali ring l'altra app ha registrato delle chiavi",
-        "deny": "Non consentire",
-        "allow": "Consenti"
-      },
       "aliasPermission": {
         "title": "Consentire l'accesso al tuo alias in {requestedIdentifier}?",
         "subtitle": "Usato per collegare il tuo account identità tra le app",

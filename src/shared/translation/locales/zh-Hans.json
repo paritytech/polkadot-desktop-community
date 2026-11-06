@@ -1090,6 +1090,11 @@
           "subtitle": "让此应用使用属于另一个应用的账户进行操作",
           "warning": "允许后，此应用可代表你使用另一个应用的账户"
         },
+        "identityDisclosure": {
+          "title": "与此应用分享你的用户名？",
+          "subtitle": "此应用将看到你的主用户名",
+          "warning": "允许后，此应用可通过你的用户名识别你"
+        },
         "productSubtree": {
           "title": "允许此应用访问自己的账户？",
           "subtitle": "从你已配对的设备获取此应用的账户"
@@ -1166,13 +1171,6 @@
       }
     },
     "productContainerBinding": {
-      "keyListingPermission": {
-        "title": "允许访问 {requestedIdentifier} 的密钥？",
-        "subtitle": "让该应用发现另一个应用注册了哪些密钥",
-        "warning": "允许后，该应用将得知另一个应用为哪些 ring 注册了密钥",
-        "deny": "不允许",
-        "allow": "允许"
-      },
       "aliasPermission": {
         "title": "允许 {requestedIdentifier} 访问你的 alias？",
         "subtitle": "用于跨应用关联你的身份账户",

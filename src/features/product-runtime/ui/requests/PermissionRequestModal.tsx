@@ -17,6 +17,8 @@ type Props = {
   allowTestId?: string;
   onAllow: VoidFunction;
   onDeny: VoidFunction;
+  /** Esc / X. Defaults to `onDeny`. */
+  onDismiss?: VoidFunction;
 };
 
 /**
@@ -39,8 +41,9 @@ export const PermissionRequestModal = ({
   allowTestId,
   onAllow,
   onDeny,
+  onDismiss,
 }: Props) => (
-  <ProductRequestDialog.Root variant="default" onDismiss={onDeny}>
+  <ProductRequestDialog.Root variant="default" onDismiss={onDismiss ?? onDeny}>
     <div className="contents" data-testid={dialogTestId} />
     <RequestProductHeader identifier={identifier} />
 

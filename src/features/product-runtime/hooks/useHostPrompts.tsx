@@ -12,8 +12,10 @@ import { ProductReviewDialog } from '../ui/ProductReviewDialog';
 /**
  * The callbacks that need a user in the loop.
  *
- * Every one fails closed: a prompt torn down without an answer — the component
- * unmounting, the entry being disposed — resolves to a denial, never an approval.
+ * Every one fails closed, never to an approval. `confirmUserAction` resolves `false` when a
+ * prompt is dismissed or torn down without an answer. `confirmPermission` rejects instead:
+ * the core persists whatever it is told, so a rejection leaves the product unanswered and
+ * nothing persisted, where a `'Deny'` would be a permanent refusal the user never chose.
  *
  * Both permission callbacks answer with a lifetime the core then owns: under the core's
  * contract the core persists an `AllowAlways` itself. The one grant written here is the
@@ -25,17 +27,31 @@ export function useHostPrompts(): HostPrompts {
   const nextReviewId = useRef(0);
 
   return useMemo<HostPrompts>(() => {
-    const ask = async (review: UserConfirmationReview): Promise<boolean> => {
-      // A distinct id per review: `useConfirmation` keys entries by id and rejects
-      // the previous holder of a reused one, which would resolve a live prompt as
-      // denied while the user was still looking at it.
+    // A distinct id per review: `useConfirmation` keys entries by id and rejects
+    // the previous holder of a reused one, which would resolve a live prompt as
+    // denied while the user was still looking at it.
+    const openReview = (review: UserConfirmationReview, rejectOnDismiss: boolean): Promise<boolean> | null => {
       const id = `truapi-review:${nextReviewId.current++}`;
       const props = productRuntimeService.toModalProps(review);
-      if (!props) return false;
+      if (!props) return null;
 
-      return confirmRef()<boolean>(id, ({ resolve }) => <ProductReviewDialog props={props} onDecide={resolve} />).catch(
-        () => false,
-      );
+      return confirmRef()<boolean>(id, ({ resolve, reject }) => (
+        <ProductReviewDialog
+          props={props}
+          onDecide={resolve}
+          onDismiss={rejectOnDismiss ? () => reject(new Error('Permission review dismissed')) : undefined}
+        />
+      ));
+    };
+
+    const ask = async (review: UserConfirmationReview): Promise<boolean> =>
+      (await openReview(review, false)?.catch(() => false)) ?? false;
+
+    const askPermissionReview = async (review: UserConfirmationReview): Promise<PermissionDecision> => {
+      const pending = openReview(review, true);
+      if (!pending) return 'Deny';
+
+      return (await pending) ? 'AllowOnce' : 'Deny';
     };
 
     // `capability` is the wire value, which is already the copy key the shared dialog
@@ -72,7 +88,7 @@ export function useHostPrompts(): HostPrompts {
         confirmUserAction: ask,
         // No lifetime is offered for an identity or account disclosure — the review
         // surface asks about one action — so an approval is always one-shot.
-        confirmPermission: async review => ((await ask(review)) ? 'AllowOnce' : 'Deny'),
+        confirmPermission: askPermissionReview,
       },
 
       permissions: {
