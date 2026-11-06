@@ -14,7 +14,7 @@ Features may be churny — reshaped, split, or thrown away. That's fine as long 
 
 2. **Confirm the domain supports it.** Skim the domain's `index.ts` for the hooks you need. If something's missing, stop and extend the domain — don't paper over it in the feature.
 
-3. **Scaffold the feature.** Run `/create-feature <name>` — it creates `src/features/{name}/` and registers the feature in `src/bootstrap.ts` (covering step 8). For the file layout and per-file contracts, see the [Feature section in project-structure.md](./project-structure.md#feature).
+3. **Scaffold the feature.** Create `src/features/{name}/` with a `feature.tsx` and an `index.ts`. For the file layout and per-file contracts, see the [Feature section in project-structure.md](./project-structure.md#feature).
 
 4. **Build UI on domain and aggregate hooks.**
    - Components read via the named `useX` hooks exposed by domain and aggregate `hooks.ts` files.
@@ -42,7 +42,7 @@ Features may be churny — reshaped, split, or thrown away. That's fine as long 
    export const Route = createFileRoute('/dashboard')({ component: Dashboard });
    ```
 
-8. **Register the feature.** If you skipped `/create-feature`, add the feature identifier to `registerFeatures([...])` in `src/bootstrap.ts` — without this, the feature is invisible.
+8. **Register the feature.** Add the feature identifier to `registerFeatures([...])` in `src/bootstrap.ts` — without this, the feature is invisible.
 
 9. **Test what matters.**
    - **`*.spec.ts`** — pure logic in `state/` and `hooks/`.
@@ -59,7 +59,7 @@ Features may be churny — reshaped, split, or thrown away. That's fine as long 
 - [ ] **No imports of another feature's components, hooks, or state.** The one sanctioned cross-feature import is another feature's **DI identifiers** (slots, pipelines, transformers, side effects, SDK contracts) — to `feature.inject(...)` into them. Everything else is shared via DI or promoted to a widget / aggregate / domain (see [Sharing across features](#sharing-across-features)).
 - [ ] No JSX string literals — everything user-visible goes through `react-intl`.
 - [ ] No Effector in new code.
-- [ ] Feature is registered in `src/bootstrap.ts` (`/create-feature` handles this).
+- [ ] Feature is registered in `src/bootstrap.ts`.
 - [ ] If the feature has a URL, a route file exists in `src/routes/` with routing config only.
 - [ ] New `data-testid` values live in `src/shared/test-ids.ts`.
 

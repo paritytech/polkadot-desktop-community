@@ -1,10 +1,10 @@
 # Glossary — load-bearing thresholds
 
-These terms recur as thresholds in the skills, hooks, and checklists. Use these definitions; don't reinterpret. When a rule says "non-trivial" or "peer file", it means exactly what's here.
+These terms recur as thresholds in the development flows and the review checklists. Use these definitions; don't reinterpret. When a rule says "non-trivial" or "peer file", it means exactly what's here.
 
 ## Change size
 
-**Non-trivial change** — triggers the full `architecture` flow (placement + a written plan). At least one of:
+**Non-trivial change** — goes through the full change process: frame, size, placement, an approved design and plan, a plan review, implementation in reviewed batches, a final review and its fixes. At least one of:
 
 - creates a new file or module;
 - introduces or extends a **public surface** (a domain/aggregate/feature `index.ts` export — a service, resource, hook, schema, use case, or DI identifier);
@@ -15,17 +15,19 @@ These terms recur as thresholds in the skills, hooks, and checklists. Use these 
 - could **break an existing caller** of a public surface;
 - **adds a branch or flag to a shared path** — a second behavior braided into code other callers already use (`docs/abstract/simple-vs-easy.md`). Size is not the test here: three lines qualify. This trigger exists because that change is cheap to write, invisible in review, and paid for by every later change to the same path.
 
-**Trivial in-place edit** — the negation, and the _only_ thing that may skip the `architecture` skill: a change confined to **one existing file** that adds no new file, no new public surface, no layer crossing, and no new branch or flag on a path other callers share. Examples: fixing a typo, adjusting a constant's value, a localized bugfix inside one function, tightening a copy string. Counter-example: adding a `skipCache` boolean to a helper three call sites already use — one file, no new surface, still non-trivial. If you're unsure whether a change is trivial, it isn't — run `architecture`.
+**Trivial in-place edit** — the negation, and the _only_ change that may skip that process: a change confined to **one existing file** that adds no new file, no new public surface, no layer crossing, and no new branch or flag on a path other callers share. Examples: fixing a typo, adjusting a constant's value, a localized bugfix inside one function, tightening a copy string. Counter-example: adding a `skipCache` boolean to a helper three call sites already use — one file, no new surface, still non-trivial. If you're unsure whether a change is trivial, it isn't.
 
-**Blast radius** — the set of files and layers that MUST change for a change to be complete, **measured** (`findReferences` / `incomingCalls` on every symbol and public surface touched), never estimated from the description. Reported as `N files, M layers`. Large radius is a measurement of _existing_ complecting, not a property of the change itself. Measured at step 1.5 of the `architecture` skill; enumerated again in the plan.
+**Blast radius** — the set of files, modules and layers that MUST change for a change to be complete, **measured** (find references and the call hierarchy on every symbol and public surface touched), never estimated from the description. Reported as `N files, K modules, M layers`. Large radius is a measurement of _existing_ complecting, not a property of the change itself. Measured before the design; enumerated again in the plan.
 
 **Complecting** (Hickey) — braiding two concerns together so neither can change without touching the other. A change **adds braid** when it puts a second concern in one place (a flag on a shared path, a field on a shared type, a branch others must now know about) or spreads one concern across more places (a parameter threaded through callers that have no use for it). Orthogonal to size: a three-line diff can add braid, a 90-file rename adds none. The cost is never visible in the current diff — it is paid by every later change. See `docs/abstract/simple-vs-easy.md`.
 
-**Frame** — the change stated in **one sentence using one layer's vocabulary** (step 1 of `architecture`). A frame is a statement of the concern, **not an estimate of the cost**. When the measured blast radius contradicts the frame — one layer's vocabulary, three layers of artifact — that gap is a finding that stops for the user.
+**Frame** — the change stated in **one sentence using one module's vocabulary**. A frame is a statement of the concern, **not an estimate of the cost**. When the measured blast radius contradicts the frame — one module's vocabulary, three modules or layers of artifact — that gap is a finding that stops for the owner.
 
 ## Scope
 
 **Public surface** — what a domain / aggregate / feature exposes through its `index.ts`. Everything else is internal and may be refactored freely; changing the public surface is always non-trivial.
+
+**Module** — one domain, aggregate, feature or widget: a folder directly under its layer (`src/domains/product/`, `src/features/chat/`). A module has one vocabulary, which is why a frame is stated in one module's terms. A domain's sub-modules belong to it.
 
 **Layer** — one of: `shared` → `domains` / `aggregates` → `features` / `widgets` / `routes`. The dependency arrow points only left-to-right (read up-the-graph: features may import domains; domains may not import features). See `project-structure.md`.
 
@@ -37,7 +39,7 @@ These terms recur as thresholds in the skills, hooks, and checklists. Use these 
 - the `schemas.ts` entry for a touched `gateway.ts` boundary;
 - the feature's `feature.tsx` wiring for a slot / DI identifier the same change defines.
 
-Anything else touched outside the plan's stated files that is **not** a peer is **scope creep** — stop and confirm with the user.
+Anything else touched outside the plan's stated files that is **not** a peer is **scope creep** — stop and confirm with the owner.
 
 ## Composition
 

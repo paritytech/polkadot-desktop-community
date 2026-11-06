@@ -1,6 +1,6 @@
 ---
 name: feature-development
-description: Use when working in `src/features/` or `src/routes/` files hosting features, scaffolding a feature, wiring into `src/bootstrap.ts`, defining/injecting DI extension points (slots, pipelines, transformers, side effects, SDKs), placing cross-feature logic, or deciding whether two flows are one feature.
+description: Use when working in `src/features/` or `src/routes/` files hosting features, scaffolding a feature, wiring into `src/bootstrap.ts`, defining/injecting DI extension points (slots, pipelines, transformers, side effects, SDKs), placing cross-feature logic, or deciding whether two flows are one feature. For a non-trivial change it runs inside the `architect` agent (step 3 of the `architecture` skill), never in the main session, which dispatches that agent instead (CLAUDE.md § Project agent).
 ---
 
 # Feature Development

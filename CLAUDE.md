@@ -18,9 +18,39 @@ A product is an application or set of applications resolvable through dotNS (Pol
   - Known spec → `npx vitest run <path>`. **Not** `npm test -- <path>`: `npm test` chains three vitest projects and the filter reaches only the first, so the rest exit 0 under `--passWithNoTests` and the run **false-passes**. Confirm the output says `Test Files N passed`, never `No test files found`.
   - Don't know which specs cover a file → `npx vitest related --run <changed files>` runs every spec that imports them, transitively. `npx vitest run --changed` scopes to the git diff. A widely-imported file legitimately pulls in most of the suite — that is the tool working, not a reason to distrust it.
   - E2E: run the one relevant project (`npm run test:e2e:<project>`), never `test:e2e:all` mid-work.
-  - Run the full `npm test` once before committing or opening a PR, and report that result — not the narrow run's.
+  - Run the full `npm test` once before committing or opening a PR, and report that result — not the narrow run's. Inside the `architect` lifecycle each task commits after its fast checks instead, and the full suite runs where the `architecture` skill's step 7 sets (§ Step 7: Review, "The full suite").
 - Report what you actually observed. If a change to UI or runtime behavior was not run, say that plainly instead of describing what it should do — an unrun change reported as working costs more than one reported as unverified.
 - Every claim about this codebase cites the `file:line` you read in this session, or is labeled as inference. When a decision is questioned ("why is this X?", "check my reasoning"), re-open the file and the library's types before answering. Never construct a rationale for code you have not re-read — being wrong is cheap, a fabricated justification is not.
+
+## Project agent
+
+These rules bind the main session only. A subagent skips them.
+
+A non-trivial change runs in the `architect` agent (.claude/skills/architecture/SKILL.md § Who runs this skill). While
+`docs/_plans/project-agent.md` exists, read the agent ID from it and route each owner message:
+
+- `p:` at the start sends the message to the agent and `m:` keeps it here. Strip the prefix.
+- A reply to the agent's open `QUESTION`, `APPROVAL` or `BLOCKED` goes to the agent.
+- Anything about that change goes to the agent: its design, plan, code, progress, a correction, a pause or a stop.
+- Everything else is handled here as usual, without reading the change's plan.
+- When unsure, ask the owner once whether it is for the project or for here.
+
+Relay with `SendMessage` to the agent ID, as `OWNER: <the owner's words verbatim>`, plus the paths of any file the owner
+attached. Never paraphrase, summarise or add an opinion. Never answer a question, pass a gate or decide for the owner,
+even when the owner is away.
+
+From the agent, show `QUESTION`, `APPROVAL`, `BLOCKED` and `DONE` verbatim. Offer a `QUESTION` or `BLOCKED` with options
+through `AskUserQuestion` and relay the chosen label and any notes. Show a `STATUS` as one line. A finished turn of the
+agent only means it is waiting, unless its message is `DONE`. Never stop or replace the agent before `DONE`, not even at
+a gate, unless the owner stops the change. After `DONE`, or when the owner stops the change, delete
+`docs/_plans/project-agent.md`, except between the stages of a staged change.
+
+A staged change (.claude/skills/architecture/SKILL.md § A staged change) runs one agent per stage, and
+`project-agent.md` also records the roadmap path and the current stage. After the roadmap's or a stage's `DONE`, show
+it, then start the next stage's agent without asking the owner, who approved the roadmap. Dispatch it as that skill's
+"Who runs this skill" does, with the owner's roadmap approval verbatim as `OWNER: <text>` plus
+`Stage: <roadmap path> § <stage>`, and update `project-agent.md`. Delete the file only after the last stage's `DONE`, or
+when the owner stops the change.
 
 ## Code navigation
 
@@ -59,19 +89,20 @@ These skills (under `.claude/skills/`) carry the project's procedural rules. The
 
 > **Required plugin dependency:** the `superpowers` plugin (`superpowers@claude-plugins-official`) is declared in `.claude/settings.json` so the whole team/CI gets it.
 
-- `architecture` — **entry point for any decision-driven code change, and orchestrator of the full lifecycle** (frame → place → brainstorm → refine → approve → plan → refine → plan-review → implement → review → fix). Orchestrates `code-placement`, `domain-development`, `feature-development`; delegates brainstorming + plan-writing + implementation to `superpowers`; gates implementation on plan approval; hard-stops on mid-flight plan deviations; and runs `reviewer` as the mandatory post-implementation gate. Run it first, always.
+- `architecture` — **entry point for any non-trivial code change, and the whole lifecycle** (frame → size → place → design → plan → plan review → implement in review batches → review → fix → rule extraction). The main session never runs its steps: it dispatches the `architect` agent (`.claude/agents/architect.md`), which runs the change in its own context and talks to the owner through the main session (see § Project agent). Orchestrates `code-placement`, `domain-development`, `feature-development`; delegates brainstorming, plan-writing and implementation to `superpowers`; gates implementation on design and plan approval; checks every plan with `scripts/checkPlanNames.ts` before a fresh-context review pass; hard-stops on a discovery that breaks the plan; and runs `reviewer` as the mandatory post-implementation gate. Run it first, always.
 - `document-review` — refines a design or plan document in `docs/_plans/` (clarity, YAGNI, unstated assumptions, scope creep) and edits it inline. Invoked by `architecture` twice: on `<topic>-design.md` before the approval gate, and on `<topic>-plan.md` before the fresh-context plan review. Not a substitute for that review — it runs in the authoring context and does not verify the plan against the repo.
 - `code-placement` — fires first when the target layer is uncertain (domain / aggregate / feature / widget / shared). Entry point for "where does this go?".
 - `domain-development` — fires when working in `src/domains/`. Points at `docs/code/domain-development.md`.
 - `feature-development` — fires when working in `src/features/` or `src/routes/` files that host features. Points at `docs/code/feature-development.md`.
+- `code-placement`, `domain-development` and `feature-development` run inside the `architect` agent for a non-trivial change; the main session dispatches the agent and does not place the change itself.
 - `react-best-practices` — fires when writing/reviewing/refactoring React code. Performance and rendering rules in `rules/`.
 - `run-app` — launches and drives the real Electron app (Playwright REPL at `e2e/driver.ts`) for screenshots and visual
   validation of a change. Renderer hot-reloads inside Electron via `RENDERER_SOURCE=localhost`.
-- `reviewer` — audits a branch diff / PR against this project's checklists (`docs/claude/`) with blocking/major/minor severity. Project-rule-aware; complements the generic `/code-review`. Run after a change, before merge.
+- `reviewer` — audits a branch diff / PR against this project's checklists (`docs/claude/`) with blocking/major/minor severity, numbered B1/M1/m1. Every finding is fixed in the branch, minor included. Also runs as a scoped re-review of a fix's commit range. Project-rule-aware; complements the generic `/code-review`. Run after a change, before merge.
 
 ## Project Structure
 
-> **MANDATORY — start every code change with the `architecture` skill.** Before writing or changing any non-trivial code in `src/` (new code, new/moved/renamed files, a new abstraction, extending behavior, or a refactor that relocates logic), you MUST invoke the `architecture` skill first. It is the single entry point that decides _what_ the change is and _where_ it goes, orchestrating `code-placement`, `domain-development`, and `feature-development`, and (for non-trivial changes) produces a short plan in `docs/_plans/`. Do not generate a file path, pick a layer, or open the flow docs yourself before running it — this does not depend on the skill auto-activating. Inside `src/domains/`, a leaf/container module may ONLY contain the file kinds enumerated below (`types`, `service`, `resource`, `hooks`, `gateway`, `repository`, `schemas`, `constants`, `index`, `README`, `bootstrap`, `$usecase/`) — the PreToolUse hook blocks new non-canonical files outright. If your logic has no canonical home, STOP and ask — never invent a new filename (e.g. `changes.ts`, `manager.ts`, `helpers.ts`) to resolve the ambiguity. Skip the skill only for trivial in-place edits within one existing file (`docs/code/glossary.md` defines the threshold).
+> **MANDATORY — start every code change with the `architecture` skill.** Before writing or changing any non-trivial code in `src/` (new code, new/moved/renamed files, a new abstraction, extending behavior, or a refactor that relocates logic), the `architecture` skill runs first — the main session dispatches the `architect` agent for it (§ Project agent) and does no framing, reading or exploring of its own. It is the single entry point that decides _what_ the change is and _where_ it goes, orchestrating `code-placement`, `domain-development`, and `feature-development`, and produces a design and a plan in `docs/_plans/`. Do not generate a file path, pick a layer, or open the flow docs yourself before running it — this does not depend on the skill auto-activating. Inside `src/domains/`, a leaf/container module may ONLY contain the file kinds enumerated below (`types`, `service`, `resource`, `hooks`, `gateway`, `repository`, `schemas`, `constants`, `index`, `README`, `bootstrap`, `$usecase/`) — the PreToolUse hook blocks new non-canonical files outright. If your logic has no canonical home, STOP and ask — never invent a new filename (e.g. `changes.ts`, `manager.ts`, `helpers.ts`) to resolve the ambiguity. Skip the skill only for trivial in-place edits within one existing file (`docs/code/glossary.md` defines the threshold). A subagent the `architect` dispatches skips this paragraph: its brief and the plan are its scope.
 
 @docs/code/project-structure.md
 
@@ -87,7 +118,7 @@ These skills (under `.claude/skills/`) carry the project's procedural rules. The
 - Sizing a change before designing it (blast radius vs braid — "looks easy, is complex") → [docs/abstract/simple-vs-easy.md](docs/abstract/simple-vs-easy.md).
 - Auditing a change before merge → the `reviewer` skill (checklists in [docs/claude/](docs/claude/); review output to [docs/\_reviews/](docs/_reviews/)).
 - Thresholds (trivial vs non-trivial, peer file, composition) → [docs/code/glossary.md](./docs/code/glossary.md).
-- Turning a recurring correction into a durable rule → [docs/code/rule-extraction.md](./docs/code/rule-extraction.md).
+- Turning a recurring correction into a durable rule → [docs/code/rule-extraction.md](./docs/code/rule-extraction.md). Code and workflow corrections become repo rules, never agent memory (docs/code/rule-extraction.md § When to run).
 
 Always check whether the change belongs in a domain before touching a feature.
 
@@ -174,6 +205,8 @@ npm run papi:update      # Update Polkadot API metadata
 
 # Misc
 npm run knip             # Detect unused files/exports/dependencies
+node scripts/checkPlanNames.ts <plan> [--base <rev>]  # Look up every name a docs/_plans plan cites (architecture plan review)
+npm run test:scripts     # node:test specs of scripts/ (part of npm test)
 npm run storybook        # Run Storybook dev server
 npm run storybook:build  # Build static Storybook
 ```

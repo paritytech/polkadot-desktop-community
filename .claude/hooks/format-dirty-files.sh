@@ -15,6 +15,11 @@ set -uo pipefail
 
 cd "$CLAUDE_PROJECT_DIR" || exit 0
 
+# While the `architect` agent runs a change (CLAUDE.md § Project agent), its implementers edit
+# files in this same checkout. Formatting them at the end of a main-session turn would change a
+# file between an implementer's read and its edit. Their commits format through lint-staged.
+[[ -f docs/_plans/project-agent.md ]] && exit 0
+
 prettier="$CLAUDE_PROJECT_DIR/node_modules/.bin/prettier"
 [[ -x "$prettier" ]] || exit 0
 

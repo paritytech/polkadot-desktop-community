@@ -87,7 +87,7 @@ one key, it belongs in the key.
 
 ## Deciding where code goes
 
-Which layer, which file within it, the cut rules, and which binding hook to use have moved to [code-placement.md](./code-placement.md) (the reference paired with the `code-placement` skill). The dependency-rule companion — what each artifact may import and who may import it — is the [Where each artifact sits](#where-each-artifact-sits) table above.
+Which layer, which file within it, the cut rules, and which binding hook to use have moved to [code-placement.md](./code-placement.md). The dependency-rule companion — what each artifact may import and who may import it — is the [Where each artifact sits](#where-each-artifact-sits) table above.
 
 ---
 
@@ -276,7 +276,7 @@ export const installationUseCase = {
 handlers, bridging native event subscriptions into the domain. Exports `bootstrap<Action>` functions (`bootstrapProduct`); the
 domain-root file is the **single** bootstrap location and the canonical entry point, re-exported from the domain `index.ts`. It may
 organize its wiring into per-module functions (`bootstrapPermissions`, `bootstrapProduct`), but those functions live **inside this
-root file** — a sub-module must not carry its own `bootstrap.ts` (the PreToolUse hook and the architecture checklist enforce this).
+root file** — a sub-module must not carry its own `bootstrap.ts` (the architecture checklist enforces this).
 
 - **Called once from the app `bootstrap.ts`** — never at module-import time, so host wiring and its load order stay explicit (no
   hidden side effects on import).

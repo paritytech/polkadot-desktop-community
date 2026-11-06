@@ -1,6 +1,6 @@
 ---
 name: code-placement
-description: Use BEFORE `domain-development`/`feature-development` when the target layer (domain, aggregate, feature, widget, shared) is uncertain — multi-layer changes, new abstractions, promoting code out of a feature, or "where should this live?". Skip when the layer is obvious.
+description: Use BEFORE `domain-development`/`feature-development` when the target layer (domain, aggregate, feature, widget, shared) is uncertain — multi-layer changes, new abstractions, promoting code out of a feature, or "where should this live?". Skip when the layer is obvious. For a non-trivial change it runs inside the `architect` agent (step 3 of the `architecture` skill), never in the main session, which dispatches that agent instead (CLAUDE.md § Project agent).
 ---
 
 # Code Placement

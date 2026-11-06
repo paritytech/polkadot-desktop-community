@@ -1,6 +1,6 @@
 # Deciding where code goes
 
-The full reference behind the `code-placement` skill: which layer, which file within that layer, and how to tell one kind of artifact from another. The skill carries a quick cheat-sheet for the common cases; this doc is the authoritative version.
+Which layer, which file within that layer, and how to tell one kind of artifact from another.
 
 Layer definitions and per-file contracts live in [project-structure.md](./project-structure.md). The runtime traces that show these artifacts interacting live in [architecture.md](./architecture.md). When the model itself is ambiguous (you can't pick a layer), run event storming — see [docs/abstract/event-storming.md](../abstract/event-storming.md).
 
