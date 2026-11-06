@@ -1,6 +1,6 @@
 import { produce } from 'immer';
 import { firstValueFrom } from 'rxjs';
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { createQueryResource } from './createQueryResource';
 
@@ -393,5 +393,81 @@ describe('createQueryResource', () => {
 
       await expect(firstValueFrom(resource.read$({ id: '1' }))).rejects.toMatchObject({ name: 'TimeoutError' });
     });
+  });
+});
+
+describe('staleAfter as a function of the response', () => {
+  beforeEach(() => {
+    vi.useFakeTimers({ toFake: ['Date'] });
+  });
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  const advance = (ms: number) => vi.setSystemTime(Date.now() + ms);
+
+  const build = (fn: (params: { id: string }) => Promise<string | null>) =>
+    createQueryResource<{ id: string }>({ key: ({ id }) => id })
+      .request(fn)
+      .cache<Record<string, string | null>>({
+        initial: {},
+        staleAfter: value => (value ? Number.POSITIVE_INFINITY : 30_000),
+        map: (cache, value, { id }) => ({ ...cache, [id]: value }),
+      })
+      .build();
+
+  it('keeps a value whose lifetime is infinite', async () => {
+    const fn = vi.fn(async () => 'bytes');
+    const resource = build(fn);
+
+    await firstValueFrom(resource.read$({ id: '1' }));
+    advance(60 * 60_000);
+    await firstValueFrom(resource.read$({ id: '1' }));
+
+    expect(fn).toHaveBeenCalledTimes(1);
+  });
+
+  it('refetches a null only after its lifetime', async () => {
+    const fn = vi.fn(async (): Promise<string | null> => null);
+    const resource = build(fn);
+
+    await firstValueFrom(resource.read$({ id: '1' }));
+    await firstValueFrom(resource.read$({ id: '1' }));
+    expect(fn).toHaveBeenCalledTimes(1);
+
+    advance(29_999);
+    await firstValueFrom(resource.read$({ id: '1' }));
+    expect(fn).toHaveBeenCalledTimes(1);
+
+    advance(2);
+    await firstValueFrom(resource.read$({ id: '1' }));
+    expect(fn).toHaveBeenCalledTimes(2);
+  });
+
+  it('does not cache a rejection', async () => {
+    const fn = vi.fn<(params: { id: string }) => Promise<string | null>>();
+    fn.mockRejectedValueOnce(new Error('gateway down')).mockResolvedValue(null);
+    const resource = build(fn);
+
+    await expect(firstValueFrom(resource.read$({ id: '1' }))).rejects.toThrow('gateway down');
+    await firstValueFrom(resource.read$({ id: '1' }));
+
+    expect(fn).toHaveBeenCalledTimes(2);
+  });
+
+  it('keeps the numeric form unchanged', async () => {
+    const fn = vi.fn(async () => 'x');
+    const resource = createQueryResource<{ id: string }>({ key: ({ id }) => id })
+      .request(fn)
+      .cache({ initial: {}, staleAfter: 1_000, map: (cache, value, { id }) => ({ ...cache, [id]: value }) })
+      .build();
+
+    await firstValueFrom(resource.read$({ id: '1' }));
+    await firstValueFrom(resource.read$({ id: '1' }));
+    expect(fn).toHaveBeenCalledTimes(1);
+
+    advance(1_001);
+    await firstValueFrom(resource.read$({ id: '1' }));
+    expect(fn).toHaveBeenCalledTimes(2);
   });
 });

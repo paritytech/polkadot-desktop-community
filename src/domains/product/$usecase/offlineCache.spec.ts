@@ -6,6 +6,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { database } from '@/shared/database';
 import { environmentUseCase } from '@/domains/application';
+import { ipfsRawResource } from '@/domains/network';
 import { executableCacheRepository } from '../product/executable-cache/repository';
 import { archiveGateway } from '../product/manifest/gateway';
 import { executableArchiveResource } from '../product/manifest/resource';
@@ -87,6 +88,29 @@ describe('offlineCacheUseCase.prefetchArchives', () => {
     expect(window.App.persistArchive).toHaveBeenCalledTimes(1);
     const rows = await executableCacheRepository.getByBaseName('app.dot');
     expect(rows[0]).toEqual(expect.objectContaining({ status: 'ready', contenthash: '0xaa' }));
+  });
+
+  // A directory CID is read twice: as-is (just its index.html), then as a CAR. A
+  // miss on the second read must fail the kind, not store a one-file archive.
+  it('marks failed and persists nothing when the CAR read misses', async () => {
+    const decodable: Product = {
+      ...product,
+      executables: {
+        app: {
+          ...product.executables.app!,
+          contenthash: '0xe30101551220e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
+        },
+      },
+    };
+    ipfsRawResource.instead(({ asCar }) =>
+      Promise.resolve(asCar ? null : new TextEncoder().encode('<!doctype html><html></html>')),
+    );
+
+    await offlineCacheUseCase.prefetchArchives(decodable);
+
+    expect(window.App.persistArchive).not.toHaveBeenCalled();
+    const rows = await executableCacheRepository.getByBaseName('app.dot');
+    expect(rows[0]).toEqual(expect.objectContaining({ status: 'failed' }));
   });
 });
 
