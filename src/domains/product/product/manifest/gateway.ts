@@ -14,10 +14,10 @@ import { type ExecutableContent } from './types';
 // Once all deployments use directory CIDs, phase (a) can be dropped.
 async function fetchArchiveFiles(cid: string, gatewayUrl: string): Promise<ArchiveContent> {
   const raw = await firstValueFrom(ipfsRawResource.read$({ cid, gatewayUrl }));
-  // A failed fetch must propagate, not collapse into an empty file set: the
-  // request would otherwise resolve to a blank archive that the resource caches
-  // forever (`staleAfter: Infinity`), never retrying the transient failure.
-  // Throwing keeps it out of the cache so a later mount re-attempts.
+  // A miss on either read must propagate, not collapse into a partial file set:
+  // the archive resource would cache that forever (`staleAfter: Infinity`) and the
+  // offline cache would store it as ready. Throwing keeps it out of both, so a
+  // later mount re-attempts once the IPFS resource releases the miss.
   if (!raw) throw new Error(`IPFS fetch returned no data for cid ${cid}`);
 
   if (ipfsService.isCarFile(raw)) {
@@ -25,7 +25,7 @@ async function fetchArchiveFiles(cid: string, gatewayUrl: string): Promise<Archi
   }
 
   const carBytes = await firstValueFrom(ipfsRawResource.read$({ cid, gatewayUrl, asCar: true }));
-  if (!carBytes) return { 'index.html': raw };
+  if (!carBytes) throw new Error(`IPFS CAR fetch returned no data for cid ${cid}`);
 
   return ipfsService.parseIpfsResponse(carBytes);
 }

@@ -7,6 +7,13 @@ type CachedRecord<T> = {
 
 export type CacheLookup<T> = { hit: true; value: T } | { hit: false };
 
+/** Milliseconds an entry stays fresh — fixed, or decided by the value it holds. */
+export type Ttl<T> = number | ((value: T) => number);
+
+function resolveTtl<T>(ttl: Ttl<T>, value: T): number {
+  return typeof ttl === 'function' ? ttl(value) : ttl;
+}
+
 export const createCache = <K extends PropertyKey, T>({ now: getTs }: { now(): number }) => {
   const records: Map<K, CachedRecord<T>> = new Map();
   const requests: Map<K, Promise<CachedRecord<T>>> = new Map();
@@ -45,9 +52,9 @@ export const createCache = <K extends PropertyKey, T>({ now: getTs }: { now(): n
       return record;
     },
 
-    setRequest(key: K, request: Promise<T>, ttl: number) {
+    setRequest(key: K, request: Promise<T>, ttl: Ttl<T>) {
       const chainedRequest = request
-        .then(value => cache.set(key, value, ttl))
+        .then(value => cache.set(key, value, resolveTtl(ttl, value)))
         .finally(() => {
           requests.delete(key);
         });
@@ -60,11 +67,11 @@ export const createCache = <K extends PropertyKey, T>({ now: getTs }: { now(): n
       return chainedRequest;
     },
 
-    async setAny(key: K, value: T | Promise<T>, ttl: number) {
+    async setAny(key: K, value: T | Promise<T>, ttl: Ttl<T>) {
       if (value instanceof Promise) {
         return cache.setRequest(key, value, ttl);
       } else {
-        return cache.set(key, value, ttl);
+        return cache.set(key, value, resolveTtl(ttl, value));
       }
     },
 

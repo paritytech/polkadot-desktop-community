@@ -11,7 +11,7 @@ export type IpfsFetchOptions = {
 // `ipfsRawResource` is the cached entry point for immutable blobs (icons,
 // archives); callers that must NOT cache — e.g. polling for a preimage that
 // hasn't propagated to the gateway yet — go through `ipfsUseCase.fetchRaw`,
-// since a cached miss would pin `null` forever.
+// since even the resource's short hold on a miss would swallow their own retries.
 async function fetchRaw(
   gatewayUrl: string,
   cid: string,

@@ -2,7 +2,7 @@ import { createNanoEvents } from 'nanoevents';
 import { type Observable, BehaviorSubject, finalize, firstValueFrom, from, of, shareReplay, switchMap, tap } from 'rxjs';
 
 import { isTestEnvironment, onExecutionEnvironmentReset } from '@/shared/execution-environment';
-import { createAsyncTaskPool, createCache } from '@/shared/utils';
+import { type Ttl, createAsyncTaskPool, createCache } from '@/shared/utils';
 
 import { createDefaultCacheMapper, createDefaultInitial, wrapKeyFactory } from './generic';
 import { type DefaultCache, type KeyFn, type MapCacheFn, type Overridable, type Resource, type ResourceKey } from './types';
@@ -17,7 +17,7 @@ type QueryParams<Params, Response, Cache> = {
   cache: {
     initial: Cache;
     map: MapCacheFn<Params, Response, Cache>;
-    staleAfter?: number;
+    staleAfter?: Ttl<Response>;
   };
   retry?: {
     count: number;
