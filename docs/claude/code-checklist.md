@@ -6,6 +6,8 @@ Walk this for every file the diff touches. Cite the **doc and section**. Severit
 - **major** — clearly violates a documented code pattern.
 - **minor** — naming, comment noise, redundancy.
 
+Severity only orders the work. Every finding is fixed in this branch.
+
 **This checklist lists only rules ESLint does NOT enforce.** The mechanical style / format / import rules — `as`, `interface`, `Array<T>`, `console.log`, `.forEach`/`for..in`, inline type imports, import order, unused vars (`_`-prefix), the `@/` alias, the 25-import cap, arrow-function components, memoized context values, JSX curly-brace presence, i18n string literals — are caught by ESLint + CI. Don't re-raise them; the reviewer is the layer above the linter: semantics, layering, data flow, naming.
 
 ---

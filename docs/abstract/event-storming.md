@@ -57,7 +57,7 @@ Flows belong in the same feature only if those arrows **cross between them**: an
 
 For the full split decision (vocabulary test + event-storming test), see [feature-development.md → When to split a feature](../code/feature-development.md#when-to-split-a-feature).
 
-## For Claude
+## Running it
 
 If the user's description of the desired logic is ambiguous — actor unclear, trigger unclear, what changes after the action unclear, or two vocabularies showing up at once — run a lightweight event storming with the user before writing code. Ask narrow, one-fact-at-a-time questions:
 

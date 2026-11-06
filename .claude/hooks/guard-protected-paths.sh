@@ -105,8 +105,10 @@ failure mode the project guards against. Do ONE of:
     a cached read → resource.ts, persistence → repository.ts, wire I/O →
     gateway.ts, cross-source orchestration → \$usecase/{group}.ts).
   • If it's genuinely cross-source orchestration, create it under \$usecase/.
-  • If nothing fits, STOP and ask the user — do not rename to dodge this guard.
+  • If nothing fits, STOP and ask the owner — do not rename to dodge this guard.
 
-Run the 'architecture' skill if you haven't placed this change yet.
+Main session: a non-trivial change runs in the 'architect' agent (CLAUDE.md § Project agent).
+Implementer subagent: do not place it yourself — report the file the plan is missing
+as NEEDS_CONTEXT.
 EOF
 exit 2

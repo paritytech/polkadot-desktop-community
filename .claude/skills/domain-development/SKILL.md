@@ -1,6 +1,6 @@
 ---
 name: domain-development
-description: Use when working in `src/domains/`, introducing/extending a domain's public API (services, resources, hooks, repositories, schemas, README), modeling a user action in domain terms, event-storming domain seams, or deciding whether business logic belongs in a domain.
+description: Use when working in `src/domains/`, introducing/extending a domain's public API (services, resources, hooks, repositories, schemas, README), modeling a user action in domain terms, event-storming domain seams, or deciding whether business logic belongs in a domain. For a non-trivial change it runs inside the `architect` agent (step 3 of the `architecture` skill), never in the main session, which dispatches that agent instead (CLAUDE.md § Project agent).
 ---
 
 # Domain Development

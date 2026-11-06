@@ -6,6 +6,8 @@ Walk this for any change that touches placement, layering, module structure, or 
 - **major** — clearly violates a documented placement/structure pattern.
 - **minor** — naming, structure, or maintenance smell.
 
+Severity only orders the work. Every finding is fixed in this branch.
+
 Rationale for every rule lives in `project-structure.md`, `code-placement.md`, and `di.md`; this file is the citable index. **It lists only rules ESLint does NOT enforce** — pure import-direction (`domain`→up, `aggregate`→up, `@/shared`→up, deep cross-layer imports bypassing a package's `index.ts`) is caught by `eslint-plugin-boundaries` + CI, so don't re-check it. If a violation isn't covered here but is in those docs, flag it and propose adding it (see `rule-extraction.md`).
 
 ---
@@ -28,7 +30,7 @@ Import-direction is ESLint-enforced (see above). These remain because a linter c
 
 ## Domain module structure (`project-structure.md` § Module recursion, § File contracts)
 
-- **major** — A non-canonical file under a domain module (anything other than `index`/`types`/`service`/`resource`/`hooks`/`gateway`/`repository`/`schemas`/`constants`/`bootstrap`/`README`, plus `$usecase/` files and co-located tests). _(The PreToolUse hook blocks new ones; flag any that slipped in.)_ **Exempt:** a named container-root orchestration/infra primitive that the container `README.md` explicitly frames per `code-placement.md` § Container-root orchestration (the `$usecase/`-is-domain-root-only gap) — don't re-flag a documented one.
+- **major** — A non-canonical file under a domain module (anything other than `index`/`types`/`service`/`resource`/`hooks`/`gateway`/`repository`/`schemas`/`constants`/`bootstrap`/`README`, plus `$usecase/` files and co-located tests). _(New ones are blocked at creation; flag any that slipped in.)_ **Exempt:** a named container-root orchestration/infra primitive that the container `README.md` explicitly frames per `code-placement.md` § Container-root orchestration (the `$usecase/`-is-domain-root-only gap) — don't re-flag a documented one.
 - **major** — A leaf module (no sub-modules) carrying its own `index.ts`. Only containers and the domain root have one.
 - **major** — `bootstrap.ts` or `$usecase/` placed inside a sub-module instead of the domain root.
 - **minor** — A container nested 3+ levels deep — usually signals a domain should be extracted.
@@ -48,8 +50,8 @@ Complecting is invisible to every other row here: it breaks no import rule, land
 - **major** — A new **flag, mode, or branch parameter added to a path other callers already share**, not named in the design or plan. Test before flagging: do two call sites pass different values, and do the two branch bodies share little? Then these are two behaviors braided into one path — the fix is two functions (or two resources), not a parameter. _Not_ a finding when every caller passes the same value today (that is a dead option — flag as minor YAGNI) or when the branch is a genuine runtime condition the callers cannot know.
 - **major** — A value **threaded through call sites that only forward it** and never read it. Forwarding is the signature of complecting: those files were changed because the value is braided into the call chain, not because they use it. Fix: supply it at the composition point that owns it — a use-case parameter, a DI identifier, or the resource's cache key (`project-structure.md` § "a parameter the key already subsumes") — so intermediate callers stop carrying it.
 - **major** — A **new field on a shared type that most consumers ignore**, or one whose meaning depends on another field's value. Two independent concerns in one type; split the type or model the pair as a discriminated union.
-- **minor** — **Diff radius contradicts the stated intent**: the design/plan/PR title frames the change in one layer's vocabulary and the diff spans three or more layers, or reaches public surfaces the frame never mentioned. The gap is not itself a defect — the finding is that it was never surfaced for a decision. Propose staging into reviewable PRs, and check whether the step-1.5 probe (`architecture` skill) recorded the radius at all. Never blocking: at review time that cost is already sunk.
-- **minor** — A `ponytail:`-style deferral, `TODO`, or "clean this up in a follow-up" comment covering braid the diff introduces. The braid ships and the follow-up is unfunded; either the cleanup is in this PR or the deferral is a tracked issue.
+- **minor** — **Diff radius contradicts the stated intent**: the design/plan/PR title frames the change in one module's vocabulary (`glossary.md` § Scope) and the diff spans three or more modules or layers, or reaches public surfaces the frame never mentioned. The gap is not itself a defect — the finding is that it was never surfaced for a decision. Propose staging into reviewable PRs, and check whether the size probe (`docs/abstract/simple-vs-easy.md` § The probe) recorded the radius at all. Never blocking: at review time that cost is already sunk.
+- **minor** — A `ponytail:`-style deferral, `TODO`, or "clean this up in a follow-up" comment covering braid the diff introduces is a finding, fixed in this branch. The braid would otherwise ship with the follow-up unfunded.
 
 ## DI naming (`di.md` § Naming)
 

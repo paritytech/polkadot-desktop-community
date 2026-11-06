@@ -54,7 +54,7 @@ Write a comment when it is one of these:
 
 - **Why, not what** — the constraint that forced this shape: a spec/RFC clause, an upstream bug, a protocol quirk, or the reason the obvious approach does not work. The reader can see the code; they cannot see what you rejected.
 - **An assumption or invariant the code relies on but cannot enforce locally** — a guarantee the caller must uphold, a required ordering, an expectation about chain or peer behavior. Example: `src/features/call/state/callActivity.ts:5` records that a single active call is assumed.
-- **A temporary state or deferral** — a workaround, a migration half-done, a branch that exists only for an old client. **It MUST name the condition that removes it**, in the existing form: `// TODO(<scope>): <what> when <condition>`. A deferral with no exit condition is not a comment, it is rot — either finish it in this PR or open a tracked issue and reference that (`docs/claude/architecture-checklist.md § Complexity`).
+- **A temporary state or deferral** — a workaround, a migration half-done, a branch that exists only for an old client. **It MUST name the condition that removes it**, in the existing form: `// TODO(<scope>): <what> when <condition>`. A deferral with no exit condition is not a comment, it is rot — finish it in this branch (`docs/claude/architecture-checklist.md § Complexity`).
 - **TSDoc on a public surface** — a `/**` block on something exported through a domain / aggregate / feature `index.ts`, describing the contract for callers who will never open the file. Not on internal helpers.
 
 Do not write a comment that:
