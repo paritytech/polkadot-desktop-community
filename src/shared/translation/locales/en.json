@@ -1091,6 +1091,11 @@
           "subtitle": "Lets this app act with an account that belongs to another app",
           "warning": "By allowing this, this app can use the other app's account on your behalf"
         },
+        "identityDisclosure": {
+          "title": "Share your username with this app?",
+          "subtitle": "This app will see your primary username",
+          "warning": "By allowing this, this app can recognize you by your username"
+        },
         "productSubtree": {
           "title": "Allow this app to access its account?",
           "subtitle": "Fetches this app's account from your paired device"
@@ -1167,13 +1172,6 @@
       }
     },
     "productContainerBinding": {
-      "keyListingPermission": {
-        "title": "Allow access to {requestedIdentifier}'s keys?",
-        "subtitle": "Lets this app discover which keys another app has registered",
-        "warning": "By allowing this, this app learns which rings the other app registered keys for",
-        "deny": "Don't Allow",
-        "allow": "Allow"
-      },
       "aliasPermission": {
         "title": "Allow access to your alias in {requestedIdentifier}?",
         "subtitle": "Used to link your identity account across apps",

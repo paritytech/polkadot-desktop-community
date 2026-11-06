@@ -1090,6 +1090,11 @@
           "subtitle": "Bu uygulamanın, başka bir uygulamaya ait bir hesapla işlem yapmasına izin verir",
           "warning": "Buna izin verirsen bu uygulama, diğer uygulamanın hesabını senin adına kullanabilir"
         },
+        "identityDisclosure": {
+          "title": "Kullanıcı adın bu uygulamayla paylaşılsın mı?",
+          "subtitle": "Bu uygulama birincil kullanıcı adını görecek",
+          "warning": "Buna izin verirsen bu uygulama seni kullanıcı adınla tanıyabilir"
+        },
         "productSubtree": {
           "title": "Bu uygulamanın kendi hesabına erişmesine izin verilsin mi?",
           "subtitle": "Bu uygulamanın hesabını eşleştirilmiş cihazından alır"
@@ -1166,13 +1171,6 @@
       }
     },
     "productContainerBinding": {
-      "keyListingPermission": {
-        "title": "{requestedIdentifier} anahtarlarına erişime izin verilsin mi?",
-        "subtitle": "Bu uygulamanın, başka bir uygulamanın hangi anahtarları kaydettiğini görmesini sağlar",
-        "warning": "Buna izin verirsen, bu uygulama diğer uygulamanın hangi ring'ler için anahtar kaydettiğini öğrenir",
-        "deny": "İzin verme",
-        "allow": "İzin ver"
-      },
       "aliasPermission": {
         "title": "{requestedIdentifier} içindeki takma adına erişime izin verilsin mi?",
         "subtitle": "Kimlik hesabını uygulamalar arasında ilişkilendirmek için kullanılır",

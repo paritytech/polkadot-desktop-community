@@ -81,7 +81,7 @@ describe('productRuntimeService.toModalProps', () => {
 
   // The five permission-shaped reviews share a layout but not a payload, so each gets
   // its own target: that is what lets a modal be typed to the review it renders.
-  it('routes identity disclosure to the key-listing modal', () => {
+  it('routes identity disclosure to the username modal', () => {
     expect(review({ tag: 'IdentityDisclosure', value: { productId: DEMO } })).toMatchObject({
       target: 'identityDisclosure',
     });

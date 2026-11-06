@@ -1090,6 +1090,11 @@
           "subtitle": "이 앱이 다른 앱에 속한 계정으로 동작할 수 있게 합니다",
           "warning": "허용하면 이 앱이 다른 앱의 계정을 대신 사용할 수 있습니다"
         },
+        "identityDisclosure": {
+          "title": "이 앱과 사용자 이름을 공유할까요?",
+          "subtitle": "이 앱이 회원님의 기본 사용자 이름을 볼 수 있습니다",
+          "warning": "허용하면 이 앱이 사용자 이름으로 회원님을 알아볼 수 있습니다"
+        },
         "productSubtree": {
           "title": "이 앱이 자신의 계정에 접근하도록 허용할까요?",
           "subtitle": "연결된 기기에서 이 앱의 계정을 가져옵니다"
@@ -1166,13 +1171,6 @@
       }
     },
     "productContainerBinding": {
-      "keyListingPermission": {
-        "title": "{requestedIdentifier}의 키에 대한 접근을 허용할까요?",
-        "subtitle": "다른 앱이 등록한 키를 이 앱이 확인할 수 있게 됩니다",
-        "warning": "이를 허용하면 다른 앱이 어떤 링에 키를 등록했는지 이 앱이 알게 됩니다",
-        "deny": "허용 안 함",
-        "allow": "허용"
-      },
       "aliasPermission": {
         "title": "{requestedIdentifier}에서 별칭에 대한 접근을 허용할까요?",
         "subtitle": "앱 간에 아이덴티티 계정을 연결하는 데 사용됩니다",

@@ -4,7 +4,7 @@ import { AccountAccessModal } from './requests/AccountAccessModal';
 import { AliasPermissionModal } from './requests/AliasPermissionModal';
 import { AllocationRequestModal } from './requests/AllocationRequestModal';
 import { CreateTransactionModal } from './requests/CreateTransactionModal';
-import { KeyListingPermissionModal } from './requests/KeyListingPermissionModal';
+import { IdentityDisclosureModal } from './requests/IdentityDisclosureModal';
 import { ProductSubtreeModal } from './requests/ProductSubtreeModal';
 import { ProofPermissionModal } from './requests/ProofPermissionModal';
 import { SignPayloadModal } from './requests/SignPayloadModal';
@@ -15,6 +15,12 @@ import { StatementSignModal } from './requests/StatementSignModal';
 type Props = {
   props: ReviewModalProps;
   onDecide: (approved: boolean) => void;
+  /**
+   * The "no answer" path for `confirmPermission` reviews (identity disclosure, account
+   * access): Esc / X leaves the core unanswered instead of persisting a refusal. When
+   * absent, a dismissal is `onDecide(false)`.
+   */
+  onDismiss?: VoidFunction;
 };
 
 /**
@@ -28,7 +34,7 @@ type Props = {
  * No `default` arm — `ReviewModalProps` is a closed union, so a variant added upstream
  * fails to compile here rather than reaching a user as a blank dialog.
  */
-export const ProductReviewDialog = ({ props, onDecide }: Props) => {
+export const ProductReviewDialog = ({ props, onDecide, onDismiss }: Props) => {
   switch (props.target) {
     case 'createTransaction':
       return <CreateTransactionModal review={props.review} onDecide={onDecide} />;
@@ -55,10 +61,10 @@ export const ProductReviewDialog = ({ props, onDecide }: Props) => {
       return <AliasPermissionModal review={props.review} onDecide={onDecide} />;
 
     case 'identityDisclosure':
-      return <KeyListingPermissionModal review={props.review} onDecide={onDecide} />;
+      return <IdentityDisclosureModal review={props.review} onDecide={onDecide} onDismiss={onDismiss} />;
 
     case 'accountAccess':
-      return <AccountAccessModal review={props.review} onDecide={onDecide} />;
+      return <AccountAccessModal review={props.review} onDecide={onDecide} onDismiss={onDismiss} />;
 
     case 'productSubtree':
       return <ProductSubtreeModal review={props.review} onDecide={onDecide} />;

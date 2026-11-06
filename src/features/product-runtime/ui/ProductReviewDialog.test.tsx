@@ -133,9 +133,11 @@ describe('ProductReviewDialog', () => {
     expect(screen.queryByTestId(TEST_IDS.signReviewCallData)).not.toBeInTheDocument();
   });
 
-  it('routes key listing to its own dialog', () => {
+  it('routes identity disclosure to the username dialog', () => {
     show({ target: 'identityDisclosure', review: { productId: DEMO } });
 
-    expect(screen.getByTestId(TEST_IDS.keyListingPermissionDialog)).toBeInTheDocument();
+    expect(screen.getByTestId(TEST_IDS.identityDisclosureDialog)).toBeInTheDocument();
+    expect(screen.getByText('Share your username with this app?')).toBeInTheDocument();
+    expect(screen.queryByText(/rings|keys/i)).not.toBeInTheDocument();
   });
 });

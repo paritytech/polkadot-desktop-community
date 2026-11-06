@@ -1090,6 +1090,11 @@
           "subtitle": "Erlaubt dieser App, mit einem Konto zu handeln, das einer anderen App gehört",
           "warning": "Wenn du das erlaubst, kann diese App das Konto der anderen App in deinem Namen nutzen"
         },
+        "identityDisclosure": {
+          "title": "Deinen Benutzernamen mit dieser App teilen?",
+          "subtitle": "Diese App sieht deinen primären Benutzernamen",
+          "warning": "Wenn du das erlaubst, kann diese App dich anhand deines Benutzernamens erkennen"
+        },
         "productSubtree": {
           "title": "Dieser App Zugriff auf ihr Konto erlauben?",
           "subtitle": "Holt das Konto dieser App von deinem gekoppelten Gerät"
@@ -1166,13 +1171,6 @@
       }
     },
     "productContainerBinding": {
-      "keyListingPermission": {
-        "title": "Zugriff auf die Schlüssel von {requestedIdentifier} zulassen?",
-        "subtitle": "Ermöglicht dieser App zu erkennen, welche Schlüssel eine andere App registriert hat",
-        "warning": "Wenn du dies zulässt, erfährt diese App, für welche Ringe die andere App Schlüssel registriert hat",
-        "deny": "Nicht zulassen",
-        "allow": "Zulassen"
-      },
       "aliasPermission": {
         "title": "Zugriff auf deinen Alias in {requestedIdentifier} zulassen?",
         "subtitle": "Wird verwendet, um dein Identitätskonto app-übergreifend zu verknüpfen",

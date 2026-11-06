@@ -8,6 +8,7 @@ import { PermissionRequestModal } from './PermissionRequestModal';
 type Props = {
   review: AccountAccessReview;
   onDecide: (approved: boolean) => void;
+  onDismiss?: VoidFunction;
 };
 
 /**
@@ -17,7 +18,7 @@ type Props = {
  * new rather than restored. It names both products, because which account is being
  * borrowed is the whole decision.
  */
-export const AccountAccessModal = ({ review, onDecide }: Props) => {
+export const AccountAccessModal = ({ review, onDecide, onDismiss }: Props) => {
   const { t } = useTranslation();
 
   return (
@@ -32,6 +33,7 @@ export const AccountAccessModal = ({ review, onDecide }: Props) => {
       allowTestId={TEST_IDS.accountAccessAllow}
       onAllow={() => onDecide(true)}
       onDeny={() => onDecide(false)}
+      onDismiss={onDismiss}
     />
   );
 };

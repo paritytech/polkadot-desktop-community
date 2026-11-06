@@ -57,6 +57,11 @@ const unwatermarkedSignRawReview = {
 
 const identityReview = { tag: 'IdentityDisclosure', value: { productId: DEMO } } as const;
 
+const accountAccessReview = {
+  tag: 'AccountAccess',
+  value: { requestingProductId: DEMO, targetProductId: asProductId('other.dot') },
+} as const;
+
 const appProduct = { productId: DEMO, executionKind: 'App' } as const;
 const widgetProduct = { productId: DEMO, executionKind: 'Widget' } as const;
 
@@ -120,6 +125,16 @@ describe('confirmUserAction', () => {
     await expect(decision).resolves.toBe(false);
   });
 
+  it('resolves false when a review is dismissed', async () => {
+    const { result } = renderHook(() => useHostPrompts(), { wrapper });
+
+    const decision = openPrompt(() => result.current.userConfirmation.confirmUserAction(signRawReview));
+    await screen.findByTestId(TEST_IDS.signReviewContinueButton);
+    await userEvent.keyboard('{Escape}');
+
+    await expect(decision).resolves.toBe(false);
+  });
+
   it('rejects a review it has no surface for, without opening a dialog', async () => {
     const { result } = renderHook(() => useHostPrompts(), { wrapper });
 
@@ -164,12 +179,12 @@ describe('confirmUserAction', () => {
     void second.then(() => settled.push('second'));
 
     // Two different requests, so two different surfaces: the raw-signing review and the
-    // key-listing prompt. Both being up is what the stacking test is about.
+    // username prompt. Both being up is what the stacking test is about.
     await waitFor(async () => {
       expect(await screen.findAllByTestId(TEST_IDS.productRequestDeny)).toHaveLength(2);
     });
 
-    await userEvent.click(await screen.findByTestId(TEST_IDS.keyListingPermissionAllow));
+    await userEvent.click(await screen.findByTestId(TEST_IDS.identityDisclosureAllow));
 
     await expect(second).resolves.toBe(true);
     expect(settled).toEqual(['second']);
@@ -313,8 +328,50 @@ describe('permission prompts', () => {
     const { result } = renderHook(() => useHostPrompts(), { wrapper });
 
     const decision = openPrompt(() => result.current.userConfirmation.confirmPermission(identityReview));
-    await userEvent.click(await screen.findByTestId(TEST_IDS.keyListingPermissionAllow));
+    await userEvent.click(await screen.findByTestId(TEST_IDS.identityDisclosureAllow));
 
     await expect(decision).resolves.toBe('AllowOnce');
+  });
+
+  // A rejection leaves the core with no answer, so nothing is persisted; a 'Deny' would
+  // be stored as a permanent refusal the user never chose.
+  it('rejects a dismissed confirmPermission review instead of denying it', async () => {
+    const { result } = renderHook(() => useHostPrompts(), { wrapper });
+
+    const decision = openPrompt(() => result.current.userConfirmation.confirmPermission(identityReview));
+    await screen.findByTestId(TEST_IDS.identityDisclosureAllow);
+    const rejected = expect(decision).rejects.toThrow();
+    await userEvent.keyboard('{Escape}');
+    await rejected;
+  });
+
+  it('rejects a dismissed account-access review instead of denying it', async () => {
+    const { result } = renderHook(() => useHostPrompts(), { wrapper });
+
+    const decision = openPrompt(() => result.current.userConfirmation.confirmPermission(accountAccessReview));
+    await screen.findByTestId(TEST_IDS.accountAccessAllow);
+    const rejected = expect(decision).rejects.toThrow();
+    await userEvent.keyboard('{Escape}');
+    await rejected;
+  });
+
+  it('rejects a confirmPermission review torn down unanswered', async () => {
+    const { result, unmount } = renderHook(() => useHostPrompts(), { wrapper });
+
+    const decision = openPrompt(() => result.current.userConfirmation.confirmPermission(identityReview));
+    await screen.findByTestId(TEST_IDS.identityDisclosureAllow);
+    const rejected = expect(decision).rejects.toThrow();
+    unmount();
+
+    await rejected;
+  });
+
+  it('denies a confirmPermission review the user refuses', async () => {
+    const { result } = renderHook(() => useHostPrompts(), { wrapper });
+
+    const decision = openPrompt(() => result.current.userConfirmation.confirmPermission(identityReview));
+    await userEvent.click(await screen.findByTestId(TEST_IDS.productRequestDeny));
+
+    await expect(decision).resolves.toBe('Deny');
   });
 });

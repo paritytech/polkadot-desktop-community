@@ -24,12 +24,13 @@ const GATED_APPROVE_TESTIDS = [TEST_IDS.permissionDialogAllowAlways, TEST_IDS.al
  * them. Opting out of the auto-approver means "let me drive the dialog under test", not
  * "let me answer the core's preamble in every scenario".
  *
- * `keyListingPermissionAllow` is the same shape: the signing and alias flows look up which
- * ring-VRF keys are registered before they get to the request under test, and that lookup
- * raises its own review. `accountAccessAllow` (one product borrowing another's account)
- * rides along too — no scenario asserts on either, and both block the same way.
+ * `identityDisclosureAllow` is the same shape: a product asks for the user's primary username
+ * (`account.get_user_id`) before the flow under test, and paritytech/polkadot-desktop-community#55
+ * reports that the product SDK signer does so on connect. `accountAccessAllow` (one product
+ * borrowing another's account) rides along too — no scenario asserts on either, and both block
+ * the same way.
  */
-const ALWAYS_APPROVE_TESTIDS = [TEST_IDS.productSubtreeAllow, TEST_IDS.keyListingPermissionAllow, TEST_IDS.accountAccessAllow];
+const ALWAYS_APPROVE_TESTIDS = [TEST_IDS.productSubtreeAllow, TEST_IDS.identityDisclosureAllow, TEST_IDS.accountAccessAllow];
 
 /**
  * localStorage key whose value gates the auto-approver at runtime. Value `'0'`
