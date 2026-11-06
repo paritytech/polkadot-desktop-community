@@ -62,3 +62,66 @@ describe('formatCallDuration', () => {
     expect(chatService.formatCallDuration(ms)).toBe(expected);
   });
 });
+
+describe('toMessageSegments', () => {
+  const tld = '.paseo';
+  const segments = (text: string, activeTld = tld) => chatService.toMessageSegments(text, activeTld);
+  const joined = (text: string) =>
+    segments(text)
+      .map(segment => segment.text)
+      .join('');
+
+  it('keeps text without links as one text segment', () => {
+    expect(segments('just a message')).toEqual([{ type: 'text', text: 'just a message' }]);
+  });
+
+  it('turns a product invitation URL into a product link with its query', () => {
+    expect(segments('join https://coff3r.paseo.li/?invite=abc please')).toEqual([
+      { type: 'text', text: 'join ' },
+      {
+        type: 'product',
+        text: 'https://coff3r.paseo.li/?invite=abc',
+        target: { identifier: 'coff3r.paseo', pathname: '?invite=abc' },
+      },
+      { type: 'text', text: ' please' },
+    ]);
+  });
+
+  it.each([
+    ['coff3r.paseo', 'coff3r.paseo', ''],
+    ['polkadot://coff3r.paseo/x', 'coff3r.paseo', 'x'],
+    ['http://coff3r.paseo.li', 'coff3r.paseo', ''],
+  ])('treats %s as a product link', (text, identifier, pathname) => {
+    expect(segments(text)).toEqual([{ type: 'product', text, target: { identifier, pathname } }]);
+  });
+
+  it('leaves surrounding punctuation as text', () => {
+    expect(segments('(see coff3r.paseo).')).toEqual([
+      { type: 'text', text: '(see ' },
+      { type: 'product', text: 'coff3r.paseo', target: { identifier: 'coff3r.paseo', pathname: '' } },
+      { type: 'text', text: ').' },
+    ]);
+  });
+
+  it('turns an https URL that names no product into an external link', () => {
+    expect(segments('https://example.com/a?b=1')).toEqual([
+      { type: 'external', text: 'https://example.com/a?b=1', href: 'https://example.com/a?b=1' },
+    ]);
+  });
+
+  it("treats another network's gateway URL as an external link", () => {
+    expect(segments('https://coff3r.dot.li')).toEqual([
+      { type: 'external', text: 'https://coff3r.dot.li', href: 'https://coff3r.dot.li/' },
+    ]);
+  });
+
+  it.each(['http://example.com', 'example.com', 'http://localhost:3000', 'localhost:3000'])('keeps %s as text', text => {
+    expect(segments(text)).toEqual([{ type: 'text', text }]);
+  });
+
+  it('preserves whitespace and newlines verbatim', () => {
+    const text = 'a\nhttps://example.com\n\nb';
+    expect(joined(text)).toBe(text);
+    expect(segments(text).map(segment => segment.type)).toEqual(['text', 'external', 'text']);
+  });
+});

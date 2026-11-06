@@ -1,6 +1,12 @@
 import { type ChatSession, type P2PChatRequest } from '@/domains/chat';
+import { type DotNsUrl, dotNsService } from '@/domains/product';
 
 export type ChatItemDensity = 'regular' | 'compact';
+
+export type MessageSegment =
+  | { type: 'text'; text: string }
+  | { type: 'product'; text: string; target: DotNsUrl }
+  | { type: 'external'; text: string; href: string };
 
 // Polkadot SS58 addresses are base58-encoded 32-byte payloads — typical
 // printed length is 47-49 chars, and substrate (prefix 42) addresses all
@@ -117,6 +123,66 @@ function formatCallDuration(durationMs: number): string {
   return `${minutes}:${pad(seconds)}`;
 }
 
+// Punctuation that wraps a link in prose — `(see coff3r.paseo).` — and is never part of it.
+const LEADING_WRAPPERS = new Set(['(', '[', '{', '"', "'", '«']);
+const TRAILING_WRAPPERS = new Set(['.', ',', ';', ':', '!', '?', ')', ']', '}', '"', "'", '»']);
+
+function classifyLink(core: string, tld: string): MessageSegment | null {
+  // Whether a token names a product is `dotNsService`'s call alone. `isDotDomain`
+  // drops the localhost targets `parseDotNsDomain` also accepts: a dev server named
+  // in a peer's message is not a product.
+  const target = dotNsService.parseDotNsDomain(core, tld);
+  if (target && dotNsService.isDotDomain(target.identifier, tld)) {
+    return { type: 'product', text: core, target };
+  }
+
+  // https only: main's window-open handler hands nothing else to the system browser.
+  try {
+    const url = new URL(core);
+    return url.protocol === 'https:' ? { type: 'external', text: core, href: url.href } : null;
+  } catch {
+    return null;
+  }
+}
+
+function appendText(segments: MessageSegment[], text: string) {
+  if (!text) return;
+  const last = segments.at(-1);
+  if (last?.type === 'text') {
+    last.text += text;
+  } else {
+    segments.push({ type: 'text', text });
+  }
+}
+
+/**
+ * Splits message text into plain text and links. Whitespace is kept verbatim, so
+ * joining every segment's `text` reproduces the input.
+ */
+function toMessageSegments(text: string, tld: string): MessageSegment[] {
+  const segments: MessageSegment[] = [];
+
+  for (const token of text.split(/(\s+)/)) {
+    let start = 0;
+    let end = token.length;
+    while (start < end && LEADING_WRAPPERS.has(token.charAt(start))) start++;
+    while (end > start && TRAILING_WRAPPERS.has(token.charAt(end - 1))) end--;
+
+    const core = token.slice(start, end);
+    const link = core ? classifyLink(core, tld) : null;
+    if (!link) {
+      appendText(segments, token);
+      continue;
+    }
+
+    appendText(segments, token.slice(0, start));
+    segments.push(link);
+    appendText(segments, token.slice(end));
+  }
+
+  return segments;
+}
+
 export const chatService = {
   formatPeerName,
   formatRequesterNames,
@@ -127,4 +193,5 @@ export const chatService = {
   formatChatListTime,
   formatRequestTime,
   formatCallDuration,
+  toMessageSegments,
 };
