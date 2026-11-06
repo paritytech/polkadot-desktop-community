@@ -60,19 +60,22 @@ function productIdsWithPermissionSlots$(): Observable<string[]> {
 
 /**
  * Rows that MIGHT still be missing an indexed key field: no `slotTag` at all (written
- * before schema v9), or a `slotTag` with no `productId`. The second case is not
+ * before schema v9), or a `slotTag` with neither a `productId` nor a `productLabel`. The
+ * second case is not
  * hypothetical — a slot variant the descriptor did not yet index wrote exactly that
  * shape, and such a row is invisible to a `slotTag`-only filter.
  *
- * Deliberately over-selects. Most rows with no `productId` are slots that correctly
+ * Deliberately over-selects. Most rows with no owner are slots that correctly
  * have none, and telling those apart from a row still missing one needs the key
  * decoded — which needs the core's codec, so it belongs to the use case. This returns
  * candidates; the use case decides, and skips the ones already correct. The table holds
  * one row per core-owned slot and this runs once at bootstrap, so the extra decodes are
  * cheaper than carrying a descriptor version to avoid them.
  */
-async function descriptorCandidates(): Promise<{ key: string; slotTag?: string; productId?: string }[]> {
-  return database.coreStorage.filter(row => row.slotTag === undefined || row.productId === undefined).toArray();
+async function descriptorCandidates(): Promise<{ key: string; slotTag?: string; productId?: string; productLabel?: string }[]> {
+  return database.coreStorage
+    .filter(row => row.slotTag === undefined || (row.productId === undefined && row.productLabel === undefined))
+    .toArray();
 }
 
 /** Write the decoded key fields onto one row, leaving its value untouched. */
@@ -81,19 +84,19 @@ async function updateDescriptor(key: string, descriptor: CoreSlotDescriptor): Pr
 }
 
 /**
- * Drop every product-indexed slot belonging to `productIds`.
+ * Drop every product-indexed slot belonging to `productIds`, and every label-indexed slot
+ * belonging to `productLabels`.
  *
  * Clearing these is the host's job, per the core's `CoreStorage` contract: the core
  * drops what it is holding when a session ends, but a product it never opened this run
  * has no entry to drop, so those slots would outlive the disconnect and accumulate for
  * the life of the install. Which variants are product-indexed is not restated here —
- * `coreSlotService.describeSlot` decides it structurally, and the `productId` index it
- * populates is what makes this a sweep rather than a scan.
+ * `coreSlotService.describeSlot` decides it, and the `productId` / `productLabel` indexes
+ * it populates are what make this a sweep rather than a scan.
  */
-async function clearProductSlots(productIds: string[]): Promise<void> {
-  if (productIds.length === 0) return;
-
-  await database.coreStorage.where('productId').anyOf(productIds).delete();
+async function clearProductSlots(productIds: string[], productLabels: string[]): Promise<void> {
+  if (productIds.length > 0) await database.coreStorage.where('productId').anyOf(productIds).delete();
+  if (productLabels.length > 0) await database.coreStorage.where('productLabel').anyOf(productLabels).delete();
 }
 
 /**

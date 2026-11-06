@@ -1,5 +1,6 @@
 import 'fake-indexeddb/auto';
 
+import { asProductId } from '@parity/truapi';
 import { BehaviorSubject } from 'rxjs';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
@@ -18,7 +19,7 @@ const setUserInputMock = vi.spyOn(productRoomUseCase, 'setProductRoomUserInput')
 const watchProductRoomsMock = vi.spyOn(productRoomUseCase, 'watchProductRooms');
 
 const USER: `0x${string}` = `0x${'11'.repeat(32)}`;
-const product = { productId: 'demo.dot', executionKind: 'Worker' as const };
+const product = { productId: asProductId('demo.dot'), executionKind: 'Worker' as const };
 
 function connect() {
   truapiRuntimeUseCase.publishAuthState({ tag: 'Connected', value: { publicKey: USER, identityAccountId: USER } });

@@ -76,6 +76,7 @@ export type CoreStorageRow = {
   // `key` alone.
   slotTag?: string;
   productId?: string;
+  productLabel?: string;
   request?: Uint8Array; // SCALE-encoded by the core's own codec
 };
 

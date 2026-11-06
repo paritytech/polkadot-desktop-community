@@ -1,4 +1,4 @@
-import { type ProductExecutionKind } from '@parity/truapi-host';
+import { type ExecutableKind } from '@parity/truapi-host';
 
 import { requestExternalUrlAccess } from '../permissions/broker';
 import { permissionsService } from '../permissions/service';
@@ -27,7 +27,7 @@ async function resolveRemoteUrlAccess({
 }: {
   productId: string;
   url: string;
-  executionKind: ProductExecutionKind;
+  executionKind: ExecutableKind;
 }): Promise<PermissionStatus> {
   // `toAuthorizationRequest` reduces the URL to the bare host the core keys on, the
   // same normalization the allow-always write path applies, so read and write agree.

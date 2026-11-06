@@ -1,8 +1,9 @@
+import { type ProductId } from '@parity/truapi';
 import {
   type AuthState,
+  type ExecutableKind,
   type PermissionAuthorizationRequest,
   type PermissionAuthorizationStatus,
-  type ProductExecutionKind,
   type RequiredHostCallbacks,
   type TrUApiProductProvider,
   type WorkerDemandChange,
@@ -10,7 +11,7 @@ import {
 
 /** The worker-backed runtime handle, narrowed to what the host actually calls. */
 export type TruapiHostRuntime = {
-  createProvider(product: { productId: string; executionKind?: ProductExecutionKind }): Promise<TrUApiProductProvider>;
+  createProvider(product: { productId: ProductId; executionKind?: ExecutableKind }): Promise<TrUApiProductProvider>;
   disconnectSession(): Promise<void>;
   cancelPairing(): void;
   // Restores the session the core persisted, resolving once it is usable. Awaited at
@@ -18,29 +19,29 @@ export type TruapiHostRuntime = {
   // cannot be told apart from "signed out".
   activateStoredSession(): Promise<void>;
   getPermissionAuthorizationStatus(
-    productId: string,
+    productId: ProductId,
     request: PermissionAuthorizationRequest,
   ): Promise<PermissionAuthorizationStatus>;
   getPermissionAuthorizationStatuses(
-    productId: string,
+    productId: ProductId,
     requests: PermissionAuthorizationRequest[],
   ): Promise<PermissionAuthorizationStatus[]>;
   setPermissionAuthorizationStatus(
-    productId: string,
+    productId: ProductId,
     request: PermissionAuthorizationRequest,
     status: PermissionAuthorizationStatus,
   ): Promise<void>;
   // The product's hard-subtree public key, cached by the core after the account holder
   // authorizes it once. `undefined` until that happens. The host derives a product
   // account's public key (and address) from this without ever seeing the private half.
-  getProductSubtreePublicKey(productId: string, timeoutMs?: number): Promise<Uint8Array | undefined>;
+  getProductSubtreePublicKey(productId: ProductId, timeoutMs?: number): Promise<Uint8Array | undefined>;
   /**
    * Take one reference on a product's worker. The core counts; the resulting level
    * reaches `subscribeWorkerDemand` listeners. Every call pairs with one release.
    */
-  acquireWorker(productId: string): void;
+  acquireWorker(productId: ProductId): void;
   /** Release one reference. Releasing with none held is a no-op. */
-  releaseWorker(productId: string): void;
+  releaseWorker(productId: ProductId): void;
   /**
    * Which product workers the host should be running. The listener first receives
    * `wanted: true` for every product wanted right now, then each change, and

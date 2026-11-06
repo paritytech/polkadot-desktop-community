@@ -29,7 +29,7 @@ import { type MessageContent } from '@/domains/chat';
  * Which confirmation surface a core review opens, and the payload it needs.
  *
  * The core reviews the action and asks one question — `confirmUserAction` — over a
- * union of eleven variants. This maps that union onto the host's modals so the UI
+ * union of review variants. This maps that union onto the host's modals so the UI
  * layer switches on `target` instead of re-reading the core's shape.
  *
  * One `target` per surface, so `target` discriminates `review`: a modal receives the
@@ -54,7 +54,11 @@ export type ReviewModalProps =
   | { target: 'accountAlias'; review: AccountAliasReview }
   | { target: 'productSubtree'; review: ProductSubtreeReview };
 
-function toModalProps(review: UserConfirmationReview): ReviewModalProps {
+/**
+ * `null` for a review the host has no surface for, which the caller answers as a
+ * rejection.
+ */
+function toModalProps(review: UserConfirmationReview): ReviewModalProps | null {
   switch (review.tag) {
     case 'SignPayload':
       return { target: 'signPayload', legacyAccount: review.value.tag === 'LegacyAccount', review: review.value };
@@ -88,6 +92,11 @@ function toModalProps(review: UserConfirmationReview): ReviewModalProps {
 
     case 'ProductSubtree':
       return { target: 'productSubtree', review: review.value };
+
+    // TODO(truapi): add a drain review modal when one is designed; until then a product
+    // cannot move items out of a purse it does not own.
+    case 'NftPurseDrain':
+      return null;
   }
 }
 

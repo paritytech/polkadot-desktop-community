@@ -1,4 +1,4 @@
-import { type ProductExecutionKind } from '@parity/truapi-host';
+import { type ExecutableKind } from '@parity/truapi-host';
 import { type Observable, BehaviorSubject } from 'rxjs';
 
 import { promiseWithResolvers } from '@/shared/utils';
@@ -8,7 +8,7 @@ import { type PermissionStatus } from './types';
 export type PendingRemotePermissionRequest = {
   productId: string;
   /** The kind of executable that asked — concurrent requests are coalesced per kind. */
-  executionKind: ProductExecutionKind;
+  executionKind: ExecutableKind;
   /**
    * URL origin (scheme + host + port) — the pattern persisted if the user picks
    * "Allow always". Origin-wide granularity avoids prompt storms when a page
@@ -41,7 +41,7 @@ function toOrigin(url: string): string | null {
   return parsed.origin;
 }
 
-function dedupeKey(productId: string, origin: string, executionKind: ProductExecutionKind): string {
+function dedupeKey(productId: string, origin: string, executionKind: ExecutableKind): string {
   return `${productId}\0${origin}\0${executionKind}`;
 }
 
@@ -56,7 +56,7 @@ export function requestExternalUrlAccess({
 }: {
   productId: string;
   url: string;
-  executionKind: ProductExecutionKind;
+  executionKind: ExecutableKind;
 }): Promise<PermissionStatus> {
   const origin = toOrigin(url);
   if (!origin) return Promise.resolve('denied');

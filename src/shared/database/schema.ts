@@ -103,6 +103,11 @@ dexie.version(11).stores({ lightClientDatabases: 'genesisHash' });
 // the one row the host used was ever read by the core, so only it is carried over. The
 // old store is read inside this upgrade and deleted after it.
 dexie.version(12).stores({ productStorage: 'key', productLocalStorage: null }).upgrade(migrateProductStorageToV12);
+// v13: `coreStorage` gains a `productLabel` index. TrUAPI 0.29 files some slots under a
+// bare product label rather than a full product id, and the product sweep has to find
+// them. Index only. The bootstrap backfill describes rows that carry no owner yet; a
+// row that already holds a `productId` keeps it and is still swept by it.
+dexie.version(13).stores({ coreStorage: 'key, slotTag, productId, productLabel, [slotTag+productId]' });
 
 export const appDatabase = dexie;
 

@@ -203,7 +203,7 @@ it can ask which slots exist. Every _status_ is read back from the core.
   `ask`, `granted`, or `denied` in this domain's words; the core spells the same three
   `NotDetermined`, `Authorized`, `Denied`, and the translation stops at
   `$usecase/permissions.ts`.
-- **Execution kind** — which executable is asking: the core's `ProductExecutionKind`
+- **Execution kind** — which executable is asking: the core's `ExecutableKind`
   (`App`, `Widget`, `Worker`), the same kinds a manifest declares as `app` / `widget` /
   `worker` (`manifestService.executionKindOf` converts). It does not scope a stored
   decision — the core keys a persisted decision per `(product, permission)` only. It keys

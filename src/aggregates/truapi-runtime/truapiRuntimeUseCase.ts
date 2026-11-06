@@ -1,9 +1,5 @@
-import {
-  type AuthState,
-  type ProductExecutionKind,
-  type RequiredHostCallbacks,
-  type TrUApiProductProvider,
-} from '@parity/truapi-host';
+import { asProductId } from '@parity/truapi';
+import { type AuthState, type ExecutableKind, type RequiredHostCallbacks, type TrUApiProductProvider } from '@parity/truapi-host';
 import * as v from 'valibot';
 
 import { promiseWithResolvers } from '@/shared/utils';
@@ -131,12 +127,15 @@ function whenSessionActivated(): Promise<TruapiHostRuntime> {
 }
 
 /** Open a wire to one product, once the core is up and its stored session is restored. */
-async function createProvider(product: {
+async function createProvider({
+  productId,
+  executionKind,
+}: {
   productId: string;
-  executionKind?: ProductExecutionKind;
+  executionKind?: ExecutableKind;
 }): Promise<TrUApiProductProvider> {
   const runtime = await whenSessionActivated();
-  return runtime.createProvider(product);
+  return runtime.createProvider({ productId: asProductId(productId), executionKind });
 }
 
 /**
@@ -148,13 +147,13 @@ async function createProvider(product: {
  */
 async function acquireWorker(productId: string): Promise<void> {
   const runtime = await whenRuntimeReady();
-  runtime.acquireWorker(productId);
+  runtime.acquireWorker(asProductId(productId));
 }
 
 /** Drop one `acquireWorker` reference. Releasing with none held is a no-op. */
 async function releaseWorker(productId: string): Promise<void> {
   const runtime = await whenRuntimeReady();
-  runtime.releaseWorker(productId);
+  runtime.releaseWorker(asProductId(productId));
 }
 
 /**
