@@ -1,5 +1,6 @@
 // @vitest-environment happy-dom
 
+import { asProductId } from '@parity/truapi';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
@@ -13,7 +14,11 @@ import { ProductReviewDialog } from './ProductReviewDialog';
 // The dialog reads the product catalog and the chain list to name what is asking and
 // where it executes; neither is what these tests are about.
 
-const account = { dotNsIdentifier: 'demo.dot', derivationIndex: { tag: 'Index' as const, value: 3 } };
+const DEMO = asProductId('demo.dot');
+const A = asProductId('a.dot');
+const B = asProductId('b.dot');
+
+const account = { dotNsIdentifier: DEMO, derivationIndex: { tag: 'Index' as const, value: 3 } };
 
 function show(props: ReviewModalProps) {
   render(
@@ -65,8 +70,8 @@ describe('ProductReviewDialog', () => {
     show({
       target: 'accountAlias',
       review: {
-        callingProductId: 'a.dot',
-        context: { productId: 'b.dot', suffix: { tag: 'Index', value: 0 } },
+        callingProductId: A,
+        context: { productId: B, suffix: { tag: 'Index', value: 0 } },
         ringLocation: { chainId: '0xaa', junctions: [] },
       },
     });
@@ -79,7 +84,7 @@ describe('ProductReviewDialog', () => {
     show({
       target: 'signVrf',
       review: {
-        callingProductId: 'a.dot',
+        callingProductId: A,
         request: { account, transcriptLabel: '0x01', items: [{ label: '0x02', value: '0x03' }] },
       },
     });
@@ -92,7 +97,7 @@ describe('ProductReviewDialog', () => {
   it('lists every requested grant on the allowance dialog', () => {
     show({
       target: 'allowance',
-      review: { callingProductId: 'demo.dot', resources: [{ tag: 'AutoSigning' }, { tag: 'BulletinAllowance' }] },
+      review: { callingProductId: DEMO, resources: [{ tag: 'AutoSigning' }, { tag: 'BulletinAllowance' }] },
     });
 
     expect(screen.getByTestId(TEST_IDS.allocationRequestDialog)).toBeInTheDocument();
@@ -129,7 +134,7 @@ describe('ProductReviewDialog', () => {
   });
 
   it('routes key listing to its own dialog', () => {
-    show({ target: 'identityDisclosure', review: { productId: 'demo.dot' } });
+    show({ target: 'identityDisclosure', review: { productId: DEMO } });
 
     expect(screen.getByTestId(TEST_IDS.keyListingPermissionDialog)).toBeInTheDocument();
   });

@@ -10,7 +10,7 @@
 // over the core's API. These four functions stay because session state is not
 // persistence, and moving them across layers is a separate decision.
 
-import { type ProductExecutionKind } from '@parity/truapi-host';
+import { type ExecutableKind } from '@parity/truapi-host';
 
 import { type DevicePermissionType } from './types';
 
@@ -19,7 +19,7 @@ const transientDeviceGrants = new Set<string>();
 type TransientDeviceGrantParams = {
   productId: string;
   permission: DevicePermissionType;
-  executionKind: ProductExecutionKind;
+  executionKind: ExecutableKind;
 };
 
 function transientDeviceGrantKey({ productId, permission, executionKind }: TransientDeviceGrantParams): string {
@@ -39,7 +39,7 @@ export function clearTransientDevicePermissionGrants({
   executionKind,
 }: {
   productId: string;
-  executionKind: ProductExecutionKind;
+  executionKind: ExecutableKind;
 }): void {
   const prefix = `${productId}\0`;
   const suffix = `\0${executionKind}`;

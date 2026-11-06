@@ -8,6 +8,8 @@
 export type CoreSlotDescriptor = {
   slotTag: string;
   productId?: string;
+  /** Bare product label owning a slot shared by every executable of that product. */
+  productLabel?: string;
   /**
    * The slot's request, SCALE-encoded with the core's own codec.
    *

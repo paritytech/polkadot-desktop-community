@@ -37,6 +37,24 @@ describe.each(['.dot', '.paseo'])('dotNS name helpers on %s', tld => {
     });
   });
 
+  describe('labelOf', () => {
+    it('names a product by the label just above its TLD', () => {
+      expect(dotNsService.labelOf(`caller${tld}`)).toBe('caller');
+    });
+
+    it('names an executable subname by its product', () => {
+      expect(dotNsService.labelOf(`app.Caller${tld}`)).toBe('caller');
+    });
+
+    it('accepts a bare label', () => {
+      expect(dotNsService.labelOf('caller')).toBe('caller');
+    });
+
+    it('names an id from another network by its product, not its TLD', () => {
+      expect(dotNsService.labelOf(`caller${tld === '.dot' ? '.paseo' : '.dot'}`)).toBe('caller');
+    });
+  });
+
   describe('toDisplayName', () => {
     it('strips a trailing TLD', () => {
       expect(dotNsService.toDisplayName(`hackm3${tld}`, tld)).toBe('hackm3');

@@ -1,8 +1,9 @@
+import { asProductId } from '@parity/truapi';
 import { describe, expect, it } from 'vitest';
 
 import { createProductOperationsCallbacks } from './operationCallbacks';
 
-const product = (productId: string) => ({ productId, executionKind: 'Worker' }) as const;
+const product = (productId: string) => ({ productId: asProductId(productId), executionKind: 'Worker' }) as const;
 
 describe('createProductOperationsCallbacks', () => {
   it('gives every open operation of one product a distinct id', async () => {

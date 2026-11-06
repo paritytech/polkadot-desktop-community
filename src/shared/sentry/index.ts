@@ -56,7 +56,7 @@ export function initSentry(): void {
   //
   // What we keep below: error capture (globalHandlers), error de-dup, error
   // chaining, HTTP context for stacktraces, function.toString preservation,
-  // inbound filtering. Performance tracing is omitted because every
+  // event filtering. Performance tracing is omitted because every
   // `browserTracingIntegration` config we tried still triggered the
   // listener-leak symptom; can be reintroduced once the upstream interaction
   // is understood.
@@ -64,6 +64,8 @@ export function initSentry(): void {
     dsn,
     release: `polkadot-desktop@${process.env['VERSION']}`,
     environment,
+    // Sentry 11 records the user's IP address unless told not to; the app never sent it.
+    dataCollection: { userInfo: false },
     defaultIntegrations: false,
     integrations: [
       Sentry.globalHandlersIntegration(),
@@ -71,7 +73,7 @@ export function initSentry(): void {
       Sentry.linkedErrorsIntegration(),
       Sentry.httpContextIntegration(),
       Sentry.functionToStringIntegration(),
-      Sentry.inboundFiltersIntegration(),
+      Sentry.eventFiltersIntegration(),
     ],
   });
 }

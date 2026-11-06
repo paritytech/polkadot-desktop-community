@@ -41,6 +41,16 @@ function isSameBaseName(a: string, b: string, tld: string): boolean {
   return baseNameOf(a, tld) === baseNameOf(b, tld);
 }
 
+// The label just above the TLD — `caller` for `app.caller.dot` — which is how the
+// TrUAPI core names a product across its executables. Mirrors `ProductId::bare_label`
+// rather than taking the active TLD: an id from another network still names its own
+// product, never its TLD, and an id with no TLD is its own label.
+function labelOf(input: string): string {
+  const parts = input.trim().toLowerCase().split('.');
+
+  return parts.length > 1 ? (parts.at(-2) ?? input) : input;
+}
+
 // dotNS subname grammar: a `<sub>.<base>` name. The sub is opaque here
 // (callers pass an executable kind, but dotNS doesn't model that).
 function subnameOf(baseName: string, sub: string): string {
@@ -176,6 +186,7 @@ function reviveOriginAccount(): string {
 export const dotNsService = {
   baseNameOf,
   isSameBaseName,
+  labelOf,
   subnameOf,
   generateProductBase,
   isDotDomain,

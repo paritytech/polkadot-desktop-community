@@ -1,3 +1,4 @@
+import { asProductId } from '@parity/truapi';
 import {
   type DevicePermissionStatus,
   type PermissionAuthorizationRequest,
@@ -119,7 +120,7 @@ function toAuthorizationRequest(
  * not a member of `PERMISSION_IDS`.
  */
 function toAccountAccessRequest(targetProductId: string): PermissionAuthorizationRequest {
-  return { tag: 'AccountAccess', value: { targetProductId } };
+  return { tag: 'AccountAccess', value: { targetProductId: asProductId(targetProductId) } };
 }
 
 /** The inverse of `toAuthorizationRequest`, for naming a slot the core handed back. */

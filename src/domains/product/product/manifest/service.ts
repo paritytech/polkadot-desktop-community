@@ -1,4 +1,4 @@
-import { type ProductExecutionKind } from '@parity/truapi-host';
+import { type ExecutableKind as CoreExecutableKind } from '@parity/truapi-host';
 import * as v from 'valibot';
 
 import { type HexString } from '@/shared/types';
@@ -140,7 +140,7 @@ function formatVersion(version: SemVer): string {
 
 // The core names the executable kinds a manifest declares in its own casing
 // (`ProductContext.executionKind`); host state keyed for the core uses the core's name.
-function executionKindOf(kind: ExecutableKind): ProductExecutionKind {
+function executionKindOf(kind: ExecutableKind): CoreExecutableKind {
   switch (kind) {
     case 'app':
       return 'App';

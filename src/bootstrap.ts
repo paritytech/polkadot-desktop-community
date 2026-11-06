@@ -1,4 +1,6 @@
 /* eslint-disable import-x/max-dependencies */
+import { asProductId } from '@parity/truapi';
+
 import { AUTOTEST_ENABLED, E2E_TEST_ENABLED } from '@/shared/autotest';
 import { deleteLegacyDatabases } from '@/shared/database';
 import { isDev, isElectron, isProductionBuild, isWeb } from '@/shared/env';
@@ -113,11 +115,11 @@ const runBootstrap = async (): Promise<BootstrapOutcome> => {
     // these calls, so a runtime that never starts fails closed rather than hanging.
     permissionsAdapter: {
       getStatus: async (productId, request) =>
-        (await truapiRuntimeUseCase.whenRuntimeReady()).getPermissionAuthorizationStatus(productId, request),
+        (await truapiRuntimeUseCase.whenRuntimeReady()).getPermissionAuthorizationStatus(asProductId(productId), request),
       getStatuses: async (productId, requests) =>
-        (await truapiRuntimeUseCase.whenRuntimeReady()).getPermissionAuthorizationStatuses(productId, requests),
+        (await truapiRuntimeUseCase.whenRuntimeReady()).getPermissionAuthorizationStatuses(asProductId(productId), requests),
       setStatus: async (productId, request, status) =>
-        (await truapiRuntimeUseCase.whenRuntimeReady()).setPermissionAuthorizationStatus(productId, request, status),
+        (await truapiRuntimeUseCase.whenRuntimeReady()).setPermissionAuthorizationStatus(asProductId(productId), request, status),
     },
   });
 

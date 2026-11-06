@@ -1,5 +1,6 @@
 // @vitest-environment happy-dom
 
+import { asProductId } from '@parity/truapi';
 import { act, renderHook, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { type PropsWithChildren } from 'react';
@@ -24,13 +25,15 @@ const wrapper = ({ children }: PropsWithChildren) => (
   </TranslationProvider>
 );
 
+const DEMO = asProductId('demo.dot');
+
 const signRawReview = {
   tag: 'SignRaw',
   value: {
     tag: 'Product',
     value: {
       request: {
-        account: { dotNsIdentifier: 'demo.dot', derivationIndex: { tag: 'Index', value: 0 } },
+        account: { dotNsIdentifier: DEMO, derivationIndex: { tag: 'Index', value: 0 } },
         payload: { tag: 'Bytes', value: { bytes: '0x01' } },
       },
       watermarked: true,
@@ -44,7 +47,7 @@ const unwatermarkedSignRawReview = {
     tag: 'Product',
     value: {
       request: {
-        account: { dotNsIdentifier: 'demo.dot', derivationIndex: { tag: 'Index', value: 0 } },
+        account: { dotNsIdentifier: DEMO, derivationIndex: { tag: 'Index', value: 0 } },
         payload: { tag: 'Bytes', value: { bytes: '0x01' } },
       },
       watermarked: false,
@@ -52,10 +55,10 @@ const unwatermarkedSignRawReview = {
   },
 } as const;
 
-const identityReview = { tag: 'IdentityDisclosure', value: { productId: 'demo.dot' } } as const;
+const identityReview = { tag: 'IdentityDisclosure', value: { productId: DEMO } } as const;
 
-const appProduct = { productId: 'demo.dot', executionKind: 'App' } as const;
-const widgetProduct = { productId: 'demo.dot', executionKind: 'Widget' } as const;
+const appProduct = { productId: DEMO, executionKind: 'App' } as const;
+const widgetProduct = { productId: DEMO, executionKind: 'Widget' } as const;
 
 afterEach(() => {
   _resetTransientDevicePermissionGrants();
@@ -115,6 +118,24 @@ describe('confirmUserAction', () => {
     await userEvent.click(await screen.findByTestId(TEST_IDS.productRequestDeny));
 
     await expect(decision).resolves.toBe(false);
+  });
+
+  it('rejects a review it has no surface for, without opening a dialog', async () => {
+    const { result } = renderHook(() => useHostPrompts(), { wrapper });
+
+    const decision = result.current.userConfirmation.confirmUserAction({
+      tag: 'NftPurseDrain',
+      value: {
+        callingProductId: DEMO,
+        fromPurse: 0,
+        owner: { tag: 'Root' },
+        itemCount: 1,
+        destination: { tag: 'Cheque' },
+      },
+    });
+
+    await expect(decision).resolves.toBe(false);
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
   });
 
   // Fail closed: anything that tears the prompt down without an answer is a denial,

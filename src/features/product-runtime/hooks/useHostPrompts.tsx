@@ -31,6 +31,7 @@ export function useHostPrompts(): HostPrompts {
       // denied while the user was still looking at it.
       const id = `truapi-review:${nextReviewId.current++}`;
       const props = productRuntimeService.toModalProps(review);
+      if (!props) return false;
 
       return confirmRef()<boolean>(id, ({ resolve }) => <ProductReviewDialog props={props} onDecide={resolve} />).catch(
         () => false,

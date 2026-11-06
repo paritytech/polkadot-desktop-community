@@ -6,7 +6,7 @@ import * as v from 'valibot';
 import { environmentUseCase } from '@/domains/application';
 import { type Chain, chainRegistry, customChainUseCase, genesisHash } from '@/domains/network';
 
-type ChainCallbacks = Pick<RequiredHostCallbacks, 'chain' | 'features'>;
+type ChainCallbacks = Pick<RequiredHostCallbacks, 'chain' | 'extrinsicVersion' | 'features'>;
 
 /**
  * Adapt a polkadot-api `JsonRpcProvider` (push-style: hand it a listener, get a
@@ -100,6 +100,9 @@ async function findChain(raw: string): Promise<Chain | undefined> {
 
 export function createChainCallbacks(): ChainCallbacks {
   return {
+    // The host builds no extrinsics of its own — it signs statements only — so it builds
+    // none as V5, and the core keeps its own extrinsics on V4 to match.
+    extrinsicVersion: { transactionExtensionVersions: async () => ({ chains: [] }) },
     features: {
       // `HostFeatureSupportedRequest` is a single-variant union (`tag: 'Chain'`),
       // so there is no other branch to answer.

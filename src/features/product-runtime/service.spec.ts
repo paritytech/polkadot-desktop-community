@@ -1,4 +1,4 @@
-import { type HostSignPayloadData, type ProductAccountId } from '@parity/truapi';
+import { type HostSignPayloadData, type ProductAccountId, asProductId } from '@parity/truapi';
 import { type UserConfirmationReview } from '@parity/truapi-host';
 import { describe, expect, it } from 'vitest';
 
@@ -9,8 +9,12 @@ import { productRuntimeService } from './service';
 // therefore the compiler's job; these cases cover what actually branches at
 // runtime — the legacy/product split and the permission grouping.
 
+const DEMO = asProductId('demo.dot');
+const A = asProductId('a.dot');
+const B = asProductId('b.dot');
+
 const account: ProductAccountId = {
-  dotNsIdentifier: 'demo.dot',
+  dotNsIdentifier: DEMO,
   derivationIndex: { tag: 'Index', value: 0 },
 };
 
@@ -64,7 +68,7 @@ describe('productRuntimeService.toModalProps', () => {
   });
 
   it('routes a resource allocation review to the allowance modal', () => {
-    expect(review({ tag: 'ResourceAllocation', value: { callingProductId: 'demo.dot', resources: [] } })).toMatchObject({
+    expect(review({ tag: 'ResourceAllocation', value: { callingProductId: DEMO, resources: [] } })).toMatchObject({
       target: 'allowance',
     });
   });
@@ -78,21 +82,21 @@ describe('productRuntimeService.toModalProps', () => {
   // The five permission-shaped reviews share a layout but not a payload, so each gets
   // its own target: that is what lets a modal be typed to the review it renders.
   it('routes identity disclosure to the key-listing modal', () => {
-    expect(review({ tag: 'IdentityDisclosure', value: { productId: 'demo.dot' } })).toMatchObject({
+    expect(review({ tag: 'IdentityDisclosure', value: { productId: DEMO } })).toMatchObject({
       target: 'identityDisclosure',
     });
   });
 
   it('routes account access to its own modal', () => {
-    expect(review({ tag: 'AccountAccess', value: { requestingProductId: 'a.dot', targetProductId: 'b.dot' } })).toMatchObject({
+    expect(review({ tag: 'AccountAccess', value: { requestingProductId: A, targetProductId: B } })).toMatchObject({
       target: 'accountAccess',
     });
   });
 
   it('routes an account alias to the alias modal', () => {
     const value = {
-      callingProductId: 'a.dot',
-      context: { productId: 'b.dot', suffix: { tag: 'Index' as const, value: 0 } },
+      callingProductId: A,
+      context: { productId: B, suffix: { tag: 'Index' as const, value: 0 } },
       ringLocation: { chainId: '0xaa' as const, junctions: [] },
     };
 
@@ -100,9 +104,22 @@ describe('productRuntimeService.toModalProps', () => {
   });
 
   it('carries the review payload through untouched', () => {
-    const value = { callingProductId: 'demo.dot', resources: [] };
+    const value = { callingProductId: DEMO, resources: [] };
 
     expect(review({ tag: 'ResourceAllocation', value })).toMatchObject({ review: value });
+  });
+
+  // No modal exists for a drain, so the caller answers it as a rejection.
+  it('opens no surface for an NFT purse drain', () => {
+    const value = {
+      callingProductId: A,
+      fromPurse: 1,
+      owner: { tag: 'Product' as const, value: B },
+      itemCount: 2,
+      destination: { tag: 'Cheque' as const },
+    };
+
+    expect(review({ tag: 'NftPurseDrain', value })).toBeNull();
   });
 });
 

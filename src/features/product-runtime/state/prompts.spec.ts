@@ -1,3 +1,4 @@
+import { asProductId } from '@parity/truapi';
 import { type ProductContext, type UserConfirmationReview } from '@parity/truapi-host';
 import { describe, expect, it, vi } from 'vitest';
 
@@ -5,8 +6,10 @@ import { type HostPrompts } from '../createHostCallbacks';
 
 import { deferredHostPrompts, registerHostPrompts } from './prompts';
 
-const product: ProductContext = { productId: 'demo.dot', executionKind: 'App' };
-const review: UserConfirmationReview = { tag: 'ResourceAllocation', value: { callingProductId: 'demo.dot', resources: [] } };
+const DEMO = asProductId('demo.dot');
+
+const product: ProductContext = { productId: DEMO, executionKind: 'App' };
+const review: UserConfirmationReview = { tag: 'ResourceAllocation', value: { callingProductId: DEMO, resources: [] } };
 
 function createPrompts(): HostPrompts {
   return {

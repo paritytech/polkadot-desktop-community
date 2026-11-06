@@ -1,4 +1,5 @@
-import { type PermissionAuthorizationStatus } from '@parity/truapi-host';
+import { asProductId } from '@parity/truapi';
+import { type PermissionAuthorizationStatus, type WorkerDemandChange } from '@parity/truapi-host';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -81,7 +82,7 @@ function fakeInstance(productId: string): ProductWorkerInstance {
 
 // The core's demand stream, driven by hand.
 function fakeRuntime() {
-  const listeners: ((change: { productId: string; wanted: boolean }) => void)[] = [];
+  const listeners: ((change: WorkerDemandChange) => void)[] = [];
   const unsubscribe = vi.fn();
 
   // Built in full rather than asserted from a partial: the handle is small, and a
@@ -97,7 +98,7 @@ function fakeRuntime() {
     getProductSubtreePublicKey: vi.fn(() => Promise.resolve(undefined)),
     acquireWorker: vi.fn(),
     releaseWorker: vi.fn(),
-    subscribeWorkerDemand: (listener: (change: { productId: string; wanted: boolean }) => void) => {
+    subscribeWorkerDemand: (listener: (change: WorkerDemandChange) => void) => {
       listeners.push(listener);
 
       return unsubscribe;
@@ -109,7 +110,7 @@ function fakeRuntime() {
     runtime,
     unsubscribe,
     emit: (productId: string, wanted: boolean) => {
-      for (const listener of [...listeners]) listener({ productId, wanted });
+      for (const listener of [...listeners]) listener({ productId: asProductId(productId), wanted });
     },
   };
 }

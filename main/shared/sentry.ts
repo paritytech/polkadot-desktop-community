@@ -15,6 +15,8 @@ export function initSentry(): void {
     release: `polkadot-desktop@${version}`,
     environment: getUpdateChannel(),
     tracesSampleRate: 0.1,
+    // Sentry 11 records the user's IP address unless told not to; the app never sent it.
+    dataCollection: { userInfo: false },
     // Drop the NodeFetch integration: under rolldown/vite bundling, both
     // instrumentation classes it constructs (UndiciInstrumentation and
     // SentryNodeFetchInstrumentation, via @opentelemetry/instrumentation

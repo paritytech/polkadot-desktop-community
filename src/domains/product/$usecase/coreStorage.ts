@@ -59,7 +59,13 @@ async function backfillDescriptors(): Promise<void> {
     }
 
     const descriptor = coreSlotService.describeSlot(key);
-    if (row.slotTag === descriptor.slotTag && row.productId === descriptor.productId) continue;
+    if (
+      row.slotTag === descriptor.slotTag &&
+      row.productId === descriptor.productId &&
+      row.productLabel === descriptor.productLabel
+    ) {
+      continue;
+    }
 
     await coreStorageRepository.updateDescriptor(row.key, descriptor);
   }
@@ -70,13 +76,14 @@ async function backfillDescriptors(): Promise<void> {
  *
  * Matched by base name, not by exact id: a slot is keyed by whatever product id the
  * core was handed, which is the raw webview identifier, while a purge holds the
- * normalized name.
+ * normalized name. Slots the core files per product rather than per executable carry
+ * the bare label instead, and go with it.
  */
 async function clearProductSlots({ productId, tld }: { productId: string; tld: string }): Promise<void> {
   const owners = await coreStorageRepository.productIdsWithSlots();
   const matching = owners.filter(owner => dotNsService.isSameBaseName(owner, productId, tld));
 
-  await coreStorageRepository.clearProductSlots(matching.length > 0 ? matching : [productId]);
+  await coreStorageRepository.clearProductSlots(matching.length > 0 ? matching : [productId], [dotNsService.labelOf(productId)]);
 }
 
 export const coreStorageUseCase = {

@@ -1,3 +1,4 @@
+import { asProductId } from '@parity/truapi';
 import { type Observable, Subject } from 'rxjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -5,6 +6,8 @@ const productEntries = new Map<string, Uint8Array>();
 const coreSlots = new Map<string, Uint8Array>();
 
 const toKey = (bytes: Uint8Array) => bytes.join(',');
+
+const ONE = asProductId('one.dot');
 
 // `writeSlot` is a spy rather than a bare arrow so the descriptor it now receives can
 // be asserted. It keeps the map write, so the round-trip tests below are unaffected.
@@ -153,8 +156,8 @@ describe('createCoreStorageCallbacks', () => {
   it('keeps two permission slots distinct', async () => {
     const result = { current: createCoreStorageCallbacks() };
     const request = { tag: 'IdentityDisclosure' } as const;
-    const first = { tag: 'PermissionAuthorization', value: { productId: 'a.dot', request } } as const;
-    const second = { tag: 'PermissionAuthorization', value: { productId: 'b.dot', request } } as const;
+    const first = { tag: 'PermissionAuthorization', value: { scope: 'a.dot', request } } as const;
+    const second = { tag: 'PermissionAuthorization', value: { scope: 'b.dot', request } } as const;
 
     await result.current.coreStorage.writeCoreStorage(first, new Uint8Array([1]));
     await result.current.coreStorage.writeCoreStorage(second, new Uint8Array([2]));
@@ -174,7 +177,7 @@ describe('createCoreStorageCallbacks — key descriptor', () => {
     const { coreStorage } = createCoreStorageCallbacks();
 
     await coreStorage.writeCoreStorage(
-      { tag: 'PermissionAuthorization', value: { productId: 'one.dot', request: { tag: 'Device', value: 'Camera' } } },
+      { tag: 'PermissionAuthorization', value: { scope: 'one.dot', request: { tag: 'Device', value: 'Camera' } } },
       new Uint8Array([1]),
     );
 
@@ -192,7 +195,7 @@ describe('createCoreStorageCallbacks — key descriptor', () => {
   it('indexes an auto-signing key by its product', async () => {
     const { coreStorage } = createCoreStorageCallbacks();
 
-    await coreStorage.writeCoreStorage({ tag: 'AutoSigningKey', value: { productId: 'one.dot' } }, new Uint8Array([3]));
+    await coreStorage.writeCoreStorage({ tag: 'AutoSigningKey', value: { productId: ONE } }, new Uint8Array([3]));
 
     expect(mocks.writeSlot).toHaveBeenCalledWith(expect.any(Uint8Array), new Uint8Array([3]), {
       slotTag: 'AutoSigningKey',
@@ -204,7 +207,7 @@ describe('createCoreStorageCallbacks — key descriptor', () => {
     const { coreStorage } = createCoreStorageCallbacks();
 
     await coreStorage.writeCoreStorage(
-      { tag: 'ProductSubtree', value: { sessionId: 'session-1', productId: 'one.dot' } },
+      { tag: 'ProductSubtree', value: { sessionId: 'session-1', productId: ONE } },
       new Uint8Array([4]),
     );
 
@@ -214,14 +217,14 @@ describe('createCoreStorageCallbacks — key descriptor', () => {
     });
   });
 
-  it('indexes a product manifest by its product', async () => {
+  it('indexes a product manifest by its label', async () => {
     const { coreStorage } = createCoreStorageCallbacks();
 
-    await coreStorage.writeCoreStorage({ tag: 'ProductManifest', value: { productId: 'one.dot' } }, new Uint8Array([5]));
+    await coreStorage.writeCoreStorage({ tag: 'ProductManifest', value: { productLabel: 'one' } }, new Uint8Array([5]));
 
     expect(mocks.writeSlot).toHaveBeenCalledWith(expect.any(Uint8Array), new Uint8Array([5]), {
       slotTag: 'ProductManifest',
-      productId: 'one.dot',
+      productLabel: 'one',
     });
   });
 
