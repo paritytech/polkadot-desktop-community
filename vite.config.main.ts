@@ -27,8 +27,6 @@ const config: UserConfigFn = async ({ mode }) => {
       'process.env.RENDERER_SOURCE': JSON.stringify(rendererSource),
       'process.env.LOGGER': JSON.stringify(process.env['LOGGER']),
       'process.env.SENTRY_DSN': JSON.stringify(process.env['SENTRY_DSN'] ?? ''),
-      'process.env.SANDBOX_RELAY_ALLOWLIST': JSON.stringify(process.env['SANDBOX_RELAY_ALLOWLIST'] ?? ''),
-      'process.env.SANDBOX_IPFS_ALLOWLIST': JSON.stringify(process.env['SANDBOX_IPFS_ALLOWLIST'] ?? ''),
     },
     resolve: {
       tsconfigPaths: true,
