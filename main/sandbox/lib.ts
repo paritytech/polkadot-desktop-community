@@ -93,32 +93,6 @@ export function validateContenthash(value: unknown): { ok: true; contenthash: st
 }
 
 /**
- * Check if a hostname matches any of the allowed domains (exact or subdomain).
- * `matchesDomain('sub.relay.example.com', ['relay.example.com'])` → true
- * `matchesDomain('attacker-relay.example.com', ['relay.example.com'])` → false
- */
-export function matchesDomain(hostname: string, allowedDomains: string[]): boolean {
-  if (!hostname || allowedDomains.length === 0) return false;
-  return allowedDomains.some(domain => hostname === domain || hostname.endsWith(`.${domain}`));
-}
-
-/**
- * Parse a comma-separated list of hostnames from an env variable into the format
- * `matchesDomain` consumes. Empty / unset → empty allowlist, which means every
- * matching request (TURN/STUN, IPFS gateway, …) from a product webview goes
- * through the renderer-side permission flow (fail-closed). Set the corresponding
- * env variable only when you operate a known host that products should reach
- * without prompting the user — see PUBLISHING.md.
- */
-export function parseHostAllowlist(raw: string | undefined): string[] {
-  if (!raw) return [];
-  return raw
-    .split(',')
-    .map(entry => entry.trim())
-    .filter(entry => entry.length > 0);
-}
-
-/**
  * Returns the localhost port a product is loaded from, or null if it isn't a
  * localhost product. Used to scope `http://localhost` network access to the
  * product's own port — preventing lateral access to other local services.
@@ -143,10 +117,7 @@ export type NetworkDecision = 'fetch-direct' | 'check-permission';
 
 export function evaluateNetworkRequest(args: {
   scheme: 'http' | 'https' | 'ws' | 'wss';
-  method: string;
   url: URL;
-  ipfsAllowlist: string[];
-  relayAllowlist: string[];
   /**
    * Port of the product's own origin when it is itself loaded from `http://localhost:<port>`,
    * `null` otherwise. The empty string represents the default port (no `:` in the URL).
@@ -154,27 +125,16 @@ export function evaluateNetworkRequest(args: {
    */
   productLocalhostPort: string | null;
 }): NetworkDecision {
-  const { scheme, method, url, ipfsAllowlist, relayAllowlist, productLocalhostPort } = args;
-  const hostname = url.hostname;
+  const { scheme, url, productLocalhostPort } = args;
 
   switch (scheme) {
-    case 'https': {
-      // Temporary hack: allow GET requests to IPFS gateway until smoldot bitswap is ready
-      const isIpfsRequest = method === 'GET' && matchesDomain(hostname, ipfsAllowlist);
-      // Temporary hack: Allow TURN/STUN relay server requests for WebRTC connectivity
-      const isRelayRequest = matchesDomain(hostname, relayAllowlist);
-      // Temporary hack: Allow Sentry.io requests (QUIRK: substring match, not domain match)
-      const isSentry = hostname.includes('sentry.io');
-
-      if (isIpfsRequest || isRelayRequest || isSentry) return 'fetch-direct';
-      return 'check-permission';
-    }
     case 'http':
     case 'ws': {
-      if (hostname !== 'localhost') return 'check-permission';
+      if (url.hostname !== 'localhost') return 'check-permission';
       if (productLocalhostPort === null) return 'check-permission';
       return url.port === productLocalhostPort ? 'fetch-direct' : 'check-permission';
     }
+    case 'https':
     case 'wss': {
       // QUIRK: only ws://localhost is whitelisted, NOT wss://localhost — intentional behavior pin
       return 'check-permission';

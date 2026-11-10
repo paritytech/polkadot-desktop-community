@@ -9,8 +9,6 @@ import {
   isExternalUrlAllowed,
   listClearablePartitions,
   mapElectronPermission,
-  matchesDomain,
-  parseHostAllowlist,
   parseProductLocalhostPort,
   parseSandboxPartition,
   resolveArchiveContent,
@@ -187,89 +185,31 @@ describe('validateArchiveFilePath', () => {
   });
 });
 
-describe('matchesDomain', () => {
-  it.each([
-    ['relay.example.com', ['relay.example.com'], true],
-    ['sub.relay.example.com', ['relay.example.com'], true],
-    ['a.b.relay.example.com', ['relay.example.com'], true],
-    ['attacker-relay.example.com', ['relay.example.com'], false], // prefix-attack
-    ['relay.example.com.evil.com', ['relay.example.com'], false], // suffix-attack
-    ['RELAY.EXAMPLE.COM', ['relay.example.com'], false], // case-sensitive — current behavior
-    ['', ['relay.example.com'], false], // empty hostname
-    ['relay.example.com', [], false], // empty allowlist
-  ] as const)('matchesDomain(%j, %j) → %s', (hostname, allowed, expected) => {
-    expect(matchesDomain(hostname, [...allowed])).toBe(expected);
-  });
-});
-
-describe('parseHostAllowlist', () => {
-  it.each([
-    [undefined, []],
-    ['', []],
-    ['   ', []],
-    ['relay.example.com', ['relay.example.com']],
-    ['relay.example.com,stun.example.com', ['relay.example.com', 'stun.example.com']],
-    [' relay.example.com , stun.example.com ', ['relay.example.com', 'stun.example.com']],
-    ['relay.example.com,,stun.example.com', ['relay.example.com', 'stun.example.com']], // empty entries dropped
-    ['ipfs-a.example.com,ipfs-b.example.com', ['ipfs-a.example.com', 'ipfs-b.example.com']],
-    [',,,', []],
-  ] as const)('parseHostAllowlist(%j) → %j', (input, expected) => {
-    expect(parseHostAllowlist(input)).toEqual(expected);
-  });
-});
-
 describe('evaluateNetworkRequest', () => {
-  const IPFS = ['ipfs.example.com', 'gateway.example.org'];
-  const RELAY = ['relay.example.com', 'stun.example.com'];
-
-  function req(
-    scheme: 'http' | 'https' | 'ws' | 'wss',
-    method: string,
-    urlString: string,
-    productLocalhostPort: string | null = null,
-  ) {
-    return {
-      scheme,
-      method,
-      url: new URL(urlString),
-      ipfsAllowlist: IPFS,
-      relayAllowlist: RELAY,
-      productLocalhostPort,
-    };
+  function req(scheme: 'http' | 'https' | 'ws' | 'wss', urlString: string, productLocalhostPort: string | null = null) {
+    return { scheme, url: new URL(urlString), productLocalhostPort };
   }
 
   it.each([
-    // IPFS allowlist — GET only
-    [req('https', 'GET', 'https://ipfs.example.com/file'), 'fetch-direct'],
-    [req('https', 'POST', 'https://ipfs.example.com/file'), 'check-permission'],
-    [req('https', 'GET', 'https://gateway.example.org/file'), 'fetch-direct'],
-    [req('https', 'GET', 'https://sub.ipfs.example.com/file'), 'fetch-direct'],
-    // Relay allowlist — method-agnostic
-    [req('https', 'GET', 'https://relay.example.com/'), 'fetch-direct'],
-    [req('https', 'POST', 'https://relay.example.com/'), 'fetch-direct'],
-    // Sentry inline rule — substring match (documented quirk)
-    [req('https', 'GET', 'https://app.sentry.io/'), 'fetch-direct'],
-    // QUIRK: .includes('sentry.io') so 'sentry.io.attacker.com'.includes('sentry.io') is true → fetch-direct
-    [req('https', 'GET', 'https://evil-sentry.io.attacker.com/'), 'fetch-direct'],
     // Generic https — blocked unless permission
-    [req('https', 'GET', 'https://evil.com/'), 'check-permission'],
+    [req('https', 'https://evil.com/'), 'check-permission'],
     // http localhost — only when product is itself localhost on the same port
-    [req('http', 'GET', 'http://localhost/', null), 'check-permission'],
-    [req('http', 'GET', 'http://localhost:5173/', null), 'check-permission'],
-    [req('http', 'GET', 'http://localhost:5173/', '5173'), 'fetch-direct'],
-    [req('http', 'GET', 'http://localhost/', ''), 'fetch-direct'],
-    [req('http', 'GET', 'http://localhost:5173/', '8080'), 'check-permission'],
-    [req('http', 'GET', 'http://evil.com/', null), 'check-permission'],
-    [req('http', 'GET', 'http://evil.com/', '5173'), 'check-permission'],
+    [req('http', 'http://localhost/', null), 'check-permission'],
+    [req('http', 'http://localhost:5173/', null), 'check-permission'],
+    [req('http', 'http://localhost:5173/', '5173'), 'fetch-direct'],
+    [req('http', 'http://localhost/', ''), 'fetch-direct'],
+    [req('http', 'http://localhost:5173/', '8080'), 'check-permission'],
+    [req('http', 'http://evil.com/', null), 'check-permission'],
+    [req('http', 'http://evil.com/', '5173'), 'check-permission'],
     // ws localhost — same port-scoped rule
-    [req('ws', 'GET', 'ws://localhost/', null), 'check-permission'],
-    [req('ws', 'GET', 'ws://localhost:5173/', '5173'), 'fetch-direct'],
-    [req('ws', 'GET', 'ws://localhost:5173/', '8080'), 'check-permission'],
-    [req('ws', 'GET', 'ws://evil.com/'), 'check-permission'],
+    [req('ws', 'ws://localhost/', null), 'check-permission'],
+    [req('ws', 'ws://localhost:5173/', '5173'), 'fetch-direct'],
+    [req('ws', 'ws://localhost:5173/', '8080'), 'check-permission'],
+    [req('ws', 'ws://evil.com/'), 'check-permission'],
     // wss — ALWAYS check-permission (including localhost — documented quirk)
-    [req('wss', 'GET', 'wss://localhost/'), 'check-permission'],
-    [req('wss', 'GET', 'wss://localhost:5173/', '5173'), 'check-permission'],
-    [req('wss', 'GET', 'wss://evil.com/'), 'check-permission'],
+    [req('wss', 'wss://localhost/'), 'check-permission'],
+    [req('wss', 'wss://localhost:5173/', '5173'), 'check-permission'],
+    [req('wss', 'wss://evil.com/'), 'check-permission'],
   ] as const)('evaluateNetworkRequest(%o) → %s', (args, expected) => {
     expect(evaluateNetworkRequest(args)).toBe(expected);
   });
