@@ -29,7 +29,6 @@ import {
   isExternalUrlAllowed,
   listClearablePartitions,
   mapElectronPermission,
-  parseHostAllowlist,
   parseProductLocalhostPort,
   parseSandboxPartition,
   resolveArchiveContent,
@@ -39,14 +38,6 @@ import {
   validateArchiveFilePath,
   validateContenthash,
 } from './lib';
-
-// Allowed IPFS gateway and TURN/STUN relay domains for product webviews — comma-separated
-// hostname lists injected at build time via `SANDBOX_IPFS_ALLOWLIST` / `SANDBOX_RELAY_ALLOWLIST`.
-// An empty/unset allowlist sends every such request through the per-product permission flow
-// (fail-closed), which is the safe default for a fork without dedicated gateway or relay
-// infrastructure. Documented in `.env.example` / PUBLISHING.md.
-const ALLOWED_IPFS_DOMAINS = parseHostAllowlist(process.env['SANDBOX_IPFS_ALLOWLIST']);
-const ALLOWED_RELAY_DOMAINS = parseHostAllowlist(process.env['SANDBOX_RELAY_ALLOWLIST']);
 
 export function setupSandbox(main: () => WebContents | null) {
   // Track configured partitions to avoid duplicate setup. Cleared on session reset
@@ -176,10 +167,7 @@ export function setupSandbox(main: () => WebContents | null) {
       const url = new URL(request.url);
       const decision = evaluateNetworkRequest({
         scheme: 'https',
-        method: request.method,
         url,
-        ipfsAllowlist: ALLOWED_IPFS_DOMAINS,
-        relayAllowlist: ALLOWED_RELAY_DOMAINS,
         productLocalhostPort,
       });
       if (decision === 'fetch-direct') return fetch(request);
@@ -191,10 +179,7 @@ export function setupSandbox(main: () => WebContents | null) {
       const url = new URL(request.url);
       const decision = evaluateNetworkRequest({
         scheme: 'http',
-        method: request.method,
         url,
-        ipfsAllowlist: ALLOWED_IPFS_DOMAINS,
-        relayAllowlist: ALLOWED_RELAY_DOMAINS,
         productLocalhostPort,
       });
       if (decision === 'fetch-direct') return fetch(request);
@@ -210,10 +195,7 @@ export function setupSandbox(main: () => WebContents | null) {
       const scheme = url.protocol === 'ws:' ? 'ws' : 'wss';
       const decision = evaluateNetworkRequest({
         scheme,
-        method: details.method ?? 'GET',
         url,
-        ipfsAllowlist: ALLOWED_IPFS_DOMAINS,
-        relayAllowlist: ALLOWED_RELAY_DOMAINS,
         productLocalhostPort,
       });
       if (decision === 'fetch-direct') {

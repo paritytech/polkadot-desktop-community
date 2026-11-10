@@ -50,21 +50,23 @@
 
   // Helper: expect a promise to reject or return a blocked response
   function expectBlocked(promise) {
-    return promise.then(function (response) {
-      if (response && typeof response.status === 'number' && response.status === 403) {
-        return 'blocked (403)';
-      }
-      if (response && typeof response.ok === 'boolean' && !response.ok) {
-        return 'blocked (' + response.status + ')';
-      }
-      throw new Error('Expected blocked, got status ' + (response && response.status));
-    }).catch(function (err) {
-      // Network errors also count as blocked
-      if (err && err.message && err.message.indexOf('Expected blocked') !== -1) {
-        throw err;
-      }
-      return 'blocked (error: ' + (err && err.message ? err.message : String(err)) + ')';
-    });
+    return promise
+      .then(function (response) {
+        if (response && typeof response.status === 'number' && response.status === 403) {
+          return 'blocked (403)';
+        }
+        if (response && typeof response.ok === 'boolean' && !response.ok) {
+          return 'blocked (' + response.status + ')';
+        }
+        throw new Error('Expected blocked, got status ' + (response && response.status));
+      })
+      .catch(function (err) {
+        // Network errors also count as blocked
+        if (err && err.message && err.message.indexOf('Expected blocked') !== -1) {
+          throw err;
+        }
+        return 'blocked (error: ' + (err && err.message ? err.message : String(err)) + ')';
+      });
   }
 
   // Helper: expect a value to be undefined
@@ -98,8 +100,12 @@
             reject(new Error('Expected blocked, got status ' + xhr.status));
           }
         };
-        xhr.onerror = function () { resolve('blocked (network error)'); };
-        xhr.ontimeout = function () { resolve('blocked (timeout)'); };
+        xhr.onerror = function () {
+          resolve('blocked (network error)');
+        };
+        xhr.ontimeout = function () {
+          resolve('blocked (timeout)');
+        };
         xhr.send();
       });
     }),
@@ -109,12 +115,20 @@
         try {
           var ws = new WebSocket('wss://echo.websocket.org');
           var timer = setTimeout(function () {
-            try { ws.close(); } catch (e) { /* ignore */ }
+            try {
+              ws.close();
+            } catch (e) {
+              /* ignore */
+            }
             resolve('blocked (timeout)');
           }, 5000);
           ws.onopen = function () {
             clearTimeout(timer);
-            try { ws.close(); } catch (e) { /* ignore */ }
+            try {
+              ws.close();
+            } catch (e) {
+              /* ignore */
+            }
             reject(new Error('WebSocket opened — expected blocked'));
           };
           ws.onerror = function () {
@@ -132,12 +146,20 @@
         try {
           var ws = new WebSocket('ws://echo.websocket.org');
           var timer = setTimeout(function () {
-            try { ws.close(); } catch (e) { /* ignore */ }
+            try {
+              ws.close();
+            } catch (e) {
+              /* ignore */
+            }
             resolve('blocked (timeout)');
           }, 5000);
           ws.onopen = function () {
             clearTimeout(timer);
-            try { ws.close(); } catch (e) { /* ignore */ }
+            try {
+              ws.close();
+            } catch (e) {
+              /* ignore */
+            }
             reject(new Error('WebSocket opened — expected blocked'));
           };
           ws.onerror = function () {
@@ -279,30 +301,6 @@
     }),
   ];
 
-  // --- ALLOWLIST ABUSE ---
-
-  var allowlistProbes = [
-    probe('allow.ipfs.fake', 'allowlist', 'fetch fake IPFS domain', 'blocked', function () {
-      return expectBlocked(fetch('https://ipfs.evil-example.test/'));
-    }),
-
-    probe('allow.ipfs.subdomain', 'allowlist', 'fetch IPFS subdomain abuse', 'blocked', function () {
-      return expectBlocked(fetch('https://anything.ipfs.evil-example.test/'));
-    }),
-
-    probe('allow.turn.fake', 'allowlist', 'fetch fake TURN domain', 'blocked', function () {
-      return expectBlocked(fetch('https://turn.evil-example.test/'));
-    }),
-
-    probe('allow.saturn', 'allowlist', 'fetch saturn (contains turn)', 'blocked', function () {
-      return expectBlocked(fetch('https://saturn.evil-example.test/'));
-    }),
-
-    probe('allow.stun.fake', 'allowlist', 'fetch fake STUN domain', 'blocked', function () {
-      return expectBlocked(fetch('https://stun.evil-example.test/'));
-    }),
-  ];
-
   // --- NODE.JS / CONTEXT ISOLATION ---
 
   var contextProbes = [
@@ -354,31 +352,45 @@
 
   var permissionProbes = [
     probe('perm.camera', 'permission', 'getUserMedia video', 'blocked', function () {
-      return navigator.mediaDevices.getUserMedia({ video: true }).then(function (stream) {
-        stream.getTracks().forEach(function (t) { t.stop(); });
-        throw new Error('Camera access granted — expected blocked');
-      }).catch(function (err) {
-        if (err.message.indexOf('expected blocked') !== -1) throw err;
-        return 'blocked (' + err.name + ')';
-      });
+      return navigator.mediaDevices
+        .getUserMedia({ video: true })
+        .then(function (stream) {
+          stream.getTracks().forEach(function (t) {
+            t.stop();
+          });
+          throw new Error('Camera access granted — expected blocked');
+        })
+        .catch(function (err) {
+          if (err.message.indexOf('expected blocked') !== -1) throw err;
+          return 'blocked (' + err.name + ')';
+        });
     }),
 
     probe('perm.microphone', 'permission', 'getUserMedia audio', 'blocked', function () {
-      return navigator.mediaDevices.getUserMedia({ audio: true }).then(function (stream) {
-        stream.getTracks().forEach(function (t) { t.stop(); });
-        throw new Error('Microphone access granted — expected blocked');
-      }).catch(function (err) {
-        if (err.message.indexOf('expected blocked') !== -1) throw err;
-        return 'blocked (' + err.name + ')';
-      });
+      return navigator.mediaDevices
+        .getUserMedia({ audio: true })
+        .then(function (stream) {
+          stream.getTracks().forEach(function (t) {
+            t.stop();
+          });
+          throw new Error('Microphone access granted — expected blocked');
+        })
+        .catch(function (err) {
+          if (err.message.indexOf('expected blocked') !== -1) throw err;
+          return 'blocked (' + err.name + ')';
+        });
     }),
 
     probe('perm.geolocation', 'permission', 'geolocation', 'blocked', function () {
       return new Promise(function (resolve, reject) {
         navigator.geolocation.getCurrentPosition(
-          function () { reject(new Error('Geolocation granted — expected blocked')); },
-          function (err) { resolve('blocked (' + err.code + ': ' + err.message + ')'); },
-          { timeout: 5000 }
+          function () {
+            reject(new Error('Geolocation granted — expected blocked'));
+          },
+          function (err) {
+            resolve('blocked (' + err.code + ': ' + err.message + ')');
+          },
+          { timeout: 5000 },
         );
       });
     }),
@@ -391,23 +403,29 @@
     }),
 
     probe('perm.clipboard.read', 'permission', 'clipboard read', 'blocked', function () {
-      return navigator.clipboard.readText().then(function () {
-        throw new Error('Clipboard read granted — expected blocked');
-      }).catch(function (err) {
-        if (err.message.indexOf('expected blocked') !== -1) throw err;
-        return 'blocked (' + err.name + ')';
-      });
+      return navigator.clipboard
+        .readText()
+        .then(function () {
+          throw new Error('Clipboard read granted — expected blocked');
+        })
+        .catch(function (err) {
+          if (err.message.indexOf('expected blocked') !== -1) throw err;
+          return 'blocked (' + err.name + ')';
+        });
     }),
 
     probe('perm.clipboard.write', 'permission', 'clipboard write', 'allowed-or-context-limited', function () {
-      return navigator.clipboard.writeText('probe-test').then(function () {
-        return 'allowed';
-      }).catch(function (err) {
-        // Clipboard write may fail in test context (no user gesture, non-HTTPS origin)
-        // even though the permission handler allows clipboard-sanitized-write.
-        // This is acceptable — the permission IS granted, the API just requires secure context.
-        return 'context-limited (' + err.name + ': ' + err.message + ')';
-      });
+      return navigator.clipboard
+        .writeText('probe-test')
+        .then(function () {
+          return 'allowed';
+        })
+        .catch(function (err) {
+          // Clipboard write may fail in test context (no user gesture, non-HTTPS origin)
+          // even though the permission handler allows clipboard-sanitized-write.
+          // This is acceptable — the permission IS granted, the API just requires secure context.
+          return 'context-limited (' + err.name + ': ' + err.message + ')';
+        });
     }),
   ];
 
@@ -433,7 +451,9 @@
     probe('store.indexeddb', 'storage', 'IndexedDB access', 'accessible', function () {
       return new Promise(function (resolve, reject) {
         var request = indexedDB.open('__probe_test_db__', 1);
-        request.onerror = function () { reject(new Error('IndexedDB open failed')); };
+        request.onerror = function () {
+          reject(new Error('IndexedDB open failed'));
+        };
         request.onsuccess = function () {
           request.result.close();
           indexedDB.deleteDatabase('__probe_test_db__');
@@ -455,7 +475,9 @@
     probe('store.host_db', 'storage', 'host app IndexedDB', 'empty', function () {
       return new Promise(function (resolve, reject) {
         var request = indexedDB.open('polkadot-desktop-product-storage', 1);
-        request.onerror = function () { resolve('blocked (open failed)'); };
+        request.onerror = function () {
+          resolve('blocked (open failed)');
+        };
         request.onupgradeneeded = function () {
           // DB didn't exist in this partition — expected
           resolve('empty (new db in isolated partition)');
@@ -480,7 +502,11 @@
     probe('nav.window_open', 'navigation', 'window.open to external', 'denied', function () {
       var w = window.open('https://evil.com');
       if (w === null || w === undefined) return 'denied (null)';
-      try { w.close(); } catch (e) { /* ignore */ }
+      try {
+        w.close();
+      } catch (e) {
+        /* ignore */
+      }
       throw new Error('window.open succeeded');
     }),
 
@@ -557,14 +583,22 @@
     probe('nav.open_file', 'navigation', 'window.open file:// URL', 'denied', function () {
       var w = window.open('file:///etc/passwd');
       if (w === null || w === undefined) return 'denied (null)';
-      try { w.close(); } catch (e) { /* ignore */ }
+      try {
+        w.close();
+      } catch (e) {
+        /* ignore */
+      }
       throw new Error('window.open file:// succeeded');
     }),
 
     probe('nav.open_tel', 'navigation', 'window.open tel: URL', 'denied', function () {
       var w = window.open('tel:+1234567890');
       if (w === null || w === undefined) return 'denied (null)';
-      try { w.close(); } catch (e) { /* ignore */ }
+      try {
+        w.close();
+      } catch (e) {
+        /* ignore */
+      }
       throw new Error('window.open tel: succeeded');
     }),
 
@@ -572,14 +606,22 @@
       // eslint-disable-next-line no-script-url
       var w = window.open('javascript:alert(1)');
       if (w === null || w === undefined) return 'denied (null)';
-      try { w.close(); } catch (e) { /* ignore */ }
+      try {
+        w.close();
+      } catch (e) {
+        /* ignore */
+      }
       throw new Error('window.open javascript: succeeded');
     }),
 
     probe('nav.open_data', 'navigation', 'window.open data: URL', 'denied', function () {
       var w = window.open('data:text/html,<script>alert(1)</script>');
       if (w === null || w === undefined) return 'denied (null)';
-      try { w.close(); } catch (e) { /* ignore */ }
+      try {
+        w.close();
+      } catch (e) {
+        /* ignore */
+      }
       throw new Error('window.open data: succeeded');
     }),
   ];
@@ -609,29 +651,37 @@
       if (typeof performance.measureUserAgentSpecificMemory !== 'function') {
         return 'blocked (not available)';
       }
-      return performance.measureUserAgentSpecificMemory().then(function () {
-        throw new Error('Memory measurement succeeded — expected blocked');
-      }).catch(function (err) {
-        if (err.message.indexOf('expected blocked') !== -1) throw err;
-        return 'blocked (' + err.name + ')';
-      });
+      return performance
+        .measureUserAgentSpecificMemory()
+        .then(function () {
+          throw new Error('Memory measurement succeeded — expected blocked');
+        })
+        .catch(function (err) {
+          if (err.message.indexOf('expected blocked') !== -1) throw err;
+          return 'blocked (' + err.name + ')';
+        });
     }),
   ];
 
   // --- RUN ALL ---
 
-  Promise.all([].concat(
-    networkProbes,
-    allowlistProbes,
-    contextProbes,
-    permissionProbes,
-    storageProbes,
-    navigationProbes,
-    dangerousUrlProbes,
-    sideChannelProbes
-  )).then(function () {
-    var passed = results.filter(function (r) { return r.passed; }).length;
-    var failed = results.filter(function (r) { return !r.passed; }).length;
+  Promise.all(
+    [].concat(
+      networkProbes,
+      contextProbes,
+      permissionProbes,
+      storageProbes,
+      navigationProbes,
+      dangerousUrlProbes,
+      sideChannelProbes,
+    ),
+  ).then(function () {
+    var passed = results.filter(function (r) {
+      return r.passed;
+    }).length;
+    var failed = results.filter(function (r) {
+      return !r.passed;
+    }).length;
     var summary = {
       total: results.length,
       passed: passed,
@@ -640,7 +690,6 @@
     };
 
     console.info('SECURITY_PROBE_COMPLETE::' + JSON.stringify(summary));
-    document.getElementById('status').textContent =
-      'Done: ' + passed + ' passed, ' + failed + ' failed out of ' + results.length;
+    document.getElementById('status').textContent = 'Done: ' + passed + ' passed, ' + failed + ' failed out of ' + results.length;
   });
 })();

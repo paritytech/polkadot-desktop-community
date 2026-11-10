@@ -104,19 +104,6 @@ inputs:
   webrtc_turn_ttl:
     description: WebRTC TURN relay secret TTL in seconds for P2P chat.
     required: true
-  sandbox_ipfs_allowlist:
-    description: >-
-      Comma-separated IPFS gateway hostnames sandboxed product webviews may GET without the
-      per-product permission prompt. Empty = fail-closed, every IPFS request prompts.
-    required: false
-    default: ''
-  sandbox_relay_allowlist:
-    description: >-
-      Comma-separated TURN/STUN hostnames sandboxed product webviews may dial without the
-      per-product permission prompt. Distinct from webrtc_turn_host, which is the host app's own
-      relay. Empty = fail-closed, every relay request prompts.
-    required: false
-    default: ''
   include_dist_artifacts:
     description: Include dist artifacts in artifacts.
     required: false
@@ -243,8 +230,6 @@ runs:
         VITE_WEBRTC_TURN_HOST: ${{ inputs.webrtc_turn_host }}
         VITE_WEBRTC_TURN_SECRET: ${{ inputs.webrtc_turn_secret }}
         VITE_WEBRTC_TURN_TTL: ${{ inputs.webrtc_turn_ttl }}
-        SANDBOX_IPFS_ALLOWLIST: ${{ inputs.sandbox_ipfs_allowlist }}
-        SANDBOX_RELAY_ALLOWLIST: ${{ inputs.sandbox_relay_allowlist }}
         SENTRY_DSN: ${{ inputs.sentry_dsn }}
         SENTRY_AUTH_TOKEN: ${{ inputs.sentry_auth_token }}
         SENTRY_ORG: ${{ inputs.sentry_org }}
@@ -278,8 +263,6 @@ runs:
         VITE_WEBRTC_TURN_HOST: ${{ inputs.webrtc_turn_host }}
         VITE_WEBRTC_TURN_SECRET: ${{ inputs.webrtc_turn_secret }}
         VITE_WEBRTC_TURN_TTL: ${{ inputs.webrtc_turn_ttl }}
-        SANDBOX_IPFS_ALLOWLIST: ${{ inputs.sandbox_ipfs_allowlist }}
-        SANDBOX_RELAY_ALLOWLIST: ${{ inputs.sandbox_relay_allowlist }}
 
     - name: Include dist artifacts
       if: inputs.include_dist_artifacts == true || inputs.include_dist_artifacts == 'true'
