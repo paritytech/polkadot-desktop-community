@@ -159,8 +159,6 @@ jobs:
           webrtc_turn_host: ${{ secrets.VITE_WEBRTC_TURN_HOST }}
           webrtc_turn_secret: ${{ secrets.VITE_WEBRTC_TURN_SECRET }}
           webrtc_turn_ttl: ${{ secrets.VITE_WEBRTC_TURN_TTL }}
-          sandbox_ipfs_allowlist: ${{ secrets.SANDBOX_IPFS_ALLOWLIST }}
-          sandbox_relay_allowlist: ${{ secrets.SANDBOX_RELAY_ALLOWLIST }}
           version: ${{ needs.prepare.outputs.version }}
           build_type: ${{ github.event.inputs.build_type }}
           include_dist_artifacts: true

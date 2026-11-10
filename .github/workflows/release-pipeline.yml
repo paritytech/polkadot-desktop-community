@@ -221,8 +221,6 @@ jobs:
           webrtc_turn_host: ${{ secrets.VITE_WEBRTC_TURN_HOST }}
           webrtc_turn_secret: ${{ secrets.VITE_WEBRTC_TURN_SECRET }}
           webrtc_turn_ttl: ${{ secrets.VITE_WEBRTC_TURN_TTL }}
-          sandbox_ipfs_allowlist: ${{ secrets.SANDBOX_IPFS_ALLOWLIST }}
-          sandbox_relay_allowlist: ${{ secrets.SANDBOX_RELAY_ALLOWLIST }}
           version: ${{ steps.version.outputs.version }}
           build_type: ${{ env.BUILD_TYPE }}
           enable_auto_update: ${{ env.AUTO_UPDATE_ENABLED }}
@@ -266,8 +264,6 @@ jobs:
           webrtc_turn_host: ${{ secrets.VITE_WEBRTC_TURN_HOST }}
           webrtc_turn_secret: ${{ secrets.VITE_WEBRTC_TURN_SECRET }}
           webrtc_turn_ttl: ${{ secrets.VITE_WEBRTC_TURN_TTL }}
-          sandbox_ipfs_allowlist: ${{ secrets.SANDBOX_IPFS_ALLOWLIST }}
-          sandbox_relay_allowlist: ${{ secrets.SANDBOX_RELAY_ALLOWLIST }}
           update_repo_owner: ${{ vars.UPDATE_REPO_OWNER }}
           update_repo_name: ${{ vars.UPDATE_REPO_NAME }}
 
