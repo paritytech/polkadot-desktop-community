@@ -6,6 +6,7 @@ import { type ChainLanes, createChainLanes } from './createChainLanes';
 import { createConnectionManager } from './createConnectionManager';
 import { createRefCounter } from './createRefCounter';
 import { type RestartableJsonRpcProvider, createRestartableProvider } from './createRestartableProvider';
+import { runEvery } from './runEvery';
 import { type ChainConfig, type ConnectionStatus } from './types';
 
 export type ChainConnectionConfig<C extends ChainConfig, T = PolkadotClient> = {
@@ -14,8 +15,8 @@ export type ChainConnectionConfig<C extends ChainConfig, T = PolkadotClient> = {
   // Defaults to polkadot-api's `createClient`. An injection point for tests and for wrapping client construction — polkadot-api is imported either way.
   createClient?: typeof createClient;
   resolve(chain: C, client: PolkadotClient): Promise<T>;
-  // The most `chainHead_v1_follow` subscriptions one transport of the chain may hold. Read each time a follow is placed,
-  // so a value that changes with the chain's transport applies to the next follow.
+  // The most `chainHead_v1_follow` subscriptions one transport of the chain may hold. Read at every lane pick,
+  // so a value that changes with the chain's transport applies to the next pick.
   followLimit(chain: C): number;
   destroyDelay?: number;
 };
@@ -54,9 +55,9 @@ type ChainConnection<C extends ChainConfig, T = PolkadotClient> = {
 
 /**
  * Creates the chain connection pool. Each consumer of a chain gets its own session: its own request
- * ids and subscription tokens, and a home connection that lives with the chain. A follow is placed
- * on a connection holding fewer than `followLimit(chain)` follows; when none has room, a new
- * connection opens, and it closes once empty.
+ * ids and subscription tokens, and a home connection that stays open while the consumer is connected.
+ * A follow is placed on a connection holding fewer than `followLimit(chain)` follows; when none has
+ * room, a new connection opens, and it closes once empty.
  */
 export function createChainConnection<C extends ChainConfig, T = PolkadotClient>({
   resolve,
@@ -113,6 +114,7 @@ export function createChainConnection<C extends ChainConfig, T = PolkadotClient>
     const existing = entries.get(chain.genesisHash);
     if (existing) return existing;
 
+    const options = clientOptions?.(chain);
     const lanes = createChainLanes({
       label: chain.genesisHash,
       createTransport: onLaneStatus => createLaneTransport(chain, onLaneStatus),
@@ -124,7 +126,13 @@ export function createChainConnection<C extends ChainConfig, T = PolkadotClient>
     // The lanes report changes only, so the status they start in is seeded here.
     connections.update(chain.genesisHash, lanes.status());
 
-    const client = makeClient(onMessage => lanes.connect({ sessionId: 'client', onMessage }), clientOptions?.(chain));
+    let client: PolkadotClient;
+    try {
+      client = makeClient(onMessage => lanes.connect({ sessionId: 'client', onMessage }), options);
+    } catch (error) {
+      lanes.disconnectAll();
+      throw error;
+    }
     const entry: PoolEntry = { client, lanes };
     entries.set(chain.genesisHash, entry);
     return entry;
@@ -269,19 +277,26 @@ export function createChainConnection<C extends ChainConfig, T = PolkadotClient>
 
     pauseAll() {
       paused = true;
-      for (const { lanes } of entries.values()) {
-        lanes.pause();
-      }
+      runEvery(
+        [...entries.values()].map(({ lanes }) => () => {
+          lanes.pause();
+        }),
+        'pauseAll failed on several chains',
+      );
     },
 
     resumeAll() {
       paused = false;
-      for (const { lanes } of entries.values()) {
-        lanes.resume();
-      }
+      runEvery(
+        [...entries.values()].map(({ lanes }) => () => {
+          lanes.resume();
+        }),
+        'resumeAll failed on several chains',
+      );
     },
 
     reconnect(genesisHashes) {
+      const restarts: (() => void)[] = [];
       for (const [genesisHash, { lanes }] of entries) {
         if (genesisHashes && !genesisHashes.includes(genesisHash)) continue;
         // Nobody holds this one any more — it is only waiting out `destroyDelay`.
@@ -289,8 +304,11 @@ export function createChainConnection<C extends ChainConfig, T = PolkadotClient>
         // about to throw away.
         if (destructionTimers.has(genesisHash)) continue;
 
-        lanes.restart();
+        restarts.push(() => {
+          lanes.restart();
+        });
       }
+      runEvery(restarts, 'reconnect failed on several chains');
     },
   };
 }

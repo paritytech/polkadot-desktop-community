@@ -1,7 +1,7 @@
 // One consumer's connection to a chain that holds several lanes. Requests go to the consumer's home lane, a follow goes
 // to the lane picked for it, and a call on a follow's token goes to the lane that holds it.
 
-import { type JsonRpcMessage, type JsonRpcRequest } from '@polkadot-api/json-rpc-provider';
+import { type JsonRpcRequest } from '@polkadot-api/json-rpc-provider';
 
 import {
   type BrokerConnection,
@@ -10,13 +10,11 @@ import {
   getErrorMessage,
   isRequestMessage,
 } from './brokerMessages';
+import { type ChainBroker } from './createChainBroker';
 import { runEvery } from './runEvery';
 
 // What a lane's `connect` takes: the broker's own session params.
-export type LaneConnectParams = {
-  sessionId: string;
-  onMessage: (message: JsonRpcMessage) => void;
-};
+export type LaneConnectParams = Parameters<ChainBroker['connect']>[0];
 
 // One lane as a consumer's router reaches it.
 export type LaneHandle = {

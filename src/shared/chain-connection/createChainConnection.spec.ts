@@ -76,11 +76,13 @@ type FakeTransport = {
 type TransportsParams = {
   // The first transport's build throws.
   failFirstBuild?: boolean;
+  // The first transport's pause throws.
+  failFirstPause?: boolean;
 };
 
 // Fake transports that answer as the node: a fresh token for a follow, `'node'` for `system_name`. Each reports
 // `connecting` as it is built and `connected` as it opens.
-function createTransports({ failFirstBuild = false }: TransportsParams = {}) {
+function createTransports({ failFirstBuild = false, failFirstPause = false }: TransportsParams = {}) {
   const built: FakeTransport[] = [];
   let builds = 0;
   let nextToken = 0;
@@ -119,6 +121,9 @@ function createTransports({ failFirstBuild = false }: TransportsParams = {}) {
     return Object.assign(provider, {
       pause() {
         transport.calls.push('pause');
+        if (failFirstPause && transport === built[0]) {
+          throw new Error('pause failed');
+        }
       },
       resume() {
         transport.calls.push('resume');
@@ -277,7 +282,6 @@ describe('createChainConnection', () => {
 
       // Suppress the unhandled rejection from the detached .finally() promise chain
       // in createChainConnection.ts (pendingResolutions cleanup).
-
       const suppress = () => {};
       process.on('unhandledRejection', suppress);
 
@@ -699,10 +703,50 @@ describe('createChainConnection', () => {
       follow(b, 'b-2');
       await vi.runAllTimersAsync();
 
-      // `restart` rebuilds the lanes in id order, so lane 0's new transport is the first of the two rebuilt.
-      const [, , laneZero, laneOne] = transports.built;
-      expect(listSent(laneZero, CHAIN_HEAD_FOLLOW)).toHaveLength(2);
-      expect(listSent(laneOne, CHAIN_HEAD_FOLLOW)).toHaveLength(0);
+      // Both lanes were rebuilt, and the re-follows all went to one of them.
+      const rebuilt = transports.built.slice(2);
+      expect(rebuilt).toHaveLength(2);
+      expect(rebuilt.map(transport => listSent(transport, CHAIN_HEAD_FOLLOW).length).sort()).toEqual([0, 2]);
+    });
+
+    it('pauses every chain even when one chain throws', async () => {
+      const { pool, transports } = createLanePool({}, createTransports({ failFirstPause: true }));
+      connectConsumer(pool, testChain('a'));
+      connectConsumer(pool, testChain('b'));
+      await vi.runAllTimersAsync();
+
+      expect(() => {
+        pool.pauseAll();
+      }).toThrow('pause failed');
+      expect(transports.built).toHaveLength(2);
+      expect(transports.built[1]?.calls).toContain('pause');
+    });
+
+    it('closes the lanes of a chain whose client cannot be made, and reports it disconnected', async () => {
+      const transports = createTransports();
+      const failure = new Error('client refused');
+      const { pool } = createLanePool(
+        {
+          createClient: provider => {
+            provider(noop);
+            throw failure;
+          },
+        },
+        transports,
+      );
+      const statuses: ConnectionStatus[] = [];
+      pool.onStatusChanged(chain.genesisHash, status => {
+        statuses.push(status);
+      });
+
+      await expect(pool.lockApi(chain)).rejects.toBe(failure);
+      await vi.runAllTimersAsync();
+
+      expect(pool.status(chain.genesisHash)).toBe('disconnected');
+      expect(statuses.at(-1)).toBe('disconnected');
+      for (const transport of transports.built) {
+        expect(transport.calls.at(-1)).toBe('disconnect');
+      }
     });
 
     it('brings a lane up paused while the pool is paused', async () => {

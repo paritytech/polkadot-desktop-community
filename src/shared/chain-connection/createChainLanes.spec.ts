@@ -430,6 +430,22 @@ describe('createChainLanes', () => {
     expect(statuses).toEqual(['connected', 'connecting', 'connected']);
   });
 
+  it('As an RPC chain, I throw the build error when a new home lane cannot be built, and leave no lane', () => {
+    // Given lane 0 connected and full, and a second lane whose build throws
+    const { createTransport, built } = createTransports({ faults: { 1: 'build' } });
+    const { lanes, statuses } = createLanes({ createTransport });
+    nth(built, 0).onStatus('connected');
+    fillLaneZero(lanes);
+
+    // When a new consumer connects, then the connect throws the build's error
+    expect(() => connectConsumer(lanes, 'local:e')).toThrow(FAULT);
+
+    // And only lane 0 was built, and the status is unchanged
+    expect(built).toHaveLength(1);
+    expect(lanes.status()).toBe('connected');
+    expect(statuses).toEqual(['connected']);
+  });
+
   it('As an RPC chain, I drop a new lane whose first session cannot open', () => {
     // Given lane 0 connected and full, and a second lane whose connection throws on opening
     const { createTransport, built } = createTransports({ faults: { 1: 'open' } });

@@ -1660,6 +1660,32 @@ describe('createChainBroker teardown', () => {
     expect(harness.sent.map(request => request.method)).toEqual(['chainHead_v1_follow']);
   });
 
+  it('As an integrator, I close every session while the upstream opens and its close throws, and I get a warning, not a throw', () => {
+    // Given an upstream that closes every session as it opens, and whose close throws
+    const harness = createProviderHarness();
+    harness.disconnect.mockImplementation(() => {
+      throw new Error('close refused');
+    });
+    const broker: ChainBroker = createChainBroker({
+      provider: listener => {
+        const connection = harness.provider(listener);
+        broker.disconnectAll();
+        return connection;
+      },
+    });
+
+    // When a session connects
+    const warnings = collectWarningsDuring(() => {
+      expect(() => broker.connect({ sessionId: 'a', onMessage: () => undefined })).not.toThrow();
+    });
+
+    // Then the failed close is warned under the broker's tag
+    expect(harness.disconnect).toHaveBeenCalledTimes(1);
+    expect(warnings).toEqual([
+      expect.stringContaining('[chain-broker] closing an upstream closed while it opened failed: close refused'),
+    ]);
+  });
+
   it('As an integrator, I connect while the upstream throws as it opens, and my next session opens it again', () => {
     // Given an upstream whose first opening throws
     const harness = createProviderHarness();
