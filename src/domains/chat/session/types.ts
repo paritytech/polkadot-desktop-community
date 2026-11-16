@@ -241,6 +241,10 @@ export type ChatMessage = {
 /** Whether the user writes messages into a room: `'text'` — yes; `'none'` — the product drives it. */
 export type RoomUserInput = 'text' | 'none';
 
+/** The protocol's room footer: the user's text input, nothing, or a product-drawn card. */
+export type RoomFooter =
+  { type: 'text' } | { type: 'none' } | { type: 'card'; productId: string; messageType: string; payload: Uint8Array };
+
 export type ChatSession = {
   readonly sessionId: string;
   readonly roomId: string;
