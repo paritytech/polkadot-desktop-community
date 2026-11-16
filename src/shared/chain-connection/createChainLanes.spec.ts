@@ -18,6 +18,8 @@ type TransportRecord = {
   calls: string[];
   // Answers, as the node, every request of `method` not answered yet, each with a fresh result.
   answer: (method: string) => void;
+  // Delivers a message from the node.
+  emit: (message: JsonRpcMessage) => void;
 };
 
 type TransportsParams = {
@@ -68,6 +70,9 @@ function createTransports({ faults = {} }: TransportsParams = {}) {
           listener?.({ jsonrpc: '2.0', id: request.id, result: `${method}-${String(nextResult)}` });
           nextResult += 1;
         }
+      },
+      emit(message) {
+        listener?.(message);
       },
     };
     built.push(record);
@@ -540,6 +545,37 @@ describe('createChainLanes', () => {
     expect(built.map(record => record.calls)).toEqual([
       ['open', 'pause', 'resume', 'restart'],
       ['open', 'pause', 'resume', 'restart'],
+    ]);
+  });
+
+  it('keeps the lanes paused across a restart', () => {
+    const { createTransport, built } = createTransports();
+    const { lanes } = createLanes({ createTransport });
+    const [consumer] = fillLaneZero(lanes);
+
+    lanes.pause();
+    lanes.restart();
+    consumer.connection.send(createFollow(2));
+    const newLaneCalls = [...nth(built, 1).calls];
+    lanes.resume();
+
+    expect(newLaneCalls).toEqual(['pause', 'open']);
+    expect(built.map(record => record.calls.at(-1))).toEqual(['resume', 'resume']);
+  });
+
+  it('gives every lane the chain warner', () => {
+    const warn = vi.fn<(kind: string, message: string) => void>();
+    const { createTransport, built } = createTransports();
+    const { lanes } = createLanes({ createTransport, warn });
+    fillLaneZero(lanes);
+    connectConsumer(lanes, 'local:e');
+
+    nth(built, 0).emit({ jsonrpc: '2.0', id: 'unknown-0', result: null });
+    nth(built, 1).emit({ jsonrpc: '2.0', id: 'unknown-1', result: null });
+
+    expect(warn.mock.calls.filter(([kind]) => kind === 'response_unknown_id')).toEqual([
+      ['response_unknown_id', expect.stringContaining('unknown-0')],
+      ['response_unknown_id', expect.stringContaining('unknown-1')],
     ]);
   });
 
