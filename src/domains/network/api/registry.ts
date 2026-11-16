@@ -1,11 +1,7 @@
-import {
-  createChainConnection,
-  createMetadataCache,
-  createWsJsonRpcProvider,
-} from '@novasamatech/host-substrate-chain-connection';
 import { createLocalStorageAdapter } from '@novasamatech/storage-adapter';
 import { NEVER, Observable, defer, pairwise, switchMap } from 'rxjs';
 
+import { createChainConnection, createMetadataCache, createWsJsonRpcProvider } from '@/shared/chain-connection';
 import { appActive$ } from '@/shared/utils';
 import { type Chain } from '../chain/types';
 import { connectionRepository } from '../connection/repository';

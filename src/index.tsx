@@ -84,7 +84,7 @@ const setupRendererConsoleLogging = () => {
   const originalConsoleError = console.error.bind(console);
   console.error = (...values: unknown[]) => {
     // Mute the polkadot-api chain-follow unpin chatter (`console.error("unpin", err)`
-    // in `@novasamatech/host-substrate-chain-connection`). It fires whenever the
+    // comes from polkadot-api's chainHead unpin logic, not from an npm package). It fires whenever the
     // server has already evicted the block we're trying to unpin (finalised /
     // reorged) — benign, but it floods the renderer console.
     if (values[0] === 'unpin' && values[1] instanceof Error && /Invalid block hash/i.test(values[1].message)) {

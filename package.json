@@ -101,7 +101,6 @@
     "@noble/hashes": "2.4.0",
     "@novasamatech/handoff-service": "0.12.0",
     "@novasamatech/host-chat": "0.12.0",
-    "@novasamatech/host-substrate-chain-connection": "0.12.0",
     "@novasamatech/scale": "0.12.0",
     "@novasamatech/sdk-statement": "0.6.0",
     "@novasamatech/statement-store": "0.12.0",
