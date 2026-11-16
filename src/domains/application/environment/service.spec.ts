@@ -1,5 +1,6 @@
 import paseoNextV2Document from '~trinity/paseo-next-v2.json?raw';
 import stackLinks from '~trinity/stacks.json';
+import { describe, expect, it } from 'vitest';
 
 import { environmentService } from './service';
 

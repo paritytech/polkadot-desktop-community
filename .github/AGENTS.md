@@ -277,7 +277,9 @@ composite action into the Vite configurations:
   `release/build/package.json` used for packaging.
 
 `VITE_ENVIRONMENTS` plus the three Firebase client identifiers are required by
-real CI builds. Each channel MUST name a `stack` bundled in `.trinity/`, or the renderer refuses to start. TURN configuration is also passed by the current workflows.
+real CI builds. Each channel MUST name a `stack` bundled in `.trinity/`, or the
+renderer refuses to start. TURN configuration is also passed by the current
+workflows.
 Release builds require the Sentry inputs; PR installable builds pass them but do
 not make them mandatory. Every packaged macOS CI build requires the Apple
 inputs, regardless of `build_type`.

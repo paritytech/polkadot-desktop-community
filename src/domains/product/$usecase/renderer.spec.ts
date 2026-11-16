@@ -1,6 +1,8 @@
+import { toHex } from 'polkadot-api/utils';
+import * as v from 'valibot';
 import { describe, expect, it, vi } from 'vitest';
 
-import { type HexString } from '@/shared/types';
+import { type HexString, hexString } from '@/shared/types';
 import { ipfsRawResource } from '@/domains/network';
 import { executableArchiveResource } from '../product/manifest/resource';
 import { type ExecutableContent } from '../product/manifest/types';
@@ -17,8 +19,8 @@ const ARCHIVE_HASH: HexString = '0xc1d1';
 // never read.
 const PNG = new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0x00]);
 const GIF = new Uint8Array([0x47, 0x49, 0x46, 0x38, 0x39, 0x61]);
-const PNG_HEX: HexString = '0x89504e470d0a1a0a00';
-const GIF_HEX: HexString = '0x474946383961';
+const PNG_HEX = v.parse(hexString, toHex(PNG));
+const GIF_HEX = v.parse(hexString, toHex(GIF));
 
 function productWithWorker(): Product {
   return {
@@ -134,6 +136,7 @@ describe('rendererUseCase.resolveImage', () => {
       ipfsGatewayUrl: GATEWAY,
     });
 
+    expect(inline).toMatch(/^data:image\/png;base64,/);
     expect(inline).toBe(bulletinUrl);
     expect(bulletin).not.toHaveBeenCalled();
     expect(resolveProduct).not.toHaveBeenCalled();

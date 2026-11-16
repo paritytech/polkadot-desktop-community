@@ -69,10 +69,10 @@ export const ProductRenderedBody = ({ productId, context, payload }: Props) => {
         .catch((error: unknown) => {
           // The action is a user gesture with no reply path; a rejection means the
           // product never heard it. Reporting beats pretending it landed.
-          console.warn('[chat] renderer action was not delivered', { context, actionId, error });
+          console.warn('[chat] renderer action was not delivered', { productId, context, actionId, error });
         });
     },
-    [instance, context],
+    [instance, context, productId],
   );
 
   return <RendererTree productId={productId} subscribe={subscribe} onAction={onAction} />;
