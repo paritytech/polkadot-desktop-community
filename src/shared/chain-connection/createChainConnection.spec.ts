@@ -751,6 +751,27 @@ describe('createChainConnection', () => {
       expect(clients.last().destroyed).toBe(1);
     });
 
+    it('does not retry a provider torn down before its failed acquire settles', async () => {
+      const clients = createClientFactory();
+      const createClient = vi.fn(clients.createClient).mockImplementationOnce(() => {
+        throw new Error('client build failed');
+      });
+      const { pool } = createLanePool({ createClient });
+      const connection = pool.getProvider(chain)(noop);
+      // Fires only the zero-delay connect: the acquire has thrown, and its `.catch` is still queued.
+      vi.runOnlyPendingTimers();
+      connection.disconnect();
+      await vi.runAllTimersAsync();
+
+      expect(createClient).toHaveBeenCalledTimes(1);
+
+      // With no lease left, the next holder builds a fresh client and its release destroys it at once.
+      const { unlock } = await pool.lockApi(chain);
+      unlock();
+      expect(createClient).toHaveBeenCalledTimes(2);
+      expect(clients.last().destroyed).toBe(1);
+    });
+
     it('reports disconnected for a lane whose transport factory throws, and recovers', async () => {
       const { pool } = createLanePool({}, createTransports({ failFirstBuild: true }));
       const statuses: ConnectionStatus[] = [];
