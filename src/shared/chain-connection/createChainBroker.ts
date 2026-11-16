@@ -32,6 +32,7 @@ import { type BrokerWarner, createBrokerWarner, logBrokerTraffic } from './creat
 import { createEarlySubscriptions } from './createEarlySubscriptions';
 import { createOwnedTokens } from './createOwnedTokens';
 import { createPendingRequests } from './createPendingRequests';
+import { runEvery } from './runEvery';
 
 // Many JSON-RPC sessions over one upstream connection, with ids and subscription tokens rewritten per session.
 export type ChainBroker = ReturnType<typeof createChainBroker>;
@@ -477,25 +478,4 @@ function readOpenedSubscription(
     return null;
   }
   return { releaseMethod, upstreamToken: response.result };
-}
-
-// Runs every step, even past one that throws, then throws the one `Error`, or an AggregateError of all of them with
-// `message`.
-function runEvery(steps: readonly (() => void)[], message: string): void {
-  const errors: unknown[] = [];
-  for (const step of steps) {
-    try {
-      step();
-    } catch (error) {
-      errors.push(error);
-    }
-  }
-  if (errors.length === 0) {
-    return;
-  }
-  const [only] = errors;
-  if (errors.length === 1 && only instanceof Error) {
-    throw only;
-  }
-  throw new AggregateError(errors, message);
 }
