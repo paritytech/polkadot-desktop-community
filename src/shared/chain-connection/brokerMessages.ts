@@ -1,17 +1,16 @@
 import { type JsonRpcId, type JsonRpcMessage, type JsonRpcRequest, type JsonRpcResponse } from '@polkadot-api/json-rpc-provider';
 
 export const CHAIN_HEAD_FOLLOW = 'chainHead_v1_follow';
-export const CHAIN_HEAD_FOLLOW_EVENT = 'chainHead_v1_followEvent';
 export const CHAIN_HEAD_UNFOLLOW = 'chainHead_v1_unfollow';
-export const STATEMENT_SUBSCRIBE = 'statement_subscribeStatement';
-export const STATEMENT_UNSUBSCRIBE = 'statement_unsubscribeStatement';
-export const TRANSACTION_BROADCAST = 'transaction_v1_broadcast';
-export const TRANSACTION_STOP = 'transaction_v1_stop';
-export const SUBMIT_AND_WATCH = 'transactionWatch_v1_submitAndWatch';
-export const UNWATCH = 'transactionWatch_v1_unwatch';
-export const WATCH_EVENT = 'transactionWatch_v1_watchEvent';
+const STATEMENT_SUBSCRIBE = 'statement_subscribeStatement';
+const STATEMENT_UNSUBSCRIBE = 'statement_unsubscribeStatement';
+const TRANSACTION_BROADCAST = 'transaction_v1_broadcast';
+const TRANSACTION_STOP = 'transaction_v1_stop';
+const SUBMIT_AND_WATCH = 'transactionWatch_v1_submitAndWatch';
+const UNWATCH = 'transactionWatch_v1_unwatch';
+const WATCH_EVENT = 'transactionWatch_v1_watchEvent';
 // The watch events after which the node ends the watch on its own.
-export const TERMINAL_WATCH_EVENTS: ReadonlySet<string> = new Set(['finalized', 'error', 'invalid', 'dropped']);
+const TERMINAL_WATCH_EVENTS: ReadonlySet<string> = new Set(['finalized', 'error', 'invalid', 'dropped']);
 
 export const TOKEN_METHODS: ReadonlyMap<string, string> = new Map<string, string>([
   [CHAIN_HEAD_FOLLOW, CHAIN_HEAD_UNFOLLOW],
@@ -71,10 +70,6 @@ export function createJsonRpcError(id: JsonRpcId, message: string): JsonRpcRespo
 
 export function buildJsonRpcResult(id: JsonRpcId, result: unknown): JsonRpcResponse {
   return { jsonrpc: '2.0', id, result };
-}
-
-export function buildFollowEvent(localToken: string, result: unknown): SubscriptionMessage {
-  return { jsonrpc: '2.0', method: CHAIN_HEAD_FOLLOW_EVENT, params: { subscription: localToken, result } };
 }
 
 export function readdressSubscription(message: SubscriptionMessage, localToken: string): SubscriptionMessage {
