@@ -1,10 +1,13 @@
-import { type JsonRpcMessage } from '@polkadot-api/json-rpc-provider';
+import { type JsonRpcConnection, type JsonRpcMessage, type JsonRpcRequest } from '@polkadot-api/json-rpc-provider';
 import { type JsonRpcProvider, type PolkadotClient } from 'polkadot-api';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { CHAIN_HEAD_FOLLOW, isRecord } from './brokerMessages';
 import { type ChainConnectionConfig, createChainConnection } from './createChainConnection';
 import { noop } from './noop';
 import { type ChainConfig, type ConnectionStatus } from './types';
+
+const FOLLOW_LIMIT = 4;
 
 // An in-memory stand-in for polkadot-api's `createClient`: one client object per
 // call, each counting its own `destroy()`.
@@ -58,6 +61,126 @@ function testChain(id: string): ChainConfig {
   return { genesisHash: id };
 }
 
+const SYSTEM_NAME = 'system_name';
+const CHAIN_HEAD_HEADER = 'chainHead_v1_header';
+
+type CreateProvider = ChainConnectionConfig<ChainConfig>['createProvider'];
+
+type FakeTransport = {
+  // What the pool sent the node, in order.
+  sent: JsonRpcRequest[];
+  // What the pool did to the transport, in order: `pause`, `resume`, `open` and `disconnect`.
+  calls: string[];
+};
+
+type TransportsParams = {
+  // The first transport's build throws.
+  failFirstBuild?: boolean;
+};
+
+// Fake transports that answer as the node: a fresh token for a follow, `'node'` for `system_name`. Each reports
+// `connecting` as it is built and `connected` as it opens.
+function createTransports({ failFirstBuild = false }: TransportsParams = {}) {
+  const built: FakeTransport[] = [];
+  let builds = 0;
+  let nextToken = 0;
+
+  const createProvider = vi.fn<CreateProvider>((_chain, onStatusChanged) => {
+    builds += 1;
+    if (failFirstBuild && builds === 1) {
+      throw new Error('transport factory failed');
+    }
+    const transport: FakeTransport = { sent: [], calls: [] };
+    built.push(transport);
+    onStatusChanged('connecting');
+
+    function provider(onMessage: (message: JsonRpcMessage) => void): JsonRpcConnection {
+      transport.calls.push('open');
+      onStatusChanged('connected');
+      return {
+        send(message) {
+          transport.sent.push(message);
+          if (message.id === undefined) {
+            return;
+          }
+          if (message.method === CHAIN_HEAD_FOLLOW) {
+            onMessage({ jsonrpc: '2.0', id: message.id, result: `follow-${String(nextToken)}` });
+            nextToken += 1;
+          } else if (message.method === SYSTEM_NAME) {
+            onMessage({ jsonrpc: '2.0', id: message.id, result: 'node' });
+          }
+        },
+        disconnect() {
+          transport.calls.push('disconnect');
+        },
+      };
+    }
+
+    return Object.assign(provider, {
+      pause() {
+        transport.calls.push('pause');
+      },
+      resume() {
+        transport.calls.push('resume');
+      },
+    });
+  });
+
+  return { createProvider, built };
+}
+
+function listSent(transport: FakeTransport | undefined, method: string): JsonRpcRequest[] {
+  return (transport?.sent ?? []).filter(message => message.method === method);
+}
+
+type Pool = ReturnType<typeof createChainConnection<ChainConfig>>;
+
+type Consumer = {
+  connection: JsonRpcConnection;
+  // What the consumer heard, in order.
+  heard: JsonRpcMessage[];
+};
+
+function createLanePool(overrides: Partial<ChainConnectionConfig<ChainConfig>> = {}, transports = createTransports()) {
+  const clients = createClientFactory();
+  const pool = createChainConnection<ChainConfig>({
+    createProvider: transports.createProvider,
+    createClient: clients.createClient,
+    resolve: resolveClient,
+    followLimit: () => FOLLOW_LIMIT,
+    ...overrides,
+  });
+
+  return { pool, transports, clients };
+}
+
+function connectConsumer(pool: Pool, chain: ChainConfig): Consumer {
+  const heard: JsonRpcMessage[] = [];
+  const connection = pool.getProvider(chain)(message => {
+    heard.push(message);
+  });
+
+  return { connection, heard };
+}
+
+function follow(consumer: Consumer, id: string): void {
+  consumer.connection.send({ jsonrpc: '2.0', id, method: CHAIN_HEAD_FOLLOW, params: [false] });
+}
+
+function readAnswers(consumer: Consumer, id: string): unknown[] {
+  return consumer.heard.flatMap(message => ('result' in message && message.id === id ? [message.result] : []));
+}
+
+function heardStop(consumer: Consumer): boolean {
+  return consumer.heard.some(
+    message =>
+      'method' in message &&
+      isRecord(message.params) &&
+      isRecord(message.params['result']) &&
+      message.params['result']['event'] === 'stop',
+  );
+}
+
 function createTestConnection(overrides?: Partial<ChainConnectionConfig<ChainConfig>>) {
   const mockProvider = createMockProvider();
   const clientFactory = createClientFactory();
@@ -66,6 +189,7 @@ function createTestConnection(overrides?: Partial<ChainConnectionConfig<ChainCon
     createProvider: () => mockProvider.provider,
     createClient: clientFactory.createClient,
     resolve: resolveClient,
+    followLimit: () => FOLLOW_LIMIT,
     ...overrides,
   });
 
@@ -303,6 +427,7 @@ describe('createChainConnection', () => {
         createProvider: chain => providerByChain[chain.genesisHash]!,
         createClient: createClientFactory().createClient,
         resolve: resolveClient,
+        followLimit: () => FOLLOW_LIMIT,
       });
 
       const { unlock: u1 } = await connection.lockApi(testChain('a'));
@@ -325,6 +450,7 @@ describe('createChainConnection', () => {
         createProvider: () => chainA.provider,
         createClient: createClientFactory().createClient,
         resolve: resolveClient,
+        followLimit: () => FOLLOW_LIMIT,
       });
       const { unlock } = await connection.lockApi(testChain('a'));
       await connected();
@@ -344,6 +470,7 @@ describe('createChainConnection', () => {
         createProvider: c => (c.genesisHash === 'b' ? pausable.provider : createMockProvider().provider),
         createClient: createClientFactory().createClient,
         resolve: resolveClient,
+        followLimit: () => FOLLOW_LIMIT,
       });
       await connection.lockApi(testChain('a'));
       await connection.lockApi(testChain('b'));
@@ -362,6 +489,7 @@ describe('createChainConnection', () => {
         createProvider: () => chainA.provider,
         createClient: createClientFactory().createClient,
         resolve: resolveClient,
+        followLimit: () => FOLLOW_LIMIT,
         destroyDelay: 0,
       });
 
@@ -425,6 +553,7 @@ describe('createChainConnection', () => {
         },
         createClient: createClientFactory().createClient,
         resolve: resolveClient,
+        followLimit: () => FOLLOW_LIMIT,
       });
 
       const { unlock: unlockA } = await connection.lockApi(testChain('a'));
@@ -446,6 +575,7 @@ describe('createChainConnection', () => {
         createProvider,
         createClient: createClientFactory().createClient,
         resolve: resolveClient,
+        followLimit: () => FOLLOW_LIMIT,
       });
 
       expect(() => connection.reconnect(['nothing-here'])).not.toThrow();
@@ -458,6 +588,7 @@ describe('createChainConnection', () => {
         createProvider,
         createClient: createClientFactory().createClient,
         resolve: resolveClient,
+        followLimit: () => FOLLOW_LIMIT,
         destroyDelay: 10_000,
       });
 
@@ -496,6 +627,163 @@ describe('createChainConnection', () => {
 
       expect(connection.status('a')).toBe('connected');
       unlock();
+    });
+  });
+
+  // A `getProvider` consumer's session opens only after `getSyncProvider`'s zero-delay timer and the lease's microtask,
+  // so every case lets both run before anything follows.
+  describe('on lanes', () => {
+    beforeEach(() => {
+      vi.useFakeTimers();
+    });
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    const chain = testChain('a');
+
+    it('answers each consumer under its own id', async () => {
+      const { pool, transports } = createLanePool();
+      const first = connectConsumer(pool, chain);
+      const second = connectConsumer(pool, chain);
+      await vi.runAllTimersAsync();
+
+      first.connection.send({ jsonrpc: '2.0', id: 'truapi:1', method: SYSTEM_NAME, params: [] });
+      second.connection.send({ jsonrpc: '2.0', id: 'truapi:1', method: SYSTEM_NAME, params: [] });
+      await vi.runAllTimersAsync();
+
+      expect(readAnswers(first, 'truapi:1')).toEqual(['node']);
+      expect(readAnswers(second, 'truapi:1')).toEqual(['node']);
+      // Under one id the node's two answers could not be told apart.
+      const upstreamIds = transports.built.flatMap(transport => listSent(transport, SYSTEM_NAME).map(request => request.id));
+      expect(new Set(upstreamIds).size).toBe(2);
+    });
+
+    it('opens a second transport for a follow past the limit', async () => {
+      const { pool, transports } = createLanePool({ followLimit: () => 2 });
+      const first = connectConsumer(pool, chain);
+      const second = connectConsumer(pool, chain);
+      const third = connectConsumer(pool, chain);
+      await vi.runAllTimersAsync();
+
+      follow(first, 'follow-1');
+      follow(second, 'follow-2');
+      follow(third, 'follow-3');
+      await vi.runAllTimersAsync();
+      const [token] = readAnswers(third, 'follow-3');
+      third.connection.send({ jsonrpc: '2.0', id: 'header-3', method: CHAIN_HEAD_HEADER, params: [token, '0x00'] });
+      await vi.runAllTimersAsync();
+
+      expect(transports.createProvider).toHaveBeenCalledTimes(2);
+      expect(listSent(transports.built[1], CHAIN_HEAD_HEADER)).toHaveLength(1);
+    });
+
+    it('places a re-follow after reconnect under the limit it returns then', async () => {
+      let limit = 1;
+      const { pool, transports } = createLanePool({ followLimit: () => limit });
+      const a = connectConsumer(pool, chain);
+      const b = connectConsumer(pool, chain);
+      await vi.runAllTimersAsync();
+      follow(a, 'a-1');
+      follow(b, 'b-1');
+      await vi.runAllTimersAsync();
+      expect(transports.built).toHaveLength(2);
+
+      limit = 4;
+      pool.reconnect();
+      await vi.runAllTimersAsync();
+
+      expect(heardStop(a)).toBe(true);
+      expect(heardStop(b)).toBe(true);
+      follow(a, 'a-2');
+      follow(b, 'b-2');
+      await vi.runAllTimersAsync();
+
+      // `restart` rebuilds the lanes in id order, so lane 0's new transport is the first of the two rebuilt.
+      const [, , laneZero, laneOne] = transports.built;
+      expect(listSent(laneZero, CHAIN_HEAD_FOLLOW)).toHaveLength(2);
+      expect(listSent(laneOne, CHAIN_HEAD_FOLLOW)).toHaveLength(0);
+    });
+
+    it('brings a lane up paused while the pool is paused', async () => {
+      const { pool, transports } = createLanePool({ followLimit: () => 1 });
+      pool.pauseAll();
+      const a = connectConsumer(pool, chain);
+      const b = connectConsumer(pool, chain);
+      await vi.runAllTimersAsync();
+      follow(a, 'a-1');
+      follow(b, 'b-1');
+      await vi.runAllTimersAsync();
+
+      expect(transports.built.map(transport => transport.calls.slice(0, 2))).toEqual([
+        ['pause', 'open'],
+        ['pause', 'open'],
+      ]);
+    });
+
+    it('reports connecting while a new chain opens', async () => {
+      const { pool } = createLanePool();
+      const statuses: ConnectionStatus[] = [];
+      pool.onStatusChanged(chain.genesisHash, status => {
+        statuses.push(status);
+      });
+
+      connectConsumer(pool, chain);
+      // Fires only the consumer's zero-delay connect, which takes the lease and builds the chain.
+      vi.runOnlyPendingTimers();
+      expect(pool.status(chain.genesisHash)).toBe('connecting');
+
+      await vi.runAllTimersAsync();
+      expect(statuses).toEqual(['connecting', 'connected']);
+    });
+
+    it('returns the lease of a provider torn down before it connects', async () => {
+      const { pool, transports, clients } = createLanePool({ destroyDelay: 60_000 });
+      const connection = pool.getProvider(chain)(noop);
+      // Fires only the zero-delay connect: the lease is taken, and its `.then` is still queued.
+      vi.runOnlyPendingTimers();
+      connection.disconnect();
+      await vi.runAllTimersAsync();
+
+      expect(transports.createProvider).toHaveBeenCalled();
+      expect(transports.built.every(transport => transport.calls.includes('disconnect'))).toBe(true);
+      // A second lease would have cancelled the destruction timer.
+      expect(clients.last().destroyed).toBe(1);
+    });
+
+    it('reports disconnected for a lane whose transport factory throws, and recovers', async () => {
+      const { pool } = createLanePool({}, createTransports({ failFirstBuild: true }));
+      const statuses: ConnectionStatus[] = [];
+      pool.onStatusChanged(chain.genesisHash, status => {
+        statuses.push(status);
+      });
+
+      connectConsumer(pool, chain);
+      // Short of the proxy's retry backoff.
+      await vi.advanceTimersByTimeAsync(100);
+      expect(pool.status(chain.genesisHash)).toBe('disconnected');
+
+      await vi.advanceTimersByTimeAsync(1_000);
+      expect(pool.status(chain.genesisHash)).toBe('connected');
+      expect(statuses).toEqual(['connecting', 'disconnected', 'connecting', 'connected']);
+    });
+
+    it('closes every lane when the chain is destroyed', async () => {
+      const { pool, transports, clients } = createLanePool({ followLimit: () => 1, destroyDelay: 1_000 });
+      const a = connectConsumer(pool, chain);
+      const b = connectConsumer(pool, chain);
+      await vi.runAllTimersAsync();
+      follow(a, 'a-1');
+      follow(b, 'b-1');
+      await vi.runAllTimersAsync();
+
+      a.connection.disconnect();
+      b.connection.disconnect();
+      await vi.runAllTimersAsync();
+
+      expect(transports.built).toHaveLength(2);
+      expect(transports.built.every(transport => transport.calls.includes('disconnect'))).toBe(true);
+      expect(clients.last().destroyed).toBe(1);
     });
   });
 });

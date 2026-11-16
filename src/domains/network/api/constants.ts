@@ -17,3 +17,9 @@ export type Descriptors = {
   wnd: PAPI.Wnd;
   wnd_ah: PAPI.Wnd_ah;
 };
+
+// Enforced by smoldot's `chainHead_v1_follow` check, 2 per JSON-RPC client. truapi-provider gives each `connect` a client
+// of its own, so the limit holds per connection.
+export const LIGHT_CLIENT_FOLLOW_LIMIT = 2;
+// Enforced by a Substrate RPC node, per connection.
+export const RPC_FOLLOW_LIMIT = 4;

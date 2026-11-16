@@ -1,11 +1,12 @@
 import { getSyncProvider } from '@polkadot-api/json-rpc-provider-proxy';
 import { type JsonRpcProvider, type PolkadotClient, createClient } from 'polkadot-api';
 
-import { createBranchedProvider } from './createBranchedProvider';
+import { createBrokerWarner } from './createBrokerWarner';
+import { type ChainLanes, createChainLanes } from './createChainLanes';
 import { createConnectionManager } from './createConnectionManager';
 import { createRefCounter } from './createRefCounter';
-import { createRestartableProvider } from './createRestartableProvider';
-import { type ChainConfig, type ConnectionStatus, type PooledClient } from './types';
+import { type RestartableJsonRpcProvider, createRestartableProvider } from './createRestartableProvider';
+import { type ChainConfig, type ConnectionStatus } from './types';
 
 export type ChainConnectionConfig<C extends ChainConfig, T = PolkadotClient> = {
   createProvider(chain: C, onStatusChanged: (status: ConnectionStatus) => void): JsonRpcProvider;
@@ -13,7 +14,15 @@ export type ChainConnectionConfig<C extends ChainConfig, T = PolkadotClient> = {
   // Defaults to polkadot-api's `createClient`. An injection point for tests and for wrapping client construction — polkadot-api is imported either way.
   createClient?: typeof createClient;
   resolve(chain: C, client: PolkadotClient): Promise<T>;
+  // The most `chainHead_v1_follow` subscriptions one transport of the chain may hold. Read each time a follow is placed,
+  // so a value that changes with the chain's transport applies to the next follow.
+  followLimit(chain: C): number;
   destroyDelay?: number;
+};
+
+type PoolEntry = {
+  client: PolkadotClient;
+  lanes: ChainLanes;
 };
 
 type ChainConnection<C extends ChainConfig, T = PolkadotClient> = {
@@ -47,12 +56,16 @@ export function createChainConnection<C extends ChainConfig, T = PolkadotClient>
   resolve,
   clientOptions,
   createProvider,
+  followLimit,
   createClient: makeClient = createClient,
   destroyDelay = 0,
 }: ChainConnectionConfig<C, T>): ChainConnection<C, T> {
   const connections = createConnectionManager();
   const refCounter = createRefCounter<string>();
-  const existingClients = new Map<string, PooledClient>();
+  const entries = new Map<string, PoolEntry>();
+  let paused = false;
+  // Names each `getProvider` session, never reused for the pool's life.
+  let nextLocalSession = 0;
 
   const resolvedApis = new Map<string, { resolved: T; polkadotClient: PolkadotClient }>();
   const pendingResolutions = new Map<string, { promise: Promise<T>; polkadotClient: PolkadotClient }>();
@@ -66,18 +79,15 @@ export function createChainConnection<C extends ChainConfig, T = PolkadotClient>
     }
   };
 
-  const getOrCreateClient = (chain: C): PooledClient => {
-    const existing = existingClients.get(chain.genesisHash);
-    if (existing) return existing;
-
+  const createLaneTransport = (chain: C, onLaneStatus: (status: ConnectionStatus) => void): RestartableJsonRpcProvider => {
     // A provider replaced by `reconnect` can still report a trailing
     // `disconnected` while its successor is already connecting, so status is
     // scoped to the generation that produced it and stale updates are dropped.
     let generation = 0;
-    const rootProvider = createRestartableProvider(() => {
+    return createRestartableProvider(() => {
       const current = ++generation;
       const update = (status: ConnectionStatus) => {
-        if (current === generation) connections.update(chain.genesisHash, status);
+        if (current === generation) onLaneStatus(status);
       };
 
       try {
@@ -91,36 +101,55 @@ export function createChainConnection<C extends ChainConfig, T = PolkadotClient>
         throw error;
       }
     });
-    const branchedProvider = createBranchedProvider(rootProvider);
-    const client = makeClient(branchedProvider.branch(), clientOptions?.(chain));
+  };
 
-    const pooled: PooledClient = { client, provider: branchedProvider, rootProvider };
-    existingClients.set(chain.genesisHash, pooled);
-    return pooled;
+  const getOrCreateEntry = (chain: C): PoolEntry => {
+    const existing = entries.get(chain.genesisHash);
+    if (existing) return existing;
+
+    const lanes = createChainLanes({
+      label: chain.genesisHash,
+      createTransport: onLaneStatus => createLaneTransport(chain, onLaneStatus),
+      followLimit: () => followLimit(chain),
+      warn: createBrokerWarner(),
+      paused,
+      onStatus: status => connections.update(chain.genesisHash, status),
+    });
+    // The lanes report changes only, so the status they start in is seeded here.
+    connections.update(chain.genesisHash, lanes.status());
+
+    const client = makeClient(onMessage => lanes.connect({ sessionId: 'client', onMessage }), clientOptions?.(chain));
+    const entry: PoolEntry = { client, lanes };
+    entries.set(chain.genesisHash, entry);
+    return entry;
   };
 
   const destroyClient = (genesisHash: string) => {
     cancelDestructionTimer(genesisHash);
 
-    const pooled = existingClients.get(genesisHash);
-    if (pooled) {
-      existingClients.delete(genesisHash);
-      connections.update(genesisHash, 'disconnected');
-      pooled.client.destroy();
+    const entry = entries.get(genesisHash);
+    if (entry) {
+      entries.delete(genesisHash);
+      try {
+        entry.client.destroy();
+      } finally {
+        entry.lanes.disconnectAll();
+      }
     }
     resolvedApis.delete(genesisHash);
     pendingResolutions.delete(genesisHash);
   };
 
+  // eslint-disable-next-line @typescript-eslint/require-await -- a throw must become a rejection, which `getProvider`'s `.catch` answers
   const rawAcquire = async (chain: C) => {
     try {
       if (destroyDelay > 0) cancelDestructionTimer(chain.genesisHash);
 
       refCounter.increment(chain.genesisHash);
-      const pooled = getOrCreateClient(chain);
+      const entry = getOrCreateEntry(chain);
 
       return {
-        pooled,
+        entry,
         unlock() {
           if (refCounter.decrement(chain.genesisHash) === 0) {
             if (destroyDelay === 0) {
@@ -162,10 +191,10 @@ export function createChainConnection<C extends ChainConfig, T = PolkadotClient>
 
   return {
     async lockApi(chain) {
-      const { pooled, unlock } = await rawAcquire(chain);
+      const { entry, unlock } = await rawAcquire(chain);
 
       try {
-        const api = await resolveApi(chain, pooled.client);
+        const api = await resolveApi(chain, entry.client);
         return { api, unlock };
       } catch (error) {
         unlock();
@@ -187,18 +216,33 @@ export function createChainConnection<C extends ChainConfig, T = PolkadotClient>
           unlock?.();
         };
 
+        // Neither branch answers `onResult` after a teardown: `getSyncProvider` reads `null` as a failed connect and
+        // retries even after `disconnect`, taking a lease nobody returns, which also cancels a pending destruction.
         rawAcquire(chain)
-          .then(({ pooled, unlock }) => {
+          .then(({ entry, unlock }) => {
             if (teardownCalled) {
               unlock();
-              onResult(null);
               return;
             }
             pendingUnlock = unlock;
-            onResult((onMessage, _onHalt) => pooled.provider.branch(releaseUnlock)(onMessage));
+            onResult(onMessage => {
+              const sessionId = `local:${String(nextLocalSession)}`;
+              nextLocalSession += 1;
+              const connection = entry.lanes.connect({ sessionId, onMessage });
+              return {
+                send: connection.send,
+                disconnect() {
+                  try {
+                    connection.disconnect();
+                  } finally {
+                    releaseUnlock();
+                  }
+                },
+              };
+            });
           })
           .catch(() => {
-            onResult(null);
+            if (!teardownCalled) onResult(null);
           });
 
         // Covers teardown without disconnect, and teardown before acquire resolves.
@@ -218,26 +262,28 @@ export function createChainConnection<C extends ChainConfig, T = PolkadotClient>
     },
 
     pauseAll() {
-      for (const { rootProvider } of existingClients.values()) {
-        rootProvider.pause();
+      paused = true;
+      for (const { lanes } of entries.values()) {
+        lanes.pause();
       }
     },
 
     resumeAll() {
-      for (const { rootProvider } of existingClients.values()) {
-        rootProvider.resume();
+      paused = false;
+      for (const { lanes } of entries.values()) {
+        lanes.resume();
       }
     },
 
     reconnect(genesisHashes) {
-      for (const [genesisHash, { rootProvider }] of existingClients) {
+      for (const [genesisHash, { lanes }] of entries) {
         if (genesisHashes && !genesisHashes.includes(genesisHash)) continue;
         // Nobody holds this one any more — it is only waiting out `destroyDelay`.
         // Rebuilding its transport would open a socket the destruction timer is
         // about to throw away.
         if (destructionTimers.has(genesisHash)) continue;
 
-        rootProvider.restart();
+        lanes.restart();
       }
     },
   };
