@@ -10,7 +10,7 @@ import MaximizeIcon from '@/shared/assets/images/header/maximize.svg?jsx';
 import { DismissOverlay } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
-import { type ChatSession, useP2PRequests, useProductSessions } from '@/domains/chat';
+import { type ChatSession, type RoomFooter, useP2PRequests, useProductSessions } from '@/domains/chat';
 import { browserTabs } from '@/aggregates/browser-tabs';
 import { useP2PSessions } from '@/aggregates/p2p-chat';
 import { useTruapiUserId } from '@/aggregates/truapi-runtime';
@@ -48,8 +48,9 @@ export const QuickChat = memo(({ open, onOpenChange, children }: QuickChatProps)
   const chatListEntries = useSortedChatList(sessions, outgoingRequests, pendingRequests);
   const requesterNames = useMemo(() => chatService.formatRequesterNames(pendingRequests), [pendingRequests]);
 
-  const userInputStream = useMemo(() => selectedSession?.userInput ?? of('text'), [selectedSession]);
-  const acceptsText = useObservable(userInputStream, 'text') === 'text';
+  const footerStream = useMemo(() => selectedSession?.footer ?? of<RoomFooter>({ type: 'text' }), [selectedSession]);
+  const footer = useObservable(footerStream, { type: 'text' });
+  const acceptsText = footer.type === 'text';
 
   const inputRef = useRef<HTMLTextAreaElement>(null);
 

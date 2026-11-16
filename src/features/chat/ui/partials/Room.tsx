@@ -7,7 +7,14 @@ import { of } from 'rxjs';
 import { Slot } from '@/shared/di';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
-import { type ChatMessage, type ChatSession, type MessageContent, fileTransferUseCase, useCurrentUserPeer } from '@/domains/chat';
+import {
+  type ChatMessage,
+  type ChatSession,
+  type MessageContent,
+  type RoomFooter,
+  fileTransferUseCase,
+  useCurrentUserPeer,
+} from '@/domains/chat';
 import { useTruapiSession, useTruapiUserId } from '@/aggregates/truapi-runtime';
 import { chatRoomBannerSlot, chatRoomHeaderActionsSlot } from '../../di';
 import { chatService } from '../../service';
@@ -39,8 +46,9 @@ export const Room = ({ session, initialSearch, onDeleted }: ChatConversationView
   );
   const blockedStream = useMemo(() => session.isBlocked ?? of(false), [session.isBlocked]);
   const isBlocked = useObservable(blockedStream, false);
-  const userInputStream = useMemo(() => session.userInput ?? of('text'), [session.userInput]);
-  const acceptsText = useObservable(userInputStream, 'text') === 'text';
+  const footerStream = useMemo(() => session.footer ?? of<RoomFooter>({ type: 'text' }), [session.footer]);
+  const footer = useObservable(footerStream, { type: 'text' });
+  const acceptsText = footer.type === 'text';
   const canBlock = typeof session.setBlocked === 'function';
 
   const [replyingTo, setReplyingTo] = useState<ChatMessage | null>(null);

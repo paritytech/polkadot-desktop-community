@@ -8,7 +8,7 @@ export type {
   MessageContent,
   MessagePeer,
   P2PPeer,
-  RoomUserInput,
+  RoomFooter,
   TransferContent,
 } from './session/types';
 export { useMessageSearch } from './$usecase/search.hooks';

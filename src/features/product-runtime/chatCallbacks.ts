@@ -6,7 +6,7 @@ import { distinctUntilChanged, lastValueFrom, map, of, switchMap } from 'rxjs';
 
 import {
   type ChatMessage,
-  type RoomUserInput,
+  type RoomFooter,
   createMessageInProductRoom,
   productChatService,
   productRoomUseCase,
@@ -17,7 +17,8 @@ import { productRuntimeService } from './service';
 
 type ChatCallbacks = { chat: Required<ChatPlatform> };
 
-const USER_INPUT_BY_FOOTER: Record<ChatRoomFooter, RoomUserInput> = { TextInput: 'text', Empty: 'none' };
+// TODO(truapi-0.31): replace with the core's card-capable footer when the TrUAPI 0.31 upgrade lands.
+const FOOTER_BY_CORE: Record<ChatRoomFooter, RoomFooter> = { TextInput: { type: 'text' }, Empty: { type: 'none' } };
 
 type RoomsItem = Result<HostChatListSubscribeItem, GenericError>;
 
@@ -102,11 +103,11 @@ export function createChatCallbacks(): ChatCallbacks {
 
         let result: 'Applied' | 'UnknownRoom';
         try {
-          result = await productRoomUseCase.setProductRoomUserInput({
+          result = await productRoomUseCase.setProductRoomFooter({
             productId: product.productId,
             roomId: request.roomId,
             userId,
-            userInput: USER_INPUT_BY_FOOTER[request.footer],
+            footer: FOOTER_BY_CORE[request.footer],
           });
         } catch (reason) {
           throw { tag: 'Unknown', value: { reason: String(reason) } };

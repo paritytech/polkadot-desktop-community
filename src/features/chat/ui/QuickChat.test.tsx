@@ -44,14 +44,14 @@ afterEach(() => {
 });
 
 describe('QuickChat', () => {
-  it('hides the composer in a product room whose user input is none', async () => {
-    await renderQuickChat({ ...room, userInput: 'none' });
+  it('hides the composer in a product room whose footer is none', async () => {
+    await renderQuickChat({ ...room, footer: { type: 'none' } });
 
     await screen.findByTestId(TEST_IDS.chatNoMessagesPlaceholder);
     expect(screen.queryByTestId(TEST_IDS.chatMessageInput)).toBeNull();
   });
 
-  it('shows the composer in a product room without a setting', async () => {
+  it('shows the composer in a product room without a footer', async () => {
     await renderQuickChat(room);
 
     expect(await screen.findByTestId(TEST_IDS.chatMessageInput)).toBeInTheDocument();
