@@ -8,6 +8,7 @@ import { REMOTE_CONFIG_KEYS, remoteConfigGateway, remoteUrlSchema } from '@/doma
 import { environmentsConfig } from './constants';
 import { environmentRepository } from './repository';
 import { type PersistedEnvironmentScalars, dotNsConfigSchema, persistedEnvironmentScalarsSchema } from './schemas';
+import { environmentService } from './service';
 import { type Environment, type EnvironmentId } from './types';
 
 type Params = { id: EnvironmentId; chains: Chain[] };
@@ -37,6 +38,7 @@ function toEnvironment(id: EnvironmentId, chains: Chain[], scalars: EnvironmentS
   return {
     id,
     name: channel.name,
+    stack: environmentService.stackOf(id),
     peopleChain,
     bulletinChain,
     bulletinHopEndpoints: bulletinChain.externalApi?.hop ?? [],

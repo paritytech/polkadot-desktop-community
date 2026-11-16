@@ -8,6 +8,8 @@
 - **Channel / EnvironmentId** — string discriminator persisted in `localStorage` under `pb:settings.environmentId`, and the value
   set as the Firebase Remote Config `environment` custom signal to select a channel. Current values: `nightly`, `unstable`
   (console conditions "Common &lt;value&gt; - signal"). The picker (onboarding/settings) switches between these.
+- **Stack** — the signed Trinity stack descriptor a channel runs, bundled at build time in `.trinity/`; the TrUAPI core takes
+  its chains from it.
 
 ## Scope
 
@@ -15,6 +17,7 @@ This domain owns:
 
 - the `Environment` shape (`types.ts`) and its assembly from Remote Config (`resource.ts`, cached per environment id + chain
   catalog digest), composed with the chain catalog by `$usecase/environment.ts` (`getActive()` / `getById()`);
+- the channel's bundled stack, carried on the `Environment` (`stack`);
 - the small set of config Remote Config does NOT serve, kept in code (`constants.ts`): `hostChatNetwork`,
   `iosBundleId`, `digitalDollarAsset`, plus `CHANNEL_CHAIN_ROLES` — the Android-style role map naming which `chains_v2` entry is
   the people / bulletin / assetHub chain per channel;

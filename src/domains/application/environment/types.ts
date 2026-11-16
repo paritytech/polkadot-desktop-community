@@ -19,6 +19,9 @@ export type Environment = {
   // Display name from the channel catalog.
   name: string;
 
+  // The signed Trinity stack this channel runs; the TrUAPI core takes its chains from it.
+  stack: BundledStack;
+
   peopleChain: Chain;
   bulletinChain: Chain;
 
