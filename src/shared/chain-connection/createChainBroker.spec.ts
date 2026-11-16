@@ -160,6 +160,45 @@ describe('createChainBroker brokering', () => {
     expect(harness.sent).toEqual([]);
   });
 
+  it("answers a request naming another session's token with an error and sends nothing upstream", () => {
+    // Given session a holding a follow token, and session b
+    const harness = createProviderHarness();
+    const broker = createChainBroker({ provider: harness.provider });
+    const messagesA: JsonRpcMessage[] = [];
+    const messagesB: JsonRpcMessage[] = [];
+    const connectionA = broker.connect({ sessionId: 'a', onMessage: message => messagesA.push(message) });
+    const connectionB = broker.connect({ sessionId: 'b', onMessage: message => messagesB.push(message) });
+    connectionA.send({ jsonrpc: '2.0', id: 1, method: 'chainHead_v1_follow', params: [true] });
+    harness.emit({ jsonrpc: '2.0', id: readUpstreamRequest(harness.sent[0]).id, result: 'up-1' });
+    const token = readAnswer(messagesA[0]).result;
+    const sentBefore = harness.sent.length;
+
+    // When b sends a request and an unfollow naming a's token
+    collectWarningsDuring(() => {
+      connectionB.send({ jsonrpc: '2.0', id: 5, method: 'chainHead_v1_header', params: [token, '0xabc'] });
+      connectionB.send({ jsonrpc: '2.0', id: 6, method: 'chainHead_v1_unfollow', params: [token] });
+    });
+
+    // Then b hears an error for each, nothing went upstream, and a still holds its token
+    expect(messagesB).toEqual([
+      { jsonrpc: '2.0', id: 5, error: { code: -32603, message: 'Unknown subscription/token' } },
+      { jsonrpc: '2.0', id: 6, error: { code: -32603, message: 'Unknown subscription/token' } },
+    ]);
+    expect(harness.sent).toHaveLength(sentBefore);
+    expect(broker.hasToken(token)).toBe(true);
+  });
+
+  it('throws on a duplicate open session id, and accepts the id again once that session disconnects', () => {
+    // Given an open session a
+    const broker = createChainBroker({ provider: createProviderHarness().provider });
+    const connection = broker.connect({ sessionId: 'a', onMessage: () => undefined });
+
+    // When / Then a second a is refused while the first is open, and accepted once it left
+    expect(() => broker.connect({ sessionId: 'a', onMessage: () => undefined })).toThrow('Duplicate broker session: a');
+    connection.disconnect();
+    expect(() => broker.connect({ sessionId: 'a', onMessage: () => undefined })).not.toThrow();
+  });
+
   it('As a session following a chain another session follows, I get my own upstream follow and hear only its events under my own token', () => {
     // Given two sessions on one chain
     const harness = createProviderHarness();
@@ -1182,6 +1221,60 @@ describe('createChainBroker upstream answers', () => {
     // Then the session retried once and the node received two follows
     expect(retries).toBe(1);
     expect(harness.sent.filter(message => message.method === 'chainHead_v1_follow')).toHaveLength(2);
+  });
+
+  it('routes a broadcast answer that arrives from inside the upstream send, and maps its token', () => {
+    // Given an upstream that answers a broadcast before its send returns, as the proxy under each lane does
+    const sent: JsonRpcRequest[] = [];
+    const broker = createChainBroker({
+      provider: listener => ({
+        send(message) {
+          sent.push(message);
+          if (message.method === 'transaction_v1_broadcast') {
+            listener({ jsonrpc: '2.0', id: message.id ?? null, result: 'syn-1' });
+          }
+        },
+        disconnect: () => undefined,
+      }),
+    });
+    const messages: JsonRpcMessage[] = [];
+    const connection = broker.connect({ sessionId: 'a', onMessage: message => messages.push(message) });
+
+    // When the session broadcasts, then stops the broadcast under the token it heard
+    connection.send({ jsonrpc: '2.0', id: 1, method: 'transaction_v1_broadcast', params: ['0x0102'] });
+    const answer = readAnswer(messages[0]);
+    const heldBeforeStop = broker.hasToken(answer.result);
+    connection.send({ jsonrpc: '2.0', id: 2, method: 'transaction_v1_stop', params: [answer.result] });
+
+    // Then the session heard a local token under its id, and the stop went upstream under the proxy's token
+    expect(answer.id).toBe(1);
+    expect(heldBeforeStop).toBe(true);
+    expect(sent.map(message => [message.method, message.params])).toEqual([
+      ['transaction_v1_broadcast', ['0x0102']],
+      ['transaction_v1_stop', ['syn-1']],
+    ]);
+  });
+
+  it('passes a follow refusal whose error is not an object to its session', () => {
+    // Given a session waiting on its follow
+    const harness = createProviderHarness();
+    const broker = createChainBroker({ provider: harness.provider });
+    const messages: JsonRpcMessage[] = [];
+    const connection = broker.connect({ sessionId: 'a', onMessage: message => messages.push(message) });
+    connection.send({ jsonrpc: '2.0', id: 1, method: 'chainHead_v1_follow', params: [true] });
+    const follow = readUpstreamRequest(harness.sent[0]);
+
+    // When the node answers it with a null error
+    expect(() => {
+      harness.emit(
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions -- a null error is the malformed upstream answer under test, which the message type does not allow
+        { jsonrpc: '2.0', id: follow.id, error: null } as unknown as JsonRpcMessage,
+      );
+    }).not.toThrow();
+
+    // Then the session still hears the answer under its own id, and the follow no longer counts
+    expect(messages).toEqual([{ jsonrpc: '2.0', id: 1, error: null }]);
+    expect(broker.countFollows()).toBe(0);
   });
 });
 

@@ -310,7 +310,9 @@ export function createChainBroker({ provider, warn = createBrokerWarner() }: Par
       return;
     }
     if (owner.method === CHAIN_HEAD_FOLLOW && 'error' in response) {
-      logBrokerTraffic(`Follow refused by upstream with code ${String(response.error.code)}`);
+      // Typed an error object, which the node does not guarantee at runtime.
+      const error: unknown = response.error;
+      logBrokerTraffic(`Follow refused by upstream with code ${String(isRecord(error) ? error['code'] : undefined)}`);
     }
     answerOwner(owner, response);
   }
