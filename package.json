@@ -10,6 +10,7 @@
     "name": "Polkadot Desktop contributors"
   },
   "scripts": {
+    "stacks:update": "trinity-stack update",
     "config": "config/bin.js",
     "electron": "electron .",
     "preview": "cross-env RENDERER_SOURCE=localhost npm run build:staging && concurrently \"npm run renderer:preview\" \"npm run electron\"",
@@ -160,6 +161,7 @@
     "@electron/notarize": "3.1.2",
     "@eslint/js": "10.0.1",
     "@fontsource/inter": "5.3.0",
+    "@parity/trinity-stack": "0.2.1",
     "@peterek/vite-plugin-favicons": "2.1.0",
     "@playwright/test": "1.65.0",
     "@sentry/vite-plugin": "11.11.0",
