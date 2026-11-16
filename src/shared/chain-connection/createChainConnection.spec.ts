@@ -78,16 +78,18 @@ type TransportsParams = {
   failFirstBuild?: boolean;
   // The first transport's pause throws.
   failFirstPause?: boolean;
+  // The second transport, the first build of lane 1, fails its open and halts.
+  haltSecondOpen?: boolean;
 };
 
 // Fake transports that answer as the node: a fresh token for a follow, `'node'` for `system_name`. Each reports
 // `connecting` as it is built and `connected` as it opens.
-function createTransports({ failFirstBuild = false, failFirstPause = false }: TransportsParams = {}) {
+function createTransports({ failFirstBuild = false, failFirstPause = false, haltSecondOpen = false }: TransportsParams = {}) {
   const built: FakeTransport[] = [];
   let builds = 0;
   let nextToken = 0;
 
-  const createProvider = vi.fn<CreateProvider>((_chain, onStatusChanged) => {
+  const createProvider = vi.fn<CreateProvider>((_chain, onStatusChanged, onHalt) => {
     builds += 1;
     if (failFirstBuild && builds === 1) {
       throw new Error('transport factory failed');
@@ -96,9 +98,16 @@ function createTransports({ failFirstBuild = false, failFirstPause = false }: Tr
     built.push(transport);
     onStatusChanged('connecting');
 
+    const haltsOnOpen = haltSecondOpen && builds === 2;
+
     function provider(onMessage: (message: JsonRpcMessage) => void): JsonRpcConnection {
       transport.calls.push('open');
-      onStatusChanged('connected');
+      if (haltsOnOpen) {
+        onStatusChanged('disconnected');
+        onHalt(new Error('open failed'));
+      } else {
+        onStatusChanged('connected');
+      }
       return {
         send(message) {
           transport.sent.push(message);
@@ -846,6 +855,25 @@ describe('createChainConnection', () => {
       await vi.advanceTimersByTimeAsync(1_000);
       expect(pool.status(chain.genesisHash)).toBe('connected');
       expect(statuses).toEqual(['connecting', 'disconnected', 'connecting', 'connected']);
+    });
+
+    it('heals a lane whose transport halts', async () => {
+      const { pool, transports } = createLanePool({ followLimit: () => 2 }, createTransports({ haltSecondOpen: true }));
+      const first = connectConsumer(pool, chain);
+      const second = connectConsumer(pool, chain);
+      const third = connectConsumer(pool, chain);
+      await vi.runAllTimersAsync();
+
+      follow(first, 'follow-1');
+      follow(second, 'follow-2');
+      follow(third, 'follow-3');
+      await vi.runAllTimersAsync();
+
+      expect(transports.built).toHaveLength(3);
+      expect(transports.built[1]!.calls).toEqual(['open', 'disconnect']);
+      expect(listSent(transports.built[2], CHAIN_HEAD_FOLLOW)).toHaveLength(1);
+      expect(readAnswers(third, 'follow-3')).toHaveLength(1);
+      expect(pool.status(chain.genesisHash)).toBe('connected');
     });
 
     it('closes every lane when the chain is destroyed', async () => {

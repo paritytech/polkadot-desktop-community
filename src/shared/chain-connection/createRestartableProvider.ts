@@ -27,10 +27,9 @@ export type RestartableJsonRpcProvider = JsonRpcProvider & {
 
 type ActiveTransport = {
   provider: JsonRpcProvider;
-  connection: JsonRpcConnection;
-  // The proxy's own halt trigger. Calling it is what makes `getSyncProvider` ask
-  // the factory for the next transport.
-  halt(error?: unknown): void;
+  // Closes the transport and makes `getSyncProvider` ask the factory for the
+  // next one. Acts once per build.
+  close(error?: unknown): void;
 };
 
 // A provider whose underlying transport can be replaced at any time.
@@ -42,7 +41,9 @@ type ActiveTransport = {
 // subscription-replay wrapper re-establishes the legacy subscriptions that
 // `chainHead` bookkeeping does not cover. Consumers see the same interruption a
 // dropped socket would have caused, and nothing above has to be rebuilt.
-export function createRestartableProvider(createTransport: () => JsonRpcProvider): RestartableJsonRpcProvider {
+export function createRestartableProvider(
+  createTransport: (onHalt: (error?: unknown) => void) => JsonRpcProvider,
+): RestartableJsonRpcProvider {
   let active: ActiveTransport | null = null;
   let notifyReconnect: VoidFunction = noop;
   // Survives a restart: a transport built while the host has the pool paused
@@ -63,9 +64,31 @@ export function createRestartableProvider(createTransport: () => JsonRpcProvider
     onResult((onMessage, halt) => {
       let provider: JsonRpcProvider;
       let connection: JsonRpcConnection;
+      let transport: ActiveTransport | null = null;
+      let closed = false;
+      let haltedWhileBuilding = false;
+      let haltError: unknown;
+
+      // A transport that cannot recover by itself (a light client whose
+      // connection is gone) halts its build, and the proxy owns the retry: it
+      // stops the answered follows, re-sends what was in flight and rebuilds on
+      // its backoff. A transport that recovers by itself never calls it.
+      //
+      // It must not throw: on the build path an error would abort the proxy's
+      // connect before it re-sends its buffered requests.
+      const onHalt = (error?: unknown) => {
+        if (transport) {
+          transport.close(error);
+        } else if (!haltedWhileBuilding) {
+          // The build is not registered yet, so the halt waits for it. A build
+          // that then fails is halted by the failure path below.
+          haltedWhileBuilding = true;
+          haltError = error;
+        }
+      };
 
       try {
-        provider = createTransport();
+        provider = createTransport(onHalt);
         // Paused before the transport is handed its message callback: a
         // transport that opens its connection right there (a light client, say)
         // would otherwise be up for as long as it takes to pause it again,
@@ -84,28 +107,49 @@ export function createRestartableProvider(createTransport: () => JsonRpcProvider
         return { send: noop, disconnect: noop };
       }
 
-      // The transport's own halt channel is deliberately not wired up: a
-      // transport either recovers on its own (the ws provider proxies its
-      // reconnects internally) or reports `disconnected` and stays down. `halt`
-      // is kept for `restart`, which is the only reason this layer replaces one.
-      const transport: ActiveTransport = { provider, connection, halt };
-      active = transport;
+      const current: ActiveTransport = {
+        provider,
+        close(error) {
+          if (closed) return;
+          closed = true;
+          if (active === current) active = null;
+          // Close before halting: the halt schedules the next `createTransport`,
+          // and a transport left open would keep its socket (or light-client
+          // slot) running alongside its replacement.
+          try {
+            connection.disconnect();
+          } catch (disconnectError) {
+            console.warn('[chain-connection] closing a replaced transport failed', disconnectError);
+          }
+          halt(error);
+        },
+      };
+      transport = current;
+
+      if (haltedWhileBuilding) {
+        current.close(haltError);
+
+        return { send: noop, disconnect: noop };
+      }
+
+      active = current;
       built = true;
 
       return {
         send: message => connection.send(message),
         disconnect: () => {
-          if (active === transport) active = null;
+          closed = true;
+          if (active === current) active = null;
           connection.disconnect();
         },
       };
     });
 
-    // `onResult` runs the proxy's connect synchronously, so by here the proxy is
-    // connected and the replayed subscribes go out on the new transport rather
-    // than into a buffer that a failed connect would discard. A failed attempt
-    // skips the replay entirely — the halt above has already queued another one,
-    // which will do it against a transport that exists.
+    // `onResult` runs the proxy's connect synchronously, so a build that is up
+    // by here has the proxy connected, and the replayed subscribes go out on it.
+    // A build that failed, or was halted as it registered, skips the replay: its
+    // halt put the proxy back to buffering, and a replay there would reach the
+    // next build on top of that build's own replay, sending each subscribe twice.
     if (built) notifyReconnect();
 
     // Nothing to cancel: `onResult` above already resolved this attempt.
@@ -116,17 +160,9 @@ export function createRestartableProvider(createTransport: () => JsonRpcProvider
 
   return Object.assign(provider, {
     restart() {
-      const transport = active;
       // Nothing to replace while the proxy is between transports — whatever it
       // asks the factory for next is already built from the current settings.
-      if (!transport) return;
-
-      active = null;
-      // Close before halting: the halt schedules the next `createTransport`, and
-      // a transport left open would keep its socket (or light client) running
-      // alongside its replacement.
-      transport.connection.disconnect();
-      transport.halt();
+      active?.close();
     },
     pause() {
       paused = true;

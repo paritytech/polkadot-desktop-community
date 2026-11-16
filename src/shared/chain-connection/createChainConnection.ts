@@ -11,7 +11,13 @@ import { runEvery } from './runEvery';
 import { type ChainConfig, type ConnectionStatus } from './types';
 
 export type ChainConnectionConfig<C extends ChainConfig, T = PolkadotClient> = {
-  createProvider(chain: C, onStatusChanged: (status: ConnectionStatus) => void): JsonRpcProvider;
+  // A provider that cannot recover by itself calls `onHalt` once its connection is gone for good, and the pool rebuilds
+  // it. A provider that recovers by itself ignores it.
+  createProvider(
+    chain: C,
+    onStatusChanged: (status: ConnectionStatus) => void,
+    onHalt: (error?: unknown) => void,
+  ): JsonRpcProvider;
   clientOptions?(chain: C): Parameters<typeof createClient>[1];
   // Defaults to polkadot-api's `createClient`. An injection point for tests and for wrapping client construction — polkadot-api is imported either way.
   createClient?: typeof createClient;
@@ -92,14 +98,14 @@ export function createChainConnection<C extends ChainConfig, T = PolkadotClient>
     // `disconnected` while its successor is already connecting, so status is
     // scoped to the generation that produced it and stale updates are dropped.
     let generation = 0;
-    return createRestartableProvider(() => {
+    return createRestartableProvider(onHalt => {
       const current = ++generation;
       const update = (status: ConnectionStatus) => {
         if (current === generation) onLaneStatus(status);
       };
 
       try {
-        return createProvider(chain, update);
+        return createProvider(chain, update, onHalt);
       } catch (error) {
         // The bump above already muted the previous transport's updates, so a
         // factory that throws would otherwise leave the chain reporting the
