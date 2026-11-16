@@ -35,8 +35,8 @@ async function defaultCreate(callbacks: RequiredHostCallbacks, config: TruapiHos
 /**
  * Boot the core. Idempotent — concurrent and repeated calls share one runtime.
  *
- * MUST NOT be called at module-import time: the People and Bulletin genesis hashes
- * come from the active environment, which resolves asynchronously.
+ * MUST NOT be called at module-import time: the stack comes from the active
+ * environment, which resolves asynchronously.
  */
 async function start(
   callbacks: RequiredHostCallbacks,

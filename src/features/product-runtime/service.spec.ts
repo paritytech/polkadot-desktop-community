@@ -43,7 +43,9 @@ describe('productRuntimeService.toModalProps', () => {
   });
 
   it('flags a legacy-account sign-payload review as legacy', () => {
-    expect(review({ tag: 'SignPayload', value: { tag: 'LegacyAccount', value: { signer: '0xabc', payload } } })).toMatchObject({
+    expect(
+      review({ tag: 'SignPayload', value: { tag: 'LegacyAccount', value: { account, request: { signer: '0xabc', payload } } } }),
+    ).toMatchObject({
       target: 'signPayload',
       legacyAccount: true,
     });
@@ -62,7 +64,10 @@ describe('productRuntimeService.toModalProps', () => {
     expect(
       review({
         tag: 'SignRaw',
-        value: { tag: 'LegacyAccount', value: { request: { signer: '0xabc', payload: rawPayload }, watermarked: true } },
+        value: {
+          tag: 'LegacyAccount',
+          value: { account: { tag: 'Identity' }, request: { signer: '0xabc', payload: rawPayload }, watermarked: true },
+        },
       }),
     ).toMatchObject({ target: 'signRaw', legacyAccount: true });
   });
@@ -201,6 +206,24 @@ describe('productRuntimeService.toChatMessageContent', () => {
       type: 'text',
       text: 'Unsupported message format',
     });
+  });
+});
+
+describe('productRuntimeService.toRoomFooter', () => {
+  it('maps the text input in either form', () => {
+    expect(productRuntimeService.toRoomFooter('demo.dot', 'TextInput')).toEqual({ type: 'text' });
+    expect(productRuntimeService.toRoomFooter('demo.dot', { tag: 'TextInput' })).toEqual({ type: 'text' });
+  });
+
+  it('maps an empty footer in either form', () => {
+    expect(productRuntimeService.toRoomFooter('demo.dot', 'Empty')).toEqual({ type: 'none' });
+    expect(productRuntimeService.toRoomFooter('demo.dot', { tag: 'Empty' })).toEqual({ type: 'none' });
+  });
+
+  it('decodes a card payload from hex and binds it to the product', () => {
+    expect(
+      productRuntimeService.toRoomFooter('demo.dot', { tag: 'Card', value: { messageType: 'm', payload: '0x0102' } }),
+    ).toEqual({ type: 'card', productId: 'demo.dot', messageType: 'm', payload: new Uint8Array([1, 2]) });
   });
 });
 

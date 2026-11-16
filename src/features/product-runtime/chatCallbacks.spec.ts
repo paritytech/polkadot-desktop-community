@@ -120,6 +120,22 @@ describe('createChatCallbacks', () => {
     expect(setFooterMock).toHaveBeenCalledWith({ productId: 'demo.dot', roomId: 'r1', userId: USER, footer: { type: 'text' } });
   });
 
+  it('passes a Card footer on as the product card', async () => {
+    connect();
+    setFooterMock.mockResolvedValue('Applied');
+
+    const result = { current: createChatCallbacks() };
+    const footer = { tag: 'Card' as const, value: { messageType: 'poll', payload: '0x0102' as const } };
+
+    await expect(result.current.chat.setChatRoomFooter(product, { roomId: 'r1', footer })).resolves.toBeUndefined();
+    expect(setFooterMock).toHaveBeenCalledWith({
+      productId: 'demo.dot',
+      roomId: 'r1',
+      userId: USER,
+      footer: { type: 'card', productId: 'demo.dot', messageType: 'poll', payload: new Uint8Array([1, 2]) },
+    });
+  });
+
   it('rejects setChatRoomFooter with UnknownRoom when the room does not exist', async () => {
     connect();
     setFooterMock.mockResolvedValue('UnknownRoom');

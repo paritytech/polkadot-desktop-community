@@ -1,24 +1,15 @@
-import { type ChatRoomFooter, type GenericError, type HostChatListSubscribeItem, type Result } from '@parity/truapi';
+import { type GenericError, type HostChatListSubscribeItem, type Result } from '@parity/truapi';
 import { type ChatPlatform } from '@parity/truapi-host';
 import { nanoid } from 'nanoid';
 import { err, ok } from 'neverthrow';
 import { distinctUntilChanged, lastValueFrom, map, of, switchMap } from 'rxjs';
 
-import {
-  type ChatMessage,
-  type RoomFooter,
-  createMessageInProductRoom,
-  productChatService,
-  productRoomUseCase,
-} from '@/domains/chat';
+import { type ChatMessage, createMessageInProductRoom, productChatService, productRoomUseCase } from '@/domains/chat';
 import { truapiRuntime, truapiRuntimeUseCase } from '@/aggregates/truapi-runtime';
 
 import { productRuntimeService } from './service';
 
 type ChatCallbacks = { chat: Required<ChatPlatform> };
-
-// TODO(truapi-0.31): replace with the core's card-capable footer when the TrUAPI 0.31 upgrade lands.
-const FOOTER_BY_CORE: Record<ChatRoomFooter, RoomFooter> = { TextInput: { type: 'text' }, Empty: { type: 'none' } };
 
 type RoomsItem = Result<HostChatListSubscribeItem, GenericError>;
 
@@ -107,7 +98,7 @@ export function createChatCallbacks(): ChatCallbacks {
             productId: product.productId,
             roomId: request.roomId,
             userId,
-            footer: FOOTER_BY_CORE[request.footer],
+            footer: productRuntimeService.toRoomFooter(product.productId, request.footer),
           });
         } catch (reason) {
           throw { tag: 'Unknown', value: { reason: String(reason) } };

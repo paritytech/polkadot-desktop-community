@@ -1,6 +1,7 @@
 import { type ProductId } from '@parity/truapi';
 import {
   type AuthState,
+  type BundledStack,
   type ExecutableKind,
   type PermissionAuthorizationRequest,
   type PermissionAuthorizationStatus,
@@ -86,10 +87,7 @@ export type TruapiHostConfig = {
    * reports `Web` there and `macOS` here. The key mirrors the core's config shape.
    */
   platform?: { type?: string; version?: string };
-  people: { genesisHash: string | Uint8Array };
-  bulletin: { genesisHash: string | Uint8Array };
-  // Asset Hub carries the dotNS records the core reads session usernames from.
-  assetHub: { genesisHash: string | Uint8Array };
+  stack: BundledStack;
   pairing: { deeplinkScheme: string };
 };
 

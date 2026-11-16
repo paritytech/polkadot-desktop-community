@@ -27,7 +27,6 @@ export function createStubHostCallbacks(): RequiredHostCallbacks {
     },
     features: {
       featureSupported: notImplemented('featureSupported'),
-      supportedChains: notImplemented('supportedChains'),
     },
     extrinsicVersion: { transactionExtensionVersions: notImplemented('transactionExtensionVersions') },
     productStorage: {

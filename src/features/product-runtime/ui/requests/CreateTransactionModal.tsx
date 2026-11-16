@@ -33,7 +33,7 @@ type Props = {
  */
 export const CreateTransactionModal = ({ review, onDecide }: Props) => {
   const { t } = useTranslation();
-  const payload = review.tag === 'Product' ? review.value.payload : review.value;
+  const { payload } = review.value;
   const { data: decoded } = useDecodedCall({ genesisHash: payload.genesisHash, callData: payload.callData });
   const chainName = useChainName(payload.genesisHash);
 
@@ -42,11 +42,11 @@ export const CreateTransactionModal = ({ review, onDecide }: Props) => {
   const productAccount = review.tag === 'Product' ? review.value.payload.signer : null;
   const signer =
     review.tag === 'LegacyAccount'
-      ? review.value.signer
+      ? review.value.payload.signer
       : productRuntimeService.formatProductAccount(review.value.payload.signer);
 
   const { address: derivedAddress, pending: addressPending } = useProductAccountAddress(productAccount);
-  const address = review.tag === 'LegacyAccount' ? review.value.signer : derivedAddress;
+  const address = review.tag === 'LegacyAccount' ? review.value.payload.signer : derivedAddress;
   const addressFailed = productAccount !== null && !addressPending && derivedAddress === null;
 
   return (

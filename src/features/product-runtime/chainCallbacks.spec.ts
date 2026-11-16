@@ -1,6 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { type Environment, environmentUseCase } from '@/domains/application';
 import { chainRegistry, customChainUseCase } from '@/domains/network';
 
 const GENESIS_HEX = '0x91b171bb158e2d3848fa23a9f1c25182fb8e20313b2c1eb49219da7a70ce90c3';
@@ -9,20 +8,12 @@ const UNKNOWN_BYTES = new Uint8Array(32).fill(9);
 
 const relayChain = { chainId: 'relay', genesisHash: GENESIS_HEX, name: 'Polkadot', nodes: [] };
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-assertions -- the callbacks read these four fields
-const activeEnvironment = {
-  id: 'paseo',
-  peopleChain: relayChain,
-  bulletinChain: relayChain,
-  dotnsChain: relayChain,
-} as unknown as Environment;
-
 const sendSpy = vi.fn();
 const disconnectSpy = vi.fn();
 let capturedOnMessage: ((message: unknown) => void) | null = null;
 
-// The registry, the chain catalog and the active environment are all plain objects,
-// spied in place: no socket opens, and the callbacks are the only real code on the path.
+// The registry and the chain catalog are plain objects, spied in place: no socket
+// opens, and the callbacks are the only real code on the path.
 vi.spyOn(chainRegistry, 'getProvider').mockImplementation(
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions -- the callbacks only send and disconnect
   (() => (onMessage: (message: unknown) => void) => {
@@ -33,7 +24,6 @@ vi.spyOn(chainRegistry, 'getProvider').mockImplementation(
 );
 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions -- the callbacks only read genesis hashes
 vi.spyOn(customChainUseCase, 'getAllChainsMap').mockResolvedValue({ [GENESIS_HEX]: relayChain } as never);
-vi.spyOn(environmentUseCase, 'getActive').mockResolvedValue(activeEnvironment);
 
 const { createChainCallbacks } = await import('./chainCallbacks');
 
@@ -51,19 +41,6 @@ describe('createChainCallbacks', () => {
 
     await expect(result.current.features.featureSupported({ tag: 'Chain', value: { genesisHash: '0xdead' } })).resolves.toEqual({
       supported: false,
-    });
-  });
-
-  it('reports the role chains it serves', async () => {
-    const result = { current: createChainCallbacks() };
-
-    await expect(result.current.features.supportedChains()).resolves.toMatchObject({
-      network: 'paseo',
-      chains: [
-        { identifier: 'People', genesisHash: GENESIS_HEX },
-        { identifier: 'Bulletin', genesisHash: GENESIS_HEX },
-        { identifier: 'AssetHub', genesisHash: GENESIS_HEX },
-      ],
     });
   });
 

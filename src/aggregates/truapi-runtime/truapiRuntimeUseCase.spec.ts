@@ -15,9 +15,7 @@ const performUserLogoutMock = vi.spyOn(sessionUseCase, 'performUserLogout').mock
 
 const hostConfig: TruapiHostConfig = {
   host: { name: 'Polkadot Desktop', platform: 'Desktop' },
-  people: { genesisHash: '0x01' },
-  bulletin: { genesisHash: '0x02' },
-  assetHub: { genesisHash: '0x03' },
+  stack: { pointer: 'polkadotapp://stack?key=0x01&url=https%3A%2F%2Fexample.test', descriptor: new Uint8Array() },
   pairing: { deeplinkScheme: 'polkadot' },
 };
 

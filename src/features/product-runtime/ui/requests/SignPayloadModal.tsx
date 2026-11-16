@@ -31,7 +31,7 @@ type Props = {
  */
 export const SignPayloadModal = ({ review, onDecide }: Props) => {
   const { t } = useTranslation();
-  const request = review.tag === 'Product' ? review.value.request : review.value;
+  const { request } = review.value;
   const source = productRuntimeService.payloadCallSource(request.payload);
   const { data: decoded } = useDecodedCall(source);
   const chainName = useChainName(source.genesisHash);
@@ -39,12 +39,12 @@ export const SignPayloadModal = ({ review, onDecide }: Props) => {
   const call = decoded ? productRuntimeService.formatCallTitle(decoded.pallet, decoded.method) : null;
   const signer =
     review.tag === 'LegacyAccount'
-      ? review.value.signer
+      ? review.value.request.signer
       : productRuntimeService.formatProductAccount(review.value.request.account);
 
   const productAccount = review.tag === 'Product' ? review.value.request.account : null;
   const { address: derivedAddress, pending: addressPending } = useProductAccountAddress(productAccount);
-  const address = review.tag === 'LegacyAccount' ? review.value.signer : derivedAddress;
+  const address = review.tag === 'LegacyAccount' ? review.value.request.signer : derivedAddress;
   const addressFailed = productAccount !== null && !addressPending && derivedAddress === null;
 
   return (
