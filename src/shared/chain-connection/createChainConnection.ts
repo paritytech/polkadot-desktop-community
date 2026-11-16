@@ -6,6 +6,7 @@ import { type ChainLanes, createChainLanes } from './createChainLanes';
 import { createConnectionManager } from './createConnectionManager';
 import { createRefCounter } from './createRefCounter';
 import { type RestartableJsonRpcProvider, createRestartableProvider } from './createRestartableProvider';
+import { noop } from './noop';
 import { runEvery } from './runEvery';
 import { type ChainConfig, type ConnectionStatus } from './types';
 
@@ -44,9 +45,9 @@ type ChainConnection<C extends ChainConfig, T = PolkadotClient> = {
   //
   // Pooled clients, resolved apis and refcounts all survive: consumers keep the
   // references they already hold and see the same interruption a dropped socket
-  // would have caused. A chain nobody holds is skipped — one the pool never
-  // connected to, and one still waiting out `destroyDelay` — and picks the new
-  // transport up when it is next acquired.
+  // would have caused. A chain the pool never connected to is skipped. A chain
+  // still waiting out `destroyDelay` is destroyed rather than restarted: nobody
+  // holds it, so its next acquire builds lanes from the current settings.
   //
   // The old transports close at once, the new ones come up on the reconnect
   // backoff; see `restart` in `createRestartableProvider`.
@@ -199,7 +200,9 @@ export function createChainConnection<C extends ChainConfig, T = PolkadotClient>
     })();
 
     pendingResolutions.set(chain.genesisHash, { promise, polkadotClient });
-    promise.finally(() => pendingResolutions.delete(chain.genesisHash));
+    // `.finally` passes a rejection on to a promise of its own. The caller handles it through `promise`, so this
+    // copy is dropped.
+    promise.finally(() => pendingResolutions.delete(chain.genesisHash)).catch(noop);
     return promise;
   };
 
@@ -296,19 +299,24 @@ export function createChainConnection<C extends ChainConfig, T = PolkadotClient>
     },
 
     reconnect(genesisHashes) {
-      const restarts: (() => void)[] = [];
+      const steps: (() => void)[] = [];
       for (const [genesisHash, { lanes }] of entries) {
         if (genesisHashes && !genesisHashes.includes(genesisHash)) continue;
-        // Nobody holds this one any more — it is only waiting out `destroyDelay`.
-        // Rebuilding its transport would open a socket the destruction timer is
-        // about to throw away.
-        if (destructionTimers.has(genesisHash)) continue;
+        // Nobody holds a chain waiting out `destroyDelay`, so it is closed rather than restarted: a restart would open a
+        // socket only for the timer to discard it, and keeping it would hand a re-acquire inside the delay the old
+        // transport. Its next acquire builds lanes from the current settings.
+        if (destructionTimers.has(genesisHash)) {
+          steps.push(() => {
+            destroyClient(genesisHash);
+          });
+          continue;
+        }
 
-        restarts.push(() => {
+        steps.push(() => {
           lanes.restart();
         });
       }
-      runEvery(restarts, 'reconnect failed on several chains');
+      runEvery(steps, 'reconnect failed on several chains');
     },
   };
 }

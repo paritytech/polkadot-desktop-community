@@ -280,22 +280,28 @@ describe('createChainConnection', () => {
       const resolve = vi.fn().mockRejectedValue(new Error('resolve failed'));
       const { connection } = createTestConnection({ resolve });
 
-      // Suppress the unhandled rejection from the detached .finally() promise chain
-      // in createChainConnection.ts (pendingResolutions cleanup).
-      const suppress = () => {};
-      process.on('unhandledRejection', suppress);
-
       await expect(connection.lockApi(testChain('a'))).rejects.toThrow('resolve failed');
-
-      // Let microtask queue flush so the .finally() settles
-      await new Promise(r => setTimeout(r, 0));
-      process.off('unhandledRejection', suppress);
 
       // After resolve failure with last ref released, new lock should create fresh client
       resolve.mockResolvedValue('recovered');
       const { api, unlock } = await connection.lockApi(testChain('a'));
       expect(api).toBe('recovered');
       unlock();
+    });
+
+    it('leaves no unhandled rejection when resolve fails', async () => {
+      const error = new Error('resolve failed');
+      const failingResolve = vi.fn().mockRejectedValueOnce(error);
+      const { connection } = createTestConnection({ resolve: failingResolve });
+      const listener = vi.fn();
+      process.on('unhandledRejection', listener);
+
+      await expect(connection.lockApi(testChain('a'))).rejects.toBe(error);
+      // Node reports an unhandled rejection only after the microtasks drain, so a macrotask has to pass first.
+      await new Promise(resolve => setTimeout(resolve, 0));
+      process.off('unhandledRejection', listener);
+
+      expect(listener).not.toHaveBeenCalled();
     });
   });
 
@@ -586,11 +592,15 @@ describe('createChainConnection', () => {
       expect(createProvider).not.toHaveBeenCalled();
     });
 
-    it('skips a chain that is only waiting out destroyDelay', async () => {
-      const createProvider = vi.fn(() => createMockProvider().provider);
+    it('closes a chain waiting out destroyDelay on reconnect, and builds the new transport on its next acquire', async () => {
+      const first = createMockProvider();
+      const second = createMockProvider();
+      const providers = [first, second];
+      const createProvider = vi.fn(() => providers.shift()!.provider);
+      const clients = createClientFactory();
       const connection = createChainConnection<ChainConfig>({
         createProvider,
-        createClient: createClientFactory().createClient,
+        createClient: clients.createClient,
         resolve: resolveClient,
         followLimit: () => FOLLOW_LIMIT,
         destroyDelay: 10_000,
@@ -601,11 +611,15 @@ describe('createChainConnection', () => {
       unlock();
 
       connection.reconnect();
-      await settle();
+      expect(first.disconnect).toHaveBeenCalledTimes(1);
 
-      // Nobody holds it; the destruction timer is about to discard the client,
-      // so a fresh transport would be opened only to be thrown away.
-      expect(createProvider).toHaveBeenCalledTimes(1);
+      const { unlock: unlockAgain } = await connection.lockApi(testChain('a'));
+      await settle();
+      expect(createProvider).toHaveBeenCalledTimes(2);
+
+      await vi.advanceTimersByTimeAsync(10_000);
+      expect(clients.last().destroyed).toBe(0);
+      unlockAgain();
     });
 
     it('drops a status the replaced transport reports after the swap', async () => {
@@ -703,10 +717,11 @@ describe('createChainConnection', () => {
       follow(b, 'b-2');
       await vi.runAllTimersAsync();
 
-      // Both lanes were rebuilt, and the re-follows all went to one of them.
+      // Both lanes were rebuilt in lane order, and the re-follows went home to lane 0, which has room again.
       const rebuilt = transports.built.slice(2);
       expect(rebuilt).toHaveLength(2);
-      expect(rebuilt.map(transport => listSent(transport, CHAIN_HEAD_FOLLOW).length).sort()).toEqual([0, 2]);
+      expect(listSent(rebuilt[0], CHAIN_HEAD_FOLLOW)).toHaveLength(2);
+      expect(listSent(rebuilt[1], CHAIN_HEAD_FOLLOW)).toHaveLength(0);
     });
 
     it('pauses every chain even when one chain throws', async () => {

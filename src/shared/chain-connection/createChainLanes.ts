@@ -10,7 +10,6 @@ import { type RestartableJsonRpcProvider } from './createRestartableProvider';
 import { runEvery } from './runEvery';
 import { type ConnectionStatus } from './types';
 
-// The lanes of one chain, which keep each connection under the chain's follow limit.
 export type ChainLanes = ReturnType<typeof createChainLanes>;
 
 type ChainLanesParams = {
@@ -86,7 +85,6 @@ export function createChainLanes({
     };
   }
 
-  // Opens a new lane. Throws what its build throws.
   function addLane(): Lane {
     const lane = buildLane();
     lanes.push(lane);
