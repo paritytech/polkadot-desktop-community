@@ -17,6 +17,8 @@ const ARCHIVE_HASH: HexString = '0xc1d1';
 // never read.
 const PNG = new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0x00]);
 const GIF = new Uint8Array([0x47, 0x49, 0x46, 0x38, 0x39, 0x61]);
+const PNG_HEX: HexString = '0x89504e470d0a1a0a00';
+const GIF_HEX: HexString = '0x474946383961';
 
 function productWithWorker(): Product {
   return {
@@ -109,6 +111,38 @@ describe('rendererUseCase.resolveImage', () => {
     const url = await rendererUseCase.resolveImage({
       productId: 'gone.dot',
       source: { tag: 'Archive', value: 'img/logo.png' },
+      ipfsGatewayUrl: GATEWAY,
+    });
+
+    expect(url).toBeNull();
+  });
+
+  it('draws an inline source from its own bytes, reading neither IPFS nor the archive', async () => {
+    const bulletin = vi.fn(() => PNG);
+    ipfsRawResource.instead(bulletin);
+    const resolveProduct = vi.spyOn(resolveProductUseCase, 'resolveProduct');
+
+    const inline = await rendererUseCase.resolveImage({
+      productId: 'a.dot',
+      source: { tag: 'Inline', value: PNG_HEX },
+      ipfsGatewayUrl: GATEWAY,
+    });
+    ipfsRawResource.instead(() => PNG);
+    const bulletinUrl = await rendererUseCase.resolveImage({
+      productId: 'a.dot',
+      source: { tag: 'Bulletin', value: 'bafyimage' },
+      ipfsGatewayUrl: GATEWAY,
+    });
+
+    expect(inline).toBe(bulletinUrl);
+    expect(bulletin).not.toHaveBeenCalled();
+    expect(resolveProduct).not.toHaveBeenCalled();
+  });
+
+  it('draws nothing for inline bytes outside the host allowlist', async () => {
+    const url = await rendererUseCase.resolveImage({
+      productId: 'a.dot',
+      source: { tag: 'Inline', value: GIF_HEX },
       ipfsGatewayUrl: GATEWAY,
     });
 

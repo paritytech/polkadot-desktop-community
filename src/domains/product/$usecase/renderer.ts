@@ -1,4 +1,5 @@
 import { type ImageSource } from '@parity/truapi';
+import { fromHex } from 'polkadot-api/utils';
 import { firstValueFrom } from 'rxjs';
 
 import { ipfsRawResource, ipfsService } from '@/domains/network';
@@ -24,10 +25,7 @@ type ResolveImageParams = {
  * the host never sniffs harder or substitutes a placeholder for a product's content.
  */
 async function resolveImage({ productId, source, ipfsGatewayUrl }: ResolveImageParams): Promise<string | null> {
-  const bytes =
-    source.tag === 'Bulletin'
-      ? await readBulletinBlob(source.value, ipfsGatewayUrl)
-      : await readArchiveFile(productId, source.value, ipfsGatewayUrl);
+  const bytes = await readSource(productId, source, ipfsGatewayUrl);
 
   if (!bytes) return null;
 
@@ -35,6 +33,17 @@ async function resolveImage({ productId, source, ipfsGatewayUrl }: ResolveImageP
   const format = manifestService.sniffImageFormat(bytes);
 
   return format ? ipfsService.toDataUrl(bytes, format) : null;
+}
+
+async function readSource(productId: string, source: ImageSource, ipfsGatewayUrl: string): Promise<Uint8Array | null> {
+  switch (source.tag) {
+    case 'Inline':
+      return fromHex(source.value);
+    case 'Bulletin':
+      return readBulletinBlob(source.value, ipfsGatewayUrl);
+    case 'Archive':
+      return readArchiveFile(productId, source.value, ipfsGatewayUrl);
+  }
 }
 
 /**
