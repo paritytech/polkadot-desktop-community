@@ -147,10 +147,10 @@ export function createRestartableProvider(
 
     // `onResult` runs the proxy's connect synchronously, so a build that is up
     // by here has the proxy connected, and the replayed subscribes go out on it.
-    // A build that failed, or was halted as it registered or while the proxy
-    // re-sent its buffer, skips the replay: its halt put the proxy back to
-    // buffering, and a replay there would reach the next build on top of that
-    // build's own replay, sending each subscribe twice.
+    // The replay already skips a subscription whose re-subscribe is still in
+    // flight, because the proxy re-sends it. This guard covers the other case:
+    // a build that failed, or was halted before it was registered, has no
+    // transport to replay into, so the replay is skipped entirely.
     if (built && active) notifyReconnect();
 
     // Nothing to cancel: `onResult` above already resolved this attempt.
