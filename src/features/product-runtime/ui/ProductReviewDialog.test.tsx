@@ -7,7 +7,7 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { TEST_IDS } from '@/shared/test-ids';
 import { TranslationProvider } from '@/shared/translation';
-import { type ReviewModalProps } from '../service';
+import { type ReviewModalProps, productRuntimeService } from '../service';
 
 import { ProductReviewDialog } from './ProductReviewDialog';
 
@@ -19,6 +19,7 @@ const A = asProductId('a.dot');
 const B = asProductId('b.dot');
 
 const account = { dotNsIdentifier: DEMO, derivationIndex: { tag: 'Index' as const, value: 3 } };
+const LEGACY_SIGNER = '5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY';
 
 function show(props: ReviewModalProps) {
   render(
@@ -131,6 +132,61 @@ describe('ProductReviewDialog', () => {
 
     expect(screen.getByTestId(TEST_IDS.signReviewAccount)).toBeInTheDocument();
     expect(screen.queryByTestId(TEST_IDS.signReviewCallData)).not.toBeInTheDocument();
+  });
+
+  it('names the product account a legacy review signs with', async () => {
+    const productAccount = { dotNsIdentifier: DEMO, derivationIndex: { tag: 'Index' as const, value: 0 } };
+
+    show({
+      target: 'signPayload',
+      legacyAccount: true,
+      review: {
+        tag: 'LegacyAccount',
+        value: {
+          account: productAccount,
+          request: {
+            signer: LEGACY_SIGNER,
+            payload: {
+              blockHash: '0xcc',
+              blockNumber: '0x01',
+              era: '0x00',
+              genesisHash: '0xaa',
+              method: '0xbb',
+              nonce: '0x00',
+              specVersion: '0x01',
+              tip: '0x00',
+              transactionVersion: '0x01',
+              signedExtensions: [],
+              version: 4,
+            },
+          },
+        },
+      },
+    });
+
+    expect(await screen.findByTestId(TEST_IDS.requestProductHeader)).toBeInTheDocument();
+    expect(screen.getByTestId(TEST_IDS.signReviewAccount)).toHaveTextContent(
+      productRuntimeService.formatProductAccount(productAccount),
+    );
+  });
+
+  // The identity is the user's own wallet account: no product to name, so the raw signer stays.
+  it('keeps the raw signer on a legacy review the identity signs', async () => {
+    show({
+      target: 'signRaw',
+      legacyAccount: true,
+      review: {
+        tag: 'LegacyAccount',
+        value: {
+          account: { tag: 'Identity' },
+          request: { signer: LEGACY_SIGNER, payload: { tag: 'Bytes', value: { bytes: '0x01' } } },
+          watermarked: true,
+        },
+      },
+    });
+
+    expect(await screen.findByTestId(TEST_IDS.signReviewAccount)).toHaveTextContent(LEGACY_SIGNER);
+    expect(screen.queryByTestId(TEST_IDS.requestProductHeader)).not.toBeInTheDocument();
   });
 
   it('routes identity disclosure to the username dialog', () => {

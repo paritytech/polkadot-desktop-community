@@ -40,9 +40,12 @@ export const CreateTransactionModal = ({ review, onDecide }: Props) => {
   const call = decoded ? productRuntimeService.formatCallTitle(decoded.pallet, decoded.method) : null;
   const batchHint = decoded ? productRuntimeService.batchBehaviorKey(decoded.pallet, decoded.method) : null;
   const productAccount = review.tag === 'Product' ? review.value.payload.signer : null;
+  const legacyAccount = review.tag === 'LegacyAccount' ? productRuntimeService.legacySignerAccount(review.value.account) : null;
   const signer =
     review.tag === 'LegacyAccount'
-      ? review.value.payload.signer
+      ? legacyAccount
+        ? productRuntimeService.formatProductAccount(legacyAccount)
+        : review.value.payload.signer
       : productRuntimeService.formatProductAccount(review.value.payload.signer);
 
   const { address: derivedAddress, pending: addressPending } = useProductAccountAddress(productAccount);
@@ -51,7 +54,7 @@ export const CreateTransactionModal = ({ review, onDecide }: Props) => {
 
   return (
     <ReviewRequestLayout
-      identifier={productAccount?.dotNsIdentifier ?? null}
+      identifier={(productAccount ?? legacyAccount)?.dotNsIdentifier ?? null}
       title={call ? t('feature.browser.signingRequestTitle', { call }) : t('feature.browser.signTransaction')}
       primaryLabel={t('feature.browser.continueToSign')}
       primaryTestId={TEST_IDS.signReviewContinueButton}

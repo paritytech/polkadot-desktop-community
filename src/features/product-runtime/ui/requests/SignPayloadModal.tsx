@@ -37,9 +37,12 @@ export const SignPayloadModal = ({ review, onDecide }: Props) => {
   const chainName = useChainName(source.genesisHash);
 
   const call = decoded ? productRuntimeService.formatCallTitle(decoded.pallet, decoded.method) : null;
+  const legacyAccount = review.tag === 'LegacyAccount' ? productRuntimeService.legacySignerAccount(review.value.account) : null;
   const signer =
     review.tag === 'LegacyAccount'
-      ? review.value.request.signer
+      ? legacyAccount
+        ? productRuntimeService.formatProductAccount(legacyAccount)
+        : review.value.request.signer
       : productRuntimeService.formatProductAccount(review.value.request.account);
 
   const productAccount = review.tag === 'Product' ? review.value.request.account : null;
@@ -49,7 +52,7 @@ export const SignPayloadModal = ({ review, onDecide }: Props) => {
 
   return (
     <ReviewRequestLayout
-      identifier={productAccount?.dotNsIdentifier ?? null}
+      identifier={(productAccount ?? legacyAccount)?.dotNsIdentifier ?? null}
       title={call ? t('feature.browser.signingRequestTitle', { call }) : t('feature.browser.signTransaction')}
       primaryLabel={t('feature.browser.continueToSign')}
       primaryTestId={TEST_IDS.signReviewContinueButton}
