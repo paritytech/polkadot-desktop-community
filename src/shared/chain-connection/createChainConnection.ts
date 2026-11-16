@@ -52,6 +52,12 @@ type ChainConnection<C extends ChainConfig, T = PolkadotClient> = {
   reconnect(genesisHashes?: readonly string[]): void;
 };
 
+/**
+ * Creates the chain connection pool. Each consumer of a chain gets its own session: its own request
+ * ids and subscription tokens, and a home connection that lives with the chain. A follow is placed
+ * on a connection holding fewer than `followLimit(chain)` follows; when none has room, a new
+ * connection opens, and it closes once empty.
+ */
 export function createChainConnection<C extends ChainConfig, T = PolkadotClient>({
   resolve,
   clientOptions,
