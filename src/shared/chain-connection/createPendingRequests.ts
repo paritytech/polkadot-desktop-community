@@ -31,10 +31,6 @@ export function createPendingRequests({ sendUpstream }: Params) {
     return owner;
   }
 
-  function has(id: string): boolean {
-    return pending.has(id);
-  }
-
   // Live, so a request tracked while it is read is read too.
   function listOwners(): IterableIterator<Readonly<RequestOwner>> {
     return pending.values();
@@ -71,7 +67,6 @@ export function createPendingRequests({ sendUpstream }: Params) {
   return {
     track,
     take,
-    has,
     listOwners,
     count,
     isReleasing,

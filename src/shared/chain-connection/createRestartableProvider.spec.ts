@@ -390,6 +390,65 @@ describe('createRestartableProvider', () => {
     expect(countSent(third, 'state_subscribeStorage')).toBe(1);
   });
 
+  it('sends a replayed subscribe once when the build it went out on halts before answering', async () => {
+    const first = createFakeTransport();
+    const second = createFakeTransport();
+    const third = createFakeTransport();
+    const created = buildInOrder([first, second, third]);
+    const provider = createRestartableProvider(created);
+
+    const { connection, messages } = await connect(provider);
+    connection.send({ jsonrpc: '2.0', id: 3, method: 'statement_subscribeStatement', params: ['any'] });
+    first.emit({ jsonrpc: '2.0', id: 3, result: 'sub-1' });
+
+    first.halt();
+    await settle();
+    expect(countSent(second, 'statement_subscribeStatement')).toBe(1);
+
+    // A light client whose connect is refused halts after the replay went out.
+    second.halt(new Error('connect refused'));
+    await settle();
+    await settle();
+
+    expect(created).toHaveBeenCalledTimes(3);
+    expect(countSent(third, 'statement_subscribeStatement')).toBe(1);
+
+    third.emit({ jsonrpc: '2.0', id: 3, result: 'sub-3' });
+    third.emit({ jsonrpc: '2.0', method: 'statement_statement', params: { subscription: 'sub-3', result: '0x01' } });
+
+    expect(messages).toContainEqual(expect.objectContaining({ params: { subscription: 'sub-1', result: '0x01' } }));
+    expect(messages.filter(message => 'id' in message && message.id === 3)).toHaveLength(1);
+  });
+
+  it('replays a subscription again once its re-sent subscribe was answered', async () => {
+    const first = createFakeTransport();
+    const second = createFakeTransport();
+    const third = createFakeTransport();
+    const fourth = createFakeTransport();
+    const provider = createRestartableProvider(buildInOrder([first, second, third, fourth]));
+
+    const { connection, messages } = await connect(provider);
+    connection.send({ jsonrpc: '2.0', id: 3, method: 'statement_subscribeStatement', params: ['any'] });
+    first.emit({ jsonrpc: '2.0', id: 3, result: 'sub-1' });
+    first.halt();
+    await settle();
+    second.halt(new Error('connect refused'));
+    await settle();
+    await settle();
+    third.emit({ jsonrpc: '2.0', id: 3, result: 'sub-3' });
+
+    third.halt();
+    await settle();
+    await settle();
+
+    expect(countSent(fourth, 'statement_subscribeStatement')).toBe(1);
+
+    fourth.emit({ jsonrpc: '2.0', id: 3, result: 'sub-4' });
+    fourth.emit({ jsonrpc: '2.0', method: 'statement_statement', params: { subscription: 'sub-4', result: '0x02' } });
+
+    expect(messages).toContainEqual(expect.objectContaining({ params: { subscription: 'sub-1', result: '0x02' } }));
+  });
+
   it('halts once per build', async () => {
     const first = createFakeTransport();
     const second = createFakeTransport();

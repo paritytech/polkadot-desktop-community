@@ -80,6 +80,12 @@ export function withSubscriptionReplay(
         return;
       }
 
+      // A refused subscribe is answered, so a replay must send it again rather
+      // than wait on the transport to.
+      if (isResponse(message) && message.id != null && 'error' in message) {
+        pendingSubscriptions.delete(message.id);
+      }
+
       // Notification: rewrite the server's current subId back to the consumer's
       // stable subId so raw-client's subscription manager routes the event.
       if (isRequest(message)) {
@@ -109,7 +115,10 @@ export function withSubscriptionReplay(
       // re-sending it here would put the same subscribe on the wire twice and
       // leave the second, unmatched subId subscribed server-side forever.
       // Its pending entry is kept: the response still has to be recognised.
+      // A replayed subscribe the last build never answered is in flight the
+      // same way, so it is skipped too.
       for (const [consumerSubId, sub] of activeSubscriptions) {
+        if (pendingSubscriptions.get(sub.id)?.reconnectFor === consumerSubId) continue;
         // The server returns a fresh subId, which we map back to the consumer's
         // stable subId. `reconnectFor` keeps these entries apart from the
         // unconfirmed ones already in the map, which all carry null.

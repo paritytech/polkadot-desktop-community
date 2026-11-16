@@ -152,6 +152,39 @@ describe('withSubscriptionReplay', () => {
     expect(mock.send).toHaveBeenCalledWith(msg2);
   });
 
+  it('leaves a re-subscribe still in flight to the transport underneath on reconnect', () => {
+    const mock = createMockProvider();
+    const control = createReconnectControl();
+    const conn = withSubscriptionReplay(mock.provider, control.onReconnect)(vi.fn());
+
+    conn.send(req(1, 'statement_subscribeStatement'));
+    mock.simulateMessage(res(1, 'sub-1'));
+    control.triggerReconnect();
+    // intentionally no answer to the re-subscribe — the proxy re-sends it itself
+    mock.send.mockClear();
+
+    control.triggerReconnect();
+
+    expect(mock.send).not.toHaveBeenCalled();
+  });
+
+  it('replays again a subscription whose re-subscribe was refused', () => {
+    const mock = createMockProvider();
+    const control = createReconnectControl();
+    const conn = withSubscriptionReplay(mock.provider, control.onReconnect)(vi.fn());
+    const subscribeMsg = req(1, 'statement_subscribeStatement');
+
+    conn.send(subscribeMsg);
+    mock.simulateMessage(res(1, 'sub-1'));
+    control.triggerReconnect();
+    mock.simulateMessage({ jsonrpc: '2.0', id: 1, error: { code: -32603, message: 'Internal error' } });
+    mock.send.mockClear();
+
+    control.triggerReconnect();
+
+    expect(mock.send).toHaveBeenCalledWith(subscribeMsg);
+  });
+
   it('translates inbound notifications from the new server subId back to the consumer-facing subId after reconnect', () => {
     const mock = createMockProvider();
     const control = createReconnectControl();
