@@ -25,9 +25,9 @@ function usesLightClient(chain: Chain): boolean {
 
 const chains = createChainConnection<Chain, TypedClient>({
   destroyDelay: 60 * 1000,
-  createProvider: (chain, onStatusChanged) => {
+  createProvider: (chain, onStatusChanged, onHalt) => {
     if (usesLightClient(chain)) {
-      return createLightClientProvider(chain.genesisHash, onStatusChanged);
+      return createLightClientProvider(chain.genesisHash, onStatusChanged, onHalt);
     }
 
     return createWsJsonRpcProvider({

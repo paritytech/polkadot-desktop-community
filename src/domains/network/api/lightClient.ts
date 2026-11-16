@@ -178,6 +178,7 @@ export function hasLightClientSupport(chainId: GenesisHash): boolean {
 export function createLightClientProvider(
   chainId: GenesisHash,
   onStatusChanged: (status: ConnectionStatus) => void,
+  onHalt: (error?: unknown) => void,
 ): JsonRpcProvider {
   return onMessage => {
     // Held on an object so control-flow analysis does not narrow the flag across
@@ -224,10 +225,18 @@ export function createLightClientProvider(
           onMessage(JSON.parse(response));
         }
 
-        if (!state.closed) onStatusChanged('disconnected');
+        // The halt hands the retry to the pool, which rebuilds the lane on its
+        // backoff. Without it a refused connect (such as one past the
+        // 32-connection cap) would leave the lane dead for good.
+        if (!state.closed) {
+          onStatusChanged('disconnected');
+          onHalt();
+        }
       } catch (error) {
         console.error(`[network] light client failed for ${chainId}`, error);
         onStatusChanged('disconnected');
+        // Same hand-off as the stream's end; `disconnect` closing the connection must not halt.
+        if (!state.closed) onHalt(error);
       }
     })();
 
