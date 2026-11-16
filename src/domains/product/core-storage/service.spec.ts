@@ -56,6 +56,16 @@ describe('coreSlotService.describeSlot', () => {
     expect(descriptor.productId).toBeUndefined();
   });
 
+  it.each(['WorkerManifest', 'AppManifest'] as const)('indexes a %s slot by its label', tag => {
+    const descriptor = coreSlotService.describeSlot({ tag, value: { productLabel: 'demo' } });
+
+    expect(descriptor).toEqual({ slotTag: tag, productLabel: 'demo' });
+  });
+
+  it('leaves the product-agnostic FundingSupport slot unindexed', () => {
+    expect(coreSlotService.describeSlot({ tag: 'FundingSupport' })).toEqual({ slotTag: 'FundingSupport' });
+  });
+
   // The sweep deletes by owner, so inventing one for a slot keyed by something else
   // would delete core state belonging to no product.
   it('leaves a slot keyed by something other than a product unindexed', () => {

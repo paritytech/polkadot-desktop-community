@@ -23,8 +23,8 @@ function isProductScope(scope: string): boolean {
  * product. A `productId` field is detected **structurally**, not from a list of tags: the
  * core owns the `CoreStorageKey` union and adds variants, and a hand-listed set
  * silently stops indexing the day one arrives. The two variants keyed by something
- * else — a permission's `scope` and a manifest's `productLabel` — are named here
- * because their field carries no product id to detect.
+ * else — a permission's `scope` and the `productLabel` of the product, worker and app
+ * manifests — are named here because their field carries no product id to detect.
  */
 function describeSlot(key: CoreStorageKey): CoreSlotDescriptor {
   const descriptor: CoreSlotDescriptor = { slotTag: key.tag };
@@ -33,7 +33,7 @@ function describeSlot(key: CoreStorageKey): CoreSlotDescriptor {
     descriptor.productId = key.value.productId;
   }
 
-  if (key.tag === 'ProductManifest') {
+  if (key.tag === 'ProductManifest' || key.tag === 'WorkerManifest' || key.tag === 'AppManifest') {
     descriptor.productLabel = key.value.productLabel;
   }
 

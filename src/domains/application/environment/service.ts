@@ -1,5 +1,5 @@
-import { environmentsConfig } from './constants';
-import { type DigitalDollarAsset, type Environment, type EnvironmentId } from './types';
+import { bundledStacks, environmentsConfig } from './constants';
+import { type BundledStack, type DigitalDollarAsset, type Environment, type EnvironmentId } from './types';
 
 function isEnvironmentId(value: unknown): value is EnvironmentId {
   return typeof value === 'string' && value in environmentsConfig.channels;
@@ -28,9 +28,28 @@ function activeDigitalDollarAsset(id: EnvironmentId): DigitalDollarAsset {
   return channel.digitalDollarAsset;
 }
 
+function isBundledStackName(name: string): name is keyof typeof bundledStacks {
+  return Object.hasOwn(bundledStacks, name);
+}
+
+function bundledStack(name: string): BundledStack {
+  if (!isBundledStackName(name)) throw new Error(`[environment] stack "${name}" is not bundled in .trinity/`);
+
+  return bundledStacks[name];
+}
+
+function stackOf(id: EnvironmentId): BundledStack {
+  const channel = environmentsConfig.channels[id];
+  if (!channel) throw new Error(`[environment] channel "${id}" missing from VITE_ENVIRONMENTS`);
+
+  return bundledStack(channel.stack);
+}
+
 export const environmentService = {
   list,
   isEnvironmentId,
   toEnvironmentId,
   activeDigitalDollarAsset,
+  bundledStack,
+  stackOf,
 };

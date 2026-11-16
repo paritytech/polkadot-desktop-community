@@ -30,13 +30,13 @@ The unit of consumption is a **`ChatSession`**: a uniform observable interface t
 
 ### Product-specific
 
-- **ProductChatRoom** — A room scoped to a product instance (`sessionId`, `roomId`, `productId`, `userId`, `createdAt`, `userInput`). A product can drive a chat by writing into a room it owns; users see it as a normal session.
-- **User input** — Whether the user writes messages into a product room. `'text'` — the user writes messages into the room; `'none'` — the product drives the room and the user does not write messages into it (reactions unaffected; not enforced on send). Absent reads as `'text'`. The product sets it through TrUAPI's room footer.
+- **ProductChatRoom** — A room scoped to a product instance (`sessionId`, `roomId`, `productId`, `userId`, `createdAt`, `footer`). A product can drive a chat by writing into a room it owns; users see it as a normal session.
+- **Room footer** — What a product room shows below its messages: `text` — the user's text input; `none` — nothing, the product drives the room and the user does not write messages into it (reactions unaffected; not enforced on send); `card` — a card the product draws (`productId`, `messageType`, `payload`). Absent reads as `text`. The product sets it through TrUAPI's room footer.
 
 ### Reactions and rendering
 
 - **ReactionAggregate** — `{ emoji, count, reactedByMe, reactors[] }` summarizing a message's reactions.
-- **Renderer tree** — The plugin system that lets a product define how its custom message types are drawn, using the host UI primitive tree (Box / Column / Row / Text / Button / TextField / Image / …) the TrUAPI core defines (`RendererNode` in `@parity/truapi`). The tree comes from the product that owns the room, over its worker's core connection (`render`, addressed by a `RenderContext::ChatMessage`); a tapped control goes back on the renderer's own action stream (`publishRendererAction`), naming that same context — **not** as an `ActionTriggered` chat action, which is reserved for buttons the _host_ draws for an `Actions` message. A render that fails reports through `onError`, and the host drops the partial tree rather than leaving it on screen as the product's finished output.
+- **Renderer tree** — The plugin system that lets a product define how its custom message types are drawn, using the host UI primitive tree (Box / Column / Row / Text / Button / TextField / Image / …) the TrUAPI core defines (`RendererNode` in `@parity/truapi`). The tree comes from the product that owns the room, over its worker's core connection (`render`, addressed by a `RenderContext::ChatMessage`, or by a `RenderContext::ChatRoomFooter` (`roomId`, `messageType`) for a footer card); a tapped control goes back on the renderer's own action stream (`publishRendererAction`), naming that same context — **not** as an `ActionTriggered` chat action, which is reserved for buttons the _host_ draws for an `Actions` message. A render that fails reports through `onError`, and the host drops the partial tree rather than leaving it on screen as the product's finished output.
 
 ## Scope
 

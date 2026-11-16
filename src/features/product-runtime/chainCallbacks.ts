@@ -3,7 +3,6 @@ import { type JsonRpcProvider } from 'polkadot-api';
 import { toHex } from 'polkadot-api/utils';
 import * as v from 'valibot';
 
-import { environmentUseCase } from '@/domains/application';
 import { type Chain, chainRegistry, customChainUseCase, genesisHash } from '@/domains/network';
 
 type ChainCallbacks = Pick<RequiredHostCallbacks, 'chain' | 'extrinsicVersion' | 'features'>;
@@ -107,24 +106,6 @@ export function createChainCallbacks(): ChainCallbacks {
       // `HostFeatureSupportedRequest` is a single-variant union (`tag: 'Chain'`),
       // so there is no other branch to answer.
       featureSupported: async request => ({ supported: Boolean(await findChain(request.value.genesisHash)) }),
-
-      supportedChains: async () => {
-        const environment = await environmentUseCase.getActive();
-
-        // `ChainIdentifier` is a closed set of four protocol roles, so this
-        // reports the role chains only — not every chain the registry serves.
-        // Whether that also bounds `connect` is unresolved; see
-        // `docs/_plans/truapi-upstream-issues.md` § 5.
-        const entries = environment
-          ? [
-              { identifier: 'People' as const, genesisHash: environment.peopleChain.genesisHash },
-              { identifier: 'Bulletin' as const, genesisHash: environment.bulletinChain.genesisHash },
-              { identifier: 'AssetHub' as const, genesisHash: environment.dotnsChain.genesisHash },
-            ]
-          : [];
-
-        return { network: environment?.id ?? '', chains: entries };
-      },
     },
 
     chain: {

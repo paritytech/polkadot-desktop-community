@@ -20,7 +20,7 @@ export const productRuntimeFeature = createFeature({
 
 /**
  * Boots the TrUAPI core. Called once from the app bootstrap, once the environment is
- * assembled: the People, Bulletin and Asset Hub genesis hashes come from it.
+ * assembled: the stack the core runs comes from it.
  *
  * Not from a component: the route loaders wait for the core's first auth report
  * before they let the app render, so a core started by something those loaders keep
@@ -45,11 +45,7 @@ export function bootstrapProductRuntime(environment: Environment): void {
             platform: isElectron() ? 'Desktop' : 'Web',
           },
           platform,
-          people: { genesisHash: environment.peopleChain.genesisHash },
-          bulletin: { genesisHash: environment.bulletinChain.genesisHash },
-          // dotNS lives on Asset Hub, which the host serves under `dotnsChain` (the
-          // `AssetHub` role in `chainCallbacks.supportedChains`).
-          assetHub: { genesisHash: environment.dotnsChain.genesisHash },
+          stack: environment.stack,
           // The scheme the Polkadot App registers (`AppConfig+DeepLink.swift`), which is
           // what makes the emitted `polkadotapp://pair?handshake=0x…` openable. dotli
           // configures the same value (`packages/ui/src/runtime-config.ts`).

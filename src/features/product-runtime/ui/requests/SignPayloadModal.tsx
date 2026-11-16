@@ -31,25 +31,28 @@ type Props = {
  */
 export const SignPayloadModal = ({ review, onDecide }: Props) => {
   const { t } = useTranslation();
-  const request = review.tag === 'Product' ? review.value.request : review.value;
+  const { request } = review.value;
   const source = productRuntimeService.payloadCallSource(request.payload);
   const { data: decoded } = useDecodedCall(source);
   const chainName = useChainName(source.genesisHash);
 
   const call = decoded ? productRuntimeService.formatCallTitle(decoded.pallet, decoded.method) : null;
+  const legacyAccount = review.tag === 'LegacyAccount' ? productRuntimeService.legacySignerAccount(review.value.account) : null;
   const signer =
     review.tag === 'LegacyAccount'
-      ? review.value.signer
+      ? legacyAccount
+        ? productRuntimeService.formatProductAccount(legacyAccount)
+        : review.value.request.signer
       : productRuntimeService.formatProductAccount(review.value.request.account);
 
   const productAccount = review.tag === 'Product' ? review.value.request.account : null;
   const { address: derivedAddress, pending: addressPending } = useProductAccountAddress(productAccount);
-  const address = review.tag === 'LegacyAccount' ? review.value.signer : derivedAddress;
+  const address = review.tag === 'LegacyAccount' ? review.value.request.signer : derivedAddress;
   const addressFailed = productAccount !== null && !addressPending && derivedAddress === null;
 
   return (
     <ReviewRequestLayout
-      identifier={productAccount?.dotNsIdentifier ?? null}
+      identifier={(productAccount ?? legacyAccount)?.dotNsIdentifier ?? null}
       title={call ? t('feature.browser.signingRequestTitle', { call }) : t('feature.browser.signTransaction')}
       primaryLabel={t('feature.browser.continueToSign')}
       primaryTestId={TEST_IDS.signReviewContinueButton}

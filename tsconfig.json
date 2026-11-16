@@ -27,7 +27,8 @@
 
     "paths": {
       "@/*": ["./src/*"],
-      "~config": ["./config/index.js"]
+      "~config": ["./config/index.js"],
+      "~trinity/*": ["./.trinity/*"]
     }
   },
   "include": [

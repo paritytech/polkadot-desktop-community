@@ -7,7 +7,14 @@ import { of } from 'rxjs';
 import { Slot } from '@/shared/di';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
-import { type ChatMessage, type ChatSession, type MessageContent, fileTransferUseCase, useCurrentUserPeer } from '@/domains/chat';
+import {
+  type ChatMessage,
+  type ChatSession,
+  type MessageContent,
+  type RoomFooter,
+  fileTransferUseCase,
+  useCurrentUserPeer,
+} from '@/domains/chat';
 import { useTruapiSession, useTruapiUserId } from '@/aggregates/truapi-runtime';
 import { chatRoomBannerSlot, chatRoomHeaderActionsSlot } from '../../di';
 import { chatService } from '../../service';
@@ -19,6 +26,7 @@ import { ChatSearchBar } from './ChatSearchBar';
 import { ChatSearchResults } from './ChatSearchResults';
 import { MessageFlow } from './MessageFlow';
 import { MessageInput } from './MessageInput';
+import { RoomFooterCard } from './RoomFooterCard';
 
 type ChatConversationViewProps = {
   session: ChatSession;
@@ -39,8 +47,9 @@ export const Room = ({ session, initialSearch, onDeleted }: ChatConversationView
   );
   const blockedStream = useMemo(() => session.isBlocked ?? of(false), [session.isBlocked]);
   const isBlocked = useObservable(blockedStream, false);
-  const userInputStream = useMemo(() => session.userInput ?? of('text'), [session.userInput]);
-  const acceptsText = useObservable(userInputStream, 'text') === 'text';
+  const footerStream = useMemo(() => session.footer ?? of<RoomFooter>({ type: 'text' }), [session.footer]);
+  const footer = useObservable(footerStream, { type: 'text' });
+  const acceptsText = footer.type === 'text';
   const canBlock = typeof session.setBlocked === 'function';
 
   const [replyingTo, setReplyingTo] = useState<ChatMessage | null>(null);
@@ -316,9 +325,11 @@ export const Room = ({ session, initialSearch, onDeleted }: ChatConversationView
         />
       )}
 
-      {acceptsText ? (
+      {footer.type === 'none' ? null : (
         <div className="shrink-0 border-t border-stroke-primary">
-          {isBlocked ? (
+          {footer.type === 'card' ? (
+            <RoomFooterCard roomId={session.roomId} footer={footer} />
+          ) : isBlocked ? (
             <div className="flex items-center justify-between gap-3 p-3">
               <p className="text-sm leading-4.5 text-fg-secondary">{t('feature.chat.blockedNotice', { name: sessionName })}</p>
               <Button variant="ghost" size="sm" onClick={handleToggleBlocked}>
@@ -356,7 +367,7 @@ export const Room = ({ session, initialSearch, onDeleted }: ChatConversationView
             </div>
           )}
         </div>
-      ) : null}
+      )}
     </div>
   );
 };

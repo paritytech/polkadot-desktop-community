@@ -49,6 +49,7 @@ const importXPathGroups = [
     pattern: '~config',
     position: 'before',
   },
+  { group: 'external', pattern: '~trinity/**', position: 'before' },
 ];
 
 export default tseslint.config(

@@ -1,6 +1,7 @@
 import {
   type AllocatableResource,
   type ChatMessageContent,
+  type ChatRoomFooter,
   type DerivationIndex,
   type HostSignPayloadData,
   type ProductAccountId,
@@ -13,6 +14,7 @@ import {
   type CreateProofReview,
   type CreateTransactionReview,
   type IdentityDisclosureReview,
+  type LegacySigningAccount,
   type ProductSubtreeReview,
   type ResourceAllocationReview,
   type SignPayloadReview,
@@ -23,7 +25,7 @@ import {
 } from '@parity/truapi-host';
 import { fromHex, toHex } from 'polkadot-api/utils';
 
-import { type MessageContent } from '@/domains/chat';
+import { type MessageContent, type RoomFooter } from '@/domains/chat';
 
 /**
  * Which confirmation surface a core review opens, and the payload it needs.
@@ -129,27 +131,38 @@ function toChatMessageContent(payload: ChatMessageContent, alt?: string): Messag
   }
 }
 
+/**
+ * The core's room footer, in the domain's vocabulary.
+ *
+ * The core sends the text input and the empty footer either tagged or as a bare
+ * string, so a string is lifted to its tagged form before the switch. A card is
+ * drawn by the product that set it, so it carries that product.
+ */
+function toRoomFooter(productId: string, footer: ChatRoomFooter): RoomFooter {
+  const tagged: Exclude<ChatRoomFooter, string> = typeof footer === 'string' ? { tag: footer } : footer;
+
+  switch (tagged.tag) {
+    case 'TextInput':
+      return { type: 'text' };
+    case 'Empty':
+      return { type: 'none' };
+    case 'Card':
+      return { type: 'card', productId, messageType: tagged.value.messageType, payload: fromHex(tagged.value.payload) };
+  }
+}
+
 /** The call bytes and the chain they belong to, for the reviews that carry them. */
 export type CallSource = { callData: string; genesisHash: string };
-
-/**
- * The call source of a review, or `null` for a review that has none.
- *
- * Only `createTransaction` carries one: a sign-payload review carries an
- * already-built extrinsic payload rather than a bare call, so there is nothing to
- * decode against a pallet index.
- */
-function callSourceOf(props: ReviewModalProps): CallSource | null {
-  if (props.target !== 'createTransaction') return null;
-
-  const { value } = props.review;
-
-  return 'callData' in value && 'genesisHash' in value ? { callData: value.callData, genesisHash: value.genesisHash } : null;
-}
 
 /** `my-product.dot//3` — how a product account is written wherever one is shown. */
 function formatProductAccount(account: ProductAccountId): string {
   return `${account.dotNsIdentifier}//${describeDerivationIndex(account.derivationIndex)}`;
+}
+
+/** The product account a legacy review signs with; `null` when the identity signs. */
+function legacySignerAccount(account: LegacySigningAccount | ProductAccountId): ProductAccountId | null {
+  if (!('tag' in account)) return account;
+  return account.tag === 'Product' ? account.value : null;
 }
 
 /** `my-product.dot/#3` — a proof or alias context, product plus selector. */
@@ -287,14 +300,15 @@ function describeDerivationIndex(index: DerivationIndex): string {
 
 export const productRuntimeService = {
   toModalProps,
-  callSourceOf,
   payloadCallSource,
   formatProductAccount,
+  legacySignerAccount,
   formatProofContext,
   formatTranscriptBytes,
   rawPayloadText,
   batchBehaviorKey,
   toChatMessageContent,
+  toRoomFooter,
   humanizeCallSegment,
   formatCallTitle,
   stringifyCallArguments,

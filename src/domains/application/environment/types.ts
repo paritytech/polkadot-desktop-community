@@ -1,4 +1,5 @@
 import { type HexString } from '@novasamatech/scale';
+import { type BundledStack } from '@parity/truapi-host';
 
 import { type Chain } from '@/domains/network';
 
@@ -14,6 +15,9 @@ export type Environment = {
   id: EnvironmentId;
   // Display name from the channel catalog.
   name: string;
+
+  // The signed Trinity stack this channel runs; the TrUAPI core takes its chains from it.
+  stack: BundledStack;
 
   peopleChain: Chain;
   bulletinChain: Chain;
@@ -40,4 +44,4 @@ export type Environment = {
   digitalDollarAsset: DigitalDollarAsset;
 };
 
-export type { DigitalDollarAsset };
+export type { BundledStack, DigitalDollarAsset };

@@ -1,6 +1,6 @@
 import { type RenderContext } from '@parity/truapi';
 import { toHex } from 'polkadot-api/utils';
-import { useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
 import * as v from 'valibot';
 
 import { hexString } from '@/shared/types';
@@ -9,38 +9,32 @@ import { type ActionHandler, type SubscribeToNode, RendererTree } from '@/widget
 
 type Props = {
   productId: string;
-  messageId: string;
-  messageType: string;
+  context: RenderContext;
   payload: Uint8Array;
-  roomId: string;
 };
 
 const NO_SUBSCRIPTION = () => {};
 
 /**
- * A message the product draws itself.
+ * A body the product draws itself, for a chat message or a room footer.
  *
  * Everything about *drawing* — the render tree and the visibility gate — belongs to
  * `RendererTree`, which the input surface uses for the same purpose. What is chat's
  * alone lives here: the tree comes from the product that owns the room, and an action
- * goes back naming the same message the tree was drawn for.
+ * goes back naming the same context the tree was drawn for. The caller memoises `context`
+ * so it keeps a stable identity across renders.
  *
  * One `RenderContext` addresses both directions. That is the point of the core's
  * addressing — the context that named the body names an action inside it, so the host
  * mints no correlation id of its own.
  *
- * Declaring worker demand is what makes a message in a room whose product is not on
+ * Declaring worker demand is what makes a body in a room whose product is not on
  * screen draw at all: without it there is no running worker to ask, and the core's
  * render reference can keep a worker alive but cannot start one.
  */
-export const CustomMessage = ({ productId, messageId, messageType, payload, roomId }: Props) => {
+export const ProductRenderedBody = ({ productId, context, payload }: Props) => {
   useWorkerDemand(productId);
   const instance = useProductWorkerInstance(productId);
-
-  const context = useMemo<RenderContext>(
-    () => ({ tag: 'ChatMessage', value: { roomId, messageId, messageType } }),
-    [roomId, messageId, messageType],
-  );
 
   const subscribe = useCallback<SubscribeToNode>(
     sink => {
@@ -53,7 +47,7 @@ export const CustomMessage = ({ productId, messageId, messageType, payload, room
       // one terminal fires per render. `onComplete` is deliberately unhandled: it
       // means the stream ended and the last tree stands, so there is nothing to do.
       // Host-side teardown — the disposer below — reports neither, which is what
-      // keeps a scrolled-away message from looking like a failed one.
+      // keeps a scrolled-away body from looking like a failed one.
       return render.call(
         instance.coreProvider,
         { context, payload: v.parse(hexString, toHex(payload)) },
@@ -75,10 +69,10 @@ export const CustomMessage = ({ productId, messageId, messageType, payload, room
         .catch((error: unknown) => {
           // The action is a user gesture with no reply path; a rejection means the
           // product never heard it. Reporting beats pretending it landed.
-          console.warn('[chat] renderer action was not delivered', { productId, messageId, actionId, error });
+          console.warn('[chat] renderer action was not delivered', { productId, context, actionId, error });
         });
     },
-    [instance, context, productId, messageId],
+    [instance, context, productId],
   );
 
   return <RendererTree productId={productId} subscribe={subscribe} onAction={onAction} />;

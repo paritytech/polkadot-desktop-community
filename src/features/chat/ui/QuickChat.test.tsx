@@ -14,7 +14,6 @@ import { truapiRuntimeUseCase } from '@/aggregates/truapi-runtime';
 
 import { QuickChat } from './QuickChat';
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-assertions -- a brand cannot be satisfied by a literal
 const USER = `0x${'11'.repeat(32)}` as ProductChatRoom['userId'];
 
 const room: ProductChatRoom = { sessionId: 's1', roomId: 'room-1', productId: 'demo.dot', userId: USER, createdAt: 1 };
@@ -44,14 +43,24 @@ afterEach(() => {
 });
 
 describe('QuickChat', () => {
-  it('hides the composer in a product room whose user input is none', async () => {
-    await renderQuickChat({ ...room, userInput: 'none' });
+  it('hides the composer in a product room whose footer is none', async () => {
+    await renderQuickChat({ ...room, footer: { type: 'none' } });
 
     await screen.findByTestId(TEST_IDS.chatNoMessagesPlaceholder);
     expect(screen.queryByTestId(TEST_IDS.chatMessageInput)).toBeNull();
   });
 
-  it('shows the composer in a product room without a setting', async () => {
+  it('draws the card instead of the composer in a product room whose footer is a card', async () => {
+    await renderQuickChat({
+      ...room,
+      footer: { type: 'card', productId: 'demo.dot', messageType: 'scoreboard', payload: new Uint8Array([1]) },
+    });
+
+    expect(await screen.findByTestId(TEST_IDS.chatRoomFooterCard)).toBeInTheDocument();
+    expect(screen.queryByTestId(TEST_IDS.chatMessageInput)).toBeNull();
+  });
+
+  it('shows the composer in a product room without a footer', async () => {
     await renderQuickChat(room);
 
     expect(await screen.findByTestId(TEST_IDS.chatMessageInput)).toBeInTheDocument();

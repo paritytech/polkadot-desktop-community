@@ -67,6 +67,7 @@ export const TEST_IDS = {
   // Sign Payload / Create Transaction review screen (shared by SignPayloadModal & CreateTransactionModal)
   signReviewCallTitle: 'sign-review-call-title',
   signReviewAccount: 'sign-review-account',
+  requestProductHeader: 'request-product-header',
   signReviewNetwork: 'sign-review-network',
   signReviewMoreDetails: 'sign-review-more-details',
   signReviewArguments: 'sign-review-arguments',
@@ -163,6 +164,7 @@ export const TEST_IDS = {
   // Chat (fullscreen)
   chatRoomList: 'chat-room-list',
   chatMessageInput: 'chat-message-input',
+  chatRoomFooterCard: 'chat-room-footer-card',
   chatSendButton: 'chat-send-button',
   chatAddToDashboardButton: 'chat-add-to-dashboard-button',
   chatMediaPlaceholder: 'chat-media-placeholder',

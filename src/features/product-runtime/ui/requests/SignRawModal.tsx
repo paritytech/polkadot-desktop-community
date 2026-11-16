@@ -30,9 +30,12 @@ type Props = {
 export const SignRawModal = ({ review, onDecide }: Props) => {
   const { t } = useTranslation();
   const message = productRuntimeService.rawPayloadText(review.value.request.payload);
+  const legacyAccount = review.tag === 'LegacyAccount' ? productRuntimeService.legacySignerAccount(review.value.account) : null;
   const signer =
     review.tag === 'LegacyAccount'
-      ? review.value.request.signer
+      ? legacyAccount
+        ? productRuntimeService.formatProductAccount(legacyAccount)
+        : review.value.request.signer
       : productRuntimeService.formatProductAccount(review.value.request.account);
 
   const productAccount = review.tag === 'Product' ? review.value.request.account : null;
@@ -42,7 +45,7 @@ export const SignRawModal = ({ review, onDecide }: Props) => {
 
   return (
     <ReviewRequestLayout
-      identifier={review.tag === 'Product' ? review.value.request.account.dotNsIdentifier : null}
+      identifier={(productAccount ?? legacyAccount)?.dotNsIdentifier ?? null}
       title={t('feature.browser.signMessageRequestTitle')}
       primaryLabel={t('feature.browser.continueToSign')}
       primaryTestId={TEST_IDS.signReviewContinueButton}

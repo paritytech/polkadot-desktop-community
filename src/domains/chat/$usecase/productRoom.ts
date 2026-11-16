@@ -26,7 +26,7 @@ import {
 import { productChatService } from '../product/service';
 import { type ProductChatRoom } from '../product/types';
 import { chatMessageService } from '../session/service';
-import { type ChatMessage, type ChatSession, type MessageContent, type RoomUserInput, type UserPeer } from '../session/types';
+import { type ChatMessage, type ChatSession, type MessageContent, type RoomFooter, type UserPeer } from '../session/types';
 
 type CreateRoomParams = {
   roomId: string;
@@ -88,7 +88,7 @@ function messagePeerId(message: ChatMessage): string {
  * product its own output and loop.
  *
  * Third: one subscription per room. The rooms list re-emits on every rooms-table write
- * (a user-input change, a new room), and the message stream replays its last list, so
+ * (a footer change, a new room), and the message stream replays its last list, so
  * resubscribing per emission would deliver each message once per re-emit. A deleted
  * room's subscription stays open until the whole stream is unsubscribed — accepted.
  */
@@ -144,9 +144,9 @@ function createProductChatSession(peer: UserPeer, room: ProductChatRoom): ChatSe
   );
 
   // Read from the stored row, not the snapshot: the product changes it while the session lives.
-  const userInput = roomsResource.read$({ accountId: room.userId }).pipe(
-    map((rooms): RoomUserInput => rooms.find(r => r.sessionId === room.sessionId)?.userInput ?? 'text'),
-    distinctUntilChanged(),
+  const footer = roomsResource.read$({ accountId: room.userId }).pipe(
+    map((rooms): RoomFooter => rooms.find(r => r.sessionId === room.sessionId)?.footer ?? { type: 'text' }),
+    distinctUntilChanged(productChatService.isSameFooter),
   );
 
   return {
@@ -157,7 +157,7 @@ function createProductChatSession(peer: UserPeer, room: ProductChatRoom): ChatSe
     messages,
     lastMessage,
     unreadCount,
-    userInput,
+    footer,
 
     async sendMessage(content: MessageContent) {
       const messageId = nanoid(32);
@@ -190,15 +190,15 @@ function createProductChatSession(peer: UserPeer, room: ProductChatRoom): ChatSe
   };
 }
 
-type SetUserInputParams = {
+type SetFooterParams = {
   productId: string;
   roomId: string;
   userId: AccountId;
-  userInput: RoomUserInput;
+  footer: RoomFooter;
 };
 
-async function setProductRoomUserInput(params: SetUserInputParams): Promise<'Applied' | 'UnknownRoom'> {
-  const { productId, roomId, userId, userInput } = params;
+async function setProductRoomFooter(params: SetFooterParams): Promise<'Applied' | 'UnknownRoom'> {
+  const { productId, roomId, userId, footer } = params;
   const sessionId = productChatService.getSessionId(productId, roomId, userId);
 
   return chatDatabase.rooms.db.transaction('rw', chatDatabase.rooms, async () => {
@@ -206,8 +206,8 @@ async function setProductRoomUserInput(params: SetUserInputParams): Promise<'App
     if (!stored) return 'UnknownRoom';
 
     // Every rooms write re-emits `roomsResource` and rebuilds the product sessions, so a repeat must not write.
-    if ((stored.userInput ?? 'text') !== userInput) {
-      await chatDatabase.rooms.update(sessionId, { userInput });
+    if (!productChatService.isSameFooter(stored.footer ?? { type: 'text' }, footer)) {
+      await chatDatabase.rooms.update(sessionId, { footer });
     }
 
     return 'Applied';
@@ -215,7 +215,7 @@ async function setProductRoomUserInput(params: SetUserInputParams): Promise<'App
 }
 
 export const productRoomUseCase = {
-  setProductRoomUserInput,
+  setProductRoomFooter,
   createProductRoom,
   watchOutgoingMessages,
   createProductChatSession,

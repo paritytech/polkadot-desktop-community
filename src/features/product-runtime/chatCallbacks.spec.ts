@@ -15,7 +15,7 @@ import { createChatCallbacks } from './chatCallbacks';
 // function over the product chat table, so it runs for real on the fake IndexedDB
 // imported above and the row is read back where it landed.
 const createProductRoomMock = vi.spyOn(productRoomUseCase, 'createProductRoom');
-const setUserInputMock = vi.spyOn(productRoomUseCase, 'setProductRoomUserInput');
+const setFooterMock = vi.spyOn(productRoomUseCase, 'setProductRoomFooter');
 const watchProductRoomsMock = vi.spyOn(productRoomUseCase, 'watchProductRooms');
 
 const USER: `0x${string}` = `0x${'11'.repeat(32)}`;
@@ -100,29 +100,45 @@ describe('createChatCallbacks', () => {
     expect(row?.content).toMatchObject({ type: 'custom', alt: 'Coin flip result' });
   });
 
-  it('maps an Empty footer to user input none', async () => {
+  it('maps an Empty footer to a none footer', async () => {
     connect();
-    setUserInputMock.mockResolvedValue('Applied');
+    setFooterMock.mockResolvedValue('Applied');
 
     const result = { current: createChatCallbacks() };
 
     await expect(result.current.chat.setChatRoomFooter(product, { roomId: 'r1', footer: 'Empty' })).resolves.toBeUndefined();
-    expect(setUserInputMock).toHaveBeenCalledWith({ productId: 'demo.dot', roomId: 'r1', userId: USER, userInput: 'none' });
+    expect(setFooterMock).toHaveBeenCalledWith({ productId: 'demo.dot', roomId: 'r1', userId: USER, footer: { type: 'none' } });
   });
 
-  it('maps a TextInput footer to user input text', async () => {
+  it('maps a TextInput footer to a text footer', async () => {
     connect();
-    setUserInputMock.mockResolvedValue('Applied');
+    setFooterMock.mockResolvedValue('Applied');
 
     const result = { current: createChatCallbacks() };
 
     await expect(result.current.chat.setChatRoomFooter(product, { roomId: 'r1', footer: 'TextInput' })).resolves.toBeUndefined();
-    expect(setUserInputMock).toHaveBeenCalledWith({ productId: 'demo.dot', roomId: 'r1', userId: USER, userInput: 'text' });
+    expect(setFooterMock).toHaveBeenCalledWith({ productId: 'demo.dot', roomId: 'r1', userId: USER, footer: { type: 'text' } });
+  });
+
+  it('passes a Card footer on as the product card', async () => {
+    connect();
+    setFooterMock.mockResolvedValue('Applied');
+
+    const result = { current: createChatCallbacks() };
+    const footer = { tag: 'Card' as const, value: { messageType: 'poll', payload: '0x0102' as const } };
+
+    await expect(result.current.chat.setChatRoomFooter(product, { roomId: 'r1', footer })).resolves.toBeUndefined();
+    expect(setFooterMock).toHaveBeenCalledWith({
+      productId: 'demo.dot',
+      roomId: 'r1',
+      userId: USER,
+      footer: { type: 'card', productId: 'demo.dot', messageType: 'poll', payload: new Uint8Array([1, 2]) },
+    });
   });
 
   it('rejects setChatRoomFooter with UnknownRoom when the room does not exist', async () => {
     connect();
-    setUserInputMock.mockResolvedValue('UnknownRoom');
+    setFooterMock.mockResolvedValue('UnknownRoom');
 
     const result = { current: createChatCallbacks() };
 
@@ -139,7 +155,7 @@ describe('createChatCallbacks', () => {
     await expect(result.current.chat.setChatRoomFooter(product, { roomId: 'r1', footer: 'Empty' })).rejects.toMatchObject({
       tag: 'Unknown',
     });
-    expect(setUserInputMock).not.toHaveBeenCalled();
+    expect(setFooterMock).not.toHaveBeenCalled();
   });
 
   it('rejects postChatMessage with Unknown when auth settles disconnected', async () => {

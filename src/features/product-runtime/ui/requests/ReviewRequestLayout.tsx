@@ -56,8 +56,8 @@ export const ReviewRequestLayout = ({
           <RequestBackButton onClick={toggleDetails} />
         ) : (
           <>
-            {/* TODO(truapi): render the header unconditionally when UserConfirmation carries a ProductContext —
-                a legacy-account review still reaches the host naming no product. */}
+            {/* TODO(truapi): render the header unconditionally when UserConfirmation reviews carry a ProductContext —
+                until then an Identity legacy review and the reviews without a ProductContext name no product. */}
             {identifier ? <RequestProductHeader identifier={identifier} /> : null}
             <div className="pt-2">
               <ProductRequestDialog.Title>

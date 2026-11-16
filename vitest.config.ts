@@ -16,8 +16,16 @@ const TEST_ENVIRONMENTS = JSON.stringify({
     digitalDollarAsset: { assetId: 1, symbol: 'tUSD', precision: 6, palletName: 'Assets' },
   },
   channels: {
-    alpha: { name: 'Alpha Testnet', roles: { people: 'alpha-people', bulletin: 'alpha-bulletin', assetHub: 'alpha-asset-hub' } },
-    beta: { name: 'Beta Testnet', roles: { people: 'beta-people', bulletin: 'beta-bulletin', assetHub: 'beta-asset-hub' } },
+    alpha: {
+      name: 'Alpha Testnet',
+      stack: 'paseo-next-v2',
+      roles: { people: 'alpha-people', bulletin: 'alpha-bulletin', assetHub: 'alpha-asset-hub' },
+    },
+    beta: {
+      name: 'Beta Testnet',
+      stack: 'previewnet',
+      roles: { people: 'beta-people', bulletin: 'beta-bulletin', assetHub: 'beta-asset-hub' },
+    },
   },
 });
 

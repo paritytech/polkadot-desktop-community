@@ -1,5 +1,5 @@
 import { type AccountId } from '@/domains/network';
-import { type RoomUserInput } from '../session/types';
+import { type RoomFooter } from '../session/types';
 
 export type ProductChatRoom = {
   sessionId: string;
@@ -7,5 +7,6 @@ export type ProductChatRoom = {
   productId: string;
   userId: AccountId;
   createdAt: number;
-  userInput?: RoomUserInput;
+  /** Absent reads as `{ type: 'text' }`. */
+  footer?: RoomFooter;
 };

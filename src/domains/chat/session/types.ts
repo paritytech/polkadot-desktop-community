@@ -238,8 +238,9 @@ export type ChatMessage = {
   lastUpdate?: number;
 };
 
-/** Whether the user writes messages into a room: `'text'` — yes; `'none'` — the product drives it. */
-export type RoomUserInput = 'text' | 'none';
+/** The protocol's room footer: the user's text input, nothing, or a product-drawn card. */
+export type RoomFooter =
+  { type: 'text' } | { type: 'none' } | { type: 'card'; productId: string; messageType: string; payload: Uint8Array };
 
 export type ChatSession = {
   readonly sessionId: string;
@@ -253,7 +254,7 @@ export type ChatSession = {
   // UI gates the block menu on `setBlocked` being present.
   readonly isBlocked?: Observable<boolean>;
   // Only product rooms expose this; absent means the user may write.
-  readonly userInput?: Observable<RoomUserInput>;
+  readonly footer?: Observable<RoomFooter>;
 
   sendMessage(content: MessageContent): Promise<{ messageId: string }>;
   markAsRead(): Promise<void>;

@@ -5,7 +5,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { accountId } from '@/domains/network';
 import { type ProductChatRoom } from '../product/types';
-import { type ChatMessage } from '../session/types';
+import { type ChatMessage, type RoomFooter } from '../session/types';
 
 const persisted: ChatMessage[] = [];
 const roomsSubject = new Subject<ProductChatRoom[]>();
@@ -129,8 +129,8 @@ describe('watchOutgoingMessages', () => {
 
     roomsSubject.next([room]);
     subjectFor(room.sessionId).next([]);
-    roomsSubject.next([{ ...room, userInput: 'none' }]);
-    roomsSubject.next([{ ...room, userInput: 'text' }]);
+    roomsSubject.next([{ ...room, footer: { type: 'none' } }]);
+    roomsSubject.next([{ ...room, footer: { type: 'text' } }]);
     subjectFor(room.sessionId).next([outgoing]);
     subscription.unsubscribe();
 
@@ -207,77 +207,108 @@ describe('createProductChatSession', () => {
   });
 });
 
-describe('createProductChatSession userInput', () => {
+describe('createProductChatSession footer', () => {
   const otherPeer = { ...peer, accountId: parse(accountId, '0xother') };
+  const card: RoomFooter = {
+    type: 'card',
+    productId: room.productId,
+    messageType: 'scoreboard',
+    payload: new Uint8Array([1, 2]),
+  };
 
   beforeEach(() => {
     seedResources();
     roomsReadParams.length = 0;
   });
 
-  it('defaults to text for a room without a setting', async () => {
+  it('defaults to text for a room without a footer', async () => {
     const session = productRoomUseCase.createProductChatSession(otherPeer, room);
-    const first = firstValueFrom(session.userInput!);
+    const first = firstValueFrom(session.footer!);
     roomsSubject.next([room]);
 
-    await expect(first).resolves.toBe('text');
+    await expect(first).resolves.toEqual({ type: 'text' });
   });
 
-  it('follows the stored setting live and skips repeats', () => {
+  it('follows the stored footer live and skips repeats', () => {
     const session = productRoomUseCase.createProductChatSession(otherPeer, room);
-    const seen: string[] = [];
-    const subscription = session.userInput!.subscribe(value => seen.push(value));
+    const seen: RoomFooter[] = [];
+    const subscription = session.footer!.subscribe(value => seen.push(value));
 
     roomsSubject.next([room]);
-    roomsSubject.next([{ ...room, userInput: 'none' }]);
-    roomsSubject.next([{ ...room, userInput: 'none' }]);
+    roomsSubject.next([{ ...room, footer: { type: 'none' } }]);
+    roomsSubject.next([{ ...room, footer: { type: 'none' } }]);
     subscription.unsubscribe();
 
-    expect(seen).toEqual(['text', 'none']);
+    expect(seen).toEqual([{ type: 'text' }, { type: 'none' }]);
+  });
+
+  it('emits a card once when the same card is stored again', () => {
+    const session = productRoomUseCase.createProductChatSession(otherPeer, room);
+    const seen: RoomFooter[] = [];
+    const subscription = session.footer!.subscribe(value => seen.push(value));
+
+    roomsSubject.next([{ ...room, footer: card }]);
+    roomsSubject.next([{ ...room, footer: { ...card, payload: new Uint8Array([1, 2]) } }]);
+    subscription.unsubscribe();
+
+    expect(seen).toEqual([card]);
   });
 
   it("reads the rooms of the room's own user", () => {
     const session = productRoomUseCase.createProductChatSession(otherPeer, room);
-    const subscription = session.userInput!.subscribe();
+    const subscription = session.footer!.subscribe();
     subscription.unsubscribe();
 
     expect(roomsReadParams).toEqual([{ accountId: room.userId }]);
   });
 });
 
-describe('setProductRoomUserInput', () => {
+describe('setProductRoomFooter', () => {
   const stored = {
     ...room,
     sessionId: productChatService.getSessionId(room.productId, room.roomId, room.userId),
   };
   const params = { productId: room.productId, roomId: room.roomId, userId: room.userId };
+  const card: RoomFooter = {
+    type: 'card',
+    productId: room.productId,
+    messageType: 'scoreboard',
+    payload: new Uint8Array([1, 2]),
+  };
 
   afterEach(async () => {
     await chatDatabase.rooms.clear();
   });
 
-  it('stores the setting on an existing room', async () => {
+  it('stores the footer on an existing room', async () => {
     await chatDatabase.rooms.add(stored);
 
-    await expect(productRoomUseCase.setProductRoomUserInput({ ...params, userInput: 'none' })).resolves.toBe('Applied');
-    expect((await chatDatabase.rooms.get(stored.sessionId))?.userInput).toBe('none');
+    await expect(productRoomUseCase.setProductRoomFooter({ ...params, footer: { type: 'none' } })).resolves.toBe('Applied');
+    expect((await chatDatabase.rooms.get(stored.sessionId))?.footer).toEqual({ type: 'none' });
   });
 
-  it('resolves Applied when the room already has that setting', async () => {
-    await chatDatabase.rooms.add({ ...stored, userInput: 'none' });
+  it('stores a card footer', async () => {
+    await chatDatabase.rooms.add(stored);
 
-    await expect(productRoomUseCase.setProductRoomUserInput({ ...params, userInput: 'none' })).resolves.toBe('Applied');
+    await expect(productRoomUseCase.setProductRoomFooter({ ...params, footer: card })).resolves.toBe('Applied');
+    expect((await chatDatabase.rooms.get(stored.sessionId))?.footer).toEqual(card);
+  });
+
+  it('resolves Applied when the room already has that footer', async () => {
+    await chatDatabase.rooms.add({ ...stored, footer: { type: 'none' } });
+
+    await expect(productRoomUseCase.setProductRoomFooter({ ...params, footer: { type: 'none' } })).resolves.toBe('Applied');
   });
 
   it('switches back to text', async () => {
-    await chatDatabase.rooms.add({ ...stored, userInput: 'none' });
+    await chatDatabase.rooms.add({ ...stored, footer: { type: 'none' } });
 
-    await expect(productRoomUseCase.setProductRoomUserInput({ ...params, userInput: 'text' })).resolves.toBe('Applied');
-    expect((await chatDatabase.rooms.get(stored.sessionId))?.userInput).toBe('text');
+    await expect(productRoomUseCase.setProductRoomFooter({ ...params, footer: { type: 'text' } })).resolves.toBe('Applied');
+    expect((await chatDatabase.rooms.get(stored.sessionId))?.footer).toEqual({ type: 'text' });
   });
 
   it('reports UnknownRoom and writes nothing when the room does not exist', async () => {
-    await expect(productRoomUseCase.setProductRoomUserInput({ ...params, userInput: 'none' })).resolves.toBe('UnknownRoom');
+    await expect(productRoomUseCase.setProductRoomFooter({ ...params, footer: { type: 'none' } })).resolves.toBe('UnknownRoom');
     await expect(chatDatabase.rooms.count()).resolves.toBe(0);
   });
 
@@ -285,7 +316,7 @@ describe('setProductRoomUserInput', () => {
     const otherSessionId = productChatService.getSessionId(room.productId, room.roomId, parse(accountId, '0xother'));
     await chatDatabase.rooms.add({ ...stored, sessionId: otherSessionId });
 
-    await expect(productRoomUseCase.setProductRoomUserInput({ ...params, userInput: 'none' })).resolves.toBe('UnknownRoom');
-    expect((await chatDatabase.rooms.get(otherSessionId))?.userInput).toBeUndefined();
+    await expect(productRoomUseCase.setProductRoomFooter({ ...params, footer: { type: 'none' } })).resolves.toBe('UnknownRoom');
+    expect((await chatDatabase.rooms.get(otherSessionId))?.footer).toBeUndefined();
   });
 });
