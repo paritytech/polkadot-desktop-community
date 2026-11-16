@@ -106,7 +106,10 @@ async function connect(provider: JsonRpcProvider) {
 
 describe('createRestartableProvider', () => {
   beforeEach(() => vi.useFakeTimers());
-  afterEach(() => vi.useRealTimers());
+  afterEach(() => {
+    vi.useRealTimers();
+    vi.restoreAllMocks();
+  });
 
   it('builds a transport lazily and routes traffic through it', async () => {
     const transport = createFakeTransport();
@@ -444,6 +447,23 @@ describe('createRestartableProvider', () => {
     expect(warn).toHaveBeenCalledWith(expect.any(String), expect.objectContaining({ message: 'disconnect failed' }));
     expect(created).toHaveBeenCalledTimes(3);
     expect(third.send).toHaveBeenCalledWith(expect.objectContaining({ id: 6, method: 'system_chain' }));
-    warn.mockRestore();
+  });
+
+  it('restarts even when closing the connection throws', async () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(noop);
+    const first = createFakeTransport({ failDisconnect: true });
+    const second = createFakeTransport();
+    const created = buildInOrder([first, second]);
+    const provider = createRestartableProvider(created);
+
+    await connect(provider);
+    expect(() => provider.restart()).not.toThrow();
+    // Short of the proxy's first backoff step.
+    await vi.advanceTimersByTimeAsync(400);
+    expect(created).toHaveBeenCalledOnce();
+    await settle();
+
+    expect(warn).toHaveBeenCalledWith(expect.any(String), expect.objectContaining({ message: 'disconnect failed' }));
+    expect(created).toHaveBeenCalledTimes(2);
   });
 });
