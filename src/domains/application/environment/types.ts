@@ -8,6 +8,10 @@ import { type DigitalDollarAsset } from './schemas';
 // build-time config, not a code-level union — the code carries no channel names.
 export type EnvironmentId = string;
 
+// A signed Trinity stack bundled in `.trinity/`. The descriptor holds the bytes of the copy as served, because the core
+// checks the signature over those bytes; it is never parsed and re-encoded.
+export type BundledStack = { pointer: string; descriptor: Uint8Array };
+
 // The active environment: code-side config (from `VITE_ENVIRONMENTS`) merged with
 // dynamic config (chains/ipfs/dotNS/identity) assembled from Remote Config.
 export type Environment = {

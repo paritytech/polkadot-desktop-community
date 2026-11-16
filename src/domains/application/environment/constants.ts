@@ -1,10 +1,24 @@
+import paseoNextV2Document from '~trinity/paseo-next-v2.json?raw';
+import previewnetDocument from '~trinity/previewnet.json?raw';
+import stackLinks from '~trinity/stacks.json';
 import * as v from 'valibot';
 
 import { type ChannelConfig, type EnvironmentsConfig, channelConfigSchema, rawEnvironmentsConfigSchema } from './schemas';
+import { type BundledStack } from './types';
 
 // localStorage namespace for the network-settings persistence (shared with the
 // `network-settings` aggregate). Not environment-specific.
 export const SETTINGS_STORAGE_KEY = 'pb:settings';
+
+// The signed stacks `trinity-stack` keeps in `.trinity/`. Keyed by `stacks.json`, so a stack added there without its
+// copy imported here fails the typecheck.
+export const bundledStacks: Record<keyof typeof stackLinks, BundledStack> = {
+  'paseo-next-v2': {
+    pointer: stackLinks['paseo-next-v2'],
+    descriptor: new TextEncoder().encode(paseoNextV2Document),
+  },
+  previewnet: { pointer: stackLinks.previewnet, descriptor: new TextEncoder().encode(previewnetDocument) },
+};
 
 // Build-time channel catalog from `VITE_ENVIRONMENTS`. Read eagerly (not injected)
 // because it must be available synchronously at module init — network-settings

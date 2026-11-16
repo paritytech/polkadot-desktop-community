@@ -1,3 +1,4 @@
+import stackLinks from '~trinity/stacks.json';
 import * as v from 'valibot';
 
 import { remoteUrlSchema } from '@/domains/remote-config';
@@ -52,6 +53,10 @@ const channelDefaultsSchema = v.object({
 // A fully-resolved channel (after `shared` defaults are merged in).
 export const channelConfigSchema = v.object({
   name: nonEmptyString,
+  stack: v.pipe(
+    nonEmptyString,
+    v.check(name => Object.hasOwn(stackLinks, name), 'stack is not bundled in .trinity/'),
+  ),
   // chains_v2 entry labels for each chain role.
   roles: v.object({ people: nonEmptyString, bulletin: nonEmptyString, assetHub: nonEmptyString }),
   ...channelDefaultsSchema.entries,
@@ -68,7 +73,12 @@ export const rawEnvironmentsConfigSchema = v.object({
   shared: v.optional(sharedDefaultsSchema, {}),
   channels: v.record(
     v.string(),
-    v.object({ name: nonEmptyString, roles: channelConfigSchema.entries.roles, ...sharedDefaultsSchema.entries }),
+    v.object({
+      name: nonEmptyString,
+      stack: channelConfigSchema.entries.stack,
+      roles: channelConfigSchema.entries.roles,
+      ...sharedDefaultsSchema.entries,
+    }),
   ),
 });
 
