@@ -209,7 +209,7 @@ export const RequestProductHeader = memo(({ identifier }: { identifier: string }
   });
 
   return (
-    <div data-testid={TEST_IDS.requestProductHeader}>
+    <div className="contents" data-testid={TEST_IDS.requestProductHeader}>
       <ProductHeader {...header} />
     </div>
   );
