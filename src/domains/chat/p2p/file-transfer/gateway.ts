@@ -20,9 +20,9 @@
  */
 
 import { type HopClient, createHopClient, uploadFile as hopUploadFile } from '@novasamatech/handoff-service';
-import { createWsJsonRpcProvider } from '@novasamatech/host-substrate-chain-connection';
 import { createLazyClient } from '@novasamatech/statement-store';
 
+import { createWsJsonRpcProvider } from '@/shared/chain-connection';
 import { type FileAttachment, type FileMeta } from '../../session/types';
 
 // TODO(p2p-chat): paseo-next uses a Cloudflare-proxied URL that may route different desktop
