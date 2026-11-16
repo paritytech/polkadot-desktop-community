@@ -163,6 +163,7 @@ export const TEST_IDS = {
   // Chat (fullscreen)
   chatRoomList: 'chat-room-list',
   chatMessageInput: 'chat-message-input',
+  chatRoomFooterCard: 'chat-room-footer-card',
   chatSendButton: 'chat-send-button',
   chatAddToDashboardButton: 'chat-add-to-dashboard-button',
   chatMediaPlaceholder: 'chat-media-placeholder',

@@ -42,19 +42,20 @@ describe('Room', () => {
     expect(await screen.findByTestId(TEST_IDS.chatMessageInput)).toBeInTheDocument();
   });
 
-  it('hides the composer for a session whose footer is none', async () => {
+  it('renders neither the composer nor a card for a session whose footer is none', async () => {
     renderRoom(makeSession(of({ type: 'none' })));
 
     await screen.findByTestId(TEST_IDS.chatNoMessagesPlaceholder);
     expect(screen.queryByTestId(TEST_IDS.chatMessageInput)).toBeNull();
+    expect(screen.queryByTestId(TEST_IDS.chatRoomFooterCard)).toBeNull();
   });
 
-  it('hides the composer for a session whose footer is a card', async () => {
+  it('draws the card instead of the composer for a session whose footer is a card', async () => {
     renderRoom(
       makeSession(of({ type: 'card', productId: 'coinflip.dot', messageType: 'scoreboard', payload: new Uint8Array([1]) })),
     );
 
-    await screen.findByTestId(TEST_IDS.chatNoMessagesPlaceholder);
+    expect(await screen.findByTestId(TEST_IDS.chatRoomFooterCard)).toBeInTheDocument();
     expect(screen.queryByTestId(TEST_IDS.chatMessageInput)).toBeNull();
   });
 });

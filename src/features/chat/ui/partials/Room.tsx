@@ -26,6 +26,7 @@ import { ChatSearchBar } from './ChatSearchBar';
 import { ChatSearchResults } from './ChatSearchResults';
 import { MessageFlow } from './MessageFlow';
 import { MessageInput } from './MessageInput';
+import { RoomFooterCard } from './RoomFooterCard';
 
 type ChatConversationViewProps = {
   session: ChatSession;
@@ -324,9 +325,11 @@ export const Room = ({ session, initialSearch, onDeleted }: ChatConversationView
         />
       )}
 
-      {acceptsText ? (
+      {footer.type === 'none' ? null : (
         <div className="shrink-0 border-t border-stroke-primary">
-          {isBlocked ? (
+          {footer.type === 'card' ? (
+            <RoomFooterCard roomId={session.roomId} footer={footer} />
+          ) : isBlocked ? (
             <div className="flex items-center justify-between gap-3 p-3">
               <p className="text-sm leading-4.5 text-fg-secondary">{t('feature.chat.blockedNotice', { name: sessionName })}</p>
               <Button variant="ghost" size="sm" onClick={handleToggleBlocked}>
@@ -364,7 +367,7 @@ export const Room = ({ session, initialSearch, onDeleted }: ChatConversationView
             </div>
           )}
         </div>
-      ) : null}
+      )}
     </div>
   );
 };

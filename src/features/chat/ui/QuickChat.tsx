@@ -26,6 +26,7 @@ import { MessageInput } from './partials/MessageInput';
 import { NewRequestsItem } from './partials/NewRequestsItem';
 import { NoData } from './partials/NoData';
 import { OutgoingRequestItem } from './partials/OutgoingRequestItem';
+import { RoomFooterCard } from './partials/RoomFooterCard';
 
 type QuickChatProps = PropsWithChildren<{
   open: boolean;
@@ -50,7 +51,6 @@ export const QuickChat = memo(({ open, onOpenChange, children }: QuickChatProps)
 
   const footerStream = useMemo(() => selectedSession?.footer ?? of<RoomFooter>({ type: 'text' }), [selectedSession]);
   const footer = useObservable(footerStream, { type: 'text' });
-  const acceptsText = footer.type === 'text';
 
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
@@ -150,10 +150,16 @@ export const QuickChat = memo(({ open, onOpenChange, children }: QuickChatProps)
                 <MessageFlow session={selectedSession} />
               </div>
 
-              {selectedSession && acceptsText ? (
+              {selectedSession && footer.type !== 'none' ? (
                 <div className="shrink-0 border-t border-stroke-primary p-1">
-                  {sendError && <p className="px-1 pb-1 text-xs text-fg-error">{sendError}</p>}
-                  <MessageInput ref={inputRef} submitAction={handleSendMessage} />
+                  {footer.type === 'card' ? (
+                    <RoomFooterCard roomId={selectedSession.roomId} footer={footer} />
+                  ) : (
+                    <>
+                      {sendError && <p className="px-1 pb-1 text-xs text-fg-error">{sendError}</p>}
+                      <MessageInput ref={inputRef} submitAction={handleSendMessage} />
+                    </>
+                  )}
                 </div>
               ) : null}
             </div>
