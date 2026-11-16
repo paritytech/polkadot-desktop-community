@@ -2,7 +2,7 @@ import { type PolkadotClient, type TypedApi } from 'polkadot-api';
 
 import { type Descriptors } from './constants';
 
-export type { ConnectionStatus } from '@novasamatech/host-substrate-chain-connection';
+export type { ConnectionStatus } from '@/shared/chain-connection';
 
 type AppDescriptor = Descriptors[keyof Descriptors];
 

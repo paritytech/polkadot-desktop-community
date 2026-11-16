@@ -1,16 +1,13 @@
-import {
-  createChainConnection,
-  createMetadataCache,
-  createWsJsonRpcProvider,
-} from '@novasamatech/host-substrate-chain-connection';
 import { createLocalStorageAdapter } from '@novasamatech/storage-adapter';
 import { NEVER, Observable, defer, pairwise, switchMap } from 'rxjs';
 
+import { createChainConnection, createMetadataCache, createWsJsonRpcProvider } from '@/shared/chain-connection';
 import { appActive$ } from '@/shared/utils';
 import { type Chain } from '../chain/types';
 import { connectionRepository } from '../connection/repository';
 import { connectionService } from '../connection/service';
 
+import { LIGHT_CLIENT_FOLLOW_LIMIT, RPC_FOLLOW_LIMIT } from './constants';
 import { createLightClientProvider, ensureLightClientCatalog, hasLightClientSupport } from './lightClient';
 import { type ChainApi, type TypedClient } from './types';
 
@@ -18,21 +15,28 @@ const metadataCache = createMetadataCache({
   storage: createLocalStorageAdapter('chain-metadata'),
 });
 
+// Read on every call, not once per chain: `initConnectionModeSwitch` has the
+// pool rebuild a transport when the settings change, and this is where the new
+// choice is picked up.
+function usesLightClient(chain: Chain): boolean {
+  const settings = connectionRepository.getSettings();
+  return connectionService.resolveMode(settings, chain.genesisHash, hasLightClientSupport(chain.genesisHash)) === 'light-client';
+}
+
 const chains = createChainConnection<Chain, TypedClient>({
   destroyDelay: 60 * 1000,
-  createProvider: (chain, onStatusChanged) => {
-    // Read on every build, not once per chain: `initConnectionModeSwitch` has
-    // the pool rebuild a transport when the settings change, and this is where
-    // the new choice is picked up.
-    const settings = connectionRepository.getSettings();
-    if (connectionService.resolveMode(settings, chain.genesisHash, hasLightClientSupport(chain.genesisHash)) === 'light-client') {
-      return createLightClientProvider(chain.genesisHash, onStatusChanged);
+  createProvider: (chain, onStatusChanged, onHalt) => {
+    if (usesLightClient(chain)) {
+      return createLightClientProvider(chain.genesisHash, onStatusChanged, onHalt);
     }
 
     return createWsJsonRpcProvider({
       endpoints: chain.nodes.map(node => node.url),
       onStatusChanged,
     });
+  },
+  followLimit(chain) {
+    return usesLightClient(chain) ? LIGHT_CLIENT_FOLLOW_LIMIT : RPC_FOLLOW_LIMIT;
   },
   clientOptions(chain) {
     // Key the (persisted) metadata cache by the stable genesis hash, not the

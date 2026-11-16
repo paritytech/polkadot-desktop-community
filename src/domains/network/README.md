@@ -51,7 +51,9 @@ This domain owns:
 - The **chain catalog** — loading the curated chain list and shaping it for the rest of the app (sorting, parent/child resolution, asset-type tagging).
 - The **chain registry** — connection lifecycle, light-client setup, metadata caching, and the typed-client factory. It reads
   `connection/repository.ts` directly rather than through a resource: the transport is chosen synchronously, as a provider is
-  constructed.
+  constructed. Each consumer of a chain (the registry's own client, and every `getProvider` connection) is its own session, with
+  its own request ids and subscription tokens. A chain's follows are spread over connections so that none carries more than the
+  transport's follow limit (2 for the light client, 4 for RPC); a new connection opens when none has room and closes when empty.
 - **Connection mode** — whether a network is reached through the embedded light client or through RPC nodes. The user's
   **preference** is app-wide (`light-client` / `rpc`) or `advanced`, which defers to a per-network **override**. A network's
   **requested** mode is what the preference and overrides ask for; its **effective** mode is what the wire will actually use once

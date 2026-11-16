@@ -3,8 +3,9 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 const createWsJsonRpcProviderMock = vi.hoisted(() => vi.fn());
 // The socket is the boundary; everything above it — `createLazyClient` included — is the
 // real thing. The lazy client only ever builds a request function here, and the relay
-// call that would use it is mocked below, so nothing reaches the wire.
-vi.mock('@novasamatech/host-substrate-chain-connection', () => ({
+// call that would use it is mocked below, so nothing reaches the wire. The factory
+// replaces every export of the `@/shared/chain-connection` barrel for this spec.
+vi.mock('@/shared/chain-connection', () => ({
   createWsJsonRpcProvider: createWsJsonRpcProviderMock,
 }));
 
