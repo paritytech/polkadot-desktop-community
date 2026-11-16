@@ -208,7 +208,11 @@ export const RequestProductHeader = memo(({ identifier }: { identifier: string }
     fallbackDomain: fallback.domain,
   });
 
-  return <ProductHeader {...header} />;
+  return (
+    <div data-testid={TEST_IDS.requestProductHeader}>
+      <ProductHeader {...header} />
+    </div>
+  );
 });
 
 RequestProductHeader.displayName = 'RequestProductHeader';

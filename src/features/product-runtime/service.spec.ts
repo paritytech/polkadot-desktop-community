@@ -272,3 +272,17 @@ describe('productRuntimeService.describeResources', () => {
     ]);
   });
 });
+
+describe('productRuntimeService.legacySignerAccount', () => {
+  it('has no product account for the identity', () => {
+    expect(productRuntimeService.legacySignerAccount({ tag: 'Identity' })).toBeNull();
+  });
+
+  it('unwraps the product variant', () => {
+    expect(productRuntimeService.legacySignerAccount({ tag: 'Product', value: account })).toBe(account);
+  });
+
+  it('returns a bare product account as is', () => {
+    expect(productRuntimeService.legacySignerAccount(account)).toBe(account);
+  });
+});

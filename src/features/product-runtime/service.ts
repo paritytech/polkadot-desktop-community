@@ -14,6 +14,7 @@ import {
   type CreateProofReview,
   type CreateTransactionReview,
   type IdentityDisclosureReview,
+  type LegacySigningAccount,
   type ProductSubtreeReview,
   type ResourceAllocationReview,
   type SignPayloadReview,
@@ -158,6 +159,12 @@ function formatProductAccount(account: ProductAccountId): string {
   return `${account.dotNsIdentifier}//${describeDerivationIndex(account.derivationIndex)}`;
 }
 
+/** The product account a legacy review signs with; `null` when the identity signs. */
+function legacySignerAccount(account: LegacySigningAccount | ProductAccountId): ProductAccountId | null {
+  if (!('tag' in account)) return account;
+  return account.tag === 'Product' ? account.value : null;
+}
+
 /** `my-product.dot/#3` — a proof or alias context, product plus selector. */
 function formatProofContext(context: ProductProofContext): string {
   return `${context.productId}/${describeDerivationIndex(context.suffix)}`;
@@ -295,6 +302,7 @@ export const productRuntimeService = {
   toModalProps,
   payloadCallSource,
   formatProductAccount,
+  legacySignerAccount,
   formatProofContext,
   formatTranscriptBytes,
   rawPayloadText,
