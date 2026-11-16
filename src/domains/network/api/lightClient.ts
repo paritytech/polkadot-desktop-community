@@ -225,9 +225,8 @@ export function createLightClientProvider(
           onMessage(JSON.parse(response));
         }
 
-        // The halt hands the retry to the pool, which rebuilds the lane on its
-        // backoff. Without it a refused connect (such as one past the
-        // 32-connection cap) would leave the lane dead for good.
+        // The connection ended; the halt hands the retry to the pool, which
+        // rebuilds the lane on its backoff.
         if (!state.closed) {
           onStatusChanged('disconnected');
           onHalt();
@@ -235,7 +234,8 @@ export function createLightClientProvider(
       } catch (error) {
         console.error(`[network] light client failed for ${chainId}`, error);
         onStatusChanged('disconnected');
-        // Same hand-off as the stream's end; `disconnect` closing the connection must not halt.
+        // A refused connect (such as one past the 32-connection cap) lands here. Without the
+        // halt the lane would stay dead for good; `disconnect` closing the connection must not halt.
         if (!state.closed) onHalt(error);
       }
     })();

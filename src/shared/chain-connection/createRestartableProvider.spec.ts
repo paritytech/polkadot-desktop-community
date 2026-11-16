@@ -25,6 +25,8 @@ type FakeTransportParams = {
   pausable?: boolean;
   // Calls `onHalt` from inside `provider(onMessage)`, as a transport whose open fails.
   haltOnOpen?: boolean;
+  // Calls `onHalt` from inside `send`, as a transport whose connection drops on the first write.
+  haltOnSend?: boolean;
   // `disconnect` throws, as a light client whose drain loop failed.
   failDisconnect?: boolean;
 };
@@ -32,14 +34,17 @@ type FakeTransportParams = {
 function createFakeTransport({
   pausable = false,
   haltOnOpen = false,
+  haltOnSend = false,
   failDisconnect = false,
 }: FakeTransportParams = {}): FakeTransport {
-  const send = vi.fn();
+  let onHalt: OnHalt = noop;
+  const send = vi.fn(() => {
+    if (haltOnSend) onHalt(new Error('send failed'));
+  });
   const disconnect = vi.fn(() => {
     if (failDisconnect) throw new Error('disconnect failed');
   });
   let onMessage: ((message: JsonRpcMessage) => void) | null = null;
-  let onHalt: OnHalt = noop;
 
   const provider: JsonRpcProvider = cb => {
     onMessage = cb;
@@ -362,6 +367,26 @@ describe('createRestartableProvider', () => {
     // The halted build pushed the next one out by a further backoff step.
     await settle();
     expect(created).toHaveBeenCalledTimes(3);
+    expect(countSent(third, 'state_subscribeStorage')).toBe(1);
+  });
+
+  it('does not replay subscriptions twice when a build halts from send while the proxy re-sends', async () => {
+    const first = createFakeTransport();
+    const second = createFakeTransport({ haltOnSend: true });
+    const third = createFakeTransport();
+    const provider = createRestartableProvider(buildInOrder([first, second, third]));
+
+    const { connection } = await connect(provider);
+    connection.send({ jsonrpc: '2.0', id: 3, method: 'state_subscribeStorage', params: [['0x00']] });
+    first.emit({ jsonrpc: '2.0', id: 3, result: 'sub-1' });
+    // Unanswered, so the proxy re-sends it to the next build.
+    connection.send({ jsonrpc: '2.0', id: 4, method: 'system_chain', params: [] });
+
+    provider.restart();
+    await settle();
+    await settle();
+
+    expect(second.disconnect).toHaveBeenCalledOnce();
     expect(countSent(third, 'state_subscribeStorage')).toBe(1);
   });
 

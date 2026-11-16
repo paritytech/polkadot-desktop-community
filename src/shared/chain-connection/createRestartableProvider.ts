@@ -119,7 +119,7 @@ export function createRestartableProvider(
           try {
             connection.disconnect();
           } catch (disconnectError) {
-            console.warn('[chain-connection] closing a replaced transport failed', disconnectError);
+            console.warn('[chain-connection] closing a transport failed', disconnectError);
           }
           halt(error);
         },
@@ -147,10 +147,11 @@ export function createRestartableProvider(
 
     // `onResult` runs the proxy's connect synchronously, so a build that is up
     // by here has the proxy connected, and the replayed subscribes go out on it.
-    // A build that failed, or was halted as it registered, skips the replay: its
-    // halt put the proxy back to buffering, and a replay there would reach the
-    // next build on top of that build's own replay, sending each subscribe twice.
-    if (built) notifyReconnect();
+    // A build that failed, or was halted as it registered or while the proxy
+    // re-sent its buffer, skips the replay: its halt put the proxy back to
+    // buffering, and a replay there would reach the next build on top of that
+    // build's own replay, sending each subscribe twice.
+    if (built && active) notifyReconnect();
 
     // Nothing to cancel: `onResult` above already resolved this attempt.
     return noop;
