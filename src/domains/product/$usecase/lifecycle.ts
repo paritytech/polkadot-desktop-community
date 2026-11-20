@@ -1,21 +1,42 @@
 import { createSideEffect } from '@/shared/di';
 import { isElectron } from '@/shared/env';
+import { coreStorageRepository } from '../core-storage/repository';
+import { dotNsService } from '../dotns/service';
+import { productLocalStorageRepository } from '../local-storage/repository';
+import { productStorageKeyService } from '../local-storage/service';
 import { EXECUTABLE_KINDS, invalidateExecutableArchive, productDb } from '../product';
 import { declinedUpdatesRepository } from '../product/declined-updates/repository';
 
-import { coreStorageUseCase } from './coreStorage';
 import { dotNsUseCase } from './dotns';
 import { offlineCacheUseCase } from './offlineCache';
-import { permissionsUseCase } from './permissions';
 
 const onProductForgottenSideEffect = createSideEffect<{ productId: string }>({
   name: 'onProductForgotten',
 });
 
-// Product-internal teardown: drop the row, its permissions and cached archives,
-// then clear the sandbox. Dashboard detachment is a cross-domain
-// concern owned by the product-management aggregate, which calls this after it
-// has removed the product from the dashboard.
+/**
+ * Every product id the core holds state under for `productId`: its grants, keys and
+ * storage are filed under whatever id it was handed, which is the raw webview
+ * identifier, while the host holds the normalized base name. Matched by base name
+ * over the owners of core slots and product-storage entries; `productId` itself is
+ * always included, so a product with nothing stored still gets one clear.
+ */
+async function listCoreProductIds(productId: string): Promise<string[]> {
+  const [tld, slotOwners, storageKeys] = await Promise.all([
+    dotNsUseCase.getActiveTld(),
+    coreStorageRepository.productIdsWithSlots(),
+    productLocalStorageRepository.listKeys(),
+  ]);
+  const storageOwners = storageKeys.flatMap(key => productStorageKeyService.ownerOf(key) ?? []);
+  const owners = [...slotOwners, ...storageOwners].filter(owner => dotNsService.isSameBaseName(owner, productId, tld));
+
+  return [...new Set([productId, ...owners])];
+}
+
+// Product-internal teardown: drop the row and cached archives, then clear the
+// sandbox. The product's core state (grants, keys, storage) is the core's to clear,
+// and dashboard detachment is cross-domain: the product-management aggregate owns
+// both and calls this after them.
 async function purgeProduct(productId: string): Promise<boolean> {
   // Read the row's executables BEFORE deleting so we can pass each executable's
   // contenthash to invalidateExecutableArchive for precise cache eviction.
@@ -34,14 +55,7 @@ async function purgeProduct(productId: string): Promise<boolean> {
     }
   }
 
-  const tld = await dotNsUseCase.getActiveTld();
-
-  const [, , deleteResult] = await Promise.all([
-    permissionsUseCase.clearProductPermissions({ productId, tld }),
-    // Permissions go through the core so its in-memory copy drops with the slot. The
-    // sweep then catches what no core API clears: AutoSigningKey and ProductSubtree
-    // slots, plus any permission slot for a product the core never opened this run.
-    coreStorageUseCase.clearProductSlots({ productId, tld }),
+  const [deleteResult] = await Promise.all([
     productDb.delete(productId),
     offlineCacheUseCase.evictArchives(productId),
     // Best-effort: a failing declined-updates wipe must not abort the rest of
@@ -79,6 +93,7 @@ async function clearProductCache(productId: string): Promise<void> {
 
 export const lifecycleUseCase = {
   onProductForgottenSideEffect,
+  listCoreProductIds,
   purgeProduct,
   refreshProduct,
   clearProductCache,

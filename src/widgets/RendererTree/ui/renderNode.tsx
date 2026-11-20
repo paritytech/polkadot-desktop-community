@@ -5,7 +5,6 @@ import {
   type ColorToken,
   type ContentAlignment,
   type Dimensions,
-  type Effect,
   type HorizontalAlignment,
   type Modifier,
   type Shape,
@@ -14,7 +13,6 @@ import {
 } from '@parity/truapi';
 import { type CSSProperties, type ReactNode } from 'react';
 
-import { cnTw } from '@/shared/utils';
 import { type ActionHandler, type RendererTreeNode } from '../types';
 
 import { RendererImage } from './RendererImage';
@@ -109,12 +107,6 @@ const BLEND_MODE_CSS: Record<BlendingMode, NonNullable<CSSProperties['mixBlendMo
   Saturation: 'saturation',
   Color: 'color',
   Luminosity: 'luminosity',
-};
-
-// A `Record` rather than a conditional so a variant added upstream fails to compile
-// instead of silently rendering unstyled. Keyframes live in `src/index.css`.
-const EFFECT_CLASS: Record<Effect, string> = {
-  Rainbow: 'animate-renderer-rainbow',
 };
 
 const px = (v: number | bigint) => `${Number(v)}px`;
@@ -304,15 +296,15 @@ export function renderNode(node: RendererTreeNode, productId: string, onAction: 
       return <RendererImage key={key} productId={productId} modifiers={modifiers} props={props} />;
     }
 
-    case 'Effect': {
-      const { props, children } = node.value;
-      // `Rainbow` paints through the text it wraps, so a descendant `Text` that sets
-      // its own colour wins and that run stays flat. Accepted: the alternative is
-      // stripping a colour the product explicitly asked for.
+    case 'Materials': {
+      // The host draws no materials and answers the `Materials` feature probe `false`,
+      // so every node takes the RFC's fallback: its children, placed like a `Box`,
+      // with the layers skipped.
+      const { children } = node.value;
       return (
-        <span key={key} className={cnTw(EFFECT_CLASS[props.effect])}>
+        <div key={key} className="grid">
           {children.map((child, i) => renderNode(child, productId, onAction, i))}
-        </span>
+        </div>
       );
     }
   }

@@ -1,10 +1,9 @@
-import { AccountId } from '@polkadot-api/substrate-bindings';
 import { useLocation, useNavigate } from '@tanstack/react-router';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect } from 'react';
 
 import { useNotificationService } from '@/domains/chat';
-import { useDeviceIdentity } from '@/domains/device';
 import { useTruapiAuthState } from '@/aggregates/truapi-runtime';
+import { useP2PChatUserId } from '../hooks';
 import { p2pChatUseCase } from '../p2pChatUseCase';
 
 /**
@@ -21,7 +20,6 @@ import { p2pChatUseCase } from '../p2pChatUseCase';
  * active chat id + navigation) that cannot live in the use case.
  */
 export const P2PChatBinding = (): null => {
-  const device = useDeviceIdentity();
   const authState = useTruapiAuthState();
   const authTag = authState?.tag;
 
@@ -40,13 +38,9 @@ export const P2PChatBinding = (): null => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Must equal the P2P rooms' `userId` — SS58 of this device's statement account —
-  // or notifications resolve against a room set nothing else writes.
-  const notificationUserId = useMemo(() => {
-    if (!device) return null;
-
-    return AccountId().dec(device.statementAccountPublicKey);
-  }, [device]);
+  // Must equal the P2P rooms' `userId`, or notifications resolve against a room set
+  // nothing else writes.
+  const notificationUserId = useP2PChatUserId();
 
   const getActiveChatId = useCallback(() => {
     const match = location.pathname.match(/^\/chat\/(.+)/);

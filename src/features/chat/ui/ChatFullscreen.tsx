@@ -13,7 +13,6 @@ import {
   type P2PChatRequest,
   useHideRequestsByDefault,
   useMessageSearch,
-  useP2PRequests,
   useProductSessions,
 } from '@/domains/chat';
 import {
@@ -21,6 +20,7 @@ import {
   useCancelOutgoingRequest,
   useDeclineRequest,
   useP2PChatManager,
+  useP2PChatRequests,
   useP2PSessions,
   useRevealRequest,
   useSendChatRequest,
@@ -72,7 +72,7 @@ export const ChatFullscreen = ({ selected, onSelect, onDeselect }: Props) => {
   const userId = useTruapiUserId();
   const { data: productSessions, pending: pendingProduct } = useProductSessions(userId);
   const { data: p2pSessions, pending: pendingP2P } = useP2PSessions();
-  const { data: pendingRequests, outgoing: outgoingRequests } = useP2PRequests();
+  const { data: pendingRequests, outgoing: outgoingRequests } = useP2PChatRequests();
   const manager = useP2PChatManager();
   const acceptRequest = useAcceptRequest();
   const declineRequest = useDeclineRequest();

@@ -1,9 +1,9 @@
 import { AccountId } from '@polkadot-api/substrate-bindings';
-import { fromHex } from 'polkadot-api/utils';
+import { fromHex, toHex } from 'polkadot-api/utils';
 
 import { statementStoreAdapter } from '@/domains/application';
 import { createP2PChatManagerV2 } from '@/domains/chat';
-import { type UserIdentity, deviceIdentityUseCase } from '@/domains/device';
+import { type DeviceIdentity, type UserIdentity, deviceIdentityService } from '@/domains/device';
 import { truapiRuntime, truapiRuntimeUseCase } from '@/aggregates/truapi-runtime';
 
 import { p2pChatManager$ } from './state/manager';
@@ -36,8 +36,8 @@ async function loadUserIdentity(): Promise<UserIdentity | null> {
   const authState = truapiRuntime.get().authState;
   if (authState?.tag !== 'Connected') return null;
 
-  const { chatPublicKey, identityAccountId, publicKey, deviceEncPublicKey, peerStatementAccountId } = authState.value;
-  if (!chatPublicKey || !identityAccountId || !deviceEncPublicKey || !peerStatementAccountId) return null;
+  const { chatPublicKey, identityAccountId, publicKey, peerDeviceEncPublicKey, peerStatementAccountId } = authState.value;
+  if (!chatPublicKey || !identityAccountId || !peerDeviceEncPublicKey || !peerStatementAccountId) return null;
 
   const chatSecret = await truapiRuntimeUseCase.getChatIdentityKey();
   if (!chatSecret) return null;
@@ -47,9 +47,45 @@ async function loadUserIdentity(): Promise<UserIdentity | null> {
     identityChatPrivateKey: fromHex(chatSecret),
     identitySr25519PublicKey: fromHex(identityAccountId),
     rootSr25519PublicKey: fromHex(publicKey),
-    peerDeviceEncPubKey: fromHex(deviceEncPublicKey),
+    peerDeviceEncPubKey: fromHex(peerDeviceEncPublicKey),
     peerDeviceStatementAccountId: fromHex(peerStatementAccountId),
     ssoEncPubKey: null,
+  };
+}
+
+/**
+ * This device's identity, as the core reports it for the active session.
+ *
+ * The wallet registered these keys at pairing: it holds a statement allowance for
+ * `deviceStatementAccountId` and announces `deviceEncPublicKey` to contacts. Signing
+ * or decrypting with any other key sends statements no allowance covers and misses
+ * what contacts send. `null` until both secrets exist, or when a secret does not
+ * match the public half the session reports.
+ */
+async function loadDeviceIdentity(): Promise<DeviceIdentity | null> {
+  const authState = truapiRuntime.get().authState;
+  if (authState?.tag !== 'Connected') return null;
+
+  const { deviceStatementAccountId, deviceEncPublicKey } = authState.value;
+  if (!deviceStatementAccountId || !deviceEncPublicKey) return null;
+
+  const keys = await truapiRuntimeUseCase.getDeviceKeys();
+  if (!keys) return null;
+
+  const statementAccountPublicKey = deviceIdentityService.deriveStatementAccountPublicKey(keys.statementKey);
+  const encryptionPublicKey = deviceIdentityService.deriveEncryptionPublicKey(keys.encryptionKey);
+  const sameKey = (derived: Uint8Array, reported: string) => toHex(derived) === reported.toLowerCase();
+  if (!sameKey(statementAccountPublicKey, deviceStatementAccountId) || !sameKey(encryptionPublicKey, deviceEncPublicKey)) {
+    console.error('[p2p-chat] the core device secrets do not match the session public keys');
+
+    return null;
+  }
+
+  return {
+    statementAccountSeed: keys.statementKey,
+    statementAccountPublicKey,
+    encryptionPrivateKey: keys.encryptionKey,
+    encryptionPublicKey,
   };
 }
 
@@ -59,11 +95,10 @@ async function initialize(): Promise<void> {
   disposeRequestedDuringInit = false;
 
   try {
-    // The device identity is host-owned and always resolves; the user identity is
-    // the pairing signal, and until it persists there is nothing to run a channel
-    // for — the binding re-invokes when the session settles.
-    const [device, userIdentity] = await Promise.all([deviceIdentityUseCase.getDeviceIdentity(), loadUserIdentity()]);
-    if (!userIdentity) return;
+    // Both identities come from the core session; until it is paired there is
+    // nothing to run a channel for — the binding re-invokes when the session settles.
+    const [device, userIdentity] = await Promise.all([loadDeviceIdentity(), loadUserIdentity()]);
+    if (!device || !userIdentity) return;
 
     // userId must be SS58(device.statementAccountPublicKey) to match the
     // V2 session's localAccount and the device-sync `ownUserId`, so synced

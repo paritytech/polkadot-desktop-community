@@ -8,24 +8,25 @@ vi.mock(import('@/shared/env'), async importOriginal => ({
 
 import { isElectron } from '@/shared/env';
 import { type HexString } from '@/shared/types';
+import { coreStorageRepository } from '../core-storage/repository';
+import { productLocalStorageRepository } from '../local-storage/repository';
+import { productStorageKeyService } from '../local-storage/service';
 import { declinedUpdatesRepository } from '../product/declined-updates/repository';
 import { type ExecutableKind } from '../product/manifest/constants';
 import { executableArchiveResource } from '../product/manifest/resource';
 import { productDb } from '../product/repository';
 
-import { coreStorageUseCase } from './coreStorage';
 import { lifecycleUseCase } from './lifecycle';
 import { offlineCacheUseCase } from './offlineCache';
-import { permissionsUseCase } from './permissions';
 
 // Every collaborator is a plain object, spied in place: the repositories so nothing
 // reaches Dexie, the sibling use cases so no core call or archive eviction runs.
 vi.spyOn(productDb, 'delete');
 vi.spyOn(productDb, 'getByBaseName');
-vi.spyOn(coreStorageUseCase, 'clearProductSlots');
-vi.spyOn(permissionsUseCase, 'clearProductPermissions');
+vi.spyOn(coreStorageRepository, 'productIdsWithSlots');
+vi.spyOn(productLocalStorageRepository, 'listKeys');
 vi.spyOn(declinedUpdatesRepository, 'deleteByBaseName');
-vi.spyOn(offlineCacheUseCase, 'evictArchives').mockResolvedValue();
+vi.spyOn(offlineCacheUseCase, 'evictArchives');
 
 const onProductForgottenSpy = vi.spyOn(lifecycleUseCase.onProductForgottenSideEffect, 'apply');
 
@@ -38,8 +39,9 @@ const clearProductData = vi.fn();
 
 beforeEach(() => {
   vi.clearAllMocks();
-  vi.mocked(permissionsUseCase.clearProductPermissions).mockResolvedValue(undefined);
-  vi.mocked(coreStorageUseCase.clearProductSlots).mockResolvedValue(undefined);
+  vi.mocked(offlineCacheUseCase.evictArchives).mockResolvedValue();
+  vi.mocked(coreStorageRepository.productIdsWithSlots).mockResolvedValue([]);
+  vi.mocked(productLocalStorageRepository.listKeys).mockResolvedValue([]);
   vi.mocked(declinedUpdatesRepository.deleteByBaseName).mockResolvedValue(undefined);
   vi.mocked(isElectron).mockReturnValue(true);
   vi.mocked(productDb.getByBaseName).mockReturnValue(ResultAsync.fromSafePromise(Promise.resolve(null)));
@@ -85,27 +87,6 @@ describe('purgeProduct', () => {
     await lifecycleUseCase.purgeProduct('app.dot');
 
     expect(clearProductSandboxData).not.toHaveBeenCalled();
-  });
-
-  it('clears every permission the core holds for the product, matched by base name', async () => {
-    vi.mocked(productDb.delete).mockReturnValue(okResult());
-
-    await lifecycleUseCase.purgeProduct('app.dot');
-
-    // `tld` is passed because a slot is keyed by the raw webview identifier the core
-    // was handed, which may differ from the normalized base name a purge holds.
-    expect(permissionsUseCase.clearProductPermissions).toHaveBeenCalledWith({ productId: 'app.dot', tld: '.dot' });
-  });
-
-  // AutoSigningKey and ProductSubtree slots have no core API that clears them, and the
-  // core only drops what it happens to be holding, so without this sweep they outlive
-  // the product for the life of the install.
-  it('sweeps every product-indexed core storage slot the product owned', async () => {
-    vi.mocked(productDb.delete).mockReturnValue(okResult());
-
-    await lifecycleUseCase.purgeProduct('app.dot');
-
-    expect(coreStorageUseCase.clearProductSlots).toHaveBeenCalledWith({ productId: 'app.dot', tld: '.dot' });
   });
 
   it('deletes declined-update rows for the product', async () => {
@@ -167,22 +148,20 @@ describe('purgeProduct', () => {
     }
   });
 
-  it('runs permissions deletion and DB delete in parallel (Promise.all)', async () => {
-    let permissionsResolve: (() => void) | null = null;
-    vi.mocked(permissionsUseCase.clearProductPermissions).mockImplementation(
+  it('runs archive eviction and DB delete in parallel (Promise.all)', async () => {
+    let evictResolve: (() => void) | null = null;
+    vi.mocked(offlineCacheUseCase.evictArchives).mockImplementation(
       () =>
         new Promise<void>(resolve => {
-          permissionsResolve = resolve;
+          evictResolve = resolve;
         }),
     );
     vi.mocked(productDb.delete).mockReturnValue(okResult());
 
     const pending = lifecycleUseCase.purgeProduct('app.dot');
-    // DB delete already resolved; the use case should still be pending on permissions.
-    // Several async hops (the row read, then the active TLD) run before
-    // clearProductPermissions is reached, so wait for the call rather than counting them.
-    await vi.waitFor(() => expect(permissionsResolve).not.toBeNull());
-    permissionsResolve!();
+    // DB delete already resolved; the use case should still be pending on eviction.
+    await vi.waitFor(() => expect(evictResolve).not.toBeNull());
+    evictResolve!();
     await expect(pending).resolves.toBe(true);
   });
 
@@ -233,5 +212,24 @@ describe('clearProductCache', () => {
     await lifecycleUseCase.clearProductCache('app.dot');
 
     expect(clearProductData).not.toHaveBeenCalled();
+  });
+});
+
+describe('listCoreProductIds', () => {
+  it('lists every owner of core slots and storage entries matching the base name', async () => {
+    vi.mocked(coreStorageRepository.productIdsWithSlots).mockResolvedValue(['App.dot', 'other.dot']);
+    vi.mocked(productLocalStorageRepository.listKeys).mockResolvedValue([
+      `${productStorageKeyService.ownerPrefix('app')}k`,
+      `${productStorageKeyService.ownerPrefix('other.dot')}k`,
+      'plain',
+    ]);
+
+    const ids = await lifecycleUseCase.listCoreProductIds('app.dot');
+
+    expect([...ids].sort()).toEqual(['App.dot', 'app', 'app.dot']);
+  });
+
+  it('always includes the product id itself', async () => {
+    await expect(lifecycleUseCase.listCoreProductIds('app.dot')).resolves.toEqual(['app.dot']);
   });
 });

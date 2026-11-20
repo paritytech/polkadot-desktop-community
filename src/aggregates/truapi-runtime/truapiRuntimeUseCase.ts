@@ -1,5 +1,6 @@
 import { asProductId } from '@parity/truapi';
 import { type AuthState, type ExecutableKind, type RequiredHostCallbacks, type TrUApiProductProvider } from '@parity/truapi-host';
+import { fromHex } from 'polkadot-api/utils';
 import * as v from 'valibot';
 
 import { promiseWithResolvers } from '@/shared/utils';
@@ -150,6 +151,12 @@ async function acquireWorker(productId: string): Promise<void> {
   runtime.acquireWorker(asProductId(productId));
 }
 
+/** Forget one product in the core, once its stored session is restored. */
+async function clearProductState(productId: string): Promise<void> {
+  const runtime = await whenSessionActivated();
+  await runtime.clearProductState(asProductId(productId));
+}
+
 /** Drop one `acquireWorker` reference. Releasing with none held is a no-op. */
 async function releaseWorker(productId: string): Promise<void> {
   const runtime = await whenRuntimeReady();
@@ -255,6 +262,21 @@ async function getChatIdentityKey(): Promise<string | undefined> {
 }
 
 /**
+ * This device's secrets for the active session, or `undefined` before pairing.
+ *
+ * The keys the paired wallet registered for this host: `statementKey` (expanded
+ * sr25519, 64 bytes) signs the statements its allowance covers, and `encryptionKey`
+ * (X25519) decrypts what contacts address to this device. Both rotate per login.
+ */
+async function getDeviceKeys(): Promise<{ statementKey: Uint8Array; encryptionKey: Uint8Array } | undefined> {
+  const provider = await getHostAuthProvider();
+  const [statementKey, encryptionKey] = await Promise.all([provider.getDeviceStatementKey(), provider.getDeviceEncryptionKey()]);
+  if (!statementKey || !encryptionKey) return undefined;
+
+  return { statementKey, encryptionKey: fromHex(encryptionKey) };
+}
+
+/**
  * Start a pairing. The deeplink to present arrives separately as
  * `AuthState.Pairing`, not as this call's result.
  */
@@ -281,11 +303,13 @@ export const truapiRuntimeUseCase = {
   start,
   toUserId,
   getChatIdentityKey,
+  getDeviceKeys,
   watchSessionTeardown,
   requestLogin,
   createProvider,
   acquireWorker,
   releaseWorker,
+  clearProductState,
   publishAuthState,
   whenAuthResolved,
   whenRuntimeReady,

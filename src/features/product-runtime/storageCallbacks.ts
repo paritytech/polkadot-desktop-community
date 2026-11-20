@@ -20,6 +20,7 @@ export function createProductStorageCallbacks(): ProductStorageCallbacks {
       read: key => productStorageUseCase.readEntry(key),
       write: (key, value) => productStorageUseCase.writeEntry(key, value),
       clear: key => productStorageUseCase.clearEntry(key),
+      clearProduct: productId => productStorageUseCase.clearOwnerEntries(productId),
       // The wire carries hex, not bytes, so the conversion happens here and the
       // domain stream stays in `Uint8Array`. Comparing the converted string is also
       // what makes the "unchanged write emits nothing" rule a plain `===`.

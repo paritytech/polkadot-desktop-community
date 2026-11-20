@@ -100,13 +100,6 @@ export type DeclinedUpdateRow = {
   declinedAt: number;
 };
 
-export type DeviceIdentityRow = {
-  id: string; // always the single-row id — the store holds exactly one row
-  statementAccountSeed: Uint8Array;
-  encryptionPrivateKey: Uint8Array;
-  createdAt: number;
-};
-
 export type ThemeSettingsRow = {
   id: string; // always the single-row id — the store holds exactly one row
   preference: string;
@@ -132,6 +125,5 @@ export type AppTableName =
   | 'productExecutableCache'
   | 'declinedUpdates'
   | 'coreStorage'
-  | 'deviceIdentity'
   | 'themeSettings'
   | 'lightClientDatabases';

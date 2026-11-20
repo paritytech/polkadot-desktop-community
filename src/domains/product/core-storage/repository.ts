@@ -94,11 +94,6 @@ async function updateDescriptor(key: string, descriptor: CoreSlotDescriptor): Pr
  * `coreSlotService.describeSlot` decides it, and the `productId` / `productLabel` indexes
  * it populates are what make this a sweep rather than a scan.
  */
-async function clearProductSlots(productIds: string[], productLabels: string[]): Promise<void> {
-  if (productIds.length > 0) await database.coreStorage.where('productId').anyOf(productIds).delete();
-  if (productLabels.length > 0) await database.coreStorage.where('productLabel').anyOf(productLabels).delete();
-}
-
 /**
  * Every product id owning at least one slot of ANY product-indexed kind.
  *
@@ -120,6 +115,5 @@ export const coreStorageRepository = {
   productIdsWithPermissionSlots$,
   descriptorCandidates,
   updateDescriptor,
-  clearProductSlots,
   productIdsWithSlots,
 };

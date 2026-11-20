@@ -1,8 +1,6 @@
-import { AccountId } from '@polkadot-api/substrate-bindings';
 import { useMemo } from 'react';
 
 import { useRead } from '@/shared/hooks';
-import { useDeviceIdentity } from '@/domains/device';
 
 import { p2pRequestsResource, p2pRoomsResource } from './resource';
 import { p2pService } from './service';
@@ -13,28 +11,15 @@ import { type P2PRoom } from './types';
  * (sessions, contact search, request actions) and the manager lifecycle live
  * in the `p2p-chat` aggregate — the domain owns the data layer, not the
  * runtime manager.
+ *
+ * `userId` is SS58 of this device's statement account, the id the rooms are keyed
+ * by; `null` reads nothing.
  */
-
-// P2P rooms are keyed by SS58 of this device's statement account, which the host
-// now mints itself (`@/domains/device`). It is a device-scoped id, not a user one:
-// two installs of the same account hold separate room sets, which is what the
-// multi-device protocol syncs between.
-const useCurrentUserId = (): string | null => {
-  const identity = useDeviceIdentity();
-
-  return useMemo(() => {
-    if (!identity) return null;
-
-    return AccountId().dec(identity.statementAccountPublicKey);
-  }, [identity]);
-};
 
 /**
  * Live P2P rooms for the signed-in user.
  */
-export const useP2PRooms = (): { data: P2PRoom[]; pending: boolean; error: unknown } => {
-  const userId = useCurrentUserId();
-
+export const useP2PRooms = (userId: string | null): { data: P2PRoom[]; pending: boolean; error: unknown } => {
   return useRead(p2pRoomsResource, {
     params: userId ? { userId } : null,
     defaultValue: [],
@@ -45,9 +30,7 @@ export const useP2PRooms = (): { data: P2PRoom[]; pending: boolean; error: unkno
 /**
  * Returns pending P2P chat requests (incoming + outgoing).
  */
-export const useP2PRequests = () => {
-  const userId = useCurrentUserId();
-
+export const useP2PRequests = (userId: string | null) => {
   const { data: requests, pending: pendingRequests } = useRead(p2pRequestsResource, {
     params: userId ? { userId } : null,
     defaultValue: [],

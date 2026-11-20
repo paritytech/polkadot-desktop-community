@@ -1,6 +1,7 @@
 import { type Observable } from 'rxjs';
 
 import { productLocalStorageRepository } from '../local-storage/repository';
+import { productStorageKeyService } from '../local-storage/service';
 
 // The domain's public surface for product key/value storage. The core hands over an
 // opaque, already-namespaced key and a blob; nothing here interprets either.
@@ -26,9 +27,15 @@ function watchEntry(key: string): Observable<Uint8Array | undefined> {
   return productLocalStorageRepository.watchEntry(key);
 }
 
+/** Remove every entry the core filed under exactly `productId` — the core's `clearProduct`. */
+function clearOwnerEntries(productId: string): Promise<void> {
+  return productLocalStorageRepository.clearByPrefix(productStorageKeyService.ownerPrefix(productId));
+}
+
 export const productStorageUseCase = {
   readEntry,
   writeEntry,
   clearEntry,
+  clearOwnerEntries,
   watchEntry,
 };

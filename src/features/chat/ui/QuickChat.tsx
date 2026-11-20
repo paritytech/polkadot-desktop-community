@@ -10,9 +10,9 @@ import MaximizeIcon from '@/shared/assets/images/header/maximize.svg?jsx';
 import { DismissOverlay } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
-import { type ChatSession, type RoomFooter, useP2PRequests, useProductSessions } from '@/domains/chat';
+import { type ChatSession, type RoomFooter, useProductSessions } from '@/domains/chat';
 import { browserTabs } from '@/aggregates/browser-tabs';
-import { useP2PSessions } from '@/aggregates/p2p-chat';
+import { useP2PChatRequests, useP2PSessions } from '@/aggregates/p2p-chat';
 import { useTruapiUserId } from '@/aggregates/truapi-runtime';
 import { type ChatListEntry, useSortedChatList } from '../hooks/useSortedChatList';
 import { chatService } from '../service';
@@ -38,7 +38,7 @@ export const QuickChat = memo(({ open, onOpenChange, children }: QuickChatProps)
   const userId = useTruapiUserId();
   const { data: productSessions } = useProductSessions(userId);
   const { data: p2pSessions } = useP2PSessions();
-  const { data: pendingRequests, outgoing: outgoingRequests } = useP2PRequests();
+  const { data: pendingRequests, outgoing: outgoingRequests } = useP2PChatRequests();
   const [selectedSession, setSelectedSession] = useState<ChatSession | null>(null);
   const [sendError, setSendError] = useState<string | null>(null);
 

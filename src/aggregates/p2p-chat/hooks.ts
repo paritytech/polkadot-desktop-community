@@ -1,9 +1,36 @@
+import { AccountId } from '@polkadot-api/substrate-bindings';
+import { fromHex } from 'polkadot-api/utils';
 import { useCallback, useMemo } from 'react';
 
 import { useRxState } from '@/shared/rxstate';
-import { type ChatSession, type P2PChatManager, type SearchResult, createP2PChatSession, useP2PRooms } from '@/domains/chat';
+import {
+  type ChatSession,
+  type P2PChatManager,
+  type SearchResult,
+  createP2PChatSession,
+  useP2PRequests,
+  useP2PRooms,
+} from '@/domains/chat';
+import { useTruapiAuthState } from '@/aggregates/truapi-runtime';
 
 import { p2pChatManager$ } from './state/manager';
+
+/**
+ * The id P2P rooms are keyed by: SS58 of this device's statement account for the
+ * active session, or `null` while there is none. Matches the manager's `userId`,
+ * which it derives from the same account's secret.
+ */
+export const useP2PChatUserId = (): string | null => {
+  const authState = useTruapiAuthState();
+  const account = authState?.tag === 'Connected' ? authState.value.deviceStatementAccountId : undefined;
+
+  return useMemo(() => (account ? AccountId().dec(fromHex(account)) : null), [account]);
+};
+
+/**
+ * Pending P2P chat requests (incoming + outgoing) for the active session.
+ */
+export const useP2PChatRequests = () => useP2PRequests(useP2PChatUserId());
 
 /**
  * The live P2P chat manager, or `null` while chat isn't running. Manager-bound
@@ -26,7 +53,7 @@ const requireManager = (manager: P2PChatManager | null): P2PChatManager => {
  */
 export const useP2PSessions = (): { data: ChatSession[]; pending: boolean; error: unknown } => {
   const manager = useP2PChatManager();
-  const { data: rooms, pending, error } = useP2PRooms();
+  const { data: rooms, pending, error } = useP2PRooms(useP2PChatUserId());
 
   const sessions = useMemo(() => {
     if (!manager) return [];

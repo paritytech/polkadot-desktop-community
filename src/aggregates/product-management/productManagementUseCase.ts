@@ -8,6 +8,7 @@ import {
   foldersUseCase,
 } from '@/domains/application';
 import { type Product, commitmentUseCase, dotNsService, dotNsUseCase, lifecycleUseCase } from '@/domains/product';
+import { truapiRuntimeUseCase } from '@/aggregates/truapi-runtime';
 
 const WIDGET_MIN_HEIGHT = 4;
 
@@ -72,20 +73,47 @@ function placeOnDashboard(baseName: string, gridSize: { w: number; h: number }):
   return cardsUseCase.addCardToLayout(buildProductWidgetCard(baseName, gridSize));
 }
 
+/**
+ * Clear what the core holds for the product — grants, Allow once answers, keys and
+ * stored values — under every id it was filed under. Best-effort per id: one id the
+ * core refuses must not keep the rest, or the product, alive.
+ */
+async function clearCoreProductState(productId: string): Promise<void> {
+  const ids = await lifecycleUseCase.listCoreProductIds(productId);
+
+  await Promise.all(
+    ids.map(id =>
+      truapiRuntimeUseCase.clearProductState(id).catch((error: unknown) => {
+        console.warn('[product-management] the core could not clear product state', { productId: id, error });
+      }),
+    ),
+  );
+}
+
 // Detach the product from the dashboard, then tear down all product-owned state.
 // Favorites removal wins when the product lives in the folder; otherwise it is a
-// top-level card. The product-internal purge is delegated to the product domain.
+// top-level card. The core clears its own state; the product-internal purge is
+// delegated to the product domain.
 async function forgetProduct(productId: string): Promise<boolean> {
   const removedFromFolder = await foldersUseCase.removeItemFromFolder(productId);
   if (!removedFromFolder) {
     await cardsUseCase.removeCardFromLayout(productId);
   }
 
+  await clearCoreProductState(productId);
+
   return lifecycleUseCase.purgeProduct(productId);
+}
+
+/** Clear Cache: the product's core state and its sandbox data. The product stays installed. */
+async function clearProductData(productId: string): Promise<void> {
+  await clearCoreProductState(productId);
+  await lifecycleUseCase.clearProductCache(productId);
 }
 
 export const productManagementUseCase = {
   ensureDefaultDashboard,
   addProductToDashboard,
   forgetProduct,
+  clearProductData,
 };

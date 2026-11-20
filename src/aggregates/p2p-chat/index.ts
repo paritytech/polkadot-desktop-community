@@ -5,6 +5,8 @@ export {
   useCancelOutgoingRequest,
   useDeclineRequest,
   useP2PChatManager,
+  useP2PChatRequests,
+  useP2PChatUserId,
   useP2PSessions,
   useRevealRequest,
   useSearchPeers,

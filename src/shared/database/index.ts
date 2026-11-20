@@ -6,7 +6,6 @@ export {
   type DashboardLayoutItemRow,
   type DashboardLayoutRow,
   type DeclinedUpdateRow,
-  type DeviceIdentityRow,
   type ProductExecutableCacheRow,
   type ProductExecutableRow,
   type ProductPermissionsRow,

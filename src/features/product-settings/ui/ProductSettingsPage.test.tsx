@@ -6,7 +6,7 @@ import { of } from 'rxjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { TranslationProvider } from '@/shared/translation';
-import { type PersistedProduct, lifecycleUseCase, permissionsUseCase, productsResource } from '@/domains/product';
+import { type PersistedProduct, permissionsUseCase, productsResource } from '@/domains/product';
 import { productManagementUseCase } from '@/aggregates/product-management';
 
 import { ProductSettingsPage } from './ProductSettingsPage';
@@ -17,7 +17,7 @@ import { ProductSettingsPage } from './ProductSettingsPage';
 // of it here would pass after the real one changed.
 vi.spyOn(permissionsUseCase, 'watchProductPermissions').mockReturnValue(of([]));
 const watchGrantedAccountAccess = vi.spyOn(permissionsUseCase, 'watchGrantedAccountAccess').mockReturnValue(of([]));
-vi.spyOn(lifecycleUseCase, 'clearProductCache').mockResolvedValue();
+vi.spyOn(productManagementUseCase, 'clearProductData').mockResolvedValue();
 const forgetProductMock = vi.spyOn(productManagementUseCase, 'forgetProduct').mockResolvedValue(true);
 
 function seedProducts(records: Partial<PersistedProduct>[]) {

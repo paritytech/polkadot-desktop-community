@@ -103,9 +103,15 @@ export function createChainCallbacks(): ChainCallbacks {
     // none as V5, and the core keeps its own extrinsics on V4 to match.
     extrinsicVersion: { transactionExtensionVersions: async () => ({ chains: [] }) },
     features: {
-      // `HostFeatureSupportedRequest` is a single-variant union (`tag: 'Chain'`),
-      // so there is no other branch to answer.
-      featureSupported: async request => ({ supported: Boolean(await findChain(request.value.genesisHash)) }),
+      // The host draws no materials: a `Materials` node renders its children only.
+      featureSupported: async request => {
+        switch (request.tag) {
+          case 'Chain':
+            return { supported: Boolean(await findChain(request.value.genesisHash)) };
+          case 'Materials':
+            return { supported: false };
+        }
+      },
     },
 
     chain: {
