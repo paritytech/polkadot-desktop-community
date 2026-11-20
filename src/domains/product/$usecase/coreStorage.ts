@@ -4,7 +4,6 @@ import { fromHex } from 'polkadot-api/utils';
 import { coreStorageRepository } from '../core-storage/repository';
 import { coreSlotService } from '../core-storage/service';
 import { type CoreSlotDescriptor } from '../core-storage/types';
-import { dotNsService } from '../dotns/service';
 
 // The domain's public surface for the host-private slots the TrUAPI core owns.
 // The core hands over a SCALE-encoded key and an opaque value; nothing here
@@ -71,23 +70,7 @@ async function backfillDescriptors(): Promise<void> {
   }
 }
 
-/**
- * Drop every core-owned slot a removed product owned.
- *
- * Matched by base name, not by exact id: a slot is keyed by whatever product id the
- * core was handed, which is the raw webview identifier, while a purge holds the
- * normalized name. Slots the core files per product rather than per executable carry
- * the bare label instead, and go with it.
- */
-async function clearProductSlots({ productId, tld }: { productId: string; tld: string }): Promise<void> {
-  const owners = await coreStorageRepository.productIdsWithSlots();
-  const matching = owners.filter(owner => dotNsService.isSameBaseName(owner, productId, tld));
-
-  await coreStorageRepository.clearProductSlots(matching.length > 0 ? matching : [productId], [dotNsService.labelOf(productId)]);
-}
-
 export const coreStorageUseCase = {
-  clearProductSlots,
   readSlot,
   writeSlot,
   clearSlot,

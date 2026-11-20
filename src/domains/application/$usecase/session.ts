@@ -1,18 +1,8 @@
 import { createSideEffect } from '@/shared/di';
 import { clearAllP2PChatStorage, clearAllProductChatStorage } from '@/domains/chat';
 import { contactRepository } from '@/domains/contact';
-import { deviceIdentityUseCase } from '@/domains/device';
 import { deviceSyncRepository } from '@/domains/device-sync';
 import { coreAuthGateway } from '../core-auth/gateway';
-
-/**
- * Rotate the device identity; the next read mints a fresh keypair. This
- * cryptographically erases anything addressed to the old one.
- *
- * Called on its own by the onboarding "retry" path, so a fresh pairing uses a new
- * device keypair, and as the last step of `performUserLogout`.
- */
-const resetDeviceIdentity = (): Promise<void> => deviceIdentityUseCase.resetDeviceIdentity();
 
 const reloadRenderer = () => {
   // Tanstack hash router preserves `#/<path>` across reloads. If the user
@@ -47,7 +37,7 @@ const reloadRenderer = () => {
  * — the session, its secrets, the allowance slot keys — is host-papp's to drop,
  * and it already has: this runs because the session left `adapter.sessions`,
  * which host-papp only does after purging everything that session persisted.
- * The device keypair survives, rotated separately by `performUserLogout`.
+ * The device keys are the core session's and go with it.
  */
 /**
  * Fires during V2 logout, after the application-owned repos are cleared. Domains that persist
@@ -80,20 +70,12 @@ const runV2Logout = async (): Promise<void> => {
 };
 
 /**
- * Full user-initiated logout — runs `runV2Logout` (which clears the SDK-owned
- * user identity, the per-user repos, and host-papp's session cache), rotates
- * the device identity so the cached on-chain `HandshakeSuccess` becomes
- * unreadable, then reloads.
+ * Full user-initiated logout — runs `runV2Logout` (the per-user repos), then
+ * reloads. The device keys belong to the core session and rotate with the next
+ * login, so there is no host-side identity to reset.
  *
- * The pairing topic is `khash(statementAccountId, encryptionPublicKey ||
- * "topic")` and the Success payload on it is ChaCha20-Poly1305 encrypted via X25519
- * against our `encryptionPublicKey`. Dropping the device keypair means the next
- * `authenticate()` subscribes to a brand new topic (no cached statements),
- * and any old Success'es still within bulletin-chain retention are
- * encrypted to a private key we no longer hold — cryptographically erased.
- *
- * The reload at the end resets module-level state captured at startup
- * (`bootstrap`'s memoised `device`), so subsequent re-pairs start clean.
+ * The reload at the end resets module-level state captured at startup, so
+ * subsequent re-pairs start clean.
  */
 const performUserLogout = async (): Promise<void> => {
   try {
@@ -103,14 +85,7 @@ const performUserLogout = async (): Promise<void> => {
     // here still lands on the login screen — reporting beats stalling on this screen.
     console.error('[sso] logout teardown failed; reloading to the login screen anyway', error);
   } finally {
-    // The reload is what clears the logout splash and resets startup state, so it must
-    // run even if the device reset throws — a stuck splash is worse than a keypair that
-    // rotates on the next attempt.
-    try {
-      await resetDeviceIdentity();
-    } catch (error) {
-      console.error('[sso] logout: device identity reset failed; reloading anyway', error);
-    }
+    // The reload is what clears the logout splash and resets startup state.
     reloadRenderer();
   }
 };
@@ -131,5 +106,4 @@ export const sessionUseCase = {
   requestCoreLogin,
   runV2Logout,
   performUserLogout,
-  resetDeviceIdentity,
 };

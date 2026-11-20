@@ -1,16 +1,11 @@
 /**
- * The identity of *this* device — the local instance of Polkadot Desktop on this
- * machine. Minted and persisted by this domain
- * (`deviceIdentityUseCase.getDeviceIdentity`), stable for the install.
+ * The identity of *this* device for the active session. Served by the TrUAPI core:
+ * the paired wallet registered these keys at pairing, holds the statement allowance
+ * for the account and announces the encryption key to contacts. Rotated per login.
  *
- * The host owns these keys outright: they are not derived from the paired session
- * and no wallet is involved in creating them, so they survive a re-pair. That also
- * makes them the one identity the multi-device protocol cannot re-issue — minting a
- * second orphans every peer that knows the first.
- *
- * Per-device keys (locally generated):
+ * Per-device keys:
  *   `statementAccountSeed` is the device's expanded sr25519 secret (64 bytes,
- *   derived from 32 bytes of entropy via `createSr25519Secret`). Fed to
+ *   as `getDeviceStatementKey` serves it). Fed to
  *   `createSr25519Prover` to sign statements as this device.
  *   `statementAccountPublicKey` is the corresponding sr25519 public key (32 bytes)
  *   — this is the device's accountId in the multi-device protocol.

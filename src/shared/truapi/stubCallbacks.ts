@@ -33,6 +33,7 @@ export function createStubHostCallbacks(): RequiredHostCallbacks {
       read: notImplemented('productStorage.read'),
       write: notImplemented('productStorage.write'),
       clear: notImplemented('productStorage.clear'),
+      clearProduct: notImplemented('productStorage.clearProduct'),
       subscribeStorage: emptyStream,
     },
     coreStorage: {

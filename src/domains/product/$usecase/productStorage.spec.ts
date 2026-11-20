@@ -3,10 +3,13 @@ import 'fake-indexeddb/auto';
 import { afterEach, describe, expect, it } from 'vitest';
 
 import { database } from '@/shared/database';
+import { productStorageKeyService } from '../local-storage/service';
 
 import { productStorageUseCase } from './productStorage';
 
-const { readEntry, writeEntry, clearEntry, watchEntry } = productStorageUseCase;
+const { readEntry, writeEntry, clearEntry, clearOwnerEntries, watchEntry } = productStorageUseCase;
+
+const keyOf = (productId: string, key: string) => `${productStorageKeyService.ownerPrefix(productId)}${key}`;
 
 describe('productStorageUseCase', () => {
   afterEach(async () => {
@@ -28,6 +31,16 @@ describe('productStorageUseCase', () => {
 
     await expect(readEntry('a')).resolves.toBeUndefined();
     await expect(readEntry('b')).resolves.toEqual(new Uint8Array([2]));
+  });
+
+  it('clears exactly one owner, leaving an owner whose id it prefixes', async () => {
+    await writeEntry(keyOf('app.dot', 'a'), new Uint8Array([1]));
+    await writeEntry(keyOf('app.dot.x', 'a'), new Uint8Array([2]));
+
+    await clearOwnerEntries('app.dot');
+
+    await expect(readEntry(keyOf('app.dot', 'a'))).resolves.toBeUndefined();
+    await expect(readEntry(keyOf('app.dot.x', 'a'))).resolves.toEqual(new Uint8Array([2]));
   });
 
   // Dexie also re-emits on mutations from other databases sharing the process, so the

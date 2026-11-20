@@ -1,18 +1,10 @@
 import { x25519 } from '@noble/curves/ed25519.js';
-import { createSr25519Secret, deriveSr25519PublicKey } from '@novasamatech/statement-store';
+import { deriveSr25519PublicKey } from '@novasamatech/statement-store';
 
-const STATEMENT_ENTROPY_BYTES = 32;
 /** X25519 public key size (CHAT-RFC-0004). */
 const ENCRYPTION_PUBLIC_KEY_BYTES = 32;
 
-const generateStatementAccountSeed = (): Uint8Array => {
-  const entropy = crypto.getRandomValues(new Uint8Array(STATEMENT_ENTROPY_BYTES));
-  return createSr25519Secret(entropy);
-};
-
 const deriveStatementAccountPublicKey = (seed: Uint8Array): Uint8Array => deriveSr25519PublicKey(seed);
-
-const generateEncryptionPrivateKey = (): Uint8Array => x25519.utils.randomSecretKey();
 
 // 32-byte X25519 key — matches `Contact.devices[].encryptionPublicKey` and `p2pService.computeSharedSecret`.
 const deriveEncryptionPublicKey = (privateKey: Uint8Array): Uint8Array => x25519.getPublicKey(privateKey);
@@ -29,9 +21,7 @@ const deriveEncryptionPublicKey = (privateKey: Uint8Array): Uint8Array => x25519
 const isValidEncryptionPublicKey = (bytes: Uint8Array): boolean => bytes.length === ENCRYPTION_PUBLIC_KEY_BYTES;
 
 export const deviceIdentityService = {
-  generateStatementAccountSeed,
   deriveStatementAccountPublicKey,
-  generateEncryptionPrivateKey,
   deriveEncryptionPublicKey,
   isValidEncryptionPublicKey,
 };

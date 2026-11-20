@@ -321,12 +321,14 @@ the persisted/displayed surfaces refresh with no manual cache poke.
   evict — the row stays committed), then `offlineCacheUseCase.evictArchives` deletes the persisted disk archives (per-kind subname
   plus the legacy bare-name app archive) and the `productExecutableCache` index rows.
 - **Forget** (`productManagementUseCase.forgetProduct`, an **aggregate** use case, → Uncommitted). Detaches from the dashboard
-  (`removeIconFromFolder` else `removeCardFromLayout`), then delegates the product-internal teardown to
-  `lifecycleUseCase.purgeProduct`: evict the executable-archive caches, then `Promise.all`(delete permissions, `productDb.delete`,
-  evict persisted offline archives via `offlineCacheUseCase.evictArchives`), clear the Electron
-  sandbox (which also drops the on-disk archives), and — only on a successful delete — fire `onProductForgottenSideEffect`.
-  Product storage is not swept: the host cannot tell a key's owner without a decoder from `@parity/truapi-host`.
-  Dashboard detachment lives in the aggregate because it is cross-domain; the domain owns only the purge.
+  (`removeIconFromFolder` else `removeCardFromLayout`), then has the core forget the product — `clearProductState` for every
+  id `lifecycleUseCase.listCoreProductIds` finds, which revokes its grants and keys and clears its storage through the
+  `productStorage.clearProduct` callback — and delegates the rest to `lifecycleUseCase.purgeProduct`: evict the
+  executable-archive caches, then `Promise.all`(`productDb.delete`, evict persisted offline archives via
+  `offlineCacheUseCase.evictArchives`), clear the Electron sandbox (which also drops the on-disk archives), and — only on a
+  successful delete — fire `onProductForgottenSideEffect`. Storage keys are matched to owners through the core's key layout,
+  mirrored in `local-storage/service.ts` until `@parity/truapi-host` exports a decoder. Dashboard detachment and the core call
+  live in the aggregate because they are cross-domain; the domain owns only the purge.
 - **Reconcile** (`reconcileUnpinnedProducts`). The **explicit, owned** refresh of unpinned metadata, run on a defined trigger (app
   launch), never as a side effect of viewing a product. For each unpinned row it re-resolves from chain and, if `productDiffers`,
   updates the row (liveQuery re-emits → UI refreshes). Pinned rows are frozen and skipped. Best-effort per row; the chain fan-out
@@ -362,8 +364,8 @@ its **frozen** contenthash → stable offline bytes. The last two rows are the d
 on-disk archive store in the main process holds the bytes, and `productExecutableCache` tracks their fetch status for the UI — the
 disk store is authoritative, the index is reconciled to it at launch. Two manual cache ops sit outside the resolution flow and
 touch neither the row, the pin state, nor the persisted offline archive: `lifecycleUseCase.refreshProduct(id)` (browser reload —
-evicts the in-memory archive caches so the next load re-fetches) and `lifecycleUseCase.clearProductCache(id)` (product-settings
-"Clear cache" — wipes the sandbox session; product storage is not swept, because the host cannot tell a key's owner without a decoder from `@parity/truapi-host`). Neither deletes a pinned product's offline bytes; only unpin /
+evicts the in-memory archive caches so the next load re-fetches) and `productManagementUseCase.clearProductData(id)` (product-settings
+"Clear cache" — the core forgets the product's state as on Forget, then `lifecycleUseCase.clearProductCache` wipes the sandbox session). Neither deletes a pinned product's offline bytes; only unpin /
 forget / reset do.
 
 ### What `pinned` actually changes

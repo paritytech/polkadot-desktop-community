@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { cardsUseCase, foldersUseCase } from '@/domains/application';
 import { type Product, commitmentUseCase, lifecycleUseCase } from '@/domains/product';
+import { truapiRuntimeUseCase } from '@/aggregates/truapi-runtime';
 
 import { productManagementUseCase } from './productManagementUseCase';
 
@@ -16,6 +17,9 @@ vi.spyOn(foldersUseCase, 'removeItemFromFolder');
 vi.spyOn(commitmentUseCase, 'commitResolvedProduct');
 vi.spyOn(commitmentUseCase, 'commitProductByIdentifier');
 vi.spyOn(lifecycleUseCase, 'purgeProduct');
+vi.spyOn(lifecycleUseCase, 'listCoreProductIds');
+vi.spyOn(lifecycleUseCase, 'clearProductCache');
+vi.spyOn(truapiRuntimeUseCase, 'clearProductState');
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 const product = { baseName: 'app.dot' } as Product;
@@ -34,6 +38,9 @@ beforeEach(() => {
   vi.mocked(foldersUseCase.removeItemFromFolder).mockResolvedValue(true);
   vi.mocked(cardsUseCase.removeCardFromLayout).mockResolvedValue(true);
   vi.mocked(lifecycleUseCase.purgeProduct).mockResolvedValue(true);
+  vi.mocked(lifecycleUseCase.listCoreProductIds).mockResolvedValue(['app.dot']);
+  vi.mocked(lifecycleUseCase.clearProductCache).mockResolvedValue();
+  vi.mocked(truapiRuntimeUseCase.clearProductState).mockResolvedValue();
   vi.mocked(cardsUseCase.seedDefaultMainLayout).mockResolvedValue(false);
   vi.mocked(commitmentUseCase.commitProductByIdentifier).mockResolvedValue(null);
 });
@@ -126,5 +133,36 @@ describe('forgetProduct', () => {
     const result = await productManagementUseCase.forgetProduct('app.dot');
 
     expect(result).toBe(false);
+  });
+
+  it('has the core clear its state under every id the product is filed under', async () => {
+    vi.mocked(lifecycleUseCase.listCoreProductIds).mockResolvedValue(['app.dot', 'App.dot']);
+
+    await productManagementUseCase.forgetProduct('app.dot');
+
+    expect(lifecycleUseCase.listCoreProductIds).toHaveBeenCalledWith('app.dot');
+    expect(truapiRuntimeUseCase.clearProductState).toHaveBeenCalledWith('app.dot');
+    expect(truapiRuntimeUseCase.clearProductState).toHaveBeenCalledWith('App.dot');
+  });
+
+  it('still purges when the core refuses to clear one id', async () => {
+    vi.mocked(lifecycleUseCase.listCoreProductIds).mockResolvedValue(['app.dot', 'App.dot']);
+    vi.mocked(truapiRuntimeUseCase.clearProductState).mockRejectedValueOnce(new Error('disposed'));
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+    await expect(productManagementUseCase.forgetProduct('app.dot')).resolves.toBe(true);
+    expect(truapiRuntimeUseCase.clearProductState).toHaveBeenCalledTimes(2);
+    expect(lifecycleUseCase.purgeProduct).toHaveBeenCalledWith('app.dot');
+    warn.mockRestore();
+  });
+});
+
+describe('clearProductData', () => {
+  it('clears the core state and the sandbox data, keeping the product', async () => {
+    await productManagementUseCase.clearProductData('app.dot');
+
+    expect(truapiRuntimeUseCase.clearProductState).toHaveBeenCalledWith('app.dot');
+    expect(lifecycleUseCase.clearProductCache).toHaveBeenCalledWith('app.dot');
+    expect(lifecycleUseCase.purgeProduct).not.toHaveBeenCalled();
   });
 });

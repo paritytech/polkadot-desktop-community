@@ -4,7 +4,6 @@ import { type Observable, combineLatest, debounceTime, from, map, of, switchMap 
 import { createSideEffect } from '@/shared/di';
 import { withTimeout } from '@/shared/utils';
 import { coreStorageRepository } from '../core-storage/repository';
-import { dotNsService } from '../dotns/service';
 import { parsePermissionAuthorizationRequest } from '../permissions/schemas';
 import { permissionsService } from '../permissions/service';
 import {
@@ -275,44 +274,6 @@ function watchAggregatedPermissions(): Observable<AggregatedPermission[]> {
   );
 }
 
-/**
- * Clear every permission the core holds for a purged product.
- *
- * Matched through `isSameBaseName`, not by exact id: the core stores a slot under
- * whatever product id it was handed, which is the raw webview identifier, while the
- * purge flow holds a normalized base name. An exact match would silently clear nothing
- * and leave every grant alive.
- */
-async function clearProductPermissions({ productId, tld }: { productId: string; tld: string }): Promise<void> {
-  if (!adapter) return;
-
-  const allIds = await firstEmission(watchProductsWithPermissions());
-  const matching = allIds.filter(candidate => dotNsService.isSameBaseName(candidate, productId, tld));
-
-  for (const id of matching) {
-    const requests = await firstEmission(slotRequests$(id));
-    await Promise.all(
-      requests.map(request =>
-        adapter?.setStatus(id, request, 'NotDetermined').catch((error: unknown) => {
-          console.warn('[permissions] could not clear a permission slot', { productId: id, error });
-        }),
-      ),
-    );
-  }
-}
-
-function firstEmission<T>(source: Observable<T>): Promise<T> {
-  return new Promise<T>((resolve, reject) => {
-    const subscription = source.subscribe({
-      next: value => {
-        resolve(value);
-        subscription.unsubscribe();
-      },
-      error: reject,
-    });
-  });
-}
-
 export const permissionsUseCase = {
   setPermissionsAdapter,
   watchProductPermissions,
@@ -322,6 +283,5 @@ export const permissionsUseCase = {
   watchAggregatedPermissions,
   getPermissionStatus,
   setPermissionStatus,
-  clearProductPermissions,
   _resetPermissionLookups,
 };

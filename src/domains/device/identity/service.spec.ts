@@ -1,39 +1,13 @@
 import { x25519 } from '@noble/curves/ed25519.js';
-import { deriveSr25519PublicKey } from '@novasamatech/statement-store';
+import { createSr25519Secret } from '@novasamatech/statement-store';
 import { describe, expect, it } from 'vitest';
 
 import { deviceIdentityService } from './service';
 
-const {
-  deriveEncryptionPublicKey,
-  deriveStatementAccountPublicKey,
-  generateEncryptionPrivateKey,
-  generateStatementAccountSeed,
-  isValidEncryptionPublicKey,
-} = deviceIdentityService;
+const { deriveEncryptionPublicKey, deriveStatementAccountPublicKey, isValidEncryptionPublicKey } = deviceIdentityService;
 
-describe('generateStatementAccountSeed', () => {
-  it('returns a 64-byte expanded sr25519 secret', () => {
-    const seed = generateStatementAccountSeed();
-
-    expect(seed).toBeInstanceOf(Uint8Array);
-    expect(seed.length).toBe(64);
-  });
-
-  it('returns a different seed on each call', () => {
-    const a = generateStatementAccountSeed();
-    const b = generateStatementAccountSeed();
-
-    expect(Buffer.from(a).equals(Buffer.from(b))).toBe(false);
-  });
-
-  it('produces a seed that derives a 32-byte sr25519 public key', () => {
-    const seed = generateStatementAccountSeed();
-    const publicKey = deriveSr25519PublicKey(seed);
-
-    expect(publicKey.length).toBe(32);
-  });
-});
+const generateStatementAccountSeed = () => createSr25519Secret(crypto.getRandomValues(new Uint8Array(32)));
+const generateEncryptionPrivateKey = () => x25519.utils.randomSecretKey();
 
 describe('deriveStatementAccountPublicKey', () => {
   it('is deterministic for a given seed', () => {
@@ -42,22 +16,6 @@ describe('deriveStatementAccountPublicKey', () => {
     const b = deriveStatementAccountPublicKey(seed);
 
     expect(Buffer.from(a).equals(Buffer.from(b))).toBe(true);
-  });
-});
-
-describe('generateEncryptionPrivateKey', () => {
-  it('returns a 32-byte X25519 private key', () => {
-    const priv = generateEncryptionPrivateKey();
-
-    expect(priv).toBeInstanceOf(Uint8Array);
-    expect(priv.length).toBe(32);
-  });
-
-  it('returns a different key on each call', () => {
-    const a = generateEncryptionPrivateKey();
-    const b = generateEncryptionPrivateKey();
-
-    expect(Buffer.from(a).equals(Buffer.from(b))).toBe(false);
   });
 });
 

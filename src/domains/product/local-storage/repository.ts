@@ -20,6 +20,14 @@ async function clearEntry(key: string): Promise<void> {
   await database.productStorage.delete(key);
 }
 
+async function clearByPrefix(prefix: string): Promise<void> {
+  await database.productStorage.where('key').startsWith(prefix).delete();
+}
+
+async function listKeys(): Promise<string[]> {
+  return database.productStorage.toCollection().primaryKeys();
+}
+
 function watchEntry(key: string): Observable<Uint8Array | undefined> {
   return streamTable(database.productStorage, table => table.get(key)).pipe(map(row => row?.value));
 }
@@ -28,5 +36,7 @@ export const productLocalStorageRepository = {
   readEntry,
   writeEntry,
   clearEntry,
+  clearByPrefix,
+  listKeys,
   watchEntry,
 };

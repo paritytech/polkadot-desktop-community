@@ -320,27 +320,3 @@ body {
 .animate-widget-pulse {
   animation: widget-pulse 1.8s ease-in-out infinite;
 }
-
-/* Renderer tree `Effect::Rainbow` — the one visual effect the TrUAPI render
-   vocabulary defines. The gradient is painted through the text it wraps, which is
-   why a descendant that sets its own colour opts itself out. */
-@keyframes renderer-rainbow {
-  to {
-    background-position: 200% center;
-  }
-}
-
-.animate-renderer-rainbow {
-  animation: renderer-rainbow 4s linear infinite;
-  background: linear-gradient(90deg, #ff0040, #ff8000, #ffe000, #00c060, #0080ff, #8000ff, #ff0040) 0 center / 200% auto;
-  background-clip: text;
-  color: transparent;
-}
-
-/* Stopped, not shortened: collapsing an infinite loop to 1ms strobes rather than
-   settles. The gradient still reads as intended, just static. */
-@media (prefers-reduced-motion: reduce) {
-  .animate-renderer-rainbow {
-    animation: none;
-  }
-}

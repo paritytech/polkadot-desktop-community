@@ -9,7 +9,6 @@ import { formatBytes } from '@/shared/utils';
 import {
   type GrantedAccountAccess,
   type ProductPermissionEntry,
-  lifecycleUseCase,
   permissionsService,
   productService,
   useDisplayedProduct,
@@ -18,7 +17,7 @@ import {
   useWatchProductPermissions,
 } from '@/domains/product';
 import { onProductRefreshRequestedSideEffect } from '@/aggregates/product-loading';
-import { useForgetProduct } from '@/aggregates/product-management';
+import { productManagementUseCase, useForgetProduct } from '@/aggregates/product-management';
 import { STATUS_LABEL_KEYS, getPermissionMeta } from '@/widgets/Permission';
 import { ProductIcon } from '@/widgets/ProductIcon';
 import { productSettingsSectionsSlot } from '../di';
@@ -53,7 +52,7 @@ export const ProductSettingsPage = ({ productId, backLabel, onBack }: Props) => 
   };
 
   const handleClearCache = async () => {
-    await lifecycleUseCase.clearProductCache(productId);
+    await productManagementUseCase.clearProductData(productId);
 
     for (const id of productService.refreshTargetIdentifiers(productId, product)) {
       void onProductRefreshRequestedSideEffect.apply({ identifier: id });

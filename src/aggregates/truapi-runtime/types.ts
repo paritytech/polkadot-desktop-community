@@ -36,6 +36,9 @@ export type TruapiHostRuntime = {
   // authorizes it once. `undefined` until that happens. The host derives a product
   // account's public key (and address) from this without ever seeing the private half.
   getProductSubtreePublicKey(productId: ProductId, timeoutMs?: number): Promise<Uint8Array | undefined>;
+  // Forget one product: its grants, Allow once answers, keys and, through the host's
+  // `productStorage.clearProduct`, the values it stored. Other products are kept.
+  clearProductState(productId: ProductId): Promise<void>;
   /**
    * Take one reference on a product's worker. The core counts; the resulting level
    * reaches `subscribeWorkerDemand` listeners. Every call pairs with one release.

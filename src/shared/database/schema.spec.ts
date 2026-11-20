@@ -15,7 +15,6 @@ const TABLE_NAMES = [
   'productExecutableCache',
   'declinedUpdates',
   'coreStorage',
-  'deviceIdentity',
   'themeSettings',
   'lightClientDatabases',
 ] as const;
@@ -30,9 +29,9 @@ describe('unified database', () => {
     await Dexie.delete(MIGRATION_DB_NAME);
   });
 
-  it('opens at version 13 with all 9 tables', async () => {
+  it('opens at version 14 with all 8 tables', async () => {
     await appDatabase.open();
-    expect(appDatabase.verno).toBe(13);
+    expect(appDatabase.verno).toBe(14);
     expect(appDatabase.tables.map(t => t.name).sort()).toEqual([...TABLE_NAMES].sort());
   });
 

@@ -91,6 +91,7 @@ function fakeRuntime() {
     createProvider: vi.fn(),
     disconnectSession: vi.fn(() => Promise.resolve()),
     cancelPairing: vi.fn(),
+    clearProductState: vi.fn(() => Promise.resolve()),
     activateStoredSession: vi.fn(() => Promise.resolve()),
     getPermissionAuthorizationStatus: vi.fn((): Promise<PermissionAuthorizationStatus> => Promise.resolve('NotDetermined')),
     getPermissionAuthorizationStatuses: vi.fn((): Promise<PermissionAuthorizationStatus[]> => Promise.resolve([])),
