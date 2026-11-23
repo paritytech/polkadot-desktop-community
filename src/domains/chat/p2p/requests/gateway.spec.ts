@@ -1,17 +1,24 @@
 import { x25519 } from '@noble/curves/ed25519.js';
 import { type SignedStatement } from '@novasamatech/sdk-statement';
-import { type StatementStoreAdapter, createSr25519Secret, deriveSr25519PublicKey } from '@novasamatech/statement-store';
+import {
+  type StatementStoreAdapter,
+  deriveSlotAccountPublicKey,
+  ensureSubstrateSlotSr25519Ready,
+} from '@novasamatech/statement-store';
+import { substrateSlotSecretFromSeedBytes } from '@novasamatech/substrate-slot-sr25519-wasm';
 import { okAsync } from 'neverthrow';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 
 import { chatRequestGateway } from './gateway';
+
+beforeAll(ensureSubstrateSlotSr25519Ready);
 
 const aliceUserAccountId = new Uint8Array(32).fill(0xa1);
 const bobUserAccountId = new Uint8Array(32).fill(0xb2);
 
 const makeDevice = (entropyFill: number) => {
-  const seed = createSr25519Secret(new Uint8Array(32).fill(entropyFill));
-  const publicKey = deriveSr25519PublicKey(seed);
+  const seed = substrateSlotSecretFromSeedBytes(new Uint8Array(32).fill(entropyFill));
+  const publicKey = deriveSlotAccountPublicKey(seed);
   const encPriv = x25519.utils.randomSecretKey();
   const encPub = x25519.getPublicKey(encPriv);
   return { seed, publicKey, encPriv, encPub };

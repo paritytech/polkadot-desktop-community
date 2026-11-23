@@ -18,7 +18,7 @@ import {
   type StatementProver,
   type StatementStoreAdapter,
   createExpiryAllocator,
-  createSr25519Prover,
+  createSlotAccountProver,
   signAndSubmitStatement as submitWithLibraryRetry,
 } from '@novasamatech/statement-store';
 import { toHex } from 'polkadot-api/utils';
@@ -29,8 +29,12 @@ const RETRY_DELAYS_MS = [500, 1500, 3000];
 const EXPIRY_FLOAT_STEP = 2048n;
 
 export type StatementSubmitParams = {
-  /** Pass either a ready prover (e.g. when many submits share one) or a raw sr25519 seed. */
+  /** Pass either a ready prover (e.g. when many submits share one) or a signer secret. */
   prover?: StatementProver;
+  /**
+   * Canonical sr25519 secret (schnorrkel `SecretKey::to_bytes`). `ensureSubstrateSlotSr25519Ready()` must have
+   * resolved before a submit uses it.
+   */
   signerSeed?: Uint8Array;
   statementStore: StatementStoreAdapter;
   channel: Uint8Array;
@@ -56,7 +60,7 @@ export async function signAndSubmitStatement(params: StatementSubmitParams): Pro
   if (!providedProver && !signerSeed) {
     throw new Error('signAndSubmitStatement: either prover or signerSeed is required');
   }
-  const prover = providedProver ?? createSr25519Prover(signerSeed!);
+  const prover = providedProver ?? createSlotAccountProver(signerSeed!);
   const topicArray = Array.isArray(topics) ? topics : [topics];
   const logTopic = topicArray[0] ? toHex(topicArray[0]) : '';
 
