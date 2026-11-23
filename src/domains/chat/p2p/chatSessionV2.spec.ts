@@ -9,9 +9,11 @@ import {
   createMultiDeviceSession,
   createSr25519Prover,
   createSr25519Secret,
+  deriveSlotAccountPublicKey,
   ensureSubstrateSlotSr25519Ready,
 } from '@novasamatech/statement-store';
 import { substrateSlotSecretFromSeedBytes } from '@novasamatech/substrate-slot-sr25519-wasm';
+import { toHex } from 'polkadot-api/utils';
 import { beforeAll, describe, expect, it, vi } from 'vitest';
 
 import { createChatPeerSessionV2 } from './chatSessionV2';
@@ -37,11 +39,11 @@ const rawCodec = Bytes();
 /** One turn of the store's synchronous delivery plus the session's own async hops. */
 const settle = () => new Promise(resolve => setTimeout(resolve, 0));
 
-function createDevice() {
+function createDevice(statementAccountId: Uint8Array = randomBytes(32)) {
   const encryptionPrivateKey = x25519.utils.randomSecretKey();
 
   return {
-    statementAccountId: randomBytes(32),
+    statementAccountId,
     encryptionPrivateKey,
     encryptionPublicKey: x25519.getPublicKey(encryptionPrivateKey),
   };
@@ -78,7 +80,8 @@ function createPair() {
   const store = createInMemoryStatementStore();
   const host = createIdentity();
   const peer = createIdentity();
-  const hostDevice = createDevice();
+  const hostSecret = substrateSlotSecretFromSeedBytes(randomBytes(32));
+  const hostDevice = createDevice(deriveSlotAccountPublicKey(hostSecret));
   const peerDevice = createDevice();
 
   const onMessage = vi.fn();
@@ -91,7 +94,7 @@ function createPair() {
     ownIdentityAccountId: host.accountId,
     ownDeviceStatementAccountId: hostDevice.statementAccountId,
     ownDeviceEncryptionPrivateKey: hostDevice.encryptionPrivateKey,
-    ownDeviceSeed: substrateSlotSecretFromSeedBytes(randomBytes(32)),
+    ownDeviceSeed: hostSecret,
     peerIdentityAccountId: peer.accountId,
     peerIdentityChatPublicKey: peer.chatPublicKey,
     peerRoster: rosterOf(peerDevice),
@@ -116,7 +119,7 @@ function createPair() {
     peerSession.dispose();
   };
 
-  return { hostSession, peerSession, onMessage, onDelivered, onSent, onBatchDelivered, dispose };
+  return { store, hostDevice, hostSession, peerSession, onMessage, onDelivered, onSent, onBatchDelivered, dispose };
 }
 
 describe('createChatPeerSessionV2 — acknowledgement', () => {
@@ -158,7 +161,7 @@ describe('createChatPeerSessionV2 — acknowledgement', () => {
 
 describe('createChatPeerSessionV2 — batch delivery', () => {
   it('reports a batch ack, which is the only delivery signal a restored message gets', async () => {
-    const { hostSession, peerSession, onBatchDelivered, dispose } = createPair();
+    const { store, hostDevice, hostSession, peerSession, onBatchDelivered, dispose } = createPair();
     await settle();
 
     peerSession.respondToRequests(ChatMessageCodec, () => 'success');
@@ -166,6 +169,10 @@ describe('createChatPeerSessionV2 — batch delivery', () => {
     await settle();
 
     expect(onBatchDelivered).toHaveBeenCalled();
+    const signers = store
+      .acceptedStatements()
+      .map(statement => (statement.proof && 'signer' in statement.proof.value ? statement.proof.value.signer : null));
+    expect(signers).toContain(toHex(hostDevice.statementAccountId));
 
     dispose();
   });
