@@ -27,7 +27,8 @@ beforeAll(ensureSubstrateSlotSr25519Ready);
  *    build dropped),
  *  - how a batch-level response reaches messages restored from a previous run, whose
  *    delivery tokens the SDK cannot restore,
- *  - which account signs our statements (the statement account, not a key derived elsewhere).
+ *  - which account signs our statements (the statement account the canonical secret names, not the
+ *    different account the same bytes yield under the ed25519-expanded encoding).
  *
  * All three are decisions the PEER reads off the wire, so they are exercised over the SDK's
  * own in-memory statement store with a real peer session on the other end: the ack is
