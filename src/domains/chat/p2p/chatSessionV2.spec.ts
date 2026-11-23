@@ -9,20 +9,28 @@ import {
   createMultiDeviceSession,
   createSr25519Prover,
   createSr25519Secret,
+  deriveSlotAccountPublicKey,
+  ensureSubstrateSlotSr25519Ready,
 } from '@novasamatech/statement-store';
-import { describe, expect, it, vi } from 'vitest';
+import { substrateSlotSecretFromSeedBytes } from '@novasamatech/substrate-slot-sr25519-wasm';
+import { toHex } from 'polkadot-api/utils';
+import { beforeAll, describe, expect, it, vi } from 'vitest';
 
 import { createChatPeerSessionV2 } from './chatSessionV2';
 
+beforeAll(ensureSubstrateSlotSr25519Ready);
+
 /**
- * Covers the two things this adapter decides on its own; everything else is the SDK's.
+ * Covers the three things this adapter decides on its own; everything else is the SDK's.
  *
  *  - what we ACK (a blanket 'success' would tell the peer we received a message this
  *    build dropped),
  *  - how a batch-level response reaches messages restored from a previous run, whose
- *    delivery tokens the SDK cannot restore.
+ *    delivery tokens the SDK cannot restore,
+ *  - which account signs our statements (the statement account the canonical secret names, not the
+ *    different account the same bytes yield under the ed25519-expanded encoding).
  *
- * Both are decisions the PEER reads off the wire, so they are exercised over the SDK's
+ * All three are decisions the PEER reads off the wire, so they are exercised over the SDK's
  * own in-memory statement store with a real peer session on the other end: the ack is
  * asserted where it actually lands — on the response statement — rather than at the
  * handler's return value.
@@ -33,11 +41,11 @@ const rawCodec = Bytes();
 /** One turn of the store's synchronous delivery plus the session's own async hops. */
 const settle = () => new Promise(resolve => setTimeout(resolve, 0));
 
-function createDevice() {
+function createDevice(statementAccountId: Uint8Array = randomBytes(32)) {
   const encryptionPrivateKey = x25519.utils.randomSecretKey();
 
   return {
-    statementAccountId: randomBytes(32),
+    statementAccountId,
     encryptionPrivateKey,
     encryptionPublicKey: x25519.getPublicKey(encryptionPrivateKey),
   };
@@ -74,7 +82,8 @@ function createPair() {
   const store = createInMemoryStatementStore();
   const host = createIdentity();
   const peer = createIdentity();
-  const hostDevice = createDevice();
+  const hostSecret = substrateSlotSecretFromSeedBytes(randomBytes(32));
+  const hostDevice = createDevice(deriveSlotAccountPublicKey(hostSecret));
   const peerDevice = createDevice();
 
   const onMessage = vi.fn();
@@ -87,7 +96,7 @@ function createPair() {
     ownIdentityAccountId: host.accountId,
     ownDeviceStatementAccountId: hostDevice.statementAccountId,
     ownDeviceEncryptionPrivateKey: hostDevice.encryptionPrivateKey,
-    ownDeviceSeed: createSr25519Secret(randomBytes(32)),
+    ownDeviceSeed: hostSecret,
     peerIdentityAccountId: peer.accountId,
     peerIdentityChatPublicKey: peer.chatPublicKey,
     peerRoster: rosterOf(peerDevice),
@@ -112,7 +121,7 @@ function createPair() {
     peerSession.dispose();
   };
 
-  return { hostSession, peerSession, onMessage, onDelivered, onSent, onBatchDelivered, dispose };
+  return { store, hostDevice, hostSession, peerSession, onMessage, onDelivered, onSent, onBatchDelivered, dispose };
 }
 
 describe('createChatPeerSessionV2 — acknowledgement', () => {
@@ -175,6 +184,24 @@ describe('createChatPeerSessionV2 — batch delivery', () => {
     await settle();
 
     expect(onBatchDelivered).not.toHaveBeenCalled();
+
+    dispose();
+  });
+});
+
+describe('createChatPeerSessionV2 — statement signer', () => {
+  it('signs its statements as its statement account', async () => {
+    const { store, hostDevice, hostSession, peerSession, dispose } = createPair();
+    await settle();
+
+    peerSession.respondToRequests(ChatMessageCodec, () => 'success');
+    await hostSession.send({ tag: 'text', value: 'hello peer' });
+    await settle();
+
+    const signers = store
+      .acceptedStatements()
+      .map(statement => (statement.proof && 'signer' in statement.proof.value ? statement.proof.value.signer : null));
+    expect(signers).toContain(toHex(hostDevice.statementAccountId));
 
     dispose();
   });

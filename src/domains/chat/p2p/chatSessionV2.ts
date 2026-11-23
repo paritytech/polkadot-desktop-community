@@ -26,7 +26,12 @@
  */
 
 import { ChatMessage as ChatMessageCodec } from '@novasamatech/host-chat/codec/message';
-import { type PeerRoster, createAccountId, createMultiDeviceSession, createSr25519Prover } from '@novasamatech/statement-store';
+import {
+  type PeerRoster,
+  createAccountId,
+  createMultiDeviceSession,
+  createSlotAccountProver,
+} from '@novasamatech/statement-store';
 import { nanoid } from 'nanoid';
 import { type CodecType } from 'scale-ts';
 
@@ -58,7 +63,7 @@ export type V2ChatPeerSessionParams = {
   ownDeviceStatementAccountId: Uint8Array;
   /** This device's per-device X25519 private key (32 bytes). */
   ownDeviceEncryptionPrivateKey: Uint8Array;
-  /** This device's sr25519 secret seed (64 bytes) for signing statements. */
+  /** This device's canonical sr25519 secret (64 bytes) for signing statements. */
   ownDeviceSeed: Uint8Array;
   /** Peer user identity sr25519 (32 bytes). */
   peerIdentityAccountId: Uint8Array;
@@ -131,7 +136,7 @@ export const createChatPeerSessionV2 = (params: V2ChatPeerSessionParams): V2Chat
     },
     peerRoster,
     statementStore,
-    prover: createSr25519Prover(ownDeviceSeed),
+    prover: createSlotAccountProver(ownDeviceSeed),
   });
 
   const seenMessageIds = new Set<string>();

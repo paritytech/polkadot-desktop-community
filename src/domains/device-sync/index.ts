@@ -1,5 +1,4 @@
 export { type ConsumerInfoLookup } from './applier';
-export { type DeviceSyncTransport, createDeviceSyncTransport } from './transport';
 export {
   type DeviceSyncOrchestratorHandle,
   type DeviceSyncOrchestratorParams,

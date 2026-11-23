@@ -74,11 +74,9 @@ export type DeviceSyncIdentityStart = (identity: UserIdentity, signal: AbortSign
  * The bare `userIdentity$` subscription this replaces assigned its "stop
  * previous" handle only AFTER the async start resolved (which awaits
  * `fetchInitialPeers` + staggered spawns), so an emission arriving mid-start
- * left the in-flight orchestrator running and spawned a second one. Two
- * orchestrators mean two `createDeviceSyncTransport` expiry allocators minting
- * identical second-resolution expiries for the same `(account, channel)`, which
- * the statement store rejects as `ExpiryTooLow`/`AccountFull` — a retry/respawn
- * storm.
+ * left the in-flight orchestrator running and spawned a second one. Each
+ * orchestrator spawns its own signaler and peer connection per peer, so two live
+ * orchestrators would run duplicate handshakes against the same peers.
  *
  * `switchMap` disposes the previous inner subscription before subscribing the
  * next; `runDeviceSync$` then aborts that start's `AbortSignal` so an in-flight

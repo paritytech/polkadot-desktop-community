@@ -1,3 +1,4 @@
+import { ensureSubstrateSlotSr25519Ready } from '@novasamatech/statement-store';
 import { AccountId } from '@polkadot-api/substrate-bindings';
 import { fromHex, toHex } from 'polkadot-api/utils';
 
@@ -71,6 +72,10 @@ async function loadDeviceIdentity(): Promise<DeviceIdentity | null> {
 
   const keys = await truapiRuntimeUseCase.getDeviceKeys();
   if (!keys) return null;
+
+  // The canonical API reads the core's statement account secret and its wasm loads asynchronously. Every signer of
+  // that secret runs in the manager built from this identity, so awaiting here covers them all.
+  await ensureSubstrateSlotSr25519Ready();
 
   const statementAccountPublicKey = deviceIdentityService.deriveStatementAccountPublicKey(keys.statementKey);
   const encryptionPublicKey = deviceIdentityService.deriveEncryptionPublicKey(keys.encryptionKey);

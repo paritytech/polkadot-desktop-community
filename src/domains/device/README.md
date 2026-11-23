@@ -20,7 +20,7 @@ ones the wallet registered at pairing (`deviceStatementAccountId` / `getDeviceSt
   the root sr25519 public key (parent for product-account soft-derivation), and the authorising peer device's keys. Type:
   `UserIdentity` in `identity/types.ts`.
 - **Statement account** — the device's sr25519 keypair used to sign statements as this device. Use this term, not "device key"
-  or "signing key", for the sr25519 side.
+  or "signing key", for the sr25519 side. Its secret is schnorrkel's canonical `SecretKey::to_bytes` encoding, as the core serves it.
 - **Encryption key** — the device's X25519 keypair used for ECDH (CHAT-RFC-0004). A valid encryption public key is **32 bytes**. X25519 has no on-curve validation — any 32 bytes is a valid public key — so validation
   is a length check; small-order / all-zero rejection happens on the DH output at the ECDH call sites. A 32-byte SSO shared
   secret is length-indistinguishable from a key, so callers must pass the correct field — the guard is shape, not provenance.
@@ -59,6 +59,6 @@ This domain does **not** own:
 ## References
 
 - [`@noble/curves`](https://github.com/paulmillr/noble-curves) — X25519 (`x25519`) key generation and derivation (CHAT-RFC-0004).
-- [`@novasamatech/statement-store`](https://www.npmjs.com/package/@novasamatech/statement-store) — sr25519 secret creation and
-  public-key derivation for the statement account.
+- [`@novasamatech/statement-store`](https://www.npmjs.com/package/@novasamatech/statement-store) — canonical sr25519 (`SecretKey::from_bytes`)
+  public-key derivation and signing for the statement account.
 - [`identity/types.ts`](./identity/types.ts) — the fully-documented `DeviceIdentity` / `UserIdentity` field reference.

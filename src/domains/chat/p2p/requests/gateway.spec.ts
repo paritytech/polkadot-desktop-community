@@ -1,17 +1,30 @@
 import { x25519 } from '@noble/curves/ed25519.js';
 import { type SignedStatement } from '@novasamatech/sdk-statement';
-import { type StatementStoreAdapter, createSr25519Secret, deriveSr25519PublicKey } from '@novasamatech/statement-store';
+import {
+  type StatementStoreAdapter,
+  createEncryption,
+  deriveSlotAccountPublicKey,
+  ensureSubstrateSlotSr25519Ready,
+  verifySr25519Signature,
+} from '@novasamatech/statement-store';
+import { substrateSlotSecretFromSeedBytes } from '@novasamatech/substrate-slot-sr25519-wasm';
 import { okAsync } from 'neverthrow';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { toHex } from 'polkadot-api/utils';
+import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
+
+import { p2pService } from '../service';
 
 import { chatRequestGateway } from './gateway';
+import { EncryptedRemoteModel, ProofPayload, RemoteModel } from './schemas';
+
+beforeAll(ensureSubstrateSlotSr25519Ready);
 
 const aliceUserAccountId = new Uint8Array(32).fill(0xa1);
 const bobUserAccountId = new Uint8Array(32).fill(0xb2);
 
 const makeDevice = (entropyFill: number) => {
-  const seed = createSr25519Secret(new Uint8Array(32).fill(entropyFill));
-  const publicKey = deriveSr25519PublicKey(seed);
+  const seed = substrateSlotSecretFromSeedBytes(new Uint8Array(32).fill(entropyFill));
+  const publicKey = deriveSlotAccountPublicKey(seed);
   const encPriv = x25519.utils.randomSecretKey();
   const encPub = x25519.getPublicKey(encPriv);
   return { seed, publicKey, encPriv, encPub };
@@ -66,9 +79,20 @@ describe('chatRequestGateway.sendChatRequestV2 (v0.2 spec-shape RequestContentV2
     const stmt = submitted!;
     expect(stmt.data).toBeDefined();
 
+    expect(stmt.proof?.type === 'sr25519' ? stmt.proof.value.signer : null).toBe(toHex(aliceDevice.publicKey));
+
     const decoded = chatRequestGateway.decryptAndValidateRequestV2(stmt.data!, bobUserChat.priv);
     expect(decoded).not.toBeNull();
     expect(decoded!.welcomeMessage).toBe('hi from desktop');
+
+    const envelope = EncryptedRemoteModel.dec(stmt.data!);
+    const decrypted = createEncryption(p2pService.computeSharedSecret(bobUserChat.priv, envelope.encryptionPubKey)).decrypt(
+      envelope.encryptedData,
+    );
+    const remote = RemoteModel.dec(decrypted._unsafeUnwrap());
+    expect(remote.proof.tag).toBe('sr25519');
+    const signed = ProofPayload.enc({ message: remote.message, requestAcceptorId: bobUserAccountId });
+    expect(verifySr25519Signature(signed, remote.proof.value.signature, aliceDevice.publicKey)).toBe(true);
     // V2 content: senderAccountId is the user identity (not the publishing device).
     expect(Array.from(decoded!.senderAccountId)).toEqual(Array.from(aliceUserAccountId));
 

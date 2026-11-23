@@ -23,9 +23,9 @@ import { x25519 } from '@noble/curves/ed25519.js';
 import {
   type StatementStoreAdapter,
   createEncryption,
-  deriveSr25519PublicKey,
+  deriveSlotAccountPublicKey,
   khash,
-  signWithSr25519Secret,
+  signSlotAccountSecret,
 } from '@novasamatech/statement-store';
 import { nanoid } from 'nanoid';
 import { toHex } from 'polkadot-api/utils';
@@ -107,7 +107,7 @@ const sendChatRequestV2 = async (params: {
   //    private key and the recipient's identity chat pubkey (NOT the
   //    ephemeral-key shared secret used for the envelope). The recipient,
   //    holding its own identity chat priv, recomputes the same K and matches.
-  const signerPubKey = deriveSr25519PublicKey(senderDeviceSeed);
+  const signerPubKey = deriveSlotAccountPublicKey(senderDeviceSeed);
   const identityProofSharedSecret = p2pService.computeSharedSecret(senderIdentityChatPrivateKey, recipientChatPubKey);
   const identityProofPayload = IdentityProofPayload.enc({
     identityAccountId: senderIdentityAccountId,
@@ -143,7 +143,7 @@ const sendChatRequestV2 = async (params: {
     message: requestMessage,
     requestAcceptorId: recipientAccountId,
   });
-  const signature = signWithSr25519Secret(senderDeviceSeed, proofPayloadEncoded);
+  const signature = signSlotAccountSecret(senderDeviceSeed, proofPayloadEncoded);
 
   // 7. RemoteModel + V1 envelope encryption.
   const remoteModelEncoded = RemoteModel.enc({
