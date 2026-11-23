@@ -75,7 +75,7 @@ export type DeviceSyncIdentityStart = (identity: UserIdentity, signal: AbortSign
  * previous" handle only AFTER the async start resolved (which awaits
  * `fetchInitialPeers` + staggered spawns), so an emission arriving mid-start
  * left the in-flight orchestrator running and spawned a second one. Two
- * orchestrators mean two `createDeviceSyncTransport` expiry allocators minting
+ * orchestrators mean two expiry allocators minting
  * identical second-resolution expiries for the same `(account, channel)`, which
  * the statement store rejects as `ExpiryTooLow`/`AccountFull` — a retry/respawn
  * storm.

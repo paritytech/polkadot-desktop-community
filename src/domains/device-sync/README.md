@@ -57,9 +57,6 @@ that produced this README. Until then these files stay as named container-root p
   repositories (`@/domains/chat/p2p/repository`, `@/domains/contact/identity/repository`) with an
   `eslint-disable boundaries/dependencies` — a wasm-load workaround; a use case should reach other
   domains' public surfaces, so this rides the orchestration→`$usecase` migration.
-- **`transport.ts`** — the WebRTC statement transport over `statementStoreAdapter`. **Stateful** (a
-  per-instance expiry allocator + per-topic floor-sync memo), so it is _not_ a stateless `gateway.ts`;
-  it stays a framed primitive.
 - **`wiring.ts`** — reactive orchestrator lifecycle: `startDeviceSyncOnIdentity` (re)starts/stops the
   orchestrator as `userIdentity$` settles, sequencing aborts so two orchestrators never race. That is
   orchestration, not host `bootstrap.ts` wiring, so it stays here.
