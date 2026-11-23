@@ -1,10 +1,12 @@
 import { x25519 } from '@noble/curves/ed25519.js';
-import { deriveSr25519PublicKey } from '@novasamatech/statement-store';
+import { deriveSlotAccountPublicKey } from '@novasamatech/statement-store';
 
 /** X25519 public key size (CHAT-RFC-0004). */
 const ENCRYPTION_PUBLIC_KEY_BYTES = 32;
 
-const deriveStatementAccountPublicKey = (seed: Uint8Array): Uint8Array => deriveSr25519PublicKey(seed);
+// The secret is schnorrkel's canonical `SecretKey::to_bytes` encoding, as the core serves it; the ed25519-expanded
+// API would derive a different account. `ensureSubstrateSlotSr25519Ready()` must have resolved first.
+const deriveStatementAccountPublicKey = (seed: Uint8Array): Uint8Array => deriveSlotAccountPublicKey(seed);
 
 // 32-byte X25519 key — matches `Contact.devices[].encryptionPublicKey` and `p2pService.computeSharedSecret`.
 const deriveEncryptionPublicKey = (privateKey: Uint8Array): Uint8Array => x25519.getPublicKey(privateKey);

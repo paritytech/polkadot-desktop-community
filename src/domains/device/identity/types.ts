@@ -4,9 +4,13 @@
  * for the account and announces the encryption key to contacts. Rotated per login.
  *
  * Per-device keys:
- *   `statementAccountSeed` is the device's expanded sr25519 secret (64 bytes,
- *   as `getDeviceStatementKey` serves it). Fed to
- *   `createSr25519Prover` to sign statements as this device.
+ *   `statementAccountSeed` is the device's canonical schnorrkel secret
+ *   (`SecretKey::to_bytes`, `scalar || nonce`, 64 bytes) exactly as
+ *   `getDeviceStatementKey` serves it, read with statement-store's
+ *   `deriveSlotAccountPublicKey` / `signSlotAccountSecret` /
+ *   `createSlotAccountProver` after `ensureSubstrateSlotSr25519Ready()`. The
+ *   ed25519-expanded API (`createSr25519Prover`, `deriveSr25519PublicKey`)
+ *   derives a different key from these bytes.
  *   `statementAccountPublicKey` is the corresponding sr25519 public key (32 bytes)
  *   — this is the device's accountId in the multi-device protocol.
  *

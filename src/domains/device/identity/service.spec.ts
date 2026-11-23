@@ -1,12 +1,17 @@
 import { x25519 } from '@noble/curves/ed25519.js';
-import { createSr25519Secret } from '@novasamatech/statement-store';
-import { describe, expect, it } from 'vitest';
+import { ensureSubstrateSlotSr25519Ready } from '@novasamatech/statement-store';
+import { substrateSlotSecretFromSeedBytes } from '@novasamatech/substrate-slot-sr25519-wasm';
+import { getPublicKey, secretFromSeed } from '@scure/sr25519';
+import { toHex } from 'polkadot-api/utils';
+import { beforeAll, describe, expect, it } from 'vitest';
 
 import { deviceIdentityService } from './service';
 
 const { deriveEncryptionPublicKey, deriveStatementAccountPublicKey, isValidEncryptionPublicKey } = deviceIdentityService;
 
-const generateStatementAccountSeed = () => createSr25519Secret(crypto.getRandomValues(new Uint8Array(32)));
+beforeAll(ensureSubstrateSlotSr25519Ready);
+
+const generateStatementAccountSeed = () => substrateSlotSecretFromSeedBytes(crypto.getRandomValues(new Uint8Array(32)));
 const generateEncryptionPrivateKey = () => x25519.utils.randomSecretKey();
 
 describe('deriveStatementAccountPublicKey', () => {
@@ -16,6 +21,14 @@ describe('deriveStatementAccountPublicKey', () => {
     const b = deriveStatementAccountPublicKey(seed);
 
     expect(Buffer.from(a).equals(Buffer.from(b))).toBe(true);
+  });
+
+  it('reads the canonical schnorrkel secret the core serves', () => {
+    const seed = crypto.getRandomValues(new Uint8Array(32));
+    const canonicalSecret = substrateSlotSecretFromSeedBytes(seed);
+
+    // @scure/sr25519 expands the same seed in the ed25519 encoding; both must name one account.
+    expect(toHex(deriveStatementAccountPublicKey(canonicalSecret))).toBe(toHex(getPublicKey(secretFromSeed(seed))));
   });
 });
 
