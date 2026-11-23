@@ -264,9 +264,9 @@ async function getChatIdentityKey(): Promise<string | undefined> {
 /**
  * This device's secrets for the active session, or `undefined` before pairing.
  *
- * The keys the paired wallet registered for this host: `statementKey` (expanded
- * sr25519, 64 bytes) signs the statements its allowance covers, and `encryptionKey`
- * (X25519) decrypts what contacts address to this device. Both rotate per login.
+ * The keys the paired wallet registered for this host: `statementKey` (canonical
+ * schnorrkel `SecretKey::to_bytes`, 64 bytes) signs the statements its allowance covers, and
+ * `encryptionKey` (X25519) decrypts what contacts address to this device. Both rotate per login.
  */
 async function getDeviceKeys(): Promise<{ statementKey: Uint8Array; encryptionKey: Uint8Array } | undefined> {
   const provider = await getHostAuthProvider();
