@@ -161,7 +161,7 @@ describe('createChatPeerSessionV2 — acknowledgement', () => {
 
 describe('createChatPeerSessionV2 — batch delivery', () => {
   it('reports a batch ack, which is the only delivery signal a restored message gets', async () => {
-    const { store, hostDevice, hostSession, peerSession, onBatchDelivered, dispose } = createPair();
+    const { hostSession, peerSession, onBatchDelivered, dispose } = createPair();
     await settle();
 
     peerSession.respondToRequests(ChatMessageCodec, () => 'success');
@@ -169,6 +169,18 @@ describe('createChatPeerSessionV2 — batch delivery', () => {
     await settle();
 
     expect(onBatchDelivered).toHaveBeenCalled();
+
+    dispose();
+  });
+
+  it('signs its statements as its statement account', async () => {
+    const { store, hostDevice, hostSession, peerSession, dispose } = createPair();
+    await settle();
+
+    peerSession.respondToRequests(ChatMessageCodec, () => 'success');
+    await hostSession.send({ tag: 'text', value: 'hello peer' });
+    await settle();
+
     const signers = store
       .acceptedStatements()
       .map(statement => (statement.proof && 'signer' in statement.proof.value ? statement.proof.value.signer : null));

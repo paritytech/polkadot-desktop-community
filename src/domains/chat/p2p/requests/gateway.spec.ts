@@ -79,8 +79,7 @@ describe('chatRequestGateway.sendChatRequestV2 (v0.2 spec-shape RequestContentV2
     const stmt = submitted!;
     expect(stmt.data).toBeDefined();
 
-    expect(stmt.proof?.type).toBe('sr25519');
-    expect(stmt.proof && 'signer' in stmt.proof.value ? stmt.proof.value.signer : null).toBe(toHex(aliceDevice.publicKey));
+    expect(stmt.proof?.type === 'sr25519' ? stmt.proof.value.signer : null).toBe(toHex(aliceDevice.publicKey));
 
     const decoded = chatRequestGateway.decryptAndValidateRequestV2(stmt.data!, bobUserChat.priv);
     expect(decoded).not.toBeNull();

@@ -4,8 +4,7 @@ import { deriveSlotAccountPublicKey } from '@novasamatech/statement-store';
 /** X25519 public key size (CHAT-RFC-0004). */
 const ENCRYPTION_PUBLIC_KEY_BYTES = 32;
 
-// The secret is schnorrkel's canonical `SecretKey::to_bytes` encoding, as the core serves it; the ed25519-expanded
-// API would derive a different account. `ensureSubstrateSlotSr25519Ready()` must have resolved first.
+// `ensureSubstrateSlotSr25519Ready()` must have resolved first. The secret's encoding is on `DeviceIdentity`.
 const deriveStatementAccountPublicKey = (seed: Uint8Array): Uint8Array => deriveSlotAccountPublicKey(seed);
 
 // 32-byte X25519 key — matches `Contact.devices[].encryptionPublicKey` and `p2pService.computeSharedSecret`.
