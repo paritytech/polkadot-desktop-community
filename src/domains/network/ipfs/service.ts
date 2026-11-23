@@ -70,7 +70,8 @@ function joinPath(base: string, name: string): string {
 }
 
 async function parseCarFile(buffer: Uint8Array): Promise<ArchiveContent> {
-  const reader = await CarReader.fromBytes(buffer);
+  // The CAR is already whole in memory, so the reader's 8 MiB default would only refuse a product's large block.
+  const reader = await CarReader.fromBytes(buffer, { maxAllowedSectionSize: buffer.length });
   const [rootCid] = await reader.getRoots();
 
   if (!rootCid) {
