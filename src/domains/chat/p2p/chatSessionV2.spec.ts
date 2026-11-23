@@ -9,10 +9,14 @@ import {
   createMultiDeviceSession,
   createSr25519Prover,
   createSr25519Secret,
+  ensureSubstrateSlotSr25519Ready,
 } from '@novasamatech/statement-store';
-import { describe, expect, it, vi } from 'vitest';
+import { substrateSlotSecretFromSeedBytes } from '@novasamatech/substrate-slot-sr25519-wasm';
+import { beforeAll, describe, expect, it, vi } from 'vitest';
 
 import { createChatPeerSessionV2 } from './chatSessionV2';
+
+beforeAll(ensureSubstrateSlotSr25519Ready);
 
 /**
  * Covers the two things this adapter decides on its own; everything else is the SDK's.
@@ -87,7 +91,7 @@ function createPair() {
     ownIdentityAccountId: host.accountId,
     ownDeviceStatementAccountId: hostDevice.statementAccountId,
     ownDeviceEncryptionPrivateKey: hostDevice.encryptionPrivateKey,
-    ownDeviceSeed: createSr25519Secret(randomBytes(32)),
+    ownDeviceSeed: substrateSlotSecretFromSeedBytes(randomBytes(32)),
     peerIdentityAccountId: peer.accountId,
     peerIdentityChatPublicKey: peer.chatPublicKey,
     peerRoster: rosterOf(peerDevice),

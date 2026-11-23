@@ -22,7 +22,7 @@ import {
   createAccountId,
   createEncryption,
   createSession,
-  createSr25519Prover,
+  createSlotAccountProver,
 } from '@novasamatech/statement-store';
 import { nanoid } from 'nanoid';
 import { type CodecType } from 'scale-ts';
@@ -44,7 +44,7 @@ export const createIdentityChannel = (params: {
   ownIdentityAccountId: Uint8Array;
   peerIdentityChatPublicKey: Uint8Array;
   peerIdentityAccountId: Uint8Array;
-  /** This device's sr25519 seed — statements are signed per-device, the identity key never signs. */
+  /** This device's canonical sr25519 secret — statements are signed per-device, the identity key never signs. */
   ownDeviceSeed: Uint8Array;
   statementStore: StatementStoreAdapter;
   onEvent: (event: IdentityChannelEvent) => void;
@@ -70,7 +70,7 @@ export const createIdentityChannel = (params: {
     },
     statementStore,
     encryption: createEncryption(sharedSecret),
-    prover: createSr25519Prover(ownDeviceSeed),
+    prover: createSlotAccountProver(ownDeviceSeed),
     // The topic is keyed by the ECDH shared secret, not the raw peer pubkey.
     sessionKey: sharedSecret,
   });
