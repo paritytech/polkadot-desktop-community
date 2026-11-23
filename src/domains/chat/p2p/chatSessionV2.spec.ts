@@ -21,14 +21,15 @@ import { createChatPeerSessionV2 } from './chatSessionV2';
 beforeAll(ensureSubstrateSlotSr25519Ready);
 
 /**
- * Covers the two things this adapter decides on its own; everything else is the SDK's.
+ * Covers the three things this adapter decides on its own; everything else is the SDK's.
  *
  *  - what we ACK (a blanket 'success' would tell the peer we received a message this
  *    build dropped),
  *  - how a batch-level response reaches messages restored from a previous run, whose
- *    delivery tokens the SDK cannot restore.
+ *    delivery tokens the SDK cannot restore,
+ *  - which account signs our statements (the statement account, not a key derived elsewhere).
  *
- * Both are decisions the PEER reads off the wire, so they are exercised over the SDK's
+ * All three are decisions the PEER reads off the wire, so they are exercised over the SDK's
  * own in-memory statement store with a real peer session on the other end: the ack is
  * asserted where it actually lands — on the response statement — rather than at the
  * handler's return value.
@@ -173,6 +174,21 @@ describe('createChatPeerSessionV2 — batch delivery', () => {
     dispose();
   });
 
+  it('ignores a non-success response', async () => {
+    const { hostSession, peerSession, onBatchDelivered, dispose } = createPair();
+    await settle();
+
+    peerSession.respondToRequests(ChatMessageCodec, () => 'decodingFailed');
+    await hostSession.send({ tag: 'text', value: 'hello peer' });
+    await settle();
+
+    expect(onBatchDelivered).not.toHaveBeenCalled();
+
+    dispose();
+  });
+});
+
+describe('createChatPeerSessionV2 — statement signer', () => {
   it('signs its statements as its statement account', async () => {
     const { store, hostDevice, hostSession, peerSession, dispose } = createPair();
     await settle();
@@ -185,19 +201,6 @@ describe('createChatPeerSessionV2 — batch delivery', () => {
       .acceptedStatements()
       .map(statement => (statement.proof && 'signer' in statement.proof.value ? statement.proof.value.signer : null));
     expect(signers).toContain(toHex(hostDevice.statementAccountId));
-
-    dispose();
-  });
-
-  it('ignores a non-success response', async () => {
-    const { hostSession, peerSession, onBatchDelivered, dispose } = createPair();
-    await settle();
-
-    peerSession.respondToRequests(ChatMessageCodec, () => 'decodingFailed');
-    await hostSession.send({ tag: 'text', value: 'hello peer' });
-    await settle();
-
-    expect(onBatchDelivered).not.toHaveBeenCalled();
 
     dispose();
   });
