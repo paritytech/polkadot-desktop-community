@@ -34,6 +34,10 @@ const renderRoom = (props: Partial<Extract<Parameters<typeof IncomingRequestRoom
     </TranslationProvider>,
   );
 
+// The Radix trigger is the only button carrying aria-expanded.
+const getHeaderMenuTrigger = () => screen.getByRole('button', { expanded: false });
+const queryHeaderMenuTrigger = () => screen.queryByRole('button', { expanded: false });
+
 describe('IncomingRequestRoom', () => {
   it('hides the message and offers View message when hidden by default', () => {
     renderRoom({ hideByDefault: true });
@@ -80,7 +84,7 @@ describe('IncomingRequestRoom', () => {
     const onDecline = vi.fn();
     renderRoom({ onDecline });
 
-    await userEvent.click(screen.getByRole('button', { expanded: false }));
+    await userEvent.click(getHeaderMenuTrigger());
     await userEvent.click(await screen.findByRole('menuitem', { name: 'Decline' }));
     expect(onDecline).toHaveBeenCalledOnce();
   });
@@ -99,7 +103,6 @@ describe('IncomingRequestRoom', () => {
     ).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Accept' })).not.toBeInTheDocument();
     expect(screen.getByText("Hi! Here's the update we discussed.")).toBeInTheDocument();
-    expect(screen.queryByRole('button', { expanded: false })).not.toBeInTheDocument();
-    expect(screen.queryByRole('menuitem')).not.toBeInTheDocument();
+    expect(queryHeaderMenuTrigger()).not.toBeInTheDocument();
   });
 });

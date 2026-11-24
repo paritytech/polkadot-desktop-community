@@ -57,6 +57,15 @@ describe('OutgoingPendingRoom', () => {
     expect(onCancel).not.toHaveBeenCalled();
   });
 
+  it('closes the dialog before the cancel settles', async () => {
+    renderRoom(vi.fn<(request: P2PChatRequest) => Promise<void>>(() => new Promise<void>(() => {})));
+
+    await openDialog();
+    await userEvent.click(await screen.findByTestId(TEST_IDS.chatCancelRequestDialogConfirm));
+
+    await waitFor(() => expect(screen.queryByTestId(TEST_IDS.chatCancelRequestDialog)).not.toBeInTheDocument());
+  });
+
   it('cancels on confirm', async () => {
     const onCancel = renderRoom();
 

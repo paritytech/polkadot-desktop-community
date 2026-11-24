@@ -9,7 +9,7 @@ type RequestRoomHeaderProps = {
   name: string;
 } & (
   | {
-      /** Single destructive action in the overflow menu (decline / leave). */
+      /** Single destructive action in the overflow menu (decline / cancel / leave). */
       actionIcon: ReactNode;
       actionLabel: string;
       onAction: VoidFunction;

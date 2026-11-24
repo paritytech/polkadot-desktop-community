@@ -1,4 +1,4 @@
-import { type ChatSession, type P2PChatRequest } from '@/domains/chat';
+import { type ChatSession, type P2PChatRequest, p2pService } from '@/domains/chat';
 import { type DotNsUrl, dotNsService } from '@/domains/product';
 
 type RoomPane =
@@ -61,7 +61,11 @@ function findCancelledRequest(requests: P2PChatRequest[], peerId: string | null)
 
   let newest: P2PChatRequest | null = null;
   for (const request of requests) {
-    if (request.peerId === peerId && (newest === null || request.timestamp > newest.timestamp)) {
+    if (
+      p2pService.isCancelledIncomingRequest(request) &&
+      request.peerId === peerId &&
+      (newest === null || request.timestamp > newest.timestamp)
+    ) {
       newest = request;
     }
   }

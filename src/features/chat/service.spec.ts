@@ -149,6 +149,14 @@ describe('findCancelledRequest', () => {
     expect(chatService.findCancelledRequest([older, newer], '0xpeer')).toBe(newer);
   });
 
+  it('ignores a request of the peer that is not a cancelled incoming one', () => {
+    const pending: P2PChatRequest = { ...cancelled('req-3', '0xpeer', 3_000), status: 'pending' };
+    const outgoing: P2PChatRequest = { ...cancelled('req-4', '0xpeer', 4_000), direction: 'outgoing' };
+
+    expect(chatService.findCancelledRequest([older, pending, outgoing], '0xpeer')).toBe(older);
+    expect(chatService.findCancelledRequest([pending, outgoing], '0xpeer')).toBeNull();
+  });
+
   it('returns null for another peer', () => {
     expect(chatService.findCancelledRequest([older, newer], '0xother')).toBeNull();
   });
@@ -172,7 +180,7 @@ describe('chooseRoomPane', () => {
 
   const outgoing = request('req-out', 'outgoing');
   const incoming = request('req-in', 'incoming');
-  const cancelled = request('req-cancelled', 'incoming');
+  const cancelled: P2PChatRequest = { ...request('req-cancelled', 'incoming'), status: 'cancelled' };
   const session: ChatSession = {
     sessionId: '0xpeer',
     roomId: '0xpeer',

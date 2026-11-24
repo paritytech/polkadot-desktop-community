@@ -87,6 +87,7 @@ export const ChatFullscreen = ({ selected, onSelect, onDeselect }: Props) => {
   const [jumpTarget, setJumpTarget] = useState<JumpTarget | null>(null);
   const [showRequests, setShowRequests] = useState(false);
   const [declineTarget, setDeclineTarget] = useState<P2PChatRequest | null>(null);
+  const [declineOpen, setDeclineOpen] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const leftPanelRef = useRef<HTMLDivElement>(null);
 
@@ -250,6 +251,11 @@ export const ChatFullscreen = ({ selected, onSelect, onDeselect }: Props) => {
     [revealRequest],
   );
 
+  const openDecline = useCallback((request: P2PChatRequest) => {
+    setDeclineTarget(request);
+    setDeclineOpen(true);
+  }, []);
+
   const handleDeclineConfirm = useCallback(async () => {
     if (!declineTarget) return;
     const name = chatService.formatPeerName(declineTarget.peerUsername, declineTarget.peerId);
@@ -261,7 +267,7 @@ export const ChatFullscreen = ({ selected, onSelect, onDeselect }: Props) => {
     } catch (e) {
       console.error('[chat] Failed to decline request:', e);
     }
-    setDeclineTarget(null);
+    setDeclineOpen(false);
   }, [declineRequest, declineTarget, selected, onDeselect, t]);
 
   const handleCancelOutgoingRequest = useCallback(
@@ -290,7 +296,7 @@ export const ChatFullscreen = ({ selected, onSelect, onDeselect }: Props) => {
             hideByDefault={hideRequestsByDefault}
             onBack={() => setShowRequests(false)}
             onSelect={onSelect}
-            onDecline={setDeclineTarget}
+            onDecline={openDecline}
           />
         ) : (
           <>
@@ -388,7 +394,7 @@ export const ChatFullscreen = ({ selected, onSelect, onDeselect }: Props) => {
           hideByDefault={hideRequestsByDefault}
           disabled={!manager}
           onAccept={() => handleAcceptRequest(pane.request)}
-          onDecline={() => setDeclineTarget(pane.request)}
+          onDecline={() => openDecline(pane.request)}
           onReveal={handleRevealRequest}
         />
       ) : pane.kind === 'session' ? (
@@ -405,16 +411,16 @@ export const ChatFullscreen = ({ selected, onSelect, onDeselect }: Props) => {
       )}
 
       <RequestConfirmDialog
-        isOpen={declineTarget !== null}
+        isOpen={declineOpen}
         title={t('feature.chat.request.declineTitle')}
         description={t('feature.chat.request.declineBody', {
-          name: declineTarget?.peerUsername ?? declineTarget?.peerId.slice(0, 12) ?? '',
+          name: declineTarget ? chatService.formatPeerName(declineTarget.peerUsername, declineTarget.peerId) : '',
         })}
         cancelLabel={t('feature.chat.request.cancel')}
         confirmLabel={t('feature.chat.request.decline')}
         testId={TEST_IDS.chatDeclineDialog}
         confirmTestId={TEST_IDS.chatDeclineDialogConfirm}
-        onClose={() => setDeclineTarget(null)}
+        onClose={() => setDeclineOpen(false)}
         onConfirm={handleDeclineConfirm}
       />
     </div>
