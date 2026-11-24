@@ -120,6 +120,7 @@ describe('resolveIncomingCancel', () => {
       encryptionPublicKey: '0x02',
     }),
     message('m-token', { type: 'token', token: 'ab', platform: 'iOS' }),
+    message('m-left', { type: 'leftChat' }),
   ];
 
   const resolve = (
@@ -146,6 +147,10 @@ describe('resolveIncomingCancel', () => {
 
   it('cancels an accepted request whose room holds only request-system rows', () => {
     expect(resolve(row('incoming', 'accepted'), room(false), requestSystemMessages)).toBe('cancelAccepted');
+  });
+
+  it('cancels an accepted request with no room', () => {
+    expect(resolve(row('incoming', 'accepted'), undefined, requestSystemMessages)).toBe('cancelAccepted');
   });
 
   it('ignores an accepted request once the room holds another text message', () => {
