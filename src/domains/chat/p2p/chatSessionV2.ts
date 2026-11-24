@@ -20,14 +20,20 @@
  *  - **Session recreation on a roster change.** `peerRoster` is read live, so a device
  *    added or removed mid-conversation is picked up by the running session.
  *
+ * Seen receipts (chat-spec RFC 0006) are transient: never stored as a message, never pushed.
+ * The session runs with `keepSingleSeenMessage`, so at most one undelivered receipt per peer
+ * is ever pending — a newer one replaces it, an identical one is not sent again.
+ *
  * Statement proofs are signed with this device's sr25519 (the user-identity sr25519 never
  * leaves PApp). Message-level concerns — dedup by id, status mapping, push — stay with the
  * manager, exactly as before.
  */
 
 import { ChatMessage as ChatMessageCodec } from '@novasamatech/host-chat/codec/message';
+import { keepSingleSeenMessage } from '@novasamatech/host-chat/seen';
 import {
   type PeerRoster,
+  MessageReplacedError,
   createAccountId,
   createMultiDeviceSession,
   createSlotAccountProver,
@@ -88,6 +94,9 @@ export type V2ChatPeerSessionParams = {
   onUndeliverable?: (messageId: string) => void;
 };
 
+/** How a seen receipt ended: answered, superseded by a newer receipt, or not delivered. */
+export type SeenReceiptOutcome = 'delivered' | 'replaced' | 'failed';
+
 export type V2ChatPeerSession = {
   /**
    * `opts.messageId`/`opts.timestamp` let the caller pre-allocate the identity so it can
@@ -100,6 +109,8 @@ export type V2ChatPeerSession = {
     messageId: string;
     timestamp: number;
   }>;
+  /** Sends a seen receipt (RFC 0006). Touches no message status: a receipt is not a message. */
+  sendSeen: (seen: { messageId: string; timestamp: number }) => Promise<SeenReceiptOutcome>;
   dispose: () => void;
 };
 
@@ -137,6 +148,7 @@ export const createChatPeerSessionV2 = (params: V2ChatPeerSessionParams): V2Chat
     peerRoster,
     statementStore,
     prover: createSlotAccountProver(ownDeviceSeed),
+    replacementPolicy: keepSingleSeenMessage,
   });
 
   const seenMessageIds = new Set<string>();
@@ -211,8 +223,38 @@ export const createChatPeerSessionV2 = (params: V2ChatPeerSessionParams): V2Chat
     return { messageId, timestamp };
   };
 
+  const sendSeen = async (seen: { messageId: string; timestamp: number }): Promise<SeenReceiptOutcome> => {
+    const payload: CodecType<typeof ChatMessageCodec> = {
+      messageId: nanoid(12),
+      timestamp: BigInt(Date.now()),
+      versioned: {
+        tag: 'v1',
+        value: { tag: 'seen', value: { messageId: seen.messageId, timestamp: BigInt(seen.timestamp) } },
+      },
+    };
+    const submitted = await session.submitRequestMessage(ChatMessageCodec, payload);
+
+    if (submitted.isErr()) {
+      console.warn('[chat-session-v2] seen receipt for %s was not submitted: %s', seen.messageId, submitted.error.message);
+
+      return 'failed';
+    }
+
+    return session.waitForResponseMessage(submitted.value.requestId).match<SeenReceiptOutcome>(
+      response => (response.responseCode === 'success' ? 'delivered' : 'failed'),
+      error => {
+        // A replaced receipt is the policy working: the newer receipt carries it forward.
+        if (error instanceof MessageReplacedError) return 'replaced';
+        console.debug('[chat-session-v2] seen receipt waiter for %s settled without an ack: %s', seen.messageId, error.message);
+
+        return 'failed';
+      },
+    );
+  };
+
   return {
     send,
+    sendSeen,
     dispose: () => {
       stopResponding();
       unsubscribe();
