@@ -26,6 +26,7 @@ import {
   deriveSlotAccountPublicKey,
   khash,
   signSlotAccountSecret,
+  verifySr25519Signature,
 } from '@novasamatech/statement-store';
 import { nanoid } from 'nanoid';
 import { toHex } from 'polkadot-api/utils';
@@ -200,9 +201,31 @@ export type ValidatedRequestV2 = ValidatedRequest & {
 };
 
 /**
- * Decrypt + validate an incoming chat request. Handles both V1 (legacy) and V2
- * inner content; returns the V1 `ValidatedRequest` shape for V1 messages and
- * the extended `ValidatedRequestV2` shape for V2 messages.
+ * An incoming RFC 0007 cancel whose inner signature verified. `identityProof`
+ * is still unchecked: it is keyed by K(A,B), which the decoder does not hold.
+ */
+export type ValidatedRequestCancel = {
+  requestId: string;
+  timestamp: number;
+  senderIdentityAccountId: Uint8Array;
+  identityProof: Uint8Array;
+};
+
+export type DecodedRequestStatement =
+  { tag: 'request'; value: ValidatedRequest | ValidatedRequestV2 } | { tag: 'cancel'; value: ValidatedRequestCancel };
+
+export type IncomingRequestHandlers = {
+  onRequest: (request: ValidatedRequest | ValidatedRequestV2) => void;
+  onCancel: (cancel: ValidatedRequestCancel) => void;
+};
+
+/**
+ * Decrypt + validate an incoming chat request statement. Handles V1 (legacy),
+ * V2 and cancel inner content: a request decodes to `{ tag: 'request' }` with
+ * the V1 `ValidatedRequest` or the extended `ValidatedRequestV2` shape, a
+ * cancel to `{ tag: 'cancel' }`.
+ *
+ * `ownAccountId` is the `requestAcceptorId` a cancel's inner signature covers.
  *
  * `ownChatPrivateKey` is the recipient's user chat X25519 private key
  * (V1-derived from the wallet ssSecret). On desktop after V2 SSO this is
@@ -213,7 +236,8 @@ export type ValidatedRequestV2 = ValidatedRequest & {
 const decryptAndValidateRequestV2 = (
   statementData: Uint8Array,
   ownChatPrivateKey: Uint8Array,
-): ValidatedRequest | ValidatedRequestV2 | null => {
+  ownAccountId: Uint8Array,
+): DecodedRequestStatement | null => {
   try {
     const encrypted = EncryptedRemoteModel.dec(statementData);
 
@@ -255,6 +279,23 @@ const decryptAndValidateRequestV2 = (
 
     const content = remote.message.content;
 
+    if (content.tag === 'cancel') {
+      const signed = ProofPayload.enc({ message: remote.message, requestAcceptorId: ownAccountId });
+      if (!verifySr25519Signature(signed, remote.proof.value.signature, remote.proof.value.signer)) {
+        console.warn('[chat-request-v2] cancel inner signature invalid');
+        return null;
+      }
+      return {
+        tag: 'cancel',
+        value: {
+          requestId: remote.message.messageId,
+          timestamp: Number(remote.message.timestamp),
+          senderIdentityAccountId: content.value.identityProof.identityAccountId,
+          identityProof: content.value.identityProof.proof,
+        },
+      };
+    }
+
     // Channel topic is deterministic from (ephemeralPubKey, sharedSecret) —
     // both peers can derive it locally. Don't rely on the outer `stmt.channel`
     // field: the sender's adapter may not propagate it (android currently
@@ -284,7 +325,7 @@ const decryptAndValidateRequestV2 = (
           base.pushPlatform = platform;
         }
       }
-      return base;
+      return { tag: 'request', value: base };
     }
 
     // V2 content: identity acct goes onto senderAccountId so contact
@@ -308,12 +349,15 @@ const decryptAndValidateRequestV2 = (
     }
 
     return {
-      ...base,
-      senderAccountId: content.value.identityProof.identityAccountId,
-      senderIdentityAccountId: content.value.identityProof.identityAccountId,
-      senderIdentityProof: content.value.identityProof.proof,
-      senderDevicePubKey: content.value.deviceEncPubKey,
-      senderDeviceStatementAccountId: remote.proof.value.signer,
+      tag: 'request',
+      value: {
+        ...base,
+        senderAccountId: content.value.identityProof.identityAccountId,
+        senderIdentityAccountId: content.value.identityProof.identityAccountId,
+        senderIdentityProof: content.value.identityProof.proof,
+        senderDevicePubKey: content.value.deviceEncPubKey,
+        senderDeviceStatementAccountId: remote.proof.value.signer,
+      },
     };
   } catch (e) {
     console.warn('[chat-request-v2] Failed to process request:', e);
@@ -322,9 +366,9 @@ const decryptAndValidateRequestV2 = (
 };
 
 /**
- * Subscribe to incoming V1 + V2 chat requests on the current day's pagination
- * topic for our user identity sr25519. Mirrors V1 `subscribeToIncomingRequests`
- * but routes through the V2 decoder.
+ * Subscribe to incoming V1 + V2 chat requests and cancels on the current day's
+ * pagination topic for our user identity sr25519. Mirrors V1
+ * `subscribeToIncomingRequests` but routes through the V2 decoder.
  */
 const subscribeToIncomingRequestsV2 = (
   params: {
@@ -332,7 +376,7 @@ const subscribeToIncomingRequestsV2 = (
     ownChatPrivateKey: Uint8Array;
     statementStore: StatementStoreAdapter;
   },
-  callback: (request: ValidatedRequest | ValidatedRequestV2) => void,
+  handlers: IncomingRequestHandlers,
 ): VoidFunction => {
   const { ownAccountId, ownChatPrivateKey, statementStore } = params;
 
@@ -347,8 +391,9 @@ const subscribeToIncomingRequestsV2 = (
   const unsubV1 = trackedSubscribeStatements(statementStore, { matchAll: [paginationTopic] }, ({ statements }) => {
     for (const stmt of statements) {
       if (!stmt.data) continue;
-      const validated = decryptAndValidateRequestV2(stmt.data, ownChatPrivateKey);
-      if (validated) callback(validated);
+      const decoded = decryptAndValidateRequestV2(stmt.data, ownChatPrivateKey, ownAccountId);
+      if (decoded?.tag === 'request') handlers.onRequest(decoded.value);
+      if (decoded?.tag === 'cancel') handlers.onCancel(decoded.value);
     }
   });
 

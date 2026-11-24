@@ -76,8 +76,8 @@ export const CancelProofPayload = Struct({
   context: str,
 });
 
-// RFC 0007 cancel content, `VersionedRequestContent` index 2 (added with the decoder).
-export const RequestContentCancel = Struct({ identityProof: IdentityProof });
+// RFC 0007 cancel content, `VersionedRequestContent` index 2.
+const RequestContentCancel = Struct({ identityProof: IdentityProof });
 
 // v0.2 spec layout — must match android's `RequestContentV2` field-for-field.
 const RequestContentV2 = Struct({
@@ -90,6 +90,7 @@ const RequestContentV2 = Struct({
 const VersionedRequestContent = Enum({
   v1: RequestContentV1,
   v2: RequestContentV2,
+  cancel: RequestContentCancel,
 });
 
 const RequestMessage = Struct({

@@ -46,7 +46,12 @@ import { peerGateway } from './peer/gateway';
 import { peerSearchService } from './peer/service';
 import { type PeerRosterHandle, createPeerRoster } from './peerRoster';
 import { p2pChatDatabase } from './repository';
-import { type ValidatedRequestV2, chatRequestGateway } from './requests/gateway';
+import {
+  type ValidatedRequest,
+  type ValidatedRequestCancel,
+  type ValidatedRequestV2,
+  chatRequestGateway,
+} from './requests/gateway';
 import { chatRequestService } from './requests/service';
 import {
   createP2PMessage,
@@ -732,10 +737,14 @@ export const createP2PChatManagerV2 = async (params: P2PChatManagerV2Params): Pr
 
   // ── Incoming request handler ────────────────────────────────────────────
 
+  function applyIncomingCancel(cancel: ValidatedRequestCancel): void {
+    console.warn('[p2p-managerV2] incoming chat request cancel not handled yet requestId=%s', cancel.requestId);
+  }
+
   const isV2Validated = (r: object): r is ValidatedRequestV2 =>
     'senderDevicePubKey' in r && r.senderDevicePubKey instanceof Uint8Array;
 
-  const addIncomingRequest: Parameters<typeof chatRequestGateway.subscribeToIncomingRequestsV2>[1] = validated => {
+  const addIncomingRequest = (validated: ValidatedRequest | ValidatedRequestV2): void => {
     if (seenRequestIds.has(validated.requestId)) {
       return;
     }
@@ -1587,7 +1596,7 @@ export const createP2PChatManagerV2 = async (params: P2PChatManagerV2Params): Pr
             ownChatPrivateKey: userIdentity.identityChatPrivateKey,
             statementStore,
           },
-          addIncomingRequest,
+          { onRequest: addIncomingRequest, onCancel: applyIncomingCancel },
         );
       }
 
