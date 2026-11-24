@@ -1,5 +1,5 @@
 /**
- * Discovery topic derivation for chat requests — V1 and V2.
+ * Pure helpers of the chat request: discovery topic derivation (V1 and V2) and, from Task 2, the cancel proof.
  *
  * V1 must match iOS byte-for-byte:
  *   - ChatRequest+PaginationTopic.swift → allPeerTopic, paginationTopic
@@ -194,7 +194,7 @@ function computePeerSubscriptionTopicsV2(
   return senderDeviceAccountIds.map(senderDeviceId => computePaginationTopicV2(senderDeviceId, recipientUserAccountId, day));
 }
 
-export const chatRequestTopicService = {
+export const chatRequestService = {
   getCurrentDay,
   computeAllPeerTopic,
   computePaginationTopic,

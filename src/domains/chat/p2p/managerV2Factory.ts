@@ -47,7 +47,7 @@ import { peerSearchService } from './peer/service';
 import { type PeerRosterHandle, createPeerRoster } from './peerRoster';
 import { p2pChatDatabase } from './repository';
 import { type ValidatedRequestV2, chatRequestGateway } from './requests/gateway';
-import { chatRequestTopicService } from './requests/service';
+import { chatRequestService } from './requests/service';
 import {
   createP2PMessage,
   createP2PRoom,
@@ -1698,16 +1698,12 @@ export const createP2PChatManagerV2 = async (params: P2PChatManagerV2Params): Pr
       // optional). Returns an unsubscribe function.
       probeV2Topic: (senderDeviceAccountIdHex: string) => {
         const senderBytes = fromHex(senderDeviceAccountIdHex.replace(/^0x/, ''));
-        const day = chatRequestTopicService.getCurrentDay();
+        const day = chatRequestService.getCurrentDay();
         if (!day) {
           console.warn('[p2pV2Debug] probeV2Topic: clock before chat-request epoch');
           return () => {};
         }
-        const topic = chatRequestTopicService.computePaginationTopicV2(
-          senderBytes,
-          userIdentity.identitySr25519PublicKey,
-          day.day,
-        );
+        const topic = chatRequestService.computePaginationTopicV2(senderBytes, userIdentity.identitySr25519PublicKey, day.day);
         return trackedSubscribeStatements(statementStore, { matchAll: [topic] }, () => {});
       },
       wipeChatDb: async () => {

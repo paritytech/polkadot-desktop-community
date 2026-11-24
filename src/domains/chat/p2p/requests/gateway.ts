@@ -35,7 +35,7 @@ import { transportGateway } from '../session-transport/gateway';
 import { trackedSubscribeStatements } from '../subscription-registry';
 
 import { EncryptedRemoteModel, IDENTITY_PROOF_CONTEXT, IdentityProofPayload, ProofPayload, RemoteModel } from './schemas';
-import { chatRequestTopicService } from './service';
+import { chatRequestService } from './service';
 
 /**
  * Shape returned for legacy V1-wire chat requests. V2 wire decodes extend this
@@ -85,12 +85,12 @@ const sendChatRequestV2 = async (params: {
     statementStore,
   } = params;
 
-  const currentDay = chatRequestTopicService.getCurrentDay();
+  const currentDay = chatRequestService.getCurrentDay();
   if (!currentDay) throw new Error('Current time is before the chat request epoch');
 
   // 1. V1 topics keyed on recipient only.
-  const allPeerTopic = chatRequestTopicService.computeAllPeerTopic(recipientAccountId);
-  const paginationTopic = chatRequestTopicService.computePaginationTopic(recipientAccountId, currentDay.day);
+  const allPeerTopic = chatRequestService.computeAllPeerTopic(recipientAccountId);
+  const paginationTopic = chatRequestService.computePaginationTopic(recipientAccountId, currentDay.day);
 
   // 2. Ephemeral X25519 key agreement for envelope encryption against the
   //    recipient's on-chain user chat pubkey — same shape as V1.
@@ -100,7 +100,7 @@ const sendChatRequestV2 = async (params: {
   const encryption = createEncryption(sharedSecret);
 
   // 3. Channel topic for accept-signal monitoring.
-  const channelTopic = chatRequestTopicService.computeChannelTopic(ephemeralPubKey, sharedSecret);
+  const channelTopic = chatRequestService.computeChannelTopic(ephemeralPubKey, sharedSecret);
 
   // 4. Build `IdentityProof.proof = kHash(K(A,B), SCALE(IdentityProofPayload))`.
   //    K(A,B) is the *persistent* ECDH between the sender's identity chat
@@ -260,7 +260,7 @@ const decryptAndValidateRequestV2 = (
     // field: the sender's adapter may not propagate it (android currently
     // omits it on the wire), and that would leave us unable to post the
     // accept signal back on the agreed channel.
-    const channelTopic = toHex(chatRequestTopicService.computeChannelTopic(encrypted.encryptionPubKey, sharedSecret));
+    const channelTopic = toHex(chatRequestService.computeChannelTopic(encrypted.encryptionPubKey, sharedSecret));
 
     const base: ValidatedRequest = {
       requestId: remote.message.messageId,
@@ -336,10 +336,10 @@ const subscribeToIncomingRequestsV2 = (
 ): VoidFunction => {
   const { ownAccountId, ownChatPrivateKey, statementStore } = params;
 
-  const currentDay = chatRequestTopicService.getCurrentDay();
+  const currentDay = chatRequestService.getCurrentDay();
   if (!currentDay) return () => {};
 
-  const paginationTopic = chatRequestTopicService.computePaginationTopic(ownAccountId, currentDay.day);
+  const paginationTopic = chatRequestService.computePaginationTopic(ownAccountId, currentDay.day);
 
   // V1-shape pagination topic (recipient-only) — what desktop currently
   // publishes on. Subscribing here catches both desktop and (if android
