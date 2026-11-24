@@ -40,7 +40,7 @@ what they are, by design (see `docs/code/code-placement.md` § Container-root or
   sub-module (resources, gateways, services, repository, subscriptions) into the live manager
   consumed by the `aggregates/p2p-chat` aggregate.
 - `chatSessionV2.ts` — `createChatPeerSessionV2`, the per-peer **device-level** session transport
-  (SDK `createMultiDeviceSession`); carries ordinary chat messages.
+  (SDK `createMultiDeviceSession`); carries ordinary chat messages and also sends the transient seen receipts.
 - `identityChannel.ts` — `createIdentityChannel`, the per-peer **identity-level** session (SDK
   `createSession`); carries the variants that bootstrap device transport and therefore cannot use
   it — `deviceChatAccepted`, `deviceAdded`/`deviceRemoved`. Same class and shape as

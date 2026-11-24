@@ -14,12 +14,18 @@ The unit of consumption is a **`ChatSession`**: a uniform observable interface t
 - **MessagePeer** — Who a message is from. One of `UserPeer` (an account, optionally pinned), `P2PPeer` (an SS58 account string in a P2P session), or `ProductPeer` (a product instance).
 - **MessageContent** — Tagged union covering `Text`, `RichText` (text + attachments), `Custom` (typed binary payload plus an optional `alt`: the one line shown where the message is listed without being drawn), `Reaction`, `Reply`, `Edit`, plus lifecycle events (`ContactAdded`, `LeftChat`).
 - **FileAttachment** — `{ identifier, claimTicket, meta }`. The `meta` discriminates `General` / `Image` / `Video`.
+- **Seen receipt** — the transient `seen` message that tells the peer how far the local user has read (RFC 0006). It is never stored, synced or pushed. Use seen receipt, not read receipt or watermark.
+- **Seen** — the derived state of an outgoing message: the peer has seen it, because its position is at or before the peer seen position. It is never a stored status. The incoming state `seen` (the local user displayed a message) keeps its name. Seen on an outgoing message always means the peer saw it.
+- **last seen message** — the newest incoming message the local user has displayed, the one a seen receipt names.
+- **message position** — `{ timestamp, messageId }`, the place of a message in the chat. Positions compare by `timestamp`, then by `messageId` in UTF-16 code-unit order.
 - **blurhash** — the decoded preview string carried by `Image` / `Video` meta. It rides inline in the statement (not over HOP), so rendering it claims nothing. Use **`blurhash`** for the decoded domain string; the raw wire field is **`thumbnail`** (`Option(Bytes)`, the UTF-8 bytes of the blurhash) — say `thumbnail` only when talking about the on-wire bytes, `blurhash` everywhere else.
 
 ### P2P-specific
 
 - **P2PRoom** — An end-to-end-encrypted session between two peers, identified by `sessionId` and the peer's SS58 account, carrying the peer's username and (optionally) push-notification routing.
 - **P2PChatRequest** — The handshake that creates a room: direction (incoming/outgoing), status, optional welcome message, and a `channelTopic` derived from an ephemeral ECDH exchange. Two statuses are tombstones: `removed` (the user left the chat) and `cancelled` (a cancel was sent or applied), both kept so that a later copy of the request cannot bring it back.
+- **peer seen** — the furthest message position the peer has reported seen, kept on the room; it only advances.
+- **last sent seen** — the last message position the local user reported seen to the peer, kept on the room so the same receipt is not sent twice.
 - **Cancel** — the sender withdraws its own pending outgoing request (RFC 0007); the receiver drops it. Only the sender cancels.
 - **Decline** — the receiver refuses an incoming request. Only the receiver declines.
 - **Proof of compute** — a puzzle the identity backend's username-search route may demand from an
