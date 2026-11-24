@@ -23,6 +23,7 @@ import { x25519 } from '@noble/curves/ed25519.js';
 import {
   type StatementStoreAdapter,
   createEncryption,
+  createExpiryAllocator,
   deriveSlotAccountPublicKey,
   khash,
   signSlotAccountSecret,
@@ -30,6 +31,7 @@ import {
 } from '@novasamatech/statement-store';
 import { nanoid } from 'nanoid';
 import { toHex } from 'polkadot-api/utils';
+import { type CodecType } from 'scale-ts';
 
 import { p2pService } from '../service';
 import { transportGateway } from '../session-transport/gateway';
@@ -55,6 +57,45 @@ export type ValidatedRequest = {
 };
 
 // ── Send ───────────────────────────────────────────────────────────────────
+
+type RequestMessage = CodecType<typeof RemoteModel>['message'];
+
+/**
+ * Sign `message` with the device sr25519 and encrypt it to the recipient's
+ * identity chat pubkey under a fresh ephemeral X25519 key. The inner signature
+ * only proves the publishing device authored this entry; identity binding
+ * comes from the content's kHash proof.
+ */
+function sealRequestMessage(params: {
+  message: RequestMessage;
+  recipientAccountId: Uint8Array;
+  recipientChatPubKey: Uint8Array;
+  senderDeviceSeed: Uint8Array;
+}): { data: Uint8Array; ephemeralPubKey: Uint8Array; sharedSecret: Uint8Array } {
+  const { message, recipientAccountId, recipientChatPubKey, senderDeviceSeed } = params;
+
+  const ephemeralPrivKey = x25519.utils.randomSecretKey();
+  const ephemeralPubKey = x25519.getPublicKey(ephemeralPrivKey); // 32 bytes (CHAT-RFC-0004)
+  const sharedSecret = p2pService.computeSharedSecret(ephemeralPrivKey, recipientChatPubKey);
+
+  const signature = signSlotAccountSecret(senderDeviceSeed, ProofPayload.enc({ message, requestAcceptorId: recipientAccountId }));
+  const remoteModelEncoded = RemoteModel.enc({
+    message,
+    proof: {
+      tag: 'sr25519',
+      value: { signature, signer: deriveSlotAccountPublicKey(senderDeviceSeed) },
+    },
+  });
+
+  const encryptResult = createEncryption(sharedSecret).encrypt(remoteModelEncoded);
+  if (encryptResult.isErr()) throw encryptResult.error;
+
+  return {
+    data: EncryptedRemoteModel.enc({ encryptionPubKey: ephemeralPubKey, encryptedData: encryptResult.value }),
+    ephemeralPubKey,
+    sharedSecret,
+  };
+}
 
 /**
  * Send a V2 chat request to a single recipient.
@@ -93,17 +134,7 @@ const sendChatRequestV2 = async (params: {
   const allPeerTopic = chatRequestService.computeAllPeerTopic(recipientAccountId);
   const paginationTopic = chatRequestService.computePaginationTopic(recipientAccountId, currentDay.day);
 
-  // 2. Ephemeral X25519 key agreement for envelope encryption against the
-  //    recipient's on-chain user chat pubkey — same shape as V1.
-  const ephemeralPrivKey = x25519.utils.randomSecretKey();
-  const ephemeralPubKey = x25519.getPublicKey(ephemeralPrivKey); // 32 bytes (CHAT-RFC-0004)
-  const sharedSecret = p2pService.computeSharedSecret(ephemeralPrivKey, recipientChatPubKey);
-  const encryption = createEncryption(sharedSecret);
-
-  // 3. Channel topic for accept-signal monitoring.
-  const channelTopic = chatRequestService.computeChannelTopic(ephemeralPubKey, sharedSecret);
-
-  // 4. Build `IdentityProof.proof = kHash(K(A,B), SCALE(IdentityProofPayload))`.
+  // 2. Build `IdentityProof.proof = kHash(K(A,B), SCALE(IdentityProofPayload))`.
   //    K(A,B) is the *persistent* ECDH between the sender's identity chat
   //    private key and the recipient's identity chat pubkey (NOT the
   //    ephemeral-key shared secret used for the envelope). The recipient,
@@ -117,14 +148,14 @@ const sendChatRequestV2 = async (params: {
   });
   const identityProof = khash(identityProofSharedSecret, identityProofPayload);
 
-  // 5. Inner request message — V2 content per v0.2 spec.
+  // 3. Inner request message — V2 content per v0.2 spec.
   const requestId = nanoid(12);
   const timestamp = BigInt(Date.now());
-  const requestMessage = {
+  const requestMessage: RequestMessage = {
     messageId: requestId,
     timestamp,
     content: {
-      tag: 'v2' as const,
+      tag: 'v2',
       value: {
         identityProof: {
           identityAccountId: senderIdentityAccountId,
@@ -137,45 +168,110 @@ const sendChatRequestV2 = async (params: {
     },
   };
 
-  // 6. Inner proof signed by the device sr25519. Identity binding comes
-  //    from the kHash `identityProof.proof` field above; this signature just
-  //    proves the publishing device authored *this* statement-store entry.
-  const proofPayloadEncoded = ProofPayload.enc({
-    message: requestMessage,
-    requestAcceptorId: recipientAccountId,
-  });
-  const signature = signSlotAccountSecret(senderDeviceSeed, proofPayloadEncoded);
+  // 4. Signed inner message in the V1 envelope, against the recipient's
+  //    on-chain user chat pubkey.
+  const sealed = sealRequestMessage({ message: requestMessage, recipientAccountId, recipientChatPubKey, senderDeviceSeed });
 
-  // 7. RemoteModel + V1 envelope encryption.
-  const remoteModelEncoded = RemoteModel.enc({
-    message: requestMessage,
-    proof: {
-      tag: 'sr25519',
-      value: { signature, signer: signerPubKey },
-    },
-  });
+  // 5. Channel topic for accept-signal monitoring.
+  const channelTopic = chatRequestService.computeChannelTopic(sealed.ephemeralPubKey, sealed.sharedSecret);
 
-  const encryptResult = encryption.encrypt(remoteModelEncoded);
-  if (encryptResult.isErr()) throw encryptResult.error;
-
-  const encryptedRemoteModel = {
-    encryptionPubKey: ephemeralPubKey,
-    encryptedData: encryptResult.value,
-  };
-  const outerPayload = EncryptedRemoteModel.enc(encryptedRemoteModel);
-
-  // 8. Outer Statement Store proof signed by the same device sr25519.
+  // 6. Outer Statement Store proof signed by the same device sr25519.
   await transportGateway.signAndSubmitStatement({
     signerSeed: senderDeviceSeed,
     statementStore,
     channel: channelTopic,
     topics: [allPeerTopic, paginationTopic, channelTopic],
-    data: outerPayload,
+    data: sealed.data,
     logTag: 'chat-request-v2 send',
   });
 
   return { requestId, channelTopic };
 };
+
+/**
+ * Publish an RFC 0007 cancel for an outgoing request. The cancel replaces the
+ * request's copy on the request channel because it shares the copy's account
+ * and channel with a higher expiry, `max(copy expiry + 1, timestamp priority)`
+ * (RFC 0007 § Sending). Resolves `'noCopy'` and publishes nothing when this
+ * device's copy is no longer on the channel (RFC 0007 § Sending, step 4).
+ */
+async function sendChatRequestCancel(params: {
+  requestId: string;
+  requestTimestamp: number;
+  channelTopic: Uint8Array;
+  recipientAccountId: Uint8Array;
+  recipientChatPubKey: Uint8Array;
+  senderIdentityAccountId: Uint8Array;
+  senderIdentityChatPrivateKey: Uint8Array;
+  senderDeviceSeed: Uint8Array;
+  statementStore: StatementStoreAdapter;
+}): Promise<'published' | 'noCopy'> {
+  const {
+    requestId,
+    requestTimestamp,
+    channelTopic,
+    recipientAccountId,
+    recipientChatPubKey,
+    senderIdentityAccountId,
+    senderIdentityChatPrivateKey,
+    senderDeviceSeed,
+    statementStore,
+  } = params;
+
+  const queried = await statementStore.queryStatements({ matchAll: [channelTopic] });
+  if (queried.isErr()) throw queried.error;
+
+  const ownSigner = toHex(deriveSlotAccountPublicKey(senderDeviceSeed));
+  const ownCopies = queried.value.filter(
+    statement => statement.proof?.type === 'sr25519' && statement.proof.value.signer.toLowerCase() === ownSigner,
+  );
+  if (ownCopies.length === 0) return 'noCopy';
+
+  const cancelMessage: RequestMessage = {
+    messageId: requestId,
+    timestamp: BigInt(Math.max(Date.now(), requestTimestamp + 1)),
+    content: {
+      tag: 'cancel',
+      value: {
+        identityProof: {
+          identityAccountId: senderIdentityAccountId,
+          proof: chatRequestService.computeCancelProof(
+            p2pService.computeSharedSecret(senderIdentityChatPrivateKey, recipientChatPubKey),
+            senderIdentityAccountId,
+            requestId,
+          ),
+        },
+      },
+    },
+  };
+  const sealed = sealRequestMessage({ message: cancelMessage, recipientAccountId, recipientChatPubKey, senderDeviceSeed });
+
+  const currentDay = chatRequestService.getCurrentDay();
+  if (!currentDay) throw new Error('Current time is before the chat request epoch');
+
+  const allocator = createExpiryAllocator();
+  let copyExpiry = 0n;
+  for (const copy of ownCopies) {
+    if (copy.expiry !== undefined && copy.expiry > copyExpiry) copyExpiry = copy.expiry;
+  }
+  allocator.raiseFloor(copyExpiry);
+
+  await transportGateway.signAndSubmitStatement({
+    signerSeed: senderDeviceSeed,
+    statementStore,
+    channel: channelTopic,
+    topics: [
+      chatRequestService.computeAllPeerTopic(recipientAccountId),
+      chatRequestService.computePaginationTopic(recipientAccountId, currentDay.day),
+      channelTopic,
+    ],
+    data: sealed.data,
+    allocator,
+    logTag: 'chat-request-cancel send',
+  });
+
+  return 'published';
+}
 
 // ── Receive ────────────────────────────────────────────────────────────────
 
@@ -411,6 +507,7 @@ const subscribeToIncomingRequestsV2 = (
 
 export const chatRequestGateway = {
   sendChatRequestV2,
+  sendChatRequestCancel,
   decryptAndValidateRequestV2,
   subscribeToIncomingRequestsV2,
 };

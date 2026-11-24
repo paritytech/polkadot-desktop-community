@@ -3,6 +3,7 @@ import { type SignedStatement } from '@novasamatech/sdk-statement';
 import {
   type StatementStoreAdapter,
   createEncryption,
+  createInMemoryStatementStore,
   deriveSlotAccountPublicKey,
   ensureSubstrateSlotSr25519Ready,
   signSlotAccountSecret,
@@ -17,6 +18,7 @@ import { p2pService } from '../service';
 
 import { chatRequestGateway } from './gateway';
 import { EncryptedRemoteModel, ProofPayload, RemoteModel } from './schemas';
+import { chatRequestService } from './service';
 
 beforeAll(ensureSubstrateSlotSr25519Ready);
 
@@ -223,5 +225,88 @@ describe('chatRequestGateway.decryptAndValidateRequestV2 (RFC 0007 cancel)', () 
     });
 
     expect(chatRequestGateway.decryptAndValidateRequestV2(data, bobUserChat.priv, bobUserAccountId)).toBeNull();
+  });
+});
+
+describe('chatRequestGateway.sendChatRequestCancel', () => {
+  function makeCancelFixture(store: StatementStoreAdapter) {
+    const aliceDevice = makeDevice(0x07);
+    const aliceUserChat = makeUserChatKey();
+    const bobUserChat = makeUserChatKey();
+
+    const cancelParams = (request: { requestId: string; channelTopic: Uint8Array }, requestTimestamp: number) => ({
+      requestId: request.requestId,
+      requestTimestamp,
+      channelTopic: request.channelTopic,
+      recipientAccountId: bobUserAccountId,
+      recipientChatPubKey: bobUserChat.pub,
+      senderIdentityAccountId: aliceUserAccountId,
+      senderIdentityChatPrivateKey: aliceUserChat.priv,
+      senderDeviceSeed: aliceDevice.seed,
+      statementStore: store,
+    });
+
+    const sendRequest = () =>
+      chatRequestGateway.sendChatRequestV2({
+        recipientAccountId: bobUserAccountId,
+        recipientChatPubKey: bobUserChat.pub,
+        senderIdentityAccountId: aliceUserAccountId,
+        senderIdentityChatPrivateKey: aliceUserChat.priv,
+        senderDevicePubKey: aliceDevice.encPub,
+        senderDeviceSeed: aliceDevice.seed,
+        statementStore: store,
+      });
+
+    return { aliceUserChat, bobUserChat, cancelParams, sendRequest };
+  }
+
+  it('replaces the request on its channel with a cancel the receiver decodes', async () => {
+    const store = createInMemoryStatementStore();
+    const { aliceUserChat, bobUserChat, cancelParams, sendRequest } = makeCancelFixture(store);
+    const request = await sendRequest();
+
+    const result = await chatRequestGateway.sendChatRequestCancel(cancelParams(request, Date.now()));
+
+    expect(result).toBe('published');
+    const onChannel = store.currentStatements().filter(s => s.channel === toHex(request.channelTopic));
+    expect(onChannel).toHaveLength(1);
+    const decoded = chatRequestGateway.decryptAndValidateRequestV2(onChannel[0]!.data!, bobUserChat.priv, bobUserAccountId);
+    expect(decoded?.tag).toBe('cancel');
+    if (decoded?.tag !== 'cancel') return;
+    expect(decoded.value.requestId).toBe(request.requestId);
+    expect(
+      chatRequestService.isCancelProofValid(
+        p2pService.computeSharedSecret(bobUserChat.priv, aliceUserChat.pub),
+        { identityAccountId: decoded.value.senderIdentityAccountId, proof: decoded.value.identityProof },
+        request.requestId,
+      ),
+    ).toBe(true);
+  });
+
+  it('publishes nothing when no own copy is on the channel', async () => {
+    const store = createInMemoryStatementStore();
+    const { cancelParams } = makeCancelFixture(store);
+
+    const result = await chatRequestGateway.sendChatRequestCancel(
+      cancelParams({ requestId: 'req-1', channelTopic: new Uint8Array(32).fill(0xd4) }, Date.now()),
+    );
+
+    expect(result).toBe('noCopy');
+    expect(store.acceptedStatements()).toEqual([]);
+  });
+
+  it('stamps the cancel later than the request', async () => {
+    const store = createInMemoryStatementStore();
+    const { bobUserChat, cancelParams, sendRequest } = makeCancelFixture(store);
+    const request = await sendRequest();
+    const requestTimestamp = Date.now() + 60_000;
+
+    await chatRequestGateway.sendChatRequestCancel(cancelParams(request, requestTimestamp));
+
+    const onChannel = store.currentStatements().filter(s => s.channel === toHex(request.channelTopic));
+    const decoded = chatRequestGateway.decryptAndValidateRequestV2(onChannel[0]!.data!, bobUserChat.priv, bobUserAccountId);
+    expect(decoded?.tag).toBe('cancel');
+    if (decoded?.tag !== 'cancel') return;
+    expect(decoded.value.timestamp).toBeGreaterThan(requestTimestamp);
   });
 });
