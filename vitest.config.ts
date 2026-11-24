@@ -67,6 +67,9 @@ const config: ViteUserConfigFnPromise = async options => {
       sequence: {
         sequencer: Sequencer,
       },
+      // Loaded by Node outside Vite, a Radix menu and a dialog opened from one of its items loop on focus in
+      // happy-dom; Vite loads them as the app bundle does.
+      server: { deps: { inline: [/@radix-ui/, /@novasamatech\/tr-ui/] } },
       coverage: {
         provider: 'v8',
         exclude: ['**/node_modules/**'],
