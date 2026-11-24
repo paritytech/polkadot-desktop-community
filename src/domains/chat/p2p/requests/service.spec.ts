@@ -1,4 +1,5 @@
 // src/domains/chat/p2p/chatRequestTopics.spec.ts
+import { khash } from '@novasamatech/statement-store';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { chatRequestService } from './service';
@@ -156,6 +157,42 @@ describe('computeChannelTopic', () => {
   it('matches iOS channelTopic vector', () => {
     expect(toHex(chatRequestService.computeChannelTopic(FIXED_SESSION_ID, FIXED_SHARED_SECRET))).toMatchInlineSnapshot(
       `"655629fba2e8b947fa439627b817a7eaed233ed5a0e37b54fd49699ec8243004"`,
+    );
+  });
+});
+
+describe('cancel proof', () => {
+  const identityAccountId = new Uint8Array(32).fill(7);
+  const sharedSecret = new Uint8Array(32).fill(0x33);
+  const encoder = new TextEncoder();
+
+  it('is khash of the SCALE payload laid out as the RFC fixes', () => {
+    const payload = new Uint8Array([
+      ...identityAccountId,
+      0x14,
+      ...encoder.encode('req-1'),
+      0x5c,
+      ...encoder.encode('mds-chat-request-cancel'),
+    ]);
+
+    expect(chatRequestService.computeCancelProof(sharedSecret, identityAccountId, 'req-1')).toEqual(khash(sharedSecret, payload));
+  });
+
+  it('accepts its own proof', () => {
+    const proof = chatRequestService.computeCancelProof(sharedSecret, identityAccountId, 'req-1');
+
+    expect(chatRequestService.isCancelProofValid(sharedSecret, { identityAccountId, proof }, 'req-1')).toBe(true);
+  });
+
+  it('rejects another request id, another identity and another key', () => {
+    const proof = chatRequestService.computeCancelProof(sharedSecret, identityAccountId, 'req-1');
+
+    expect(chatRequestService.isCancelProofValid(sharedSecret, { identityAccountId, proof }, 'req-2')).toBe(false);
+    expect(
+      chatRequestService.isCancelProofValid(sharedSecret, { identityAccountId: new Uint8Array(32).fill(8), proof }, 'req-1'),
+    ).toBe(false);
+    expect(chatRequestService.isCancelProofValid(new Uint8Array(32).fill(0x44), { identityAccountId, proof }, 'req-1')).toBe(
+      false,
     );
   });
 });

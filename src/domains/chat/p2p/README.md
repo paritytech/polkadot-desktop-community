@@ -6,7 +6,7 @@ of rooms/messages/requests into Dexie.
 
 ## Sub-modules
 
-- `requests/` — chat-request wire format (`schemas`), topic derivation (`service`), and the
+- `requests/` — chat-request wire format (`schemas`), topic derivation and the cancel proof (`service`), and the
   send/decrypt/subscribe wire I/O (`gateway`).
 - `session-transport/` — statement-store sign-and-submit + the device-channel one-shot fallback
   (`gateway`), and SDK↔UI content mapping plus identity-channel event interpretation (`service`).
