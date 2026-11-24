@@ -17,6 +17,8 @@
  *     publishing device authored this submission). Identity binding comes
  *     from `IdentityProof.proof` instead of a separate signature.
  *   - Outer Statement Store proof: same device sr25519.
+ *   - Cancel (RFC 0007, content index 2): `IdentityProof` over `CancelProofPayload`;
+ *     published on the request's channel to replace its copy.
  */
 
 import { x25519 } from '@noble/curves/ed25519.js';
@@ -60,12 +62,8 @@ export type ValidatedRequest = {
 
 type RequestMessage = CodecType<typeof RemoteModel>['message'];
 
-/**
- * Sign `message` with the device sr25519 and encrypt it to the recipient's
- * identity chat pubkey under a fresh ephemeral X25519 key. The inner signature
- * only proves the publishing device authored this entry; identity binding
- * comes from the content's kHash proof.
- */
+// The inner signature only proves the publishing device authored this entry;
+// identity binding comes from the content's kHash proof.
 function sealRequestMessage(params: {
   message: RequestMessage;
   recipientAccountId: Uint8Array;
@@ -488,8 +486,9 @@ const subscribeToIncomingRequestsV2 = (
     for (const stmt of statements) {
       if (!stmt.data) continue;
       const decoded = decryptAndValidateRequestV2(stmt.data, ownChatPrivateKey, ownAccountId);
-      if (decoded?.tag === 'request') handlers.onRequest(decoded.value);
-      if (decoded?.tag === 'cancel') handlers.onCancel(decoded.value);
+      if (!decoded) continue;
+      if (decoded.tag === 'request') handlers.onRequest(decoded.value);
+      else handlers.onCancel(decoded.value);
     }
   });
 
