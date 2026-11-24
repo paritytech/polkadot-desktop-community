@@ -1,6 +1,7 @@
+import { NEVER } from 'rxjs';
 import { describe, expect, it } from 'vitest';
 
-import { type P2PChatRequest } from '@/domains/chat';
+import { type ChatSession, type P2PChatRequest } from '@/domains/chat';
 
 import { chatService } from './service';
 
@@ -154,5 +155,61 @@ describe('findCancelledRequest', () => {
 
   it('returns null for a null peer', () => {
     expect(chatService.findCancelledRequest([older, newer], null)).toBeNull();
+  });
+});
+
+describe('chooseRoomPane', () => {
+  const request = (requestId: string, direction: P2PChatRequest['direction']): P2PChatRequest => ({
+    requestId,
+    peerId: '0xpeer',
+    peerUsername: 'mysticRiver.88',
+    direction,
+    status: 'pending',
+    timestamp: 1_000,
+    userId: '0xuser',
+    lastUpdate: 0,
+  });
+
+  const outgoing = request('req-out', 'outgoing');
+  const incoming = request('req-in', 'incoming');
+  const cancelled = request('req-cancelled', 'incoming');
+  const session: ChatSession = {
+    sessionId: '0xpeer',
+    roomId: '0xpeer',
+    name: NEVER,
+    messages: NEVER,
+    lastMessage: NEVER,
+    unreadCount: NEVER,
+    participants: NEVER,
+    sendMessage: async () => ({ messageId: 'm' }),
+    markAsRead: async () => {},
+    deleteSession: async () => {},
+  };
+  const none = { hasDraft: false, outgoing: null, incoming: null, session: null, cancelled: null };
+
+  it('is empty when nothing is selected', () => {
+    expect(chatService.chooseRoomPane(none)).toEqual({ kind: 'empty' });
+  });
+
+  it('shows the cancelled request when it is all there is', () => {
+    expect(chatService.chooseRoomPane({ ...none, cancelled })).toEqual({ kind: 'cancelled', request: cancelled });
+  });
+
+  it('prefers a session over a cancelled request', () => {
+    expect(chatService.chooseRoomPane({ ...none, session, cancelled })).toEqual({ kind: 'session', session });
+  });
+
+  it('prefers an incoming request over a session', () => {
+    expect(chatService.chooseRoomPane({ ...none, incoming, session })).toEqual({ kind: 'incoming', request: incoming });
+  });
+
+  it('prefers an outgoing request over an incoming one', () => {
+    expect(chatService.chooseRoomPane({ ...none, outgoing, incoming })).toEqual({ kind: 'outgoing', request: outgoing });
+  });
+
+  it('prefers the draft over everything', () => {
+    expect(chatService.chooseRoomPane({ hasDraft: true, outgoing, incoming, session, cancelled })).toEqual({
+      kind: 'draft',
+    });
   });
 });

@@ -110,6 +110,13 @@ export const ChatFullscreen = ({ selected, onSelect, onDeselect }: Props) => {
     () => chatService.findCancelledRequest(cancelledIncoming, selected),
     [cancelledIncoming, selected],
   );
+  const pane = chatService.chooseRoomPane({
+    hasDraft: draftInvitation !== null,
+    outgoing: selectedOutgoingRequest,
+    incoming: selectedIncomingRequest,
+    session: selectedSession,
+    cancelled: selectedCancelledRequest,
+  });
   const requesterNames = useMemo(() => chatService.formatRequesterNames(pendingRequests), [pendingRequests]);
   const connectedIds = useMemo(() => new Set(sessions.map(s => s.sessionId)), [sessions]);
   const chatListEntries = useSortedChatList(sessions, outgoingRequests, pendingRequests);
@@ -366,30 +373,30 @@ export const ChatFullscreen = ({ selected, onSelect, onDeselect }: Props) => {
         )}
       </div>
 
-      {draftInvitation ? (
+      {pane.kind === 'draft' && draftInvitation ? (
         <DraftInvitationRoom
           name={draftInvitation.username}
           sendError={inviteError}
           onSend={handleSendInvitation}
           onCancel={handleCancelDraft}
         />
-      ) : selectedOutgoingRequest ? (
-        <OutgoingPendingRoom request={selectedOutgoingRequest} onCancel={handleCancelOutgoingRequest} />
-      ) : selectedIncomingRequest ? (
+      ) : pane.kind === 'outgoing' ? (
+        <OutgoingPendingRoom request={pane.request} onCancel={handleCancelOutgoingRequest} />
+      ) : pane.kind === 'incoming' ? (
         <IncomingRequestRoom
-          request={selectedIncomingRequest}
+          request={pane.request}
           hideByDefault={hideRequestsByDefault}
           disabled={!manager}
-          onAccept={() => handleAcceptRequest(selectedIncomingRequest)}
-          onDecline={() => setDeclineTarget(selectedIncomingRequest)}
+          onAccept={() => handleAcceptRequest(pane.request)}
+          onDecline={() => setDeclineTarget(pane.request)}
           onReveal={handleRevealRequest}
         />
-      ) : selectedSession ? (
-        <Room session={selectedSession} initialSearch={roomInitialSearch} onDeleted={onDeselect} />
-      ) : selectedCancelledRequest ? (
+      ) : pane.kind === 'session' ? (
+        <Room session={pane.session} initialSearch={roomInitialSearch} onDeleted={onDeselect} />
+      ) : pane.kind === 'cancelled' ? (
         <IncomingRequestRoom
           cancelled
-          request={selectedCancelledRequest}
+          request={pane.request}
           hideByDefault={hideRequestsByDefault}
           onReveal={handleRevealRequest}
         />
