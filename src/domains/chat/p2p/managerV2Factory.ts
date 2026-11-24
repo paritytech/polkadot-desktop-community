@@ -30,13 +30,14 @@ import { type Encryption, type StatementStoreAdapter, createEncryption } from '@
 import { AccountId as AccountIdCodec } from '@polkadot-api/substrate-bindings';
 import { nanoid } from 'nanoid';
 import { fromHex, toHex } from 'polkadot-api/utils';
-import { lastValueFrom } from 'rxjs';
+import { type Subscription, Subject, asyncScheduler, lastValueFrom, throttleTime } from 'rxjs';
 
 import { environmentUseCase } from '@/domains/application';
 import { type Contact, type Device, contactRepository as defaultContactRepository, contactWriteUseCase } from '@/domains/contact';
 import { type DeviceIdentity, type UserIdentity, deviceIdentityService } from '@/domains/device';
 // eslint-disable-next-line boundaries/dependencies -- chat needs the sibling-roster (own paired Hosts) to fan out deviceAdded to a new peer at accept time
 import { deviceSyncRepository } from '@/domains/device-sync/repository';
+import { chatMessageService } from '../session/service';
 import { type ChatMessage, type MessageContent } from '../session/types';
 
 import { type V2ChatPeerSession, createChatPeerSessionV2, isMessageTooLargeError } from './chatSessionV2';
@@ -54,6 +55,7 @@ import {
 } from './requests/gateway';
 import { chatRequestService } from './requests/service';
 import {
+  advanceP2PRoomLastSentSeen,
   advanceP2PRoomPeerSeen,
   createP2PMessage,
   createP2PRoom,
@@ -80,6 +82,10 @@ export type P2PChatManagerV2Params = {
   userIdentity: UserIdentity;
   contactRepository?: typeof defaultContactRepository;
 };
+
+// RFC 0006's send window: a seen receipt goes out at once, and a read inside the window sends
+// one more when it ends.
+const SEEN_RECEIPT_WINDOW_MS = 1000;
 
 /**
  * Sibling rows safe to fan out to a peer as `deviceAdded`. A row whose enc
@@ -208,6 +214,7 @@ export const createP2PChatManagerV2 = async (params: P2PChatManagerV2Params): Pr
   const seenMessageIds = new Set<string>();
   const seenRequestIds = new Set<string>();
   const activeSessions = new Map<string, V2ChatPeerSession>();
+  const seenTriggers = new Map<string, { trigger: Subject<void>; subscription: Subscription }>();
 
   // Mirrors `P2PRoom.isBlocked` for the ONE caller that cannot await a Dexie read: the
   // synchronous `onMessage`. Every other block check reads the room (see `listBlockedPeerIds`
@@ -354,6 +361,8 @@ export const createP2PChatManagerV2 = async (params: P2PChatManagerV2Params): Pr
     }
     peerRosters.delete(peerSs58);
     pushContexts.delete(peerSs58);
+    seenTriggers.get(peerSs58)?.subscription.unsubscribe();
+    seenTriggers.delete(peerSs58);
     const identityChannel = identityChannels.get(peerSs58);
     if (identityChannel) {
       identityChannel.dispose();
@@ -872,6 +881,44 @@ export const createP2PChatManagerV2 = async (params: P2PChatManagerV2Params): Pr
     }
   }
 
+  async function sendSeenReceipt(peerId: string): Promise<void> {
+    try {
+      const session = activeSessions.get(peerId);
+      if (!session) return;
+      const room = await p2pChatDatabase.rooms.where('peerId').equals(peerId).first();
+      if (!room || room.isBlocked) return;
+      const requests = await p2pChatDatabase.requests.where('peerId').equals(peerId).toArray();
+      if (requests.some(request => request.status === 'pending')) return;
+      const messages = await p2pChatDatabase.messages.where('sessionId').equals(room.sessionId).toArray();
+      const lastSeen = p2pService.findLastSeenMessage(messages);
+      if (!lastSeen) return;
+      const position = chatMessageService.positionOf(lastSeen);
+      if (room.lastSentSeen && chatMessageService.compareMessagePositions(position, room.lastSentSeen) <= 0) return;
+
+      const outcome = await session.sendSeen(position);
+      if (outcome !== 'delivered') return;
+      // The chat may have been removed while the receipt waited for its ack.
+      const named = await p2pChatDatabase.messages.get(position.messageId);
+      if (!named) return;
+      await lastValueFrom(advanceP2PRoomLastSentSeen({ sessionId: room.sessionId, position }));
+    } catch (err) {
+      console.warn('[p2p-managerV2] sendSeenReceipt: skipped a seen receipt to peer=%s — %o', peerId, err);
+    }
+  }
+
+  const pushSeenTrigger = (peerId: string) => {
+    let entry = seenTriggers.get(peerId);
+    if (!entry) {
+      const trigger = new Subject<void>();
+      const subscription = trigger
+        .pipe(throttleTime(SEEN_RECEIPT_WINDOW_MS, asyncScheduler, { leading: true, trailing: true }))
+        .subscribe(() => void sendSeenReceipt(peerId));
+      entry = { trigger, subscription };
+      seenTriggers.set(peerId, entry);
+    }
+    entry.trigger.next();
+  };
+
   const isV2Validated = (r: object): r is ValidatedRequestV2 =>
     'senderDevicePubKey' in r && r.senderDevicePubKey instanceof Uint8Array;
 
@@ -1325,6 +1372,8 @@ export const createP2PChatManagerV2 = async (params: P2PChatManagerV2Params): Pr
 
     async markAsRead(peerId: string) {
       await lastValueFrom(markP2PMessagesAsRead({ sessionId: peerId }));
+      if (disposed) return;
+      pushSeenTrigger(peerId);
     },
 
     async sendRequest(peerAccountId: string, peerUsername: string, welcomeMessage?: string) {
@@ -1823,6 +1872,8 @@ export const createP2PChatManagerV2 = async (params: P2PChatManagerV2Params): Pr
 
       for (const [, session] of activeSessions) session.dispose();
       activeSessions.clear();
+      for (const [, { subscription }] of seenTriggers) subscription.unsubscribe();
+      seenTriggers.clear();
       pushContexts.clear();
       pushNotifiedIds.clear();
       blockedPeers.clear();

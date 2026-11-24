@@ -1,11 +1,11 @@
 import 'fake-indexeddb/auto';
 
 import { type UpdatingHookContext } from 'dexie';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { environmentUseCase } from '@/domains/application';
 import { contactRepository } from '@/domains/contact';
-import { type ChatMessage, type MessagePosition } from '../session/types';
+import { type ChatMessage, type MessageContent, type MessagePosition } from '../session/types';
 
 import { pushNotificationGateway } from './notifications/gateway';
 import { peerGateway } from './peer/gateway';
@@ -124,6 +124,19 @@ const seedOutgoing = (messageId: string, timestamp: number, state: OutgoingState
   return p2pChatDatabase.messages.put(message);
 };
 
+const seedIncoming = (messageId: string, timestamp: number, content: MessageContent = { type: 'text', text: messageId }) => {
+  const message: ChatMessage = {
+    messageId,
+    sessionId: PEER_ID,
+    peer: { type: 'p2p', accountId: PEER_ID, name: 'peer' },
+    timestamp,
+    content,
+    status: { direction: 'incoming', state: 'seen' },
+  };
+
+  return p2pChatDatabase.messages.put(message);
+};
+
 const position = (timestamp: number, messageId: string): MessagePosition => ({ timestamp, messageId });
 
 let receiptCount = 0;
@@ -137,6 +150,7 @@ const deliverSeenReceipt = (messageId: string, timestamp: bigint) => {
 };
 
 const readPeerSeen = async () => (await p2pChatDatabase.rooms.get(PEER_ID))?.peerSeen;
+const readLastSentSeen = async () => (await p2pChatDatabase.rooms.get(PEER_ID))?.lastSentSeen;
 
 // Records the `peerSeen` of every room update. Dexie diffs a nested object into dotted key paths
 // (`peerSeen.timestamp`) once the field exists, so the hook reads the updated row, not the diff.
@@ -272,6 +286,223 @@ describe('managerV2Factory seen receipts', () => {
         where.mockRestore();
         warn.mockRestore();
       }
+    });
+  });
+
+  describe('sending seen receipts', () => {
+    const I_1 = { messageId: 'i-1', timestamp: 100 };
+    const I_2 = { messageId: 'i-2', timestamp: 200 };
+    let manager: Awaited<ReturnType<typeof buildManager>>;
+
+    beforeEach(async () => {
+      // RxJS's `asyncScheduler` runs on `setInterval`; `fake-indexeddb` needs the real `setTimeout`.
+      vi.useFakeTimers({ toFake: ['setInterval', 'clearInterval'] });
+      await seedRoom();
+      await seedIncoming('i-1', 100);
+      sendSeenSpy.mockResolvedValue('delivered');
+      manager = await buildManager();
+      await manager.initialize();
+    });
+
+    afterEach(() => {
+      manager.dispose();
+      vi.useRealTimers();
+    });
+
+    const passWindow = () => vi.advanceTimersByTime(1000);
+
+    it('sends one receipt naming the last seen message', async () => {
+      await seedIncoming('r-1', 200, { type: 'reacted', messageId: 'i-1', emoji: '+1' });
+
+      await manager.markAsRead(PEER_ID);
+
+      await vi.waitFor(() => {
+        expect(sendSeenSpy).toHaveBeenCalledTimes(1);
+      });
+      expect(sendSeenSpy).toHaveBeenCalledWith(I_1);
+    });
+
+    it('records a delivered receipt and then sends nothing for the same read', async () => {
+      await manager.markAsRead(PEER_ID);
+      await vi.waitFor(async () => {
+        expect(await readLastSentSeen()).toEqual(position(100, 'i-1'));
+      });
+
+      const findLastSeenMessage = vi.spyOn(p2pService, 'findLastSeenMessage');
+      try {
+        passWindow();
+        await manager.markAsRead(PEER_ID);
+        // The send has read the messages once it picks one, so the seed below cannot reach it.
+        await vi.waitFor(() => {
+          expect(findLastSeenMessage).toHaveBeenCalledTimes(1);
+        });
+
+        await seedIncoming('i-2', 200);
+        passWindow();
+        await manager.markAsRead(PEER_ID);
+        await vi.waitFor(() => {
+          expect(sendSeenSpy).toHaveBeenLastCalledWith(I_2);
+        });
+      } finally {
+        findLastSeenMessage.mockRestore();
+      }
+
+      expect(sendSeenSpy.mock.calls).toEqual([[I_1], [I_2]]);
+    });
+
+    it('records nothing for a failed receipt, so the next read sends again', async () => {
+      sendSeenSpy.mockResolvedValue('failed');
+
+      await manager.markAsRead(PEER_ID);
+      await vi.waitFor(() => {
+        expect(sendSeenSpy).toHaveBeenCalledTimes(1);
+      });
+      passWindow();
+      await manager.markAsRead(PEER_ID);
+      await vi.waitFor(() => {
+        expect(sendSeenSpy).toHaveBeenCalledTimes(2);
+      });
+
+      expect(sendSeenSpy.mock.calls).toEqual([[I_1], [I_1]]);
+      expect(await readLastSentSeen()).toBeUndefined();
+    });
+
+    it('records nothing for a replaced receipt', async () => {
+      sendSeenSpy.mockResolvedValue('replaced');
+
+      await manager.markAsRead(PEER_ID);
+      await vi.waitFor(() => {
+        expect(sendSeenSpy).toHaveBeenCalledTimes(1);
+      });
+      passWindow();
+      await manager.markAsRead(PEER_ID);
+      await vi.waitFor(() => {
+        expect(sendSeenSpy).toHaveBeenCalledTimes(2);
+      });
+
+      expect(sendSeenSpy.mock.calls).toEqual([[I_1], [I_1]]);
+      expect(await readLastSentSeen()).toBeUndefined();
+    });
+
+    it('sends nothing while a request with the peer is pending', async () => {
+      await p2pChatDatabase.requests.put({
+        requestId: 'req-1',
+        peerId: PEER_ID,
+        direction: 'incoming',
+        status: 'pending',
+        timestamp: 1,
+        userId: OWN_USER_ID,
+        lastUpdate: 1,
+      });
+
+      const where = vi.spyOn(p2pChatDatabase.requests, 'where');
+      try {
+        await manager.markAsRead(PEER_ID);
+        // IndexedDB runs a write after every read opened before it, so once the send has opened
+        // its request read, the update below cannot change what that read sees.
+        await vi.waitFor(() => {
+          expect(where).toHaveBeenCalledWith('peerId');
+        });
+      } finally {
+        where.mockRestore();
+      }
+
+      // The control names a newer message, so a receipt the gate let through stays a separate call
+      // instead of being deduplicated against `lastSentSeen`.
+      await p2pChatDatabase.requests.update('req-1', { status: 'accepted' });
+      await seedIncoming('i-2', 200);
+      passWindow();
+      await manager.markAsRead(PEER_ID);
+      await vi.waitFor(() => {
+        expect(sendSeenSpy).toHaveBeenCalledTimes(1);
+      });
+
+      expect(sendSeenSpy.mock.calls).toEqual([[I_2]]);
+    });
+
+    it('sends nothing to a blocked peer', async () => {
+      await manager.setBlocked(PEER_ID, true);
+      await manager.markAsRead(PEER_ID);
+
+      await manager.setBlocked(PEER_ID, false);
+      await seedIncoming('i-2', 200);
+      passWindow();
+      await manager.markAsRead(PEER_ID);
+      await vi.waitFor(() => {
+        expect(sendSeenSpy).toHaveBeenCalledTimes(1);
+      });
+
+      expect(sendSeenSpy.mock.calls).toEqual([[I_2]]);
+    });
+
+    it('logs and skips a send whose reads fail', async () => {
+      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+      const where = vi.spyOn(p2pChatDatabase.requests, 'where').mockImplementationOnce(() => {
+        throw new Error('requests unavailable');
+      });
+      try {
+        await manager.markAsRead(PEER_ID);
+        await vi.waitFor(() => {
+          expect(warn.mock.calls.some(args => args.includes(PEER_ID))).toBe(true);
+        });
+        expect(sendSeenSpy).not.toHaveBeenCalled();
+
+        passWindow();
+        await manager.markAsRead(PEER_ID);
+        await vi.waitFor(() => {
+          expect(sendSeenSpy).toHaveBeenCalledTimes(1);
+        });
+      } finally {
+        where.mockRestore();
+        warn.mockRestore();
+      }
+
+      expect(sendSeenSpy.mock.calls).toEqual([[I_1]]);
+    });
+
+    it('sends at once, holds a burst, and sends once more when the window ends', async () => {
+      await manager.markAsRead(PEER_ID);
+      await vi.waitFor(() => {
+        expect(sendSeenSpy).toHaveBeenCalledTimes(1);
+      });
+      expect(sendSeenSpy).toHaveBeenLastCalledWith(I_1);
+
+      await seedIncoming('i-2', 200);
+      await manager.markAsRead(PEER_ID);
+      await manager.markAsRead(PEER_ID);
+      vi.advanceTimersByTime(1000);
+      await vi.waitFor(() => {
+        expect(sendSeenSpy).toHaveBeenCalledTimes(2);
+      });
+
+      expect(sendSeenSpy.mock.calls[1]).toEqual([I_2]);
+    });
+
+    it('stops the window on dispose', async () => {
+      await manager.markAsRead(PEER_ID);
+      await vi.waitFor(() => {
+        expect(sendSeenSpy).toHaveBeenCalledTimes(1);
+      });
+      await manager.markAsRead(PEER_ID);
+      expect(vi.getTimerCount()).toBeGreaterThan(0);
+
+      manager.dispose();
+      expect(vi.getTimerCount()).toBe(0);
+
+      await manager.markAsRead(PEER_ID);
+      expect(vi.getTimerCount()).toBe(0);
+    });
+
+    it('stops the window when the peer is blocked', async () => {
+      await manager.markAsRead(PEER_ID);
+      await vi.waitFor(() => {
+        expect(sendSeenSpy).toHaveBeenCalledTimes(1);
+      });
+      await manager.markAsRead(PEER_ID);
+      expect(vi.getTimerCount()).toBeGreaterThan(0);
+
+      await manager.setBlocked(PEER_ID, true);
+      expect(vi.getTimerCount()).toBe(0);
     });
   });
 });
