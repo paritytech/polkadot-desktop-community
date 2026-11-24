@@ -200,3 +200,137 @@ describe('isRequestMessageHidden', () => {
     expect(p2pService.isRequestMessageHidden(withMessage({ welcomeMessage: undefined }), true)).toBe(false);
   });
 });
+
+describe('seen receipt rules', () => {
+  const build = (messageId: string, content: MessageContent, status: ChatMessage['status'], timestamp = 0): ChatMessage => ({
+    messageId,
+    sessionId: 's1',
+    peer: { type: 'p2p', accountId: 'peer', name: 'Peer' },
+    timestamp,
+    content,
+    status,
+  });
+
+  const incomingSeen: ChatMessage['status'] = { direction: 'incoming', state: 'seen' };
+  const incomingNew: ChatMessage['status'] = { direction: 'incoming', state: 'new' };
+  const outgoing = (state: 'new' | 'sent' | 'delivered'): ChatMessage['status'] => ({ direction: 'outgoing', state });
+
+  const text: MessageContent = { type: 'text', text: 'hi' };
+
+  describe('countsForSeenReceipt', () => {
+    const counts = (content: MessageContent, status: ChatMessage['status'] = incomingSeen) =>
+      p2pService.countsForSeenReceipt(build('m', content, status));
+
+    it.each<[string, MessageContent]>([
+      ['text', text],
+      ['richText', { type: 'richText', text: 'hi' }],
+      ['reply', { type: 'reply', messageId: 'x', content: text }],
+      ['legacy transfer', { type: 'transfer', kind: 'legacy', amount: 1n }],
+      ['coinage transfer', { type: 'transfer', kind: 'coinage', amount: 1n }],
+      ['callSignal offer', { type: 'callSignal', signal: 'offer' }],
+      ['callSignal answer', { type: 'callSignal', signal: 'answer' }],
+      ['callSignal closed', { type: 'callSignal', signal: 'closed' }],
+    ])('counts a seen incoming %s', (_name, content) => {
+      expect(counts(content)).toBe(true);
+    });
+
+    it.each<[string, MessageContent]>([
+      ['callSignal ice', { type: 'callSignal', signal: 'ice' }],
+      ['reacted', { type: 'reacted', messageId: 'x', emoji: 'a' }],
+      ['reactionRemoved', { type: 'reactionRemoved', messageId: 'x', emoji: 'a' }],
+      ['edit', { type: 'edit', messageId: 'x', newContent: { type: 'richText', text: 'e' } }],
+      ['contactAdded', { type: 'contactAdded' }],
+      ['leftChat', { type: 'leftChat' }],
+      ['token', { type: 'token', token: 'ab', platform: 'iOS' }],
+      [
+        'deviceChatAccepted',
+        { type: 'deviceChatAccepted', requestId: 'r', statementAccountId: '0x1', encryptionPublicKey: '0x2' },
+      ],
+      ['deviceAdded', { type: 'deviceAdded', statementAccountId: '0x1', encryptionPublicKey: '0x2' }],
+      ['custom', { type: 'custom', messageType: 't', payload: new Uint8Array() }],
+    ])('does not count %s', (_name, content) => {
+      expect(counts(content)).toBe(false);
+    });
+
+    it('does not count an incoming text that is still new', () => {
+      expect(counts(text, incomingNew)).toBe(false);
+    });
+
+    it('does not count an outgoing text', () => {
+      expect(counts(text, outgoing('delivered'))).toBe(false);
+    });
+  });
+
+  describe('findLastSeenMessage', () => {
+    it('returns the counted message with the greatest position', () => {
+      const early = build('a', text, incomingSeen, 1);
+      const last = build('b', text, incomingSeen, 2);
+      const reaction = build('c', { type: 'reacted', messageId: 'a', emoji: 'x' }, incomingSeen, 5);
+      const unseen = build('d', text, incomingNew, 6);
+
+      expect(p2pService.findLastSeenMessage([early, reaction, last, unseen])).toBe(last);
+    });
+
+    it('breaks a timestamp tie by the greater messageId', () => {
+      const low = build('a', text, incomingSeen, 3);
+      const high = build('b', text, incomingSeen, 3);
+
+      expect(p2pService.findLastSeenMessage([high, low])).toBe(high);
+      expect(p2pService.findLastSeenMessage([low, high])).toBe(high);
+    });
+
+    it('returns null when nothing counts', () => {
+      expect(p2pService.findLastSeenMessage([build('a', text, incomingNew, 1)])).toBeNull();
+      expect(p2pService.findLastSeenMessage([])).toBeNull();
+    });
+  });
+
+  describe('resolvePeerSeen', () => {
+    it('resolves an outgoing message by id to its own position, also while new', () => {
+      const messages = [build('a', text, outgoing('delivered'), 1), build('b', text, outgoing('new'), 9)];
+
+      expect(p2pService.resolvePeerSeen(messages, { messageId: 'b', timestamp: 2 })).toEqual({
+        timestamp: 9,
+        messageId: 'b',
+      });
+    });
+
+    it('does not match an incoming message by id', () => {
+      const messages = [build('a', text, outgoing('sent'), 1), build('b', text, incomingSeen, 9)];
+
+      expect(p2pService.resolvePeerSeen(messages, { messageId: 'b', timestamp: 5 })).toEqual({
+        timestamp: 1,
+        messageId: 'a',
+      });
+    });
+
+    it('falls back to the greatest sent or delivered outgoing message not after the timestamp', () => {
+      const messages = [
+        build('a', text, outgoing('sent'), 1),
+        build('b', text, outgoing('delivered'), 4),
+        build('c', text, outgoing('new'), 5),
+        build('d', text, outgoing('delivered'), 8),
+      ];
+
+      expect(p2pService.resolvePeerSeen(messages, { messageId: 'unknown', timestamp: 6 })).toEqual({
+        timestamp: 4,
+        messageId: 'b',
+      });
+    });
+
+    it('breaks a timestamp tie by the greater messageId', () => {
+      const messages = [build('b', text, outgoing('delivered'), 4), build('a', text, outgoing('delivered'), 4)];
+
+      expect(p2pService.resolvePeerSeen(messages, { messageId: 'unknown', timestamp: 4 })).toEqual({
+        timestamp: 4,
+        messageId: 'b',
+      });
+    });
+
+    it('returns null when nothing resolves', () => {
+      const messages = [build('a', text, outgoing('new'), 1), build('b', text, outgoing('sent'), 9)];
+
+      expect(p2pService.resolvePeerSeen(messages, { messageId: 'unknown', timestamp: 5 })).toBeNull();
+    });
+  });
+});

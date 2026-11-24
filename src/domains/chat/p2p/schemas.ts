@@ -12,6 +12,8 @@ import * as v from 'valibot';
 
 const PlatformSchema = v.picklist(['Android', 'iOS']);
 
+export const MessagePositionSchema = v.object({ timestamp: v.number(), messageId: v.string() });
+
 export const P2PRoomSchema = v.object({
   sessionId: v.string(),
   peerId: v.string(),
@@ -24,6 +26,11 @@ export const P2PRoomSchema = v.object({
   // Dexie rows from before this field was added decode as unblocked without a
   // schema bump (the field is not indexed).
   isBlocked: v.optional(v.boolean()),
+  // RFC 0006 `peerSeenOrder` and `lastSentSeen`: how far the peer has seen our messages, and
+  // the last message we reported seen to the peer. Both are device-local, only advance, and are
+  // written without stamping `lastUpdate`, so device-sync never collects them.
+  peerSeen: v.optional(MessagePositionSchema),
+  lastSentSeen: v.optional(MessagePositionSchema),
   // Optional with a default: rows that pre-date the `lastUpdate` column must
   // keep decoding (they sort as "changed before everything").
   lastUpdate: v.optional(v.number(), 0),

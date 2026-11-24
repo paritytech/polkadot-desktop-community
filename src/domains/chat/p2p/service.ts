@@ -12,6 +12,8 @@
  * - `resolveIncomingCancel` — the receiver's decision for a peer's chat request cancel.
  * - `isRequestMessageHidden` — whether an incoming request's welcome message is
  *   currently hidden in the UI (carries a message, hiding is on, not yet revealed).
+ * - `countsForSeenReceipt` / `findLastSeenMessage` / `resolvePeerSeen` — the seen receipt rules of RFC 0006:
+ *   which messages a receipt may name, the one to name, and where a received receipt lands.
  * - `bytesEqual` / `buildSessionIdParam` — wire-byte helpers shared across the
  *   sub-modules (multi-device, session-transport, requests, notifications).
  */
@@ -20,7 +22,7 @@ import { x25519 } from '@noble/curves/ed25519.js';
 import { mergeUint8 } from '@polkadot-api/utils';
 
 import { chatMessageService } from '../session/service';
-import { type ChatMessage } from '../session/types';
+import { type ChatMessage, type MessageContent, type MessagePosition } from '../session/types';
 
 import { type IncomingCancelAction, type P2PChatRequest, type P2PRoom } from './types';
 
@@ -131,7 +133,52 @@ function isRequestMessageHidden(request: P2PChatRequest, hideByDefault: boolean)
   return Boolean(request.welcomeMessage) && hideByDefault && request.revealed !== true;
 }
 
+const SEEN_COUNTED_CONTENT_TYPES = new Set<MessageContent['type']>(['text', 'richText', 'reply', 'transfer']);
+
+/** RFC 0006: an incoming message the user has seen, of a kind a seen receipt may name. */
+function countsForSeenReceipt(message: ChatMessage): boolean {
+  const { content, status } = message;
+  if (status.direction !== 'incoming' || status.state !== 'seen') return false;
+  if (content.type === 'callSignal') return content.signal !== 'ice';
+
+  return SEEN_COUNTED_CONTENT_TYPES.has(content.type);
+}
+
+function findLastSeenMessage(messages: ChatMessage[]): ChatMessage | null {
+  let last: ChatMessage | null = null;
+  for (const message of messages) {
+    if (!countsForSeenReceipt(message)) continue;
+    const isLater =
+      !last ||
+      chatMessageService.compareMessagePositions(chatMessageService.positionOf(message), chatMessageService.positionOf(last)) > 0;
+    if (isLater) last = message;
+  }
+
+  return last;
+}
+
+/**
+ * Where a received seen receipt lands among our messages. The named outgoing message wins, even
+ * while still `new` locally; otherwise the receipt covers the latest outgoing message the peer
+ * could have received (`sent` or `delivered`) at or before the receipt's timestamp.
+ */
+function resolvePeerSeen(messages: ChatMessage[], seen: { messageId: string; timestamp: number }): MessagePosition | null {
+  let fallback: MessagePosition | null = null;
+  for (const message of messages) {
+    if (message.status.direction !== 'outgoing') continue;
+    const position = chatMessageService.positionOf(message);
+    if (message.messageId === seen.messageId) return position;
+    if (message.status.state === 'new' || message.timestamp > seen.timestamp) continue;
+    if (!fallback || chatMessageService.compareMessagePositions(position, fallback) > 0) fallback = position;
+  }
+
+  return fallback;
+}
+
 export const p2pService = {
+  countsForSeenReceipt,
+  findLastSeenMessage,
+  resolvePeerSeen,
   computeSharedSecret,
   bytesEqual,
   buildSessionIdParam,
