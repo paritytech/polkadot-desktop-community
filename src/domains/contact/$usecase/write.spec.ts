@@ -36,8 +36,8 @@ describe('contactWriteUseCase', () => {
     expect(signalLocalChange).toHaveBeenCalledOnce();
   });
 
-  it('applyRemoteContactDelete drops WITHOUT signalling (no echo back to peers)', async () => {
-    await contactWriteUseCase.applyRemoteContactDelete('0xabc');
+  it('deleteContactWithoutSync drops WITHOUT signalling (no echo back to peers)', async () => {
+    await contactWriteUseCase.deleteContactWithoutSync('0xabc');
 
     expect(applyRemoteDelete).toHaveBeenCalledWith('0xabc');
     expect(signalLocalChange).not.toHaveBeenCalled();

@@ -9,7 +9,8 @@
  *
  * Signal policy (unchanged from the old repository behaviour):
  *   upsert / delete       → local change, signal sync.
- *   applyRemoteContactDelete → inbound sync removal, MUST NOT signal (no echo).
+ *   deleteContactWithoutSync → drop with no tombstone and no signal, for a removal every own device applies
+ *                              on its own (inbound ChatsRemoved, chat request cancel).
  */
 
 import { signalLocalChange } from '@/domains/device-sync';
@@ -26,13 +27,16 @@ const deleteContact = async (accountId: string): Promise<void> => {
   signalLocalChange();
 };
 
-/** Inbound sync removal: drop WITHOUT signalling, so we don't echo the deletion back to peers. */
-const applyRemoteContactDelete = async (accountId: string): Promise<void> => {
+/**
+ * Drop the contact with no tombstone and no sync signal, for a removal every own device applies on its own: an
+ * inbound `ChatsRemoved`, and a chat request cancel, which every own device receives itself.
+ */
+const deleteContactWithoutSync = async (accountId: string): Promise<void> => {
   await contactRepository.applyRemoteDelete(accountId);
 };
 
 export const contactWriteUseCase = {
   upsertContact,
   deleteContact,
-  applyRemoteContactDelete,
+  deleteContactWithoutSync,
 };
