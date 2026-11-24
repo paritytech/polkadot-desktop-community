@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
+import { type P2PChatRequest } from '@/domains/chat';
+
 import { chatService } from './service';
 
 describe('chatItemDensityForCount', () => {
@@ -123,5 +125,34 @@ describe('toMessageSegments', () => {
     const text = 'a\nhttps://example.com\n\nb';
     expect(joined(text)).toBe(text);
     expect(segments(text).map(segment => segment.type)).toEqual(['text', 'external', 'text']);
+  });
+});
+
+describe('findCancelledRequest', () => {
+  const cancelled = (requestId: string, peerId: string, timestamp: number): P2PChatRequest => ({
+    requestId,
+    peerId,
+    peerUsername: 'mysticRiver.88',
+    direction: 'incoming',
+    status: 'cancelled',
+    timestamp,
+    userId: '0xuser',
+    lastUpdate: 0,
+  });
+
+  const older = cancelled('req-1', '0xpeer', 1_000);
+  const newer = cancelled('req-2', '0xpeer', 2_000);
+
+  it('returns the newest cancelled request of the peer', () => {
+    expect(chatService.findCancelledRequest([newer, older], '0xpeer')).toBe(newer);
+    expect(chatService.findCancelledRequest([older, newer], '0xpeer')).toBe(newer);
+  });
+
+  it('returns null for another peer', () => {
+    expect(chatService.findCancelledRequest([older, newer], '0xother')).toBeNull();
+  });
+
+  it('returns null for a null peer', () => {
+    expect(chatService.findCancelledRequest([older, newer], null)).toBeNull();
   });
 });

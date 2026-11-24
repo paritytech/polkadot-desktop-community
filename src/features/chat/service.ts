@@ -48,6 +48,19 @@ function excludePendingSessions(
   return sessions.filter(session => !pendingPeerIds.has(session.sessionId));
 }
 
+function findCancelledRequest(requests: P2PChatRequest[], peerId: string | null): P2PChatRequest | null {
+  if (peerId === null) return null;
+
+  let newest: P2PChatRequest | null = null;
+  for (const request of requests) {
+    if (request.peerId === peerId && (newest === null || request.timestamp > newest.timestamp)) {
+      newest = request;
+    }
+  }
+
+  return newest;
+}
+
 // Density follows the widget SIZE, not measured height: the small widget (2 items,
 // per CHAT_WIDGET_VISIBLE_COUNT) uses the compact Figma layout; medium/large use the
 // rich regular layout. Small and medium per-item heights are too close (~80 vs ~90px
@@ -187,6 +200,7 @@ export const chatService = {
   formatPeerName,
   formatRequesterNames,
   excludePendingSessions,
+  findCancelledRequest,
   chatItemDensityForCount,
   formatMessageDate,
   formatLastMessageDate,
