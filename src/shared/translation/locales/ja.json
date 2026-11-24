@@ -296,11 +296,11 @@
         "waitForAccept": "次のメッセージを送信する前に、<b>{name}</b> がリクエストを承認するのをお待ちください。",
         "today": "今日",
         "cancelRequest": "リクエストをキャンセル",
-        "cancelTitle": "リクエストをキャンセルしますか?",
+        "cancelTitle": "リクエストをキャンセルしますか？",
         "cancelBody": "{name}さんにはあなたのリクエストが表示されなくなります。",
         "keepRequest": "リクエストを残す",
         "cancelledByPeer": "<b>{name}</b>さんがこのチャットリクエストをキャンセルしました。",
-        "declineTitle": "メッセージリクエストを拒否しますか?",
+        "declineTitle": "メッセージリクエストを拒否しますか？",
         "declineBody": "{name}さんからのメッセージリクエスト"
       },
       "contactSearch": {

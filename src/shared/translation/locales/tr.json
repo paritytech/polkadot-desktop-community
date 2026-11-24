@@ -297,7 +297,7 @@
         "today": "Bugün",
         "cancelRequest": "İsteği iptal et",
         "cancelTitle": "İstek iptal edilsin mi?",
-        "cancelBody": "{name} artık isteğinizi görmeyecek.",
+        "cancelBody": "{name} artık isteğini görmeyecek.",
         "keepRequest": "İsteği koru",
         "cancelledByPeer": "<b>{name}</b> bu sohbet isteğini iptal etti.",
         "declineTitle": "Mesaj isteği reddedilsin mi?",
