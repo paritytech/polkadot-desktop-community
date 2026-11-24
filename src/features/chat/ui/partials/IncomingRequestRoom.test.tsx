@@ -21,7 +21,7 @@ const baseRequest: P2PChatRequest = {
   lastUpdate: 0,
 };
 
-const renderRoom = (props: Partial<Parameters<typeof IncomingRequestRoom>[0]> = {}) =>
+const renderRoom = (props: Partial<Extract<Parameters<typeof IncomingRequestRoom>[0], { cancelled?: false }>> = {}) =>
   render(
     <TranslationProvider>
       <IncomingRequestRoom
@@ -74,5 +74,21 @@ describe('IncomingRequestRoom', () => {
     expect(onAccept).toHaveBeenCalledOnce();
     await userEvent.click(screen.getByRole('button', { name: 'Decline' }));
     expect(onDecline).toHaveBeenCalledOnce();
+  });
+
+  it('shows the cancel notice and no accept button when cancelled', () => {
+    render(
+      <TranslationProvider>
+        <IncomingRequestRoom cancelled request={baseRequest} hideByDefault={false} onReveal={vi.fn()} />
+      </TranslationProvider>,
+    );
+
+    expect(
+      screen.getByText((_, element) => element?.textContent === 'mysticRiver.88 cancelled this chat request.', {
+        selector: 'p',
+      }),
+    ).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Accept' })).not.toBeInTheDocument();
+    expect(screen.getByText("Hi! Here's the update we discussed.")).toBeInTheDocument();
   });
 });
