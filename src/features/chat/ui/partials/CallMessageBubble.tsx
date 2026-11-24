@@ -16,10 +16,11 @@ type Props = {
   content: CallSignalContent;
   state: CallState;
   isMe: boolean;
+  isSeen?: boolean;
   onContextMenu?: (e: MouseEvent<HTMLDivElement>) => void;
 };
 
-export const CallMessageBubble = ({ message, content, state, isMe, onContextMenu }: Props) => {
+export const CallMessageBubble = ({ message, content, state, isMe, isSeen = false, onContextMenu }: Props) => {
   const { t } = useTranslation();
   const canPlaceCall = useAnyOf(canPlaceCallAnyOf);
   const isVideo = content.purpose === 'video';
@@ -78,7 +79,7 @@ export const CallMessageBubble = ({ message, content, state, isMe, onContextMenu
           </span>
           {isMe && (
             <div className="flex size-3 items-center justify-center">
-              <StatusIcon status={message.status} className={cnTw('size-3', 'text-fg-secondary-inverted')} />
+              <StatusIcon status={message.status} isSeen={isSeen} className={cnTw('size-3', 'text-fg-secondary-inverted')} />
             </div>
           )}
         </div>
