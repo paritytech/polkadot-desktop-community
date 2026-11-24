@@ -105,8 +105,9 @@ function resolveIncomingCancel(params: {
 
   if (!request) return 'tombstone';
 
-  const isOwnNewer = request.direction === 'incoming' && request.peerId === cancel.peerId && cancel.timestamp > request.timestamp;
-  if (!isOwnNewer) return 'ignore';
+  const isNewerCancelFromRowPeer =
+    request.direction === 'incoming' && request.peerId === cancel.peerId && cancel.timestamp > request.timestamp;
+  if (!isNewerCancelFromRowPeer) return 'ignore';
 
   if (request.status === 'pending') return 'cancelPending';
 

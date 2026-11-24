@@ -739,6 +739,36 @@ export const createP2PChatManagerV2 = async (params: P2PChatManagerV2Params): Pr
     });
   };
 
+  async function publishRequestCancel(request: P2PChatRequest): Promise<void> {
+    const { requestId, peerId, channelTopic } = request;
+
+    try {
+      if (!channelTopic) {
+        console.warn('[p2p-managerV2] chat request cancel not published requestId=%s: %s', requestId, 'no channel topic');
+        return;
+      }
+      const recipientChatPubKey = await resolver.getPeerChatKey(peerId);
+      if (!recipientChatPubKey) {
+        console.warn('[p2p-managerV2] chat request cancel not published requestId=%s: %s', requestId, 'peer has no chat key');
+        return;
+      }
+
+      await chatRequestGateway.sendChatRequestCancel({
+        requestId,
+        requestTimestamp: request.timestamp,
+        channelTopic: fromHex(channelTopic),
+        recipientAccountId: AccountIdCodec().enc(peerId),
+        recipientChatPubKey,
+        senderIdentityAccountId: userIdentity.identitySr25519PublicKey,
+        senderIdentityChatPrivateKey: userIdentity.identityChatPrivateKey,
+        senderDeviceSeed: device.statementAccountSeed,
+        statementStore,
+      });
+    } catch (err) {
+      console.warn('[p2p-managerV2] chat request cancel not published requestId=%s: %s', requestId, err);
+    }
+  }
+
   // ── Incoming request handler ────────────────────────────────────────────
 
   // Not gated by `seenRequestIds`: a cancel shares its request's id, and the request it
@@ -825,36 +855,6 @@ export const createP2PChatManagerV2 = async (params: P2PChatManagerV2Params): Pr
         console.warn('[p2p-managerV2] applyIncomingCancel: ignoring requestId=%s — %o', requestId, err);
       }
     })();
-  }
-
-  async function publishRequestCancel(request: P2PChatRequest): Promise<void> {
-    const { requestId, peerId, channelTopic } = request;
-
-    try {
-      if (!channelTopic) {
-        console.warn('[p2p-managerV2] chat request cancel not published requestId=%s: %s', requestId, 'no channel topic');
-        return;
-      }
-      const recipientChatPubKey = await resolver.getPeerChatKey(peerId);
-      if (!recipientChatPubKey) {
-        console.warn('[p2p-managerV2] chat request cancel not published requestId=%s: %s', requestId, 'peer has no chat key');
-        return;
-      }
-
-      await chatRequestGateway.sendChatRequestCancel({
-        requestId,
-        requestTimestamp: request.timestamp,
-        channelTopic: fromHex(channelTopic),
-        recipientAccountId: AccountIdCodec().enc(peerId),
-        recipientChatPubKey,
-        senderIdentityAccountId: userIdentity.identitySr25519PublicKey,
-        senderIdentityChatPrivateKey: userIdentity.identityChatPrivateKey,
-        senderDeviceSeed: device.statementAccountSeed,
-        statementStore,
-      });
-    } catch (err) {
-      console.warn('[p2p-managerV2] chat request cancel not published requestId=%s: %s', requestId, err);
-    }
   }
 
   const isV2Validated = (r: object): r is ValidatedRequestV2 =>
@@ -1390,6 +1390,9 @@ export const createP2PChatManagerV2 = async (params: P2PChatManagerV2Params): Pr
     },
 
     async acceptRequest(requestId: string) {
+      const inFlight = acceptsInFlight.get(requestId);
+      if (inFlight) return inFlight;
+
       let settleAccept: VoidFunction = () => {};
       acceptsInFlight.set(
         requestId,

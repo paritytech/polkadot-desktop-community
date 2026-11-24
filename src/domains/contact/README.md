@@ -21,7 +21,7 @@ one place that also nudges device-sync, so a local change propagates to the user
 - **Roster topic** — the per-contact topic a user broadcasts their roster events on; recipients subscribe (matchAny) to every
   known contact's roster topic. Derived by `contactService.computeRosterTopic`.
 - **Removal tombstone** — a marker written on a _local_ contact deletion so device-sync replicates the removal to the user's own
-  devices; cleared on re-add. An _inbound_ sync removal writes no tombstone (no echo).
+  devices; cleared on re-add. A removal through `deleteContactWithoutSync` — an inbound sync removal or a chat request cancel — writes no tombstone.
 
 ## Scope
 

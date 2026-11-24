@@ -268,7 +268,7 @@ describe('managerV2Factory incoming chat request cancel', () => {
 
     incoming.onCancel(cancelFromPeer('req-talked', 20));
 
-    await waitForWarning('applyIncomingCancel', 'req-talked');
+    await waitForWarning('nothing to cancel', 'req-talked');
     expect((await p2pChatDatabase.requests.get('req-talked'))?.status).toBe('accepted');
     expect(await p2pChatDatabase.rooms.get(PEER_ID)).toBeDefined();
     expect(await peerMessageCount()).toBe(3);
@@ -301,7 +301,14 @@ describe('managerV2Factory incoming chat request cancel', () => {
 
     incoming.onCancel(cancelFromPeer('req-tx', 20));
 
-    await waitForWarning('applyIncomingCancel', 'req-tx');
+    await vi.waitFor(() => {
+      expect(
+        warn.mock.calls.some(
+          args => args.includes('req-tx') && args.some(arg => arg instanceof Error && arg.message === 'disk full'),
+        ),
+      ).toBe(true);
+    });
+    expect(deleteRoom).toHaveBeenCalledWith(PEER_ID);
     deleteRoom.mockRestore();
     expect((await p2pChatDatabase.requests.get('req-tx'))?.status).toBe('accepted');
     expect(await p2pChatDatabase.rooms.get(PEER_ID)).toBeDefined();
@@ -430,6 +437,30 @@ describe('managerV2Factory outgoing chat request cancel', () => {
     await expect(manager.cancelOutgoingRequest('req-out', PEER_ID)).rejects.toThrow('contact store');
 
     await vi.waitFor(() => expect(sendCancel).toHaveBeenCalledTimes(1));
+    expect((await p2pChatDatabase.requests.get('req-out'))?.status).toBe('cancelled');
+  });
+
+  it('skips the publish when the request has no channel topic', async () => {
+    await seedOutgoingRequest('req-out', 'pending');
+    await p2pChatDatabase.requests.update('req-out', { channelTopic: undefined });
+    const { manager } = await startManager();
+
+    await manager.cancelOutgoingRequest('req-out', PEER_ID);
+
+    await waitForWarning('chat request cancel not published', 'req-out');
+    expect(sendCancel).not.toHaveBeenCalled();
+    expect((await p2pChatDatabase.requests.get('req-out'))?.status).toBe('cancelled');
+  });
+
+  it('skips the publish when the peer has no chat key', async () => {
+    await seedOutgoingRequest('req-out', 'pending');
+    const { manager } = await startManager();
+    getPeerChatKey.mockResolvedValueOnce(null);
+
+    await manager.cancelOutgoingRequest('req-out', PEER_ID);
+
+    await waitForWarning('chat request cancel not published', 'req-out');
+    expect(sendCancel).not.toHaveBeenCalled();
     expect((await p2pChatDatabase.requests.get('req-out'))?.status).toBe('cancelled');
   });
 
