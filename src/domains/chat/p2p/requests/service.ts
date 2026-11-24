@@ -1,5 +1,5 @@
 /**
- * Pure helpers of the chat request: discovery topic derivation (V1 and V2) and, from Task 2, the cancel proof.
+ * Pure helpers of the chat request: discovery topic derivation (V1 and V2) and the cancel proof.
  *
  * V1 must match iOS byte-for-byte:
  *   - ChatRequest+PaginationTopic.swift → allPeerTopic, paginationTopic
