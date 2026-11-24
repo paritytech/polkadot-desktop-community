@@ -73,6 +73,7 @@ const sendCancel = vi.spyOn(chatRequestGateway, 'sendChatRequestCancel');
 const deleteContactWithoutSync = vi.spyOn(contactWriteUseCase, 'deleteContactWithoutSync');
 const deleteContact = vi.spyOn(contactWriteUseCase, 'deleteContact');
 const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+const debug = vi.spyOn(console, 'debug').mockImplementation(() => {});
 
 const { createP2PChatManagerV2 } = await import('./managerV2Factory');
 
@@ -170,6 +171,12 @@ const seedAcceptedChat = async (requestId: string, conversation: ChatMessage[] =
 
 const peerMessageCount = () => p2pChatDatabase.messages.where('sessionId').equals(PEER_ID).count();
 
+const waitForDebug = (fragment: string, requestId: string) =>
+  vi.waitFor(() => {
+    const logged = debug.mock.calls.some(([format, ...args]) => String(format).includes(fragment) && args.includes(requestId));
+    expect(logged).toBe(true);
+  });
+
 const waitForWarning = (fragment: string, requestId: string) =>
   vi.waitFor(() => {
     const warned = warn.mock.calls.some(([format, ...args]) => String(format).includes(fragment) && args.includes(requestId));
@@ -189,6 +196,7 @@ beforeEach(async () => {
   deleteContactWithoutSync.mockClear();
   deleteContact.mockClear();
   warn.mockClear();
+  debug.mockClear();
 });
 
 describe('managerV2Factory incoming chat request cancel', () => {
@@ -268,7 +276,7 @@ describe('managerV2Factory incoming chat request cancel', () => {
 
     incoming.onCancel(cancelFromPeer('req-talked', 20));
 
-    await waitForWarning('nothing to cancel', 'req-talked');
+    await waitForDebug('nothing to cancel', 'req-talked');
     expect((await p2pChatDatabase.requests.get('req-talked'))?.status).toBe('accepted');
     expect(await p2pChatDatabase.rooms.get(PEER_ID)).toBeDefined();
     expect(await peerMessageCount()).toBe(3);

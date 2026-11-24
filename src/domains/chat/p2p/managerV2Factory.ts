@@ -838,7 +838,7 @@ export const createP2PChatManagerV2 = async (params: P2PChatManagerV2Params): Pr
         );
 
         if (action === 'ignore') {
-          console.warn('[p2p-managerV2] applyIncomingCancel: ignoring requestId=%s — nothing to cancel', requestId);
+          console.debug('[p2p-managerV2] applyIncomingCancel: ignoring requestId=%s — nothing to cancel', requestId);
           return;
         }
         if (action !== 'cancelAccepted') return;
