@@ -19,7 +19,9 @@ The unit of consumption is a **`ChatSession`**: a uniform observable interface t
 ### P2P-specific
 
 - **P2PRoom** — An end-to-end-encrypted session between two peers, identified by `sessionId` and the peer's SS58 account, carrying the peer's username and (optionally) push-notification routing.
-- **P2PChatRequest** — The handshake that creates a room: direction (incoming/outgoing), status, optional welcome message, and a `channelTopic` derived from an ephemeral ECDH exchange.
+- **P2PChatRequest** — The handshake that creates a room: direction (incoming/outgoing), status, optional welcome message, and a `channelTopic` derived from an ephemeral ECDH exchange. Two statuses are tombstones: `removed` (the user left the chat) and `cancelled` (a cancel was sent or applied), both kept so that a later copy of the request cannot bring it back.
+- **Cancel** — the sender withdraws its own pending outgoing request (RFC 0007); the receiver drops it. Only the sender cancels.
+- **Decline** — the receiver refuses an incoming request. Only the receiver declines.
 - **Proof of compute** — a puzzle the identity backend's username-search route may demand from an
   unauthenticated caller: mine a counter whose work digest has enough leading zero bits, and present
   it in a `Proof-Of-Compute` header. **Opportunistic, never required by this host** — deployments

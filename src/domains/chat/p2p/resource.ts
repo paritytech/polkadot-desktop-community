@@ -266,10 +266,3 @@ export function upsertP2PRequest(request: P2PChatRequest): Observable<null> {
     take(1),
   );
 }
-
-export function deleteP2PRequest({ requestId }: { requestId: string }): Observable<null> {
-  return from(p2pChatDatabase.requests.delete(requestId)).pipe(
-    map(() => null),
-    take(1),
-  );
-}

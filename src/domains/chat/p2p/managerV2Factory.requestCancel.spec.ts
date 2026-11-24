@@ -1,6 +1,7 @@
 import 'fake-indexeddb/auto';
 
 import { AccountId as AccountIdCodec } from '@polkadot-api/substrate-bindings';
+import { fromHex } from 'polkadot-api/utils';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { environmentUseCase } from '@/domains/application';
@@ -67,6 +68,7 @@ vi.spyOn(environmentUseCase, 'getActiveId').mockReturnValue('test-env' as never)
 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions -- the manager reads only these fields of the double
 vi.spyOn(environmentUseCase, 'getById').mockResolvedValue({ backendUrl: 'https://example.invalid' } as never);
 
+const sendCancel = vi.spyOn(chatRequestGateway, 'sendChatRequestCancel');
 const deleteContactWithoutSync = vi.spyOn(contactWriteUseCase, 'deleteContactWithoutSync');
 const deleteContact = vi.spyOn(contactWriteUseCase, 'deleteContact');
 const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
@@ -173,20 +175,22 @@ const waitForWarning = (fragment: string, requestId: string) =>
     expect(warned).toBe(true);
   });
 
-describe('managerV2Factory incoming chat request cancel', () => {
-  beforeEach(async () => {
-    await p2pChatDatabase.rooms.clear();
-    await p2pChatDatabase.messages.clear();
-    await p2pChatDatabase.requests.clear();
-    await contactRepository.clearAll();
-    handlers = null;
-    getPeerChatKey.mockReset();
-    getPeerChatKey.mockResolvedValue(key(0xcc));
-    deleteContactWithoutSync.mockClear();
-    deleteContact.mockClear();
-    warn.mockClear();
-  });
+beforeEach(async () => {
+  await p2pChatDatabase.rooms.clear();
+  await p2pChatDatabase.messages.clear();
+  await p2pChatDatabase.requests.clear();
+  await contactRepository.clearAll();
+  handlers = null;
+  getPeerChatKey.mockReset();
+  getPeerChatKey.mockResolvedValue(key(0xcc));
+  sendCancel.mockReset();
+  sendCancel.mockResolvedValue('published');
+  deleteContactWithoutSync.mockClear();
+  deleteContact.mockClear();
+  warn.mockClear();
+});
 
+describe('managerV2Factory incoming chat request cancel', () => {
   it('tombstones an unknown id and drops the later copy', async () => {
     const { incoming } = await startManager();
 
@@ -327,5 +331,93 @@ describe('managerV2Factory incoming chat request cancel', () => {
 
     expect(await p2pChatDatabase.rooms.get(PEER_ID)).toBeUndefined();
     expect((await p2pChatDatabase.requests.get('req-gone'))?.status).toBe('cancelled');
+  });
+});
+
+const CHANNEL_TOPIC = `0x${'ab'.repeat(32)}`;
+
+const seedOutgoingRequest = async (requestId: string, status: P2PChatRequest['status']) => {
+  await p2pChatDatabase.requests.put({
+    requestId,
+    peerId: PEER_ID,
+    peerUsername: 'peer',
+    direction: 'outgoing',
+    status,
+    timestamp: 10,
+    channelTopic: CHANNEL_TOPIC,
+    userId: OWN_USER_ID,
+    lastUpdate: 10,
+  });
+  await p2pChatDatabase.rooms.put({
+    sessionId: PEER_ID,
+    peerId: PEER_ID,
+    peerUsername: 'peer',
+    userId: OWN_USER_ID,
+    createdAt: 10,
+    lastUpdate: 10,
+  });
+  await contactRepository.upsert({
+    accountId: PEER_ID,
+    identityChatPublicKey: `0x${'cc'.repeat(32)}`,
+    devices: [],
+  });
+};
+
+describe('managerV2Factory outgoing chat request cancel', () => {
+  it('marks the outgoing request cancelled and publishes the cancel', async () => {
+    await seedOutgoingRequest('req-out', 'pending');
+    const { manager } = await startManager();
+
+    await manager.cancelOutgoingRequest('req-out', PEER_ID);
+
+    await vi.waitFor(() =>
+      expect(sendCancel).toHaveBeenCalledWith({
+        requestId: 'req-out',
+        requestTimestamp: 10,
+        channelTopic: fromHex(CHANNEL_TOPIC),
+        recipientAccountId: AccountIdCodec().enc(PEER_ID),
+        recipientChatPubKey: key(0xcc),
+        senderIdentityAccountId: key(0x55),
+        senderIdentityChatPrivateKey: key(0x66),
+        senderDeviceSeed: new Uint8Array(64).fill(0x22),
+        statementStore: {},
+      }),
+    );
+    expect((await p2pChatDatabase.requests.get('req-out'))?.status).toBe('cancelled');
+    expect(await p2pChatDatabase.rooms.get(PEER_ID)).toBeUndefined();
+    expect(deleteContact.mock.invocationCallOrder[0]).toBeLessThan(sendCancel.mock.invocationCallOrder[0] ?? 0);
+  });
+
+  it('keeps the local cancel when the publish fails', async () => {
+    await seedOutgoingRequest('req-out', 'pending');
+    sendCancel.mockRejectedValueOnce(new Error('store unreachable'));
+    const { manager } = await startManager();
+
+    await expect(manager.cancelOutgoingRequest('req-out', PEER_ID)).resolves.toBeUndefined();
+
+    await waitForWarning('chat request cancel not published', 'req-out');
+    expect((await p2pChatDatabase.requests.get('req-out'))?.status).toBe('cancelled');
+  });
+
+  it('cancels and publishes even when the leave-chat cleanup fails', async () => {
+    await seedOutgoingRequest('req-out', 'pending');
+    deleteContact.mockRejectedValueOnce(new Error('contact store'));
+    const { manager } = await startManager();
+
+    await expect(manager.cancelOutgoingRequest('req-out', PEER_ID)).rejects.toThrow('contact store');
+
+    await vi.waitFor(() => expect(sendCancel).toHaveBeenCalledTimes(1));
+    expect((await p2pChatDatabase.requests.get('req-out'))?.status).toBe('cancelled');
+  });
+
+  it('ignores a request that is not outgoing and pending', async () => {
+    await seedOutgoingRequest('req-out', 'accepted');
+    const { manager } = await startManager();
+
+    await manager.cancelOutgoingRequest('req-out', PEER_ID);
+
+    expect(sendCancel).not.toHaveBeenCalled();
+    expect(await p2pChatDatabase.requests.get('req-out')).toMatchObject({ status: 'accepted', lastUpdate: 10 });
+    expect(await p2pChatDatabase.rooms.get(PEER_ID)).toBeDefined();
   });
 });

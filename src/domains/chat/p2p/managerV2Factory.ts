@@ -58,7 +58,6 @@ import {
   createP2PRoom,
   deleteP2PMessage,
   deleteP2PMessages,
-  deleteP2PRequest,
   deleteP2PRoom,
   markP2PMessagesAsDelivered,
   markP2PMessagesAsRead,
@@ -826,6 +825,36 @@ export const createP2PChatManagerV2 = async (params: P2PChatManagerV2Params): Pr
         console.warn('[p2p-managerV2] applyIncomingCancel: ignoring requestId=%s — %o', requestId, err);
       }
     })();
+  }
+
+  async function publishRequestCancel(request: P2PChatRequest): Promise<void> {
+    const { requestId, peerId, channelTopic } = request;
+
+    try {
+      if (!channelTopic) {
+        console.warn('[p2p-managerV2] chat request cancel not published requestId=%s: %s', requestId, 'no channel topic');
+        return;
+      }
+      const recipientChatPubKey = await resolver.getPeerChatKey(peerId);
+      if (!recipientChatPubKey) {
+        console.warn('[p2p-managerV2] chat request cancel not published requestId=%s: %s', requestId, 'peer has no chat key');
+        return;
+      }
+
+      await chatRequestGateway.sendChatRequestCancel({
+        requestId,
+        requestTimestamp: request.timestamp,
+        channelTopic: fromHex(channelTopic),
+        recipientAccountId: AccountIdCodec().enc(peerId),
+        recipientChatPubKey,
+        senderIdentityAccountId: userIdentity.identitySr25519PublicKey,
+        senderIdentityChatPrivateKey: userIdentity.identityChatPrivateKey,
+        senderDeviceSeed: device.statementAccountSeed,
+        statementStore,
+      });
+    } catch (err) {
+      console.warn('[p2p-managerV2] chat request cancel not published requestId=%s: %s', requestId, err);
+    }
   }
 
   const isV2Validated = (r: object): r is ValidatedRequestV2 =>
@@ -1645,9 +1674,21 @@ export const createP2PChatManagerV2 = async (params: P2PChatManagerV2Params): Pr
     },
 
     async cancelOutgoingRequest(requestId: string, peerId: string) {
+      const request = await p2pChatDatabase.requests.get(requestId);
+      if (request?.direction !== 'outgoing' || request.status !== 'pending') {
+        console.warn('[p2p-managerV2] cancelOutgoingRequest: ignoring requestId=%s — not a pending outgoing request', requestId);
+        return;
+      }
       pendingAcceptMatchers.delete(requestId);
-      await lastValueFrom(deleteP2PRequest({ requestId }));
-      await this.removeSession(peerId);
+
+      try {
+        await this.removeSession(peerId);
+      } finally {
+        // The publish starts first so a failed status write cannot skip it, and the write
+        // comes after `removeSession`, which tombstones every row of the peer as `removed`.
+        void publishRequestCancel(request);
+        await p2pChatDatabase.requests.update(requestId, { status: 'cancelled', lastUpdate: Date.now() });
+      }
     },
 
     async setBlocked(peerId: string, blocked: boolean) {
