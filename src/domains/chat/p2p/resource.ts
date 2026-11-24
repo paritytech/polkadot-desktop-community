@@ -9,7 +9,7 @@ import { createStreamResource } from '@/shared/resource';
    imports chat/p2p/repository). */
 import { signalLocalChange } from '@/domains/device-sync/localChangeSignal';
 import { chatMessageService } from '../session/service';
-import { type ChatMessage } from '../session/types';
+import { type ChatMessage, type MessagePosition } from '../session/types';
 
 import { p2pChatDatabase } from './repository';
 import { P2PChatRequestSchema, P2PRoomSchema, PersistedChatMessageSchema } from './schemas';
@@ -225,6 +225,34 @@ export function setP2PRoomBlocked({ sessionId, isBlocked }: { sessionId: string;
     map(() => null),
     take(1),
   );
+}
+
+// Device-local and never synced, so neither stamps `lastUpdate` nor calls `signalLocalChange`:
+// either would hand the field to device-sync.
+function advanceP2PRoomPosition(
+  field: 'peerSeen' | 'lastSentSeen',
+  { sessionId, position }: { sessionId: string; position: MessagePosition },
+): Observable<null> {
+  const write = p2pChatDatabase.rooms.db.transaction('rw', p2pChatDatabase.rooms, async () => {
+    const room = await p2pChatDatabase.rooms.get(sessionId);
+    if (!room) return;
+    const stored = room[field];
+    if (stored && chatMessageService.compareMessagePositions(stored, position) >= 0) return;
+    await p2pChatDatabase.rooms.update(sessionId, { [field]: position });
+  });
+
+  return from(write).pipe(
+    map(() => null),
+    take(1),
+  );
+}
+
+export function advanceP2PRoomPeerSeen(params: { sessionId: string; position: MessagePosition }): Observable<null> {
+  return advanceP2PRoomPosition('peerSeen', params);
+}
+
+export function advanceP2PRoomLastSentSeen(params: { sessionId: string; position: MessagePosition }): Observable<null> {
+  return advanceP2PRoomPosition('lastSentSeen', params);
 }
 
 // ── Requests ────────────────────────────────────────────────────────────

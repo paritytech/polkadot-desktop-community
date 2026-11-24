@@ -54,6 +54,7 @@ import {
 } from './requests/gateway';
 import { chatRequestService } from './requests/service';
 import {
+  advanceP2PRoomPeerSeen,
   createP2PMessage,
   createP2PRoom,
   deleteP2PMessage,
@@ -857,6 +858,20 @@ export const createP2PChatManagerV2 = async (params: P2PChatManagerV2Params): Pr
     })();
   }
 
+  async function applyIncomingSeen(peerId: string, seen: { messageId: string; timestamp: number }): Promise<void> {
+    try {
+      // A P2P room's `sessionId` is its `peerId`.
+      const room = await p2pChatDatabase.rooms.get(peerId);
+      if (!room) return;
+      const messages = await p2pChatDatabase.messages.where('sessionId').equals(peerId).toArray();
+      const position = p2pService.resolvePeerSeen(messages, seen);
+      if (!position) return;
+      await lastValueFrom(advanceP2PRoomPeerSeen({ sessionId: peerId, position }));
+    } catch (err) {
+      console.warn('[p2p-managerV2] applyIncomingSeen: dropped a seen receipt from peer=%s — %o', peerId, err);
+    }
+  }
+
   const isV2Validated = (r: object): r is ValidatedRequestV2 =>
     'senderDevicePubKey' in r && r.senderDevicePubKey instanceof Uint8Array;
 
@@ -1084,6 +1099,12 @@ export const createP2PChatManagerV2 = async (params: P2PChatManagerV2Params): Pr
           if (blockedPeers.has(peerId)) return;
           if (seenMessageIds.has(messageId)) return;
           seenMessageIds.add(messageId);
+
+          // RFC 0006: a seen receipt moves the room's `peerSeen` and is never stored as a message.
+          if (content.tag === 'seen') {
+            void applyIncomingSeen(peerId, { messageId: content.value.messageId, timestamp: Number(content.value.timestamp) });
+            return;
+          }
 
           // Push token from peer. Two writes, no display:
           //   1. Denormalise onto the Room (`peerPushToken`) — what THIS device
