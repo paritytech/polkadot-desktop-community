@@ -39,6 +39,8 @@ export type P2PChatManager = {
   dispose: VoidFunction;
 };
 
+export type IncomingCancelAction = 'tombstone' | 'cancelPending' | 'cancelAccepted' | 'ignore';
+
 export type SearchResult = {
   accountId: string;
   username: string;

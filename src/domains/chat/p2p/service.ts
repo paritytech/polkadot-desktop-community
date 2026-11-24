@@ -9,6 +9,7 @@
  *   device-sync's collector (`listMessagesChangedSince` & co in
  *   `repository.ts`).
  * - `isPending*Request` / `isCancelledIncomingRequest` — request-state predicates the read hooks filter by.
+ * - `resolveIncomingCancel` — the receiver's decision for a peer's chat request cancel.
  * - `isRequestMessageHidden` — whether an incoming request's welcome message is
  *   currently hidden in the UI (carries a message, hiding is on, not yet revealed).
  * - `bytesEqual` / `buildSessionIdParam` — wire-byte helpers shared across the
@@ -18,9 +19,10 @@
 import { x25519 } from '@noble/curves/ed25519.js';
 import { mergeUint8 } from '@polkadot-api/utils';
 
+import { chatMessageService } from '../session/service';
 import { type ChatMessage } from '../session/types';
 
-import { type P2PChatRequest, type P2PRoom } from './types';
+import { type IncomingCancelAction, type P2PChatRequest, type P2PRoom } from './types';
 
 const SESSION_ID_SEPARATOR = new TextEncoder().encode('/');
 
@@ -74,6 +76,51 @@ function isCancelledIncomingRequest(request: P2PChatRequest): boolean {
   return request.direction === 'incoming' && request.status === 'cancelled';
 }
 
+type IncomingCancel = { requestId: string; peerId: string; timestamp: number };
+
+function isRequestSystemMessage(message: ChatMessage, requestId: string): boolean {
+  const { content } = message;
+
+  return (
+    message.messageId === requestId ||
+    content.type === 'contactAdded' ||
+    content.type === 'leftChat' ||
+    chatMessageService.isSyncCarrier(content)
+  );
+}
+
+/**
+ * How a peer's cancel applies to the local request (RFC 0007). A cancel with no row is
+ * kept as a tombstone, so the request it outruns on the wire cannot land later. An accepted
+ * request is cancelled only while nobody has talked yet: once the room holds a message beyond
+ * the request's own system rows, or the user blocked the peer, the chat stands.
+ */
+function resolveIncomingCancel(params: {
+  cancel: IncomingCancel;
+  request: P2PChatRequest | undefined;
+  room: P2PRoom | undefined;
+  messages: ChatMessage[];
+}): IncomingCancelAction {
+  const { cancel, request, room, messages } = params;
+
+  if (!request) return 'tombstone';
+
+  const isOwnNewer = request.direction === 'incoming' && request.peerId === cancel.peerId && cancel.timestamp > request.timestamp;
+  if (!isOwnNewer) return 'ignore';
+
+  if (request.status === 'pending') return 'cancelPending';
+
+  if (
+    request.status === 'accepted' &&
+    room?.isBlocked !== true &&
+    messages.every(message => isRequestSystemMessage(message, cancel.requestId))
+  ) {
+    return 'cancelAccepted';
+  }
+
+  return 'ignore';
+}
+
 /**
  * Whether an incoming request's message should be hidden in the UI: the request
  * carries a message, hiding is on by default, and the user hasn't revealed it
@@ -93,5 +140,6 @@ export const p2pService = {
   isPendingIncomingRequest,
   isPendingOutgoingRequest,
   isCancelledIncomingRequest,
+  resolveIncomingCancel,
   isRequestMessageHidden,
 };
