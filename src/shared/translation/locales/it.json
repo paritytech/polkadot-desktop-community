@@ -294,7 +294,14 @@
         "inviteHint": "In questo invito puoi inviare un solo messaggio",
         "inviteFailed": "Impossibile inviare l'invito. Controlla la connessione e riprova.",
         "waitForAccept": "Attendi che <b>{name}</b> accetti la tua richiesta prima di inviare il messaggio successivo.",
-        "today": "Oggi"
+        "today": "Oggi",
+        "cancelRequest": "Annulla richiesta",
+        "cancelTitle": "Annullare la richiesta?",
+        "cancelBody": "{name} non vedrà più la tua richiesta.",
+        "keepRequest": "Mantieni richiesta",
+        "cancelledByPeer": "<b>{name}</b> ha annullato questa richiesta di chat.",
+        "declineTitle": "Rifiutare la richiesta di messaggio?",
+        "declineBody": "Richiesta di messaggio da {name}"
       },
       "contactSearch": {
         "searchEntry": "Cerca",

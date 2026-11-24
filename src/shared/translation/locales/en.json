@@ -295,7 +295,14 @@
         "inviteHint": "You can only send one message in this invitation",
         "inviteFailed": "Could not send the invitation. Check your connection and try again.",
         "waitForAccept": "Wait for <b>{name}</b> to accept your request message before sending the next message.",
-        "today": "Today"
+        "today": "Today",
+        "cancelRequest": "Cancel request",
+        "cancelTitle": "Cancel request?",
+        "cancelBody": "{name} will no longer see your request.",
+        "keepRequest": "Keep request",
+        "cancelledByPeer": "<b>{name}</b> cancelled this chat request.",
+        "declineTitle": "Decline Message Request?",
+        "declineBody": "Message request from {name}"
       },
       "contactSearch": {
         "searchEntry": "Search",

@@ -294,7 +294,14 @@
         "inviteHint": "Vous ne pouvez envoyer qu'un seul message dans cette invitation",
         "inviteFailed": "Impossible d'envoyer l'invitation. Vérifiez votre connexion et réessayez.",
         "waitForAccept": "Attendez que <b>{name}</b> accepte votre demande avant d'envoyer le message suivant.",
-        "today": "Aujourd'hui"
+        "today": "Aujourd'hui",
+        "cancelRequest": "Annuler la demande",
+        "cancelTitle": "Annuler la demande ?",
+        "cancelBody": "{name} ne verra plus votre demande.",
+        "keepRequest": "Conserver la demande",
+        "cancelledByPeer": "<b>{name}</b> a annulé cette demande de discussion.",
+        "declineTitle": "Refuser la demande de message ?",
+        "declineBody": "Demande de message de {name}"
       },
       "contactSearch": {
         "searchEntry": "Rechercher",

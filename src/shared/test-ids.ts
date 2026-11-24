@@ -179,6 +179,8 @@ export const TEST_IDS = {
   chatNewRequestsCount: 'chat-new-requests-count',
   chatDeclineDialog: 'chat-decline-dialog',
   chatDeclineDialogConfirm: 'chat-decline-dialog-confirm',
+  chatCancelRequestDialog: 'chat-cancel-request-dialog',
+  chatCancelRequestDialogConfirm: 'chat-cancel-request-dialog-confirm',
   chatOutgoingRequestItem: 'chat-outgoing-request-item',
   chatOutgoingPendingRoom: 'chat-outgoing-pending-room',
   chatOutgoingPendingRoomMenuTrigger: 'chat-outgoing-pending-room-menu-trigger',

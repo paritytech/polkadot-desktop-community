@@ -294,7 +294,14 @@
         "inviteHint": "يمكنك إرسال رسالة واحدة فقط في هذه الدعوة",
         "inviteFailed": "تعذّر إرسال الدعوة. تحقق من اتصالك وحاول مرة أخرى.",
         "waitForAccept": "انتظر حتى يقبل <b>{name}</b> رسالة طلبك قبل إرسال الرسالة التالية.",
-        "today": "اليوم"
+        "today": "اليوم",
+        "cancelRequest": "إلغاء الطلب",
+        "cancelTitle": "إلغاء الطلب؟",
+        "cancelBody": "لن يرى {name} طلبك بعد الآن.",
+        "keepRequest": "الإبقاء على الطلب",
+        "cancelledByPeer": "<b>{name}</b> ألغى طلب الدردشة هذا.",
+        "declineTitle": "رفض طلب الرسالة؟",
+        "declineBody": "طلب رسالة من {name}"
       },
       "contactSearch": {
         "searchEntry": "بحث",

@@ -36,7 +36,6 @@ import { SyncStatusBanner } from './SyncStatusBanner';
 import { ChatItem } from './partials/ChatItem';
 import { ChatItemSkeleton } from './partials/ChatItemSkeleton';
 import { ChatListSearchBar } from './partials/ChatListSearchBar';
-import { DeclineDialog } from './partials/DeclineDialog';
 import { DraftInvitationRoom } from './partials/DraftInvitationRoom';
 import { IncomingRequestRoom } from './partials/IncomingRequestRoom';
 import { DateSeparator } from './partials/MessageBubble';
@@ -44,6 +43,7 @@ import { NewRequestsItem } from './partials/NewRequestsItem';
 import { NoData } from './partials/NoData';
 import { OutgoingRequestItem } from './partials/OutgoingRequestItem';
 import { RecentContactsRow } from './partials/RecentContactsRow';
+import { RequestConfirmDialog } from './partials/RequestConfirmDialog';
 import { RequestItem } from './partials/RequestItem';
 import { RequestRoomHeader } from './partials/RequestRoomHeader';
 import { Room } from './partials/Room';
@@ -393,11 +393,18 @@ export const ChatFullscreen = ({ selected, onSelect, onDeselect }: Props) => {
         <NoData icon={MessagesSquare} title={t('feature.chat.noChatSelected')} description={t('feature.chat.selectChatToView')} />
       )}
 
-      <DeclineDialog
+      <RequestConfirmDialog
         isOpen={declineTarget !== null}
-        peerName={declineTarget?.peerUsername ?? declineTarget?.peerId.slice(0, 12) ?? ''}
+        title={t('feature.chat.request.declineTitle')}
+        description={t('feature.chat.request.declineBody', {
+          name: declineTarget?.peerUsername ?? declineTarget?.peerId.slice(0, 12) ?? '',
+        })}
+        cancelLabel={t('feature.chat.request.cancel')}
+        confirmLabel={t('feature.chat.request.decline')}
+        testId={TEST_IDS.chatDeclineDialog}
+        confirmTestId={TEST_IDS.chatDeclineDialogConfirm}
         onClose={() => setDeclineTarget(null)}
-        onDecline={handleDeclineConfirm}
+        onConfirm={handleDeclineConfirm}
       />
     </div>
   );
