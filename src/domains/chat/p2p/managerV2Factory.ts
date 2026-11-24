@@ -875,8 +875,10 @@ export const createP2PChatManagerV2 = async (params: P2PChatManagerV2Params): Pr
     // (from a previous round the user has already removed via `removeSession`)
     // would resurface as a fresh incoming after each reload. We keep tombstones
     // ('removed' status) so subsequent sightings of the same requestId are
-    // silently ignored.
-    void (async () => {
+    // silently ignored. The check and the write share one transaction: a cancel's
+    // `cancelled` tombstone committed between them would otherwise be overwritten
+    // by this copy, reviving a request its sender withdrew.
+    void p2pChatDatabase.requests.db.transaction('rw', p2pChatDatabase.requests, p2pChatDatabase.rooms, async () => {
       const existing = await p2pChatDatabase.requests.get(validated.requestId);
       if (existing) return;
 
@@ -901,8 +903,8 @@ export const createP2PChatManagerV2 = async (params: P2PChatManagerV2Params): Pr
         lastUpdate: Date.now(),
       };
 
-      await writeRequest(newRequest);
-    })();
+      await p2pChatDatabase.requests.put(newRequest);
+    });
 
     resolver
       .getUsername(senderAccountIdStr)

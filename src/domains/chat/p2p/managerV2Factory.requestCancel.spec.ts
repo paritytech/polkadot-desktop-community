@@ -1,6 +1,7 @@
 import 'fake-indexeddb/auto';
 
 import { AccountId as AccountIdCodec } from '@polkadot-api/substrate-bindings';
+import Dexie from 'dexie';
 import { fromHex } from 'polkadot-api/utils';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -200,15 +201,37 @@ describe('managerV2Factory incoming chat request cancel', () => {
       expect(row).toMatchObject({ direction: 'incoming', status: 'cancelled', peerId: PEER_ID, timestamp: 20 });
     });
 
-    const readRow = vi.spyOn(p2pChatDatabase.requests, 'get');
+    const addCopy = vi.spyOn(p2pChatDatabase.requests.db, 'transaction');
     incoming.onRequest(requestFromPeer('req-early', 10));
-    await vi.waitFor(() => expect(readRow).toHaveBeenCalledWith('req-early'));
-    await readRow.mock.results[0]?.value;
-    readRow.mockRestore();
+    await vi.waitFor(() => expect(addCopy).toHaveBeenCalled());
+    await addCopy.mock.results[0]?.value;
+    addCopy.mockRestore();
 
     const row = await p2pChatDatabase.requests.get('req-early');
     expect(row?.status).toBe('cancelled');
     expect(row?.welcomeMessage).toBeUndefined();
+  });
+
+  it('keeps the cancel that lands while its copy is being added', async () => {
+    const { incoming } = await startManager();
+    const readRooms = p2pChatDatabase.rooms.where.bind(p2pChatDatabase.rooms);
+    // The copy reads the block flag between its existing-row check and its write, so the
+    // cancel delivered here lands between the two. `ignoreTransaction` keeps the cancel out
+    // of the copy's transaction zone, as a cancel off the wire would be.
+    const roomRead = vi.spyOn(p2pChatDatabase.rooms, 'where').mockImplementationOnce(
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions -- the copy calls only the index overload of `where`
+      ((index: string) => {
+        Dexie.ignoreTransaction(() => incoming.onCancel(cancelFromPeer('req-race', 20)));
+        return readRooms(index);
+      }) as never,
+    );
+
+    incoming.onRequest(requestFromPeer('req-race', 10));
+
+    await vi.waitFor(async () => {
+      expect(await p2pChatDatabase.requests.get('req-race')).toMatchObject({ status: 'cancelled', welcomeMessage: 'hello' });
+    });
+    roomRead.mockRestore();
   });
 
   it('cancels a pending request delivered before it', async () => {
