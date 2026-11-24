@@ -72,6 +72,14 @@ describe('isPendingOutgoingRequest', () => {
   });
 });
 
+describe('isCancelledIncomingRequest', () => {
+  it('is true only for an incoming cancelled request', () => {
+    expect(p2pService.isCancelledIncomingRequest(request('incoming', 'cancelled'))).toBe(true);
+    expect(p2pService.isCancelledIncomingRequest(request('outgoing', 'cancelled'))).toBe(false);
+    expect(p2pService.isCancelledIncomingRequest(request('incoming', 'removed'))).toBe(false);
+  });
+});
+
 describe('isRequestMessageHidden', () => {
   const withMessage = (overrides: Partial<P2PChatRequest> = {}): P2PChatRequest => ({
     ...request('incoming', 'pending'),

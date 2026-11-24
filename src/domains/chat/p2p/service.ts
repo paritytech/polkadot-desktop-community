@@ -8,7 +8,7 @@
  *   callers use them so mutations bump `lastUpdate` and stay visible to
  *   device-sync's collector (`listMessagesChangedSince` & co in
  *   `repository.ts`).
- * - `isPending*Request` — request-state predicates the read hooks filter by.
+ * - `isPending*Request` / `isCancelledIncomingRequest` — request-state predicates the read hooks filter by.
  * - `isRequestMessageHidden` — whether an incoming request's welcome message is
  *   currently hidden in the UI (carries a message, hiding is on, not yet revealed).
  * - `bytesEqual` / `buildSessionIdParam` — wire-byte helpers shared across the
@@ -70,6 +70,10 @@ function isPendingOutgoingRequest(request: P2PChatRequest): boolean {
   return request.direction === 'outgoing' && request.status === 'pending';
 }
 
+function isCancelledIncomingRequest(request: P2PChatRequest): boolean {
+  return request.direction === 'incoming' && request.status === 'cancelled';
+}
+
 /**
  * Whether an incoming request's message should be hidden in the UI: the request
  * carries a message, hiding is on by default, and the user hasn't revealed it
@@ -88,5 +92,6 @@ export const p2pService = {
   stampRequest,
   isPendingIncomingRequest,
   isPendingOutgoingRequest,
+  isCancelledIncomingRequest,
   isRequestMessageHidden,
 };

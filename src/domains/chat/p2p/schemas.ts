@@ -38,8 +38,10 @@ export const P2PChatRequestSchema = v.object({
   direction: v.picklist(['incoming', 'outgoing']),
   // 'removed' is a tombstone written by `removeSession` so a stale on-chain
   // request can't resurface after the user wipes a chat. UI lists filter to
-  // 'pending'/'accepted'/'declined' as before.
-  status: v.picklist(['pending', 'accepted', 'declined', 'removed']),
+  // 'pending'/'accepted'/'declined' as before. 'cancelled' is a tombstone too:
+  // written on the sender when it cancels, and on the receiver when a valid
+  // cancel arrives (RFC 0007), so a later copy of the request cannot bring it back.
+  status: v.picklist(['pending', 'accepted', 'declined', 'removed', 'cancelled']),
   welcomeMessage: v.optional(v.string()),
   // Per-request "View message" reveal flag. Incoming requests hide their
   // welcome message by default (see `request-preferences`); once the user
