@@ -76,6 +76,15 @@ describe('IncomingRequestRoom', () => {
     expect(onDecline).toHaveBeenCalledOnce();
   });
 
+  it('offers Decline in the header menu while pending', async () => {
+    const onDecline = vi.fn();
+    renderRoom({ onDecline });
+
+    await userEvent.click(screen.getByRole('button', { expanded: false }));
+    await userEvent.click(await screen.findByRole('menuitem', { name: 'Decline' }));
+    expect(onDecline).toHaveBeenCalledOnce();
+  });
+
   it('shows the cancel notice and no accept button when cancelled', () => {
     render(
       <TranslationProvider>
@@ -90,5 +99,7 @@ describe('IncomingRequestRoom', () => {
     ).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Accept' })).not.toBeInTheDocument();
     expect(screen.getByText("Hi! Here's the update we discussed.")).toBeInTheDocument();
+    expect(screen.queryByRole('button', { expanded: false })).not.toBeInTheDocument();
+    expect(screen.queryByRole('menuitem')).not.toBeInTheDocument();
   });
 });
