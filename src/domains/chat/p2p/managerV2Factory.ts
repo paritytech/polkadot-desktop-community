@@ -906,7 +906,7 @@ export const createP2PChatManagerV2 = async (params: P2PChatManagerV2Params): Pr
     }
   }
 
-  const pushSeenTrigger = (peerId: string) => {
+  function pushSeenTrigger(peerId: string) {
     let entry = seenTriggers.get(peerId);
     if (!entry) {
       const trigger = new Subject<void>();
@@ -917,7 +917,7 @@ export const createP2PChatManagerV2 = async (params: P2PChatManagerV2Params): Pr
       seenTriggers.set(peerId, entry);
     }
     entry.trigger.next();
-  };
+  }
 
   const isV2Validated = (r: object): r is ValidatedRequestV2 =>
     'senderDevicePubKey' in r && r.senderDevicePubKey instanceof Uint8Array;

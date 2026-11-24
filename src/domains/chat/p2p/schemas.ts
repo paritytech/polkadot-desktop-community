@@ -12,7 +12,7 @@ import * as v from 'valibot';
 
 const PlatformSchema = v.picklist(['Android', 'iOS']);
 
-export const MessagePositionSchema = v.object({ timestamp: v.number(), messageId: v.string() });
+const MessagePositionSchema = v.object({ timestamp: v.number(), messageId: v.string() });
 
 export const P2PRoomSchema = v.object({
   sessionId: v.string(),

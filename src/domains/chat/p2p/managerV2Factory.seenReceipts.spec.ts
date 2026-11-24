@@ -175,10 +175,16 @@ describe('managerV2Factory seen receipts', () => {
   });
 
   describe('incoming seen receipt', () => {
+    let manager: Awaited<ReturnType<typeof buildManager>>;
+
+    afterEach(() => {
+      manager.dispose();
+    });
+
     it('moves peerSeen to the outgoing message it names and stores no message', async () => {
       await seedRoom();
       await seedOutgoing('o-1', 100, 'delivered');
-      const manager = await buildManager();
+      manager = await buildManager();
       await manager.initialize();
 
       deliverSeenReceipt('o-1', 100n);
@@ -194,7 +200,7 @@ describe('managerV2Factory seen receipts', () => {
       await seedOutgoing('o-1', 100, 'sent');
       await seedOutgoing('o-2', 150, 'new');
       await seedOutgoing('o-3', 300, 'delivered');
-      const manager = await buildManager();
+      manager = await buildManager();
       await manager.initialize();
 
       deliverSeenReceipt('unknown', 200n);
@@ -208,7 +214,7 @@ describe('managerV2Factory seen receipts', () => {
       await seedRoom();
       await seedOutgoing('o-1', 100, 'sent');
       await seedOutgoing('o-3', 300, 'delivered');
-      const manager = await buildManager();
+      manager = await buildManager();
       await manager.initialize();
 
       const { writes, record } = createPeerSeenRecorder();
@@ -240,7 +246,7 @@ describe('managerV2Factory seen receipts', () => {
 
     it('ignores a receipt that resolves to nothing', async () => {
       await seedRoom();
-      const manager = await buildManager();
+      manager = await buildManager();
       await manager.initialize();
 
       const { writes, record } = createPeerSeenRecorder();
@@ -268,7 +274,7 @@ describe('managerV2Factory seen receipts', () => {
     it('logs and drops a receipt it cannot apply', async () => {
       await seedRoom();
       await seedOutgoing('o-1', 100, 'delivered');
-      const manager = await buildManager();
+      manager = await buildManager();
       await manager.initialize();
 
       const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
@@ -425,6 +431,33 @@ describe('managerV2Factory seen receipts', () => {
       await manager.markAsRead(PEER_ID);
 
       await manager.setBlocked(PEER_ID, false);
+      await seedIncoming('i-2', 200);
+      passWindow();
+      await manager.markAsRead(PEER_ID);
+      await vi.waitFor(() => {
+        expect(sendSeenSpy).toHaveBeenCalledTimes(1);
+      });
+
+      expect(sendSeenSpy.mock.calls).toEqual([[I_2]]);
+    });
+
+    it('sends nothing to a peer whose room is blocked while the session is up', async () => {
+      await p2pChatDatabase.rooms.update(PEER_ID, { isBlocked: true });
+
+      const where = vi.spyOn(p2pChatDatabase.rooms, 'where');
+      try {
+        await manager.markAsRead(PEER_ID);
+        // The send opens its room read before anything else, so the update below cannot change what it sees.
+        await vi.waitFor(() => {
+          expect(where).toHaveBeenCalledWith('peerId');
+        });
+      } finally {
+        where.mockRestore();
+      }
+
+      // The control names a newer message, so a receipt the gate let through stays a separate call
+      // instead of being deduplicated against `lastSentSeen`.
+      await p2pChatDatabase.rooms.update(PEER_ID, { isBlocked: false });
       await seedIncoming('i-2', 200);
       passWindow();
       await manager.markAsRead(PEER_ID);

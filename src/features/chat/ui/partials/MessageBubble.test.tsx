@@ -1,11 +1,12 @@
 // @vitest-environment happy-dom
 
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
-import { type ChatMessageStatus } from '@/domains/chat';
+import { TranslationProvider } from '@/shared/translation';
+import { type ChatMessage, type ChatMessageStatus } from '@/domains/chat';
 
-import { StatusIcon } from './MessageBubble';
+import { MessageBubble, StatusIcon } from './MessageBubble';
 
 const outgoing = (state: 'new' | 'sent' | 'delivered'): ChatMessageStatus => ({ direction: 'outgoing', state });
 
@@ -33,5 +34,27 @@ describe('StatusIcon', () => {
     const { container } = render(<StatusIcon status={{ direction: 'incoming', state: 'seen' }} isSeen />);
 
     expect(container.querySelector('svg')).toBeNull();
+  });
+});
+
+describe('MessageBubble', () => {
+  const message: ChatMessage = {
+    messageId: 'm-1',
+    sessionId: 'session-1',
+    peer: { type: 'p2p', accountId: '0xpeer', name: 'Alice' },
+    timestamp: 1_700_000_000_000,
+    content: { type: 'text', text: 'hello' },
+    status: outgoing('delivered'),
+  };
+
+  it('shows a double check on my message the peer has seen', async () => {
+    const { container } = render(
+      <TranslationProvider>
+        <MessageBubble productId="p" roomId="r" message={message} isMe isSeen />
+      </TranslationProvider>,
+    );
+
+    await screen.findByText('hello');
+    expect(container.querySelector('.lucide-check-check')).not.toBeNull();
   });
 });

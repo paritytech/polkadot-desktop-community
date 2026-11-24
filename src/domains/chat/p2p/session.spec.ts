@@ -1,5 +1,7 @@
-import { firstValueFrom, of } from 'rxjs';
+import { type Observable, firstValueFrom, of, toArray } from 'rxjs';
 import { describe, expect, it, vi } from 'vitest';
+
+import { type MessagePosition } from '../session/types';
 
 import { p2pRoomsResource } from './resource';
 import { createP2PChatSession } from './session';
@@ -52,5 +54,21 @@ describe('createP2PChatSession peerSeen', () => {
     const session = createP2PChatSession(peer, live, manager);
 
     await expect(firstValueFrom(session.peerSeen ?? of(undefined))).resolves.toBeNull();
+  });
+
+  it('emits again only when the position advances, not for an equal one', async () => {
+    const live = room({ peerSeen: { timestamp: 5, messageId: 'm' } });
+    p2pRoomsResource.instead(() =>
+      of([live], [room({ peerSeen: { timestamp: 5, messageId: 'm' } })], [room({ peerSeen: { timestamp: 9, messageId: 'n' } })]),
+    );
+
+    const session = createP2PChatSession(peer, live, manager);
+
+    const peerSeen$: Observable<Nullable<MessagePosition>> = session.peerSeen ?? of(null);
+
+    await expect(firstValueFrom(peerSeen$.pipe(toArray()))).resolves.toEqual([
+      { timestamp: 5, messageId: 'm' },
+      { timestamp: 9, messageId: 'n' },
+    ]);
   });
 });

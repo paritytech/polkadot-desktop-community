@@ -10,7 +10,7 @@ The unit of consumption is a **`ChatSession`**: a uniform observable interface t
 
 - **ChatSession** — Observable façade over a single conversation: messages stream, peer metadata, send, mark-as-read. The same shape regardless of whether the conversation is P2P or product-scoped.
 - **ChatMessage** — Immutable record on the session: `messageId`, `peer`, `content`, `status`, `timestamp`.
-- **ChatMessageStatus** — Either an outgoing lifecycle (queued / submitting / delivered / failed) or an incoming state (read / unread).
+- **ChatMessageStatus** — Either an outgoing lifecycle (new / sent / delivered) or an incoming state (new / seen). Seen on an outgoing message is derived, not a stored state (see **Seen**).
 - **MessagePeer** — Who a message is from. One of `UserPeer` (an account, optionally pinned), `P2PPeer` (an SS58 account string in a P2P session), or `ProductPeer` (a product instance).
 - **MessageContent** — Tagged union covering `Text`, `RichText` (text + attachments), `Custom` (typed binary payload plus an optional `alt`: the one line shown where the message is listed without being drawn), `Reaction`, `Reply`, `Edit`, plus lifecycle events (`ContactAdded`, `LeftChat`).
 - **FileAttachment** — `{ identifier, claimTicket, meta }`. The `meta` discriminates `General` / `Image` / `Video`.

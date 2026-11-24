@@ -22,7 +22,7 @@ import { x25519 } from '@noble/curves/ed25519.js';
 import { mergeUint8 } from '@polkadot-api/utils';
 
 import { chatMessageService } from '../session/service';
-import { type ChatMessage, type MessageContent, type MessagePosition } from '../session/types';
+import { type ChatMessage, type MessagePosition } from '../session/types';
 
 import { type IncomingCancelAction, type P2PChatRequest, type P2PRoom } from './types';
 
@@ -133,15 +133,40 @@ function isRequestMessageHidden(request: P2PChatRequest, hideByDefault: boolean)
   return Boolean(request.welcomeMessage) && hideByDefault && request.revealed !== true;
 }
 
-const SEEN_COUNTED_CONTENT_TYPES = new Set<MessageContent['type']>(['text', 'richText', 'reply', 'transfer']);
-
-/** RFC 0006: an incoming message the user has seen, of a kind a seen receipt may name. */
+/**
+ * RFC 0006: an incoming message the user has seen, of a kind a seen receipt may name.
+ *
+ * Not `chatMessageService.isStandaloneMessage`: the RFC counts the `answer` and `closed` call
+ * signals that the UI folds into their offer.
+ */
 function countsForSeenReceipt(message: ChatMessage): boolean {
   const { content, status } = message;
   if (status.direction !== 'incoming' || status.state !== 'seen') return false;
-  if (content.type === 'callSignal') return content.signal !== 'ice';
 
-  return SEEN_COUNTED_CONTENT_TYPES.has(content.type);
+  switch (content.type) {
+    case 'text':
+    case 'richText':
+    case 'reply':
+    case 'transfer':
+      return true;
+    case 'callSignal':
+      return content.signal !== 'ice';
+    case 'custom':
+    case 'reacted':
+    case 'reactionRemoved':
+    case 'edit':
+    case 'contactAdded':
+    case 'leftChat':
+    case 'token':
+    case 'deviceChatAccepted':
+    case 'deviceAdded':
+      return false;
+    default: {
+      const unhandled: never = content;
+
+      return unhandled;
+    }
+  }
 }
 
 function findLastSeenMessage(messages: ChatMessage[]): ChatMessage | null {
