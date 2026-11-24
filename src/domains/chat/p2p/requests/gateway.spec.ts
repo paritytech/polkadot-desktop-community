@@ -10,7 +10,7 @@ import {
   verifySr25519Signature,
 } from '@novasamatech/statement-store';
 import { substrateSlotSecretFromSeedBytes } from '@novasamatech/substrate-slot-sr25519-wasm';
-import { okAsync } from 'neverthrow';
+import { errAsync, okAsync } from 'neverthrow';
 import { toHex } from 'polkadot-api/utils';
 import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 
@@ -293,6 +293,41 @@ describe('chatRequestGateway.sendChatRequestCancel', () => {
 
     expect(result).toBe('noCopy');
     expect(store.acceptedStatements()).toEqual([]);
+  });
+
+  it("publishes nothing when only another account's statement is on the channel", async () => {
+    const store = createInMemoryStatementStore();
+    const { bobUserChat, cancelParams } = makeCancelFixture(store);
+    const otherDevice = makeDevice(0x08);
+    const foreignRequest = await chatRequestGateway.sendChatRequestV2({
+      recipientAccountId: bobUserAccountId,
+      recipientChatPubKey: bobUserChat.pub,
+      senderIdentityAccountId: aliceUserAccountId,
+      senderIdentityChatPrivateKey: makeUserChatKey().priv,
+      senderDevicePubKey: otherDevice.encPub,
+      senderDeviceSeed: otherDevice.seed,
+      statementStore: store,
+    });
+    const before = store.currentStatements();
+
+    const result = await chatRequestGateway.sendChatRequestCancel(cancelParams(foreignRequest, Date.now()));
+
+    expect(result).toBe('noCopy');
+    expect(store.acceptedStatements()).toHaveLength(1);
+    expect(store.currentStatements()).toEqual(before);
+  });
+
+  it('rejects when the query fails', async () => {
+    const { adapter } = captureSubmittedData();
+    vi.mocked(adapter.queryStatements).mockReturnValue(errAsync(new Error('down')));
+    const { cancelParams } = makeCancelFixture(adapter);
+
+    await expect(
+      chatRequestGateway.sendChatRequestCancel(
+        cancelParams({ requestId: 'req-1', channelTopic: new Uint8Array(32).fill(0xd4) }, Date.now()),
+      ),
+    ).rejects.toThrow('down');
+    expect(adapter.submitStatement).not.toHaveBeenCalled();
   });
 
   it('stamps the cancel later than the request', async () => {
