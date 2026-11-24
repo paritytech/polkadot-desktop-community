@@ -238,6 +238,9 @@ export type ChatMessage = {
   lastUpdate?: number;
 };
 
+/** A message's place in the chat's display order, standing in for the RFC 0006 local `order`. */
+export type MessagePosition = { timestamp: number; messageId: string };
+
 /** The protocol's room footer: the user's text input, nothing, or a product-drawn card. */
 export type RoomFooter =
   { type: 'text' } | { type: 'none' } | { type: 'card'; productId: string; messageType: string; payload: Uint8Array };
@@ -255,6 +258,9 @@ export type ChatSession = {
   readonly isBlocked?: Observable<boolean>;
   // Only product rooms expose this; absent means the user may write.
   readonly footer?: Observable<RoomFooter>;
+  // Only sessions whose transport carries seen receipts expose this (currently P2P).
+  // `null` until the peer has reported a seen message.
+  readonly peerSeen?: Observable<MessagePosition | null>;
 
   sendMessage(content: MessageContent): Promise<{ messageId: string }>;
   markAsRead(): Promise<void>;

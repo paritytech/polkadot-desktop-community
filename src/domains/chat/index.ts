@@ -7,6 +7,7 @@ export type {
   FileMeta,
   MessageContent,
   MessagePeer,
+  MessagePosition,
   P2PPeer,
   RoomFooter,
   TransferContent,

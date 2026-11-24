@@ -1,4 +1,4 @@
-import { type ChatMessageStatus, type MessageContent } from './types';
+import { type ChatMessage, type ChatMessageStatus, type MessageContent, type MessagePosition } from './types';
 
 /**
  * `deviceChatAccepted`, `deviceAdded` and `token` rows exist only to replicate
@@ -69,4 +69,36 @@ function shouldUpgradeStatus(current: ChatMessageStatus, incoming: ChatMessageSt
   return statusRank(incoming) > statusRank(current);
 }
 
-export const chatMessageService = { isSyncCarrier, isStandaloneMessage, shouldUpgradeStatus, getSearchableText };
+function positionOf(message: ChatMessage): MessagePosition {
+  return { timestamp: message.timestamp, messageId: message.messageId };
+}
+
+/**
+ * Orders by `timestamp`, then by `messageId` in UTF-16 code-unit order, the order IndexedDB
+ * sorts string keys in. `localeCompare` would disagree with it (it puts `'a'` before `'B'`).
+ */
+function compareMessagePositions(a: MessagePosition, b: MessagePosition): number {
+  if (a.timestamp !== b.timestamp) return a.timestamp - b.timestamp;
+  if (a.messageId === b.messageId) return 0;
+  return a.messageId < b.messageId ? -1 : 1;
+}
+
+/**
+ * A seen receipt covers every message up to its position, so an outgoing message the peer
+ * could have received (`sent` or `delivered`) is seen when it sits at or before `peerSeen`.
+ */
+function isSeenByPeer(message: ChatMessage, peerSeen: MessagePosition | null): boolean {
+  if (!peerSeen) return false;
+  if (message.status.direction !== 'outgoing' || message.status.state === 'new') return false;
+  return compareMessagePositions(positionOf(message), peerSeen) <= 0;
+}
+
+export const chatMessageService = {
+  isSyncCarrier,
+  isStandaloneMessage,
+  shouldUpgradeStatus,
+  getSearchableText,
+  positionOf,
+  compareMessagePositions,
+  isSeenByPeer,
+};
