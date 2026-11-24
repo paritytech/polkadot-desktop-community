@@ -26,6 +26,7 @@ The unit of consumption is a **`ChatSession`**: a uniform observable interface t
 - **P2PChatRequest** — The handshake that creates a room: direction (incoming/outgoing), status, optional welcome message, and a `channelTopic` derived from an ephemeral ECDH exchange. Two statuses are tombstones: `removed` (the user left the chat) and `cancelled` (a cancel was sent or applied), both kept so that a later copy of the request cannot bring it back.
 - **peer seen** — the furthest message position the peer has reported seen, kept on the room; it only advances.
 - **last sent seen** — the last message position the local user reported seen to the peer, kept on the room so the same receipt is not sent twice.
+- **Device-local room field** — a `P2PRoom` field written without stamping `lastUpdate` and without `signalLocalChange` stays on this device (`isBlocked`, `peerSeen`, `lastSentSeen`).
 - **Cancel** — the sender withdraws its own pending outgoing request (RFC 0007); the receiver drops it. Only the sender cancels.
 - **Decline** — the receiver refuses an incoming request. Only the receiver declines.
 - **Proof of compute** — a puzzle the identity backend's username-search route may demand from an
@@ -50,7 +51,7 @@ The unit of consumption is a **`ChatSession`**: a uniform observable interface t
 
 This domain owns:
 
-- **Message lifecycle** end-to-end: composition, send, delivery state, read state.
+- **Message lifecycle** end-to-end: composition, send, delivery state, read state. A chat is marked read, and so sends a seen receipt, only while it is displayed in a focused window.
 - **P2P discovery and handshake** — chat-request exchange, peer verification, channel-topic derivation.
 - **End-to-end encryption** — per-peer sessions on top of statement-store sessions, with shared secrets derived via X25519 ECDH.
 - **File transfer** — upload to and download from the HOP relay (`@novasamatech/handoff-service`), encryption, retry on transient connection issues, and surfacing files via `claimTicket`.

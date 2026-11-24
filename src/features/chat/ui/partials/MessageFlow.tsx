@@ -3,6 +3,7 @@ import { type MouseEvent, useCallback, useEffect, useMemo, useRef, useState } fr
 import { useObservable } from 'react-rx';
 import { type Observable, of } from 'rxjs';
 
+import { useWindowFocus } from '@/shared/hooks';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { cnTw } from '@/shared/utils';
@@ -79,9 +80,12 @@ export const MessageFlow = ({ session, onReply, onEdit }: ChatConversationViewPr
 
   const hasMessages = groupedMessages.length > 0;
 
+  const isWindowFocused = useWindowFocus();
+
+  // A read sends a seen receipt (RFC 0006), and Seen means displayed, so an unfocused window must not read.
   useEffect(() => {
-    session.markAsRead();
-  }, [session, groupedMessages]);
+    if (isWindowFocused) session.markAsRead();
+  }, [session, groupedMessages, isWindowFocused]);
 
   const handleContextMenu = useCallback((e: MouseEvent, message: ChatMessage) => {
     e.preventDefault();
