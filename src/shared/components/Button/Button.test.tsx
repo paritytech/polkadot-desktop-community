@@ -1,6 +1,6 @@
 // @vitest-environment happy-dom
 
-import { Slot } from '@radix-ui/react-slot';
+import { DropdownMenu } from '@novasamatech/tr-ui';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createRef } from 'react';
@@ -53,13 +53,17 @@ describe('Button', () => {
     expect(onClick).not.toHaveBeenCalled();
   });
 
-  it('keeps its own classes when a slot passes a class', () => {
+  it('keeps its own classes under a tr-ui menu trigger', () => {
     render(
-      <Slot className="outline-none">
-        <Button>Save</Button>
-      </Slot>,
+      <DropdownMenu>
+        <DropdownMenu.Trigger asChild>
+          <Button>Save</Button>
+        </DropdownMenu.Trigger>
+      </DropdownMenu>,
     );
 
-    expect(screen.getByRole('button', { name: 'Save' })).toHaveClass('inline-flex', 'rounded-full', 'h-9');
+    const button = screen.getByRole('button', { name: 'Save' });
+    expect(button).toHaveClass('inline-flex', 'rounded-full', 'h-9');
+    expect(button).toHaveAttribute('aria-haspopup', 'menu');
   });
 });
