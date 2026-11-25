@@ -62,6 +62,7 @@ describe('Dialog', () => {
     expect(dialog).toHaveAttribute('data-modal-surface');
     expect(dialog.style.getPropertyValue('app-region')).toBe('no-drag');
     expect(dialog.classList.contains('motion-reduce:[animation-duration:0.01ms]')).toBe(true);
+    expect(dialog.classList.contains('motion-reduce:data-[state=closed]:[animation-duration:0.01ms]')).toBe(true);
   });
 
   it("keeps a caller's asChild title", async () => {
