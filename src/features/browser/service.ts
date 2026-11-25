@@ -45,4 +45,11 @@ function canSwipeTo(entry: TabRef | null): boolean {
   return entry !== null && entry.type !== NEW_TAB;
 }
 
-export const browserService = { reduceSwipe, toSwipeIndicator, canSwipeTo };
+function splitDisplayAddress(path: string): { name: string; rest: string } {
+  const index = path.search(/[./]/);
+  if (index === -1) return { name: path, rest: '' };
+
+  return { name: path.slice(0, index), rest: path.slice(index) };
+}
+
+export const browserService = { reduceSwipe, toSwipeIndicator, canSwipeTo, splitDisplayAddress };

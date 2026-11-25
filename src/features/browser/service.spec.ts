@@ -204,3 +204,25 @@ describe('browserService.canSwipeTo', () => {
     expect(browserService.canSwipeTo(null)).toBe(false);
   });
 });
+
+describe('browserService.splitDisplayAddress', () => {
+  it('splits a name from its tld and path', () => {
+    expect(browserService.splitDisplayAddress('polkadot.dot/staking')).toEqual({ name: 'polkadot', rest: '.dot/staking' });
+  });
+
+  it('splits a name from its tld', () => {
+    expect(browserService.splitDisplayAddress('polkadot.dot')).toEqual({ name: 'polkadot', rest: '.dot' });
+  });
+
+  it('keeps a bare name whole', () => {
+    expect(browserService.splitDisplayAddress('chat')).toEqual({ name: 'chat', rest: '' });
+  });
+
+  it('handles an empty path', () => {
+    expect(browserService.splitDisplayAddress('')).toEqual({ name: '', rest: '' });
+  });
+
+  it('splits at the first dot or slash', () => {
+    expect(browserService.splitDisplayAddress('app/route.x')).toEqual({ name: 'app', rest: '/route.x' });
+  });
+});

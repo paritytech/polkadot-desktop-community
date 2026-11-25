@@ -19,7 +19,8 @@ export const AddressBarRefreshButton = ({ product }: Props) => {
       type="button"
       aria-label={t('common.aria.reload')}
       data-testid={TEST_IDS.browserRefreshButton}
-      className="-me-2 flex size-6 shrink-0 items-center justify-center rounded-full transition-colors duration-200 hover:bg-bg-action-secondary-hover"
+      data-no-app-focus
+      className="-me-2 flex size-6 shrink-0 cursor-pointer items-center justify-center rounded-full transition-colors duration-200 hover:bg-chrome-fill focus-visible:outline-2 focus-visible:outline-chrome-focus"
       onMouseDown={e => {
         e.preventDefault();
       }}

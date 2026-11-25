@@ -17,6 +17,7 @@ import {
   focusAddressBarSideEffect,
   resolveAddressBarProductIconTransformer,
 } from '../di';
+import { browserService } from '../service';
 
 type AddressBarProps = {
   size?: 'sm' | 'md';
@@ -44,6 +45,8 @@ export const AddressBar = ({ size = 'sm' }: AddressBarProps) => {
   const rawRoute = isProductRoute && isString(params['route']) ? params['route'] : '';
   const productRoute = rawRoute.startsWith('/') ? rawRoute.slice(1) : rawRoute;
   const fullProductPath = productId && productRoute ? `${productId}/${productRoute}` : (productId ?? '');
+
+  const { name, rest } = browserService.splitDisplayAddress(fullProductPath);
 
   const [loadingIdentifiers] = useRxState(productLoading.identifiers$);
   const isLoading = resolvedProductId != null && loadingIdentifiers.has(resolvedProductId);
@@ -79,21 +82,23 @@ export const AddressBar = ({ size = 'sm' }: AddressBarProps) => {
           menu — and a button inside a button is invalid HTML that browsers un-nest,
           which would route those clicks to this handler instead. */}
       <div
-        className={cnTw(
-          'relative flex w-full items-center gap-2 overflow-hidden rounded-full border border-stroke-primary bg-bg-surface-container px-3 transition-colors hover:bg-bg-selection-container-hover',
-          size === 'md' ? 'h-9' : 'h-8',
-        )}
+        className="relative flex h-9 w-full items-center gap-2 overflow-hidden rounded-full bg-chrome-well px-3 shadow-chrome-pill transition-colors hover:bg-chrome-well-strong"
         style={{ appRegion: 'no-drag' }}
       >
-        {productId && <Slot id={addressBarProductLeadingSlot} props={{ product: slotProduct }} />}
+        {productId && (
+          <span className="flex shrink-0 items-center text-chrome-muted empty:hidden">
+            <Slot id={addressBarProductLeadingSlot} props={{ product: slotProduct }} />
+          </span>
+        )}
 
         <button
           type="button"
           data-testid={TEST_IDS.addressBarInput}
           aria-label={t('feature.browser.addressPlaceholder', { tld })}
+          data-no-app-focus
           className={cnTw(
-            'flex h-full min-w-0 flex-1 items-center gap-2 truncate text-sm',
-            productId ? 'justify-center text-fg-primary' : 'justify-center text-fg-secondary',
+            'flex h-full min-w-0 flex-1 cursor-pointer items-center justify-center gap-2 truncate rounded-full text-sm focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-chrome-focus',
+            productId ? 'text-chrome-text' : 'text-chrome-muted',
           )}
           onClick={open}
         >
@@ -103,21 +108,26 @@ export const AddressBar = ({ size = 'sm' }: AddressBarProps) => {
                 <ProductIcon
                   icon={slotProduct?.icon}
                   className="size-4 shrink-0"
-                  fallback={<PolkadotIcon className="size-4 shrink-0 text-fg-secondary" />}
+                  fallback={<PolkadotIcon className="size-4 shrink-0" />}
                 />
               )}
-              <span className="min-w-0 truncate">{fullProductPath}</span>
+              <span className="min-w-0 truncate">
+                <span className="font-semibold">{name}</span>
+                <span className="text-chrome-muted">{rest}</span>
+              </span>
             </>
           ) : (
             t('feature.browser.addressPlaceholder', { tld })
           )}
         </button>
 
-        <Slot id={addressBarProductTrailingSlot} props={{ product: slotProduct }} />
+        <span className="flex shrink-0 items-center text-chrome-muted empty:hidden">
+          <Slot id={addressBarProductTrailingSlot} props={{ product: slotProduct }} />
+        </span>
 
         {isLoading && (
           <span data-testid={TEST_IDS.addressBarLoadingBar} className="absolute inset-x-0 bottom-0 h-0.5">
-            <span className="block h-full w-1/3 animate-[loading-bar_1s_ease-in-out_infinite] bg-bg-action-primary" />
+            <span className="block h-full w-1/3 animate-[loading-bar_1s_ease-in-out_infinite] bg-chrome-text" />
           </span>
         )}
       </div>
