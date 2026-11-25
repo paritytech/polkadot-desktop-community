@@ -94,14 +94,14 @@ export class AppearancePage {
   }
 
   /** Computed value of the palette's signature CSS variable on <html>. */
-  readPrimaryPaletteVar(): Promise<string> {
+  readPaletteVar(): Promise<string> {
     return this.page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--chrome-top').trim());
   }
 
   /** Poll until the applied palette differs from a previously captured value. */
   async expectPaletteChangedFrom(previous: string) {
-    await expect.poll(() => this.readPrimaryPaletteVar(), { timeout: DEFAULT_TIMEOUT }).not.toBe(previous);
-    expect(await this.readPrimaryPaletteVar()).not.toBe('');
+    await expect.poll(() => this.readPaletteVar(), { timeout: DEFAULT_TIMEOUT }).not.toBe(previous);
+    expect(await this.readPaletteVar()).not.toBe('');
   }
 
   // --- Preview ---------------------------------------------------------------

@@ -54,7 +54,7 @@ Then('the browser theme options Berlin, Tokyo, Lisbon and Malta are available', 
 
 When('the user selects the {string} browser theme', async ({ electronApp }, name: string) => {
   const appearance = new AppearancePage(electronApp.window);
-  paletteBeforeThemeSelect = await appearance.readPrimaryPaletteVar();
+  paletteBeforeThemeSelect = await appearance.readPaletteVar();
   await appearance.selectRadio(name);
 });
 
