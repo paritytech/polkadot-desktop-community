@@ -27,10 +27,7 @@ export const PermissionEntriesDialog = ({ open, title, icon, entries, onOpenChan
   <Dialog.Root open={open} onOpenChange={onOpenChange}>
     <Dialog.Content aria-describedby={undefined}>
       <Dialog.Header>
-        <Dialog.Title>
-          {/* pe-8 keeps the title clear of the absolutely positioned close button */}
-          <span className="block pe-8">{title}</span>
-        </Dialog.Title>
+        <Dialog.Title>{title}</Dialog.Title>
       </Dialog.Header>
       <div className="flex max-h-[60vh] flex-col gap-1 overflow-y-auto overscroll-contain pe-1">
         {entries.map(entry => (

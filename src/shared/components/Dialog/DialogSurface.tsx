@@ -55,7 +55,7 @@ export const DialogFooter = (props: DialogFooterProps) => {
 type DialogHeadingProps = Omit<ComponentProps<'h2'>, 'className'>;
 
 export const DialogHeading = (props: DialogHeadingProps) => {
-  return <h2 {...props} className="text-lg font-semibold text-chrome-text" />;
+  return <h2 {...props} className="pe-8 text-lg font-semibold text-chrome-text" />;
 };
 
 type DialogTextProps = Omit<ComponentProps<'p'>, 'className'>;

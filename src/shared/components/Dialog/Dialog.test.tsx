@@ -66,6 +66,14 @@ describe('Dialog', () => {
     expect(dialog.classList.contains('motion-reduce:data-[state=closed]:[animation-duration:0.01ms]')).toBe(true);
   });
 
+  it('keeps its title clear of the close button', async () => {
+    renderDialog();
+
+    await screen.findByRole('dialog', { name: 'Rename' });
+
+    expect(screen.getByRole('heading', { name: 'Rename' })).toHaveClass('pe-8');
+  });
+
   it('closes only itself on Escape when opened inside a popover', async () => {
     const user = userEvent.setup();
     const onPopoverOpenChange = vi.fn();
