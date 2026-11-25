@@ -46,6 +46,14 @@ describe('AlertDialog', () => {
     expect(dialog.style.getPropertyValue('app-region')).toBe('no-drag');
   });
 
+  it('leaves its title unpadded, having no close button', async () => {
+    renderAlertDialog();
+
+    await screen.findByRole('alertdialog', { name: 'Log out?' });
+
+    expect(screen.getByRole('heading', { name: 'Log out?' })).not.toHaveClass('group-data-[closable]/dialog:pe-8');
+  });
+
   it('cancels', async () => {
     const user = userEvent.setup();
     const onOpenChange = vi.fn();

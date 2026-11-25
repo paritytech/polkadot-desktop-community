@@ -23,7 +23,7 @@ const DialogContent = ({ width, height, showCloseButton = true, children, ...pro
         <DialogScrim />
       </DialogPrimitive.Overlay>
       <DialogPrimitive.Content asChild {...props}>
-        <DialogCard width={width} height={height} data-modal-surface>
+        <DialogCard width={width} height={height} data-modal-surface data-closable={showCloseButton || undefined}>
           <BodyLockSweep />
           {children}
           {showCloseButton && (
@@ -45,7 +45,7 @@ type DialogTitleProps = Omit<ComponentProps<typeof DialogPrimitive.Title>, 'clas
 
 const DialogTitle = ({ asChild, children, ...props }: DialogTitleProps) => {
   return (
-    <DialogPrimitive.Title asChild {...props}>
+    <DialogPrimitive.Title asChild {...props} className="group-data-[closable]/dialog:pe-8">
       {asChild ? children : <DialogHeading>{children}</DialogHeading>}
     </DialogPrimitive.Title>
   );

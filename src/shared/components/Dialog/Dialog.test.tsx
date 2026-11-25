@@ -69,9 +69,32 @@ describe('Dialog', () => {
   it('keeps its title clear of the close button', async () => {
     renderDialog();
 
-    await screen.findByRole('dialog', { name: 'Rename' });
+    const dialog = await screen.findByRole('dialog', { name: 'Rename' });
 
-    expect(screen.getByRole('heading', { name: 'Rename' })).toHaveClass('pe-8');
+    expect(dialog).toHaveAttribute('data-closable');
+    expect(screen.getByRole('heading', { name: 'Rename' })).toHaveClass('group-data-[closable]/dialog:pe-8');
+  });
+
+  it('is not closable without its close button', async () => {
+    renderDialog({ showCloseButton: false });
+
+    const dialog = await screen.findByRole('dialog', { name: 'Rename' });
+
+    expect(dialog).not.toHaveAttribute('data-closable');
+  });
+
+  it("pads a caller's asChild title for the close button", async () => {
+    renderDialog({
+      title: (
+        <Dialog.Title asChild>
+          <span>Plain</span>
+        </Dialog.Title>
+      ),
+    });
+
+    await screen.findByRole('dialog', { name: 'Plain' });
+
+    expect(screen.getByText('Plain')).toHaveClass('group-data-[closable]/dialog:pe-8');
   });
 
   it('closes only itself on Escape when opened inside a popover', async () => {

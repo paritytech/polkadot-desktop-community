@@ -27,7 +27,7 @@ export const DialogCard = ({ width = 'sm', height = 'content', style, ...rest }:
     <div
       {...rest}
       className={cnTw(
-        'fixed inset-0 z-50 m-auto flex max-h-[calc(100dvh-3rem)] w-[calc(100%-2rem)] animate-dialog-in flex-col gap-4 rounded-3xl bg-(image:--chrome-glass) p-5 text-chrome-text shadow-chrome-pop backdrop-blur-2xl backdrop-saturate-150 outline-none data-[state=closed]:animate-dialog-out motion-reduce:[animation-duration:0.01ms] motion-reduce:data-[state=closed]:[animation-duration:0.01ms]',
+        'group/dialog fixed inset-0 z-50 m-auto flex max-h-[calc(100dvh-3rem)] w-[calc(100%-2rem)] animate-dialog-in flex-col gap-4 rounded-3xl bg-(image:--chrome-glass) p-5 text-chrome-text shadow-chrome-pop backdrop-blur-2xl backdrop-saturate-150 outline-none data-[state=closed]:animate-dialog-out motion-reduce:[animation-duration:0.01ms] motion-reduce:data-[state=closed]:[animation-duration:0.01ms]',
         width === 'sm' && 'max-w-120',
         width === 'md' && 'max-w-160',
         width === 'lg' && 'max-w-200',
@@ -52,10 +52,11 @@ export const DialogFooter = (props: DialogFooterProps) => {
   return <div {...props} className="grid auto-cols-fr grid-flow-col gap-2" />;
 };
 
-type DialogHeadingProps = Omit<ComponentProps<'h2'>, 'className'>;
+// Takes a className, unlike its siblings: a Radix `Title` slotted onto it merges in the title's close-button padding.
+type DialogHeadingProps = ComponentProps<'h2'>;
 
-export const DialogHeading = (props: DialogHeadingProps) => {
-  return <h2 {...props} className="pe-8 text-lg font-semibold text-chrome-text" />;
+export const DialogHeading = ({ className, ...rest }: DialogHeadingProps) => {
+  return <h2 {...rest} className={cnTw('text-lg font-semibold text-chrome-text', className)} />;
 };
 
 type DialogTextProps = Omit<ComponentProps<'p'>, 'className'>;
