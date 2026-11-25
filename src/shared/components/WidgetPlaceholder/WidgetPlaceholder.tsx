@@ -1,3 +1,5 @@
+import { Button } from '../Button/Button';
+
 type WidgetPlaceholderProps = {
   message: string;
   actionLabel?: string;
@@ -11,13 +13,9 @@ export const WidgetPlaceholder = ({ message, actionLabel, onAction, testId }: Wi
       <div className="flex flex-col items-center gap-1 text-center">
         <p className="text-xs leading-4 whitespace-nowrap text-fg-secondary">{message}</p>
         {actionLabel && onAction ? (
-          <button
-            type="button"
-            className="cursor-pointer text-xs leading-4 font-medium text-fg-primary transition-opacity hover:opacity-80"
-            onClick={onAction}
-          >
+          <Button variant="ghost" size="sm" onClick={onAction}>
             {actionLabel}
-          </button>
+          </Button>
         ) : null}
       </div>
     </div>

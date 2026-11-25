@@ -1,6 +1,6 @@
 import { Star } from 'lucide-react';
 
-import { Button } from '@/shared/components';
+import { Button, SegmentedControl } from '@/shared/components';
 import { useTranslation } from '@/shared/translation';
 import { cnTw } from '@/shared/utils';
 import { type WidgetSizeIconVariant } from '@/domains/application';
@@ -30,33 +30,6 @@ export const AddWidgetFavoritesButton = ({ isInFavorites, onAdd }: { isInFavorit
     </Button>
   );
 };
-
-export const ModalSizeChip = ({
-  label,
-  isSelected,
-  disabled,
-  onClick,
-}: {
-  label: string;
-  isSelected: boolean;
-  disabled?: boolean;
-  onClick: () => void;
-}) => (
-  <button
-    type="button"
-    disabled={disabled}
-    aria-pressed={isSelected}
-    aria-disabled={disabled ?? false}
-    className={`flex h-full shrink-0 items-center rounded-md px-2 text-sm leading-5 font-medium whitespace-nowrap transition-colors disabled:pointer-events-none disabled:opacity-50 ${
-      isSelected
-        ? 'bg-bg-action-primary-inverted text-fg-primary shadow-[0px_1px_3px_0px_var(--shadow-soft),0px_1px_2px_-1px_var(--shadow-soft)]'
-        : 'bg-transparent text-fg-primary hover:bg-bg-action-secondary-hover'
-    }`}
-    onClick={onClick}
-  >
-    {label}
-  </button>
-);
 
 export const WidgetCardPreview = ({ variant }: { variant: WidgetSizeIconVariant }) => {
   return (
@@ -123,17 +96,20 @@ export const AddWidgetModalCard = ({
 
         {hasSupportedSizes ? (
           <div className="flex w-full items-center justify-between gap-4 pb-0.5">
-            <div className="flex h-9 shrink-0 flex-nowrap items-center gap-1 rounded-lg bg-bg-surface-nested p-1">
+            <SegmentedControl.Root
+              label={t('feature.dashboard.widgetMenu.sizeLabel')}
+              value={selectedVariant}
+              onChange={value => {
+                const variant = card.sizeVariants.find(item => item === value);
+                if (variant) onSelectSize(variant);
+              }}
+            >
               {card.sizeVariants.map(variant => (
-                <ModalSizeChip
-                  key={variant}
-                  label={t(WIDGET_SIZE_CONFIG[variant].labelKey)}
-                  disabled={isWidgetAlreadyOnDashboard}
-                  isSelected={selectedVariant === variant}
-                  onClick={() => onSelectSize(variant)}
-                />
+                <SegmentedControl.Item key={variant} value={variant} disabled={isWidgetAlreadyOnDashboard}>
+                  {t(WIDGET_SIZE_CONFIG[variant].labelKey)}
+                </SegmentedControl.Item>
               ))}
-            </div>
+            </SegmentedControl.Root>
 
             <Button
               variant="primary"
