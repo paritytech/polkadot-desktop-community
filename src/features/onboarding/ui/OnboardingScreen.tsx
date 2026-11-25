@@ -239,12 +239,8 @@ export const OnboardingScreen = () => {
         </div>
       </div>
       {!isProductionBuild() && (
-        <div
-          data-testid={TEST_IDS.onboardingSkip}
-          className="mt-4 flex items-center justify-center space-x-4"
-          style={{ appRegion: 'no-drag' }}
-        >
-          <Button variant="ghost" onClick={() => navigate({ to: '/dashboard' })}>
+        <div className="mt-4 flex items-center justify-center space-x-4" style={{ appRegion: 'no-drag' }}>
+          <Button variant="ghost" data-testid={TEST_IDS.onboardingSkip} onClick={() => navigate({ to: '/dashboard' })}>
             {t('common.action.skip')}
           </Button>
         </div>

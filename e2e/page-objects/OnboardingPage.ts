@@ -114,7 +114,7 @@ export class OnboardingPage {
    * not, being ordinary routing.
    */
   async skipOnboarding() {
-    await this.skipButton.locator('button').click({ timeout: VERY_LONG_TIMEOUT });
+    await this.skipButton.click({ timeout: VERY_LONG_TIMEOUT });
     await this.page.waitForURL(/dashboard/, { timeout: DEFAULT_TIMEOUT });
   }
 

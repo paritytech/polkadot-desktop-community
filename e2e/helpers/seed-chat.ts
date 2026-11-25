@@ -205,12 +205,7 @@ export async function seedChatRooms(page: Page, specs: SeedChatRoomSpec[]): Prom
 
   const homeButton = page.getByTestId(TEST_IDS.homeButton);
   await expect(homeButton).toBeVisible({ timeout: DEFAULT_TIMEOUT });
-  await homeButton
-    .locator('button')
-    .click()
-    .catch(async () => {
-      await homeButton.click();
-    });
+  await homeButton.click();
   await page.waitForURL(/dashboard/, { timeout: DEFAULT_TIMEOUT });
 
   // Re-await the manager so the seeded rooms have a live manager to map through
