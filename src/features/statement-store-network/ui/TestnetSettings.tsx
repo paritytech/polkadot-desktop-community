@@ -1,7 +1,6 @@
-import { Select } from '@novasamatech/tr-ui';
 import { memo, useState } from 'react';
 
-import { SettingsList, SettingsSection } from '@/shared/components';
+import { Select, SettingsList, SettingsSection } from '@/shared/components';
 import { reloadApp } from '@/shared/env';
 import { useRxState } from '@/shared/rxstate';
 import { useTranslation } from '@/shared/translation';
@@ -61,7 +60,7 @@ export const TestnetSettings = memo(() => {
   return (
     <SettingsList title={t('feature.statementStoreNetwork.title')}>
       <SettingsSection>
-        <Select value={settings.environmentId} onValueChange={handleSelectChange}>
+        <Select.Root value={settings.environmentId} onValueChange={handleSelectChange}>
           <Select.Trigger>
             <Select.Value />
           </Select.Trigger>
@@ -72,7 +71,7 @@ export const TestnetSettings = memo(() => {
               </Select.Item>
             ))}
           </Select.Content>
-        </Select>
+        </Select.Root>
       </SettingsSection>
 
       <NetworkChangeLogoutDialog

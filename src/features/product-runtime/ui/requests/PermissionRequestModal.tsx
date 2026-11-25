@@ -43,7 +43,7 @@ export const PermissionRequestModal = ({
   onDeny,
   onDismiss,
 }: Props) => (
-  <ProductRequestDialog.Root variant="default" onDismiss={onDismiss ?? onDeny}>
+  <ProductRequestDialog.Root height="content" onDismiss={onDismiss ?? onDeny}>
     <div className="contents" data-testid={dialogTestId} />
     <RequestProductHeader identifier={identifier} />
 

@@ -1,8 +1,7 @@
-import { DropdownMenu } from '@novasamatech/tr-ui';
 import { Ellipsis, Search } from 'lucide-react';
 import { type ReactNode } from 'react';
 
-import { IconButton } from '@/shared/components';
+import { DropdownMenu, IconButton } from '@/shared/components';
 import { useTranslation } from '@/shared/translation';
 
 import { Avatar } from './Avatar';
@@ -41,19 +40,19 @@ export const RequestRoomHeader = ({ name, actionIcon, actionLabel, onAction }: R
               <Search strokeWidth={1.75} className="size-5" />
             </IconButton>
             {onAction && (
-              <DropdownMenu>
+              <DropdownMenu.Root>
                 <DropdownMenu.Trigger asChild>
                   <IconButton size="sm" label={t('feature.chat.roomActions')}>
                     <Ellipsis strokeWidth={1.75} className="size-5" />
                   </IconButton>
                 </DropdownMenu.Trigger>
                 <DropdownMenu.Content align="end">
-                  <DropdownMenu.Item variant="destructive" onClick={onAction}>
+                  <DropdownMenu.Item variant="danger" onClick={onAction}>
                     {actionIcon}
                     {actionLabel}
                   </DropdownMenu.Item>
                 </DropdownMenu.Content>
-              </DropdownMenu>
+              </DropdownMenu.Root>
             )}
           </div>
         </div>

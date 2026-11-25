@@ -1,6 +1,6 @@
-import { AlertDialog } from '@novasamatech/tr-ui';
 import { memo } from 'react';
 
+import { AlertDialog } from '@/shared/components';
 import { useTranslation } from '@/shared/translation';
 
 type Props = {
@@ -19,7 +19,7 @@ export const NetworkChangeLogoutDialog = memo(({ open, onConfirm, onCancel }: Pr
   };
 
   return (
-    <AlertDialog open={open} onOpenChange={handleOpenChange}>
+    <AlertDialog.Root open={open} onOpenChange={handleOpenChange}>
       <AlertDialog.Content>
         <AlertDialog.Header>
           <AlertDialog.Title>{t('feature.statementStoreNetwork.changeNetworkDialog.title')}</AlertDialog.Title>
@@ -31,16 +31,14 @@ export const NetworkChangeLogoutDialog = memo(({ open, onConfirm, onCancel }: Pr
         </AlertDialog.Header>
         <AlertDialog.Footer>
           <div className="flex w-full gap-2 p-1">
-            <AlertDialog.Cancel fullWidth onClick={onCancel}>
-              {t('common.action.cancel')}
-            </AlertDialog.Cancel>
-            <AlertDialog.Action fullWidth onClick={onConfirm}>
+            <AlertDialog.Cancel onClick={onCancel}>{t('common.action.cancel')}</AlertDialog.Cancel>
+            <AlertDialog.Action onClick={onConfirm}>
               {t('feature.statementStoreNetwork.changeNetworkDialog.confirm')}
             </AlertDialog.Action>
           </div>
         </AlertDialog.Footer>
       </AlertDialog.Content>
-    </AlertDialog>
+    </AlertDialog.Root>
   );
 });
 

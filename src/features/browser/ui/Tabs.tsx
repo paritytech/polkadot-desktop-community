@@ -2,11 +2,10 @@ import { type DragEndEvent, DndContext, PointerSensor, closestCenter, useSensor,
 import { restrictToHorizontalAxis } from '@dnd-kit/modifiers';
 import { SortableContext, horizontalListSortingStrategy, useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { Popover } from '@novasamatech/tr-ui';
 import { Pin, X } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import { SegmentedControl } from '@/shared/components';
+import { Popover, SegmentedControl } from '@/shared/components';
 import { Slot } from '@/shared/di';
 import { isElectron } from '@/shared/env';
 import { useRxState } from '@/shared/rxstate';
@@ -246,7 +245,7 @@ const SortableTab = ({ tab, isActive, onClose }: SortableTabProps) => {
   const setDeeplink = (deeplink: string) => browserTabs.updateTabDeeplink(tab.id, deeplink);
 
   return (
-    <Popover open={showHoverCard}>
+    <Popover.Root open={showHoverCard}>
       <Popover.Anchor asChild>
         <div
           ref={setTabRef}
@@ -283,13 +282,7 @@ const SortableTab = ({ tab, isActive, onClose }: SortableTabProps) => {
           </button>
         </div>
       </Popover.Anchor>
-      <Popover.Content
-        side="bottom"
-        sideOffset={4}
-        collisionPadding={8}
-        variant="flush"
-        onOpenAutoFocus={e => e.preventDefault()}
-      >
+      <Popover.Content side="bottom" sideOffset={4} collisionPadding={8} onOpenAutoFocus={e => e.preventDefault()}>
         <div className="pointer-events-none flex w-max max-w-72 min-w-44 flex-col gap-2 p-3" data-testid={TEST_IDS.tabHoverCard}>
           <Slot id={tabHoverSlot} props={{ tab }} />
           {!isSystemTabType(tab.type) && (
@@ -300,7 +293,7 @@ const SortableTab = ({ tab, isActive, onClose }: SortableTabProps) => {
           )}
         </div>
       </Popover.Content>
-    </Popover>
+    </Popover.Root>
   );
 };
 

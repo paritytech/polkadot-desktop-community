@@ -1,7 +1,7 @@
-import { DropdownMenu } from '@novasamatech/tr-ui';
 import { Check, LayoutDashboard, MoreHorizontal, Trash2 } from 'lucide-react';
 import { type ReactNode, useState } from 'react';
 
+import { DropdownMenu } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { cnTw } from '@/shared/utils';
@@ -64,7 +64,7 @@ export const WidgetMenu = ({
   const showSizeSection = isSizeLocked ? sizes.length > 0 : sizes.length > 1;
 
   return (
-    <DropdownMenu open={isOpen} onOpenChange={handleOpenChange}>
+    <DropdownMenu.Root open={isOpen} onOpenChange={handleOpenChange}>
       <span className={widgetTopbarActionVisibilityClass}>
         <DropdownMenu.Trigger asChild>
           <button
@@ -126,7 +126,7 @@ export const WidgetMenu = ({
 
           {menuItems}
 
-          <DropdownMenu.Item data-testid={TEST_IDS.dashboardWidgetMenuRemove} variant="destructive" onClick={onRemove}>
+          <DropdownMenu.Item data-testid={TEST_IDS.dashboardWidgetMenuRemove} variant="danger" onClick={onRemove}>
             <div className="flex h-8 w-full items-center gap-2 rounded-md">
               <Trash2 className="size-4 text-fg-error" />
               <span className="flex-1 text-sm leading-5 font-medium">{removeLabel}</span>
@@ -134,6 +134,6 @@ export const WidgetMenu = ({
           </DropdownMenu.Item>
         </div>
       </DropdownMenu.Content>
-    </DropdownMenu>
+    </DropdownMenu.Root>
   );
 };

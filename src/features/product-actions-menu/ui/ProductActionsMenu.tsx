@@ -1,9 +1,8 @@
-import { DropdownMenu } from '@novasamatech/tr-ui';
 import { useNavigate } from '@tanstack/react-router';
 import { MoreHorizontal, Settings } from 'lucide-react';
 import { useCallback, useState } from 'react';
 
-import { Button, IconButton } from '@/shared/components';
+import { Button, DropdownMenu, IconButton } from '@/shared/components';
 import { Slot } from '@/shared/di';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
@@ -20,7 +19,7 @@ export const ProductActionsMenu = ({ productId }: Props) => {
   const closeMenu = useCallback(() => setOpen(false), []);
 
   return (
-    <DropdownMenu open={open} onOpenChange={setOpen}>
+    <DropdownMenu.Root open={open} onOpenChange={setOpen}>
       <span className="-ms-2 -me-1 flex">
         <DropdownMenu.Trigger asChild>
           <IconButton
@@ -51,6 +50,6 @@ export const ProductActionsMenu = ({ productId }: Props) => {
           </div>
         </div>
       </DropdownMenu.Content>
-    </DropdownMenu>
+    </DropdownMenu.Root>
   );
 };

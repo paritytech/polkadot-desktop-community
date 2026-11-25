@@ -1,8 +1,8 @@
-import { ContextMenu } from '@novasamatech/tr-ui';
 import { LayoutDashboard } from 'lucide-react';
 import { type MouseEvent, type PropsWithChildren } from 'react';
 
 import AddToDashboardIcon from '@/shared/assets/images/add-to-dashboard.svg?jsx';
+import { ContextMenu } from '@/shared/components';
 import { useTranslation } from '@/shared/translation';
 
 type DashboardContextMenuProps = PropsWithChildren<{
@@ -26,7 +26,7 @@ export const DashboardContextMenu = ({ children, showCleanup, onAddWidget, onCle
   const { t } = useTranslation();
 
   return (
-    <ContextMenu>
+    <ContextMenu.Root>
       <ContextMenu.Trigger asChild onContextMenu={suppressOnCard}>
         {children}
       </ContextMenu.Trigger>
@@ -57,6 +57,6 @@ export const DashboardContextMenu = ({ children, showCleanup, onAddWidget, onCle
           ) : null}
         </div>
       </ContextMenu.Content>
-    </ContextMenu>
+    </ContextMenu.Root>
   );
 };

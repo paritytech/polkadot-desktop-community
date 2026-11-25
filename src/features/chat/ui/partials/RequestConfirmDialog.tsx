@@ -1,6 +1,4 @@
-import { Dialog } from '@novasamatech/tr-ui';
-
-import { Button } from '@/shared/components';
+import { Button, Dialog } from '@/shared/components';
 
 type RequestConfirmDialogProps = {
   isOpen: boolean;
@@ -26,7 +24,7 @@ export const RequestConfirmDialog = ({
   onConfirm,
 }: RequestConfirmDialogProps) => {
   return (
-    <Dialog modal open={isOpen} onOpenChange={open => !open && onClose()}>
+    <Dialog.Root modal open={isOpen} onOpenChange={open => !open && onClose()}>
       <Dialog.Content>
         <div data-testid={testId} className="flex flex-col gap-4 p-8">
           <h3 className="text-xl leading-7 font-semibold text-fg-primary">{title}</h3>
@@ -39,6 +37,6 @@ export const RequestConfirmDialog = ({
           </div>
         </div>
       </Dialog.Content>
-    </Dialog>
+    </Dialog.Root>
   );
 };

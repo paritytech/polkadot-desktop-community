@@ -1,9 +1,9 @@
-import { Dialog, ProductHeader } from '@novasamatech/tr-ui';
+import { ProductHeader } from '@novasamatech/tr-ui';
 import JsonView from '@uiw/react-json-view';
 import { AlertTriangle, ChevronLeft, Info } from 'lucide-react';
 import { type CSSProperties, type PropsWithChildren, type ReactNode, memo, useMemo } from 'react';
 
-import { Button, CopyButton } from '@/shared/components';
+import { Button, CopyButton, Dialog } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { cnTw } from '@/shared/utils';

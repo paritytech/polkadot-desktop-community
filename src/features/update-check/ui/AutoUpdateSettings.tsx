@@ -1,7 +1,6 @@
-import { Select } from '@novasamatech/tr-ui';
 import { memo, useEffect, useState } from 'react';
 
-import { Box, Button, SettingsList, SettingsSection } from '@/shared/components';
+import { Box, Button, Select, SettingsList, SettingsSection } from '@/shared/components';
 import { useTranslation } from '@/shared/translation';
 
 import { useUpdateCheck } from './UpdateCheckContext';
@@ -42,7 +41,7 @@ export const AutoUpdateSettings = memo(() => {
       <SettingsSection>
         <Box gap={3}>
           <Box gap={1}>
-            <Select value={channel} onValueChange={handleChannelChange}>
+            <Select.Root value={channel} onValueChange={handleChannelChange}>
               <Select.Trigger>
                 <Select.Value />
               </Select.Trigger>
@@ -50,7 +49,7 @@ export const AutoUpdateSettings = memo(() => {
                 <Select.Item value="stable">{t('feature.updateCheck.channel.stable')}</Select.Item>
                 <Select.Item value="experimental">{t('feature.updateCheck.channel.experimental')}</Select.Item>
               </Select.Content>
-            </Select>
+            </Select.Root>
             <span className="text-xs text-fg-secondary">
               {channel === 'experimental'
                 ? t('feature.updateCheck.channel.experimentalHint')

@@ -1,5 +1,4 @@
-import { Tooltip } from '@novasamatech/tr-ui';
-
+import { Tooltip } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
 import { cnTw } from '@/shared/utils';
 import { type ReactionAggregate } from '@/domains/chat';
@@ -18,7 +17,7 @@ export const ReactionPills = ({ reactions, isMe, onToggleReaction }: ReactionPil
     <Tooltip.Provider delayDuration={300}>
       <div className="flex gap-1">
         {reactions.map(reaction => (
-          <Tooltip key={reaction.emoji}>
+          <Tooltip.Root key={reaction.emoji}>
             <Tooltip.Trigger asChild>
               <button
                 data-testid={TEST_IDS.chatReactionPill}
@@ -52,7 +51,7 @@ export const ReactionPills = ({ reactions, isMe, onToggleReaction }: ReactionPil
             <Tooltip.Content side="top" sideOffset={4}>
               {reaction.reactors.map(r => (r.isMe ? 'You' : r.name)).join(', ')}
             </Tooltip.Content>
-          </Tooltip>
+          </Tooltip.Root>
         ))}
       </div>
     </Tooltip.Provider>

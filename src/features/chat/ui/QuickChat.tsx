@@ -1,4 +1,3 @@
-import { Popover } from '@novasamatech/tr-ui';
 import { useNavigate } from '@tanstack/react-router';
 import { ArrowLeft, MessagesSquare } from 'lucide-react';
 import { type PropsWithChildren, memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -7,7 +6,7 @@ import { of } from 'rxjs';
 
 import ChatBubbleOvalLeftIcon from '@/shared/assets/images/header/chat-bubble-oval-left.svg?jsx';
 import MaximizeIcon from '@/shared/assets/images/header/maximize.svg?jsx';
-import { DismissOverlay } from '@/shared/components';
+import { DismissOverlay, Popover } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { type ChatSession, type RoomFooter, useProductSessions } from '@/domains/chat';
@@ -123,10 +122,10 @@ export const QuickChat = memo(({ open, onOpenChange, children }: QuickChatProps)
   }, [open, onOpenChange]);
 
   return (
-    <Popover open={open} onOpenChange={onOpenChange}>
+    <Popover.Root open={open} onOpenChange={onOpenChange}>
       <DismissOverlay open={open} testId={TEST_IDS.dismissOverlay} onDismiss={() => onOpenChange(false)} />
       <Popover.Trigger asChild>{children}</Popover.Trigger>
-      <Popover.Content variant="flush" sideOffset={8} align="end" alignOffset={8}>
+      <Popover.Content sideOffset={8} align="end" alignOffset={8}>
         <div
           data-testid={TEST_IDS.quickChatPopover}
           className="flex h-137.5 w-89 flex-col overflow-hidden rounded-xl border border-stroke-primary bg-bg-surface-container shadow-lg"
@@ -166,7 +165,7 @@ export const QuickChat = memo(({ open, onOpenChange, children }: QuickChatProps)
           )}
         </div>
       </Popover.Content>
-    </Popover>
+    </Popover.Root>
   );
 });
 

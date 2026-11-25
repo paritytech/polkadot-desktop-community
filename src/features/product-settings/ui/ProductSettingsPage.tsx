@@ -1,9 +1,9 @@
-import { Dialog, toastSuccess } from '@novasamatech/tr-ui';
+import { toastSuccess } from '@novasamatech/tr-ui';
 import { useNavigate } from '@tanstack/react-router';
 import { ChevronLeft, ExternalLink, Grid2X2, Link2, Paintbrush, Trash2 } from 'lucide-react';
 import { type ReactNode, useState } from 'react';
 
-import { Button, ScrollArea } from '@/shared/components';
+import { Button, Dialog, ScrollArea } from '@/shared/components';
 import { Slot } from '@/shared/di';
 import { useTranslation } from '@/shared/translation';
 import { formatBytes } from '@/shared/utils';
@@ -200,8 +200,8 @@ const ConfirmDialog = ({
   cancelLabel: string;
   onConfirm: VoidFunction;
 }) => (
-  <Dialog open={open} onOpenChange={onOpenChange}>
-    <Dialog.Content showCloseButton>
+  <Dialog.Root open={open} onOpenChange={onOpenChange}>
+    <Dialog.Content>
       <Dialog.Header>
         <div className="w-full text-start">
           <Dialog.Title>
@@ -227,7 +227,7 @@ const ConfirmDialog = ({
         </div>
       </Dialog.Footer>
     </Dialog.Content>
-  </Dialog>
+  </Dialog.Root>
 );
 
 type RequestedPermission = {

@@ -1,7 +1,6 @@
-import { Dialog } from '@novasamatech/tr-ui';
 import { cloneElement, memo } from 'react';
 
-import { Button } from '@/shared/components';
+import { Button, Dialog } from '@/shared/components';
 import { useTranslation } from '@/shared/translation';
 import { getPermissionMeta } from '@/widgets/Permission';
 
@@ -24,13 +23,8 @@ export const PermissionDeniedDialog = memo(({ permission, onOpenSettings, onClos
   };
 
   return (
-    <Dialog open onOpenChange={open => !open && onClose()}>
-      <Dialog.Content
-        aria-describedby={undefined}
-        variant="default"
-        showCloseButton={false}
-        onInteractOutside={event => event.preventDefault()}
-      >
+    <Dialog.Root open onOpenChange={open => !open && onClose()}>
+      <Dialog.Content aria-describedby={undefined} showCloseButton={false} onInteractOutside={event => event.preventDefault()}>
         <div className="flex size-16 items-center justify-center rounded-xl bg-bg-illustration-light text-fg-primary">{icon}</div>
 
         <div className="flex w-full flex-col gap-2 py-1 text-start">
@@ -51,7 +45,7 @@ export const PermissionDeniedDialog = memo(({ permission, onOpenSettings, onClos
           </Button>
         </div>
       </Dialog.Content>
-    </Dialog>
+    </Dialog.Root>
   );
 });
 

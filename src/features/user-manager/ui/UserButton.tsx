@@ -1,6 +1,6 @@
-import { Tooltip } from '@novasamatech/tr-ui';
 import { memo } from 'react';
 
+import { Tooltip } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { useConsumerIdentity } from '@/domains/network';
@@ -46,7 +46,7 @@ export const UserButton = memo(() => {
 
   return (
     <Tooltip.Provider delayDuration={300}>
-      <Tooltip>
+      <Tooltip.Root>
         <div className="inline-flex items-center" data-testid={TEST_IDS.userButton}>
           <UserInfoPopover
             session={session}
@@ -66,7 +66,7 @@ export const UserButton = memo(() => {
           </UserInfoPopover>
         </div>
         {state !== 'connected' && <Tooltip.Content side="bottom">{statusLabel}</Tooltip.Content>}
-      </Tooltip>
+      </Tooltip.Root>
     </Tooltip.Provider>
   );
 });

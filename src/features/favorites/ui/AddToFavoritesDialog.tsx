@@ -1,9 +1,8 @@
-import { Dialog } from '@novasamatech/tr-ui';
 import { CircleAlert, LayoutGrid, RotateCw, Search, SearchX, Star, StarOff } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 
-import { Button, Input, Spinner } from '@/shared/components';
+import { Button, Dialog, Input, Spinner } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { cnTw } from '@/shared/utils';
@@ -72,20 +71,14 @@ export const AddToFavoritesDialog = ({ isOpen, onClose }: Props) => {
   };
 
   return (
-    <Dialog
+    <Dialog.Root
       modal
       open={isOpen}
       onOpenChange={open => {
         if (!open) onClose();
       }}
     >
-      <Dialog.Content
-        showCloseButton
-        variant="tall"
-        size="md"
-        aria-describedby={undefined}
-        data-testid={TEST_IDS.addToFavoritesDialog}
-      >
+      <Dialog.Content height="tall" width="md" aria-describedby={undefined} data-testid={TEST_IDS.addToFavoritesDialog}>
         <h2 className="text-lg leading-7 font-semibold text-fg-primary">
           <FormattedMessage id="feature.favorites.addDialog.title" />
         </h2>
@@ -182,6 +175,6 @@ export const AddToFavoritesDialog = ({ isOpen, onClose }: Props) => {
           )}
         </div>
       </Dialog.Content>
-    </Dialog>
+    </Dialog.Root>
   );
 };

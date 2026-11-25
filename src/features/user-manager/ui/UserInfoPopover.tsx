@@ -1,11 +1,11 @@
-import { Avatar, Popover } from '@novasamatech/tr-ui';
+import { Avatar } from '@novasamatech/tr-ui';
 import { type SessionUiInfo } from '@parity/truapi-host';
 import { useNavigate } from '@tanstack/react-router';
 import { LogIn, LogOut, Settings, WifiOff } from 'lucide-react';
 import { type PropsWithChildren, type ReactNode, memo, useEffect, useState } from 'react';
 
 import PolkadotLogo from '@/shared/assets/images/logo-icon.svg?jsx';
-import { DismissOverlay, Spinner } from '@/shared/components';
+import { DismissOverlay, Popover, Spinner } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { browserTabs } from '@/aggregates/browser-tabs';
@@ -158,10 +158,10 @@ export const UserInfoPopover = memo(({ session, username, connectionState, netwo
   };
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
+    <Popover.Root open={open} onOpenChange={setOpen}>
       <DismissOverlay open={open} testId={TEST_IDS.dismissOverlay} onDismiss={() => setOpen(false)} />
       <Popover.Trigger asChild>{children}</Popover.Trigger>
-      <Popover.Content variant="flush" sideOffset={8} align="end" alignOffset={8}>
+      <Popover.Content sideOffset={8} align="end" alignOffset={8}>
         <div className="flex w-89 flex-col items-center gap-2 px-2 pt-2 pb-4">
           <StatusBanner state={connectionState} networkName={networkName} />
           <UserHeader username={username} />
@@ -182,6 +182,6 @@ export const UserInfoPopover = memo(({ session, username, connectionState, netwo
           </div>
         </div>
       </Popover.Content>
-    </Popover>
+    </Popover.Root>
   );
 });

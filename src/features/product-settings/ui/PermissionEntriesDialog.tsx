@@ -1,6 +1,6 @@
-import { Dialog } from '@novasamatech/tr-ui';
 import { type ReactNode } from 'react';
 
+import { Dialog } from '@/shared/components';
 import { cnTw } from '@/shared/utils';
 import { type PermissionStatus } from '@/domains/product';
 import { PermissionStatusDropdown } from '@/widgets/Permission';
@@ -24,8 +24,8 @@ type Props = {
 // a titled dialog listing entries, each with an optional icon, label, and status dropdown.
 // Rows with an icon are 64px tall; icon-less rows (e.g. web domains) are 48px.
 export const PermissionEntriesDialog = ({ open, title, icon, entries, onOpenChange, onStatusChange }: Props) => (
-  <Dialog open={open} onOpenChange={onOpenChange}>
-    <Dialog.Content showCloseButton aria-describedby={undefined}>
+  <Dialog.Root open={open} onOpenChange={onOpenChange}>
+    <Dialog.Content aria-describedby={undefined}>
       <Dialog.Header>
         <Dialog.Title>
           {/* pe-8 keeps the title clear of the absolutely positioned close button */}
@@ -51,5 +51,5 @@ export const PermissionEntriesDialog = ({ open, title, icon, entries, onOpenChan
         ))}
       </div>
     </Dialog.Content>
-  </Dialog>
+  </Dialog.Root>
 );

@@ -1,6 +1,6 @@
-import { Dialog } from '@novasamatech/tr-ui';
 import { type PropsWithChildren, createContext, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
+import { Dialog } from '@/shared/components';
 import { useTranslation } from '@/shared/translation';
 
 /**
@@ -69,13 +69,13 @@ type RootProps = PropsWithChildren<{
    * decides whether it is a denial or no answer at all.
    */
   onDismiss: VoidFunction;
-  /** `tall` for the review layouts that scroll; `default` for a single-question prompt. */
-  variant?: 'default' | 'tall';
+  /** `tall` for the review layouts that scroll; `content` for a single-question prompt. */
+  height?: 'content' | 'tall';
 }>;
 
 // Always open: a request renders `Root` only while it wants the dialog up, and closes it
 // by unmounting. There is no `open={false}` state to model.
-const Root = ({ onDismiss, variant = 'tall', children }: RootProps) => {
+const Root = ({ onDismiss, height = 'tall', children }: RootProps) => {
   const [dismissOverride, setDismissOverride] = useState<VoidFunction | null>(null);
 
   const context = useMemo<ProductRequestDialogContextValue>(() => ({ setDismissOverride }), []);
@@ -87,17 +87,16 @@ const Root = ({ onDismiss, variant = 'tall', children }: RootProps) => {
   };
 
   return (
-    <Dialog modal open onOpenChange={handleOpenChange}>
+    <Dialog.Root modal open onOpenChange={handleOpenChange}>
       <Dialog.Content
         aria-describedby={undefined}
-        showCloseButton
-        variant={variant}
+        height={height}
         onOpenAutoFocus={event => event.preventDefault()}
         onInteractOutside={event => event.preventDefault()}
       >
         <ProductRequestDialogContext.Provider value={context}>{children}</ProductRequestDialogContext.Provider>
       </Dialog.Content>
-    </Dialog>
+    </Dialog.Root>
   );
 };
 

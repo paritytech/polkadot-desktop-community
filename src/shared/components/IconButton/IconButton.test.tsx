@@ -1,10 +1,11 @@
 // @vitest-environment happy-dom
 
-import { DropdownMenu } from '@novasamatech/tr-ui';
 import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createRef } from 'react';
 import { describe, expect, it, vi } from 'vitest';
+
+import { DropdownMenu } from '../DropdownMenu/DropdownMenu';
 
 import { IconButton } from './IconButton';
 
@@ -66,13 +67,13 @@ describe('IconButton', () => {
     const user = userEvent.setup();
     const onClick = vi.fn();
     render(
-      <DropdownMenu>
+      <DropdownMenu.Root>
         <DropdownMenu.Trigger asChild>
           <IconButton size="xs" label="Menu" onClick={onClick}>
             <svg />
           </IconButton>
         </DropdownMenu.Trigger>
-      </DropdownMenu>,
+      </DropdownMenu.Root>,
     );
 
     const button = screen.getByRole('button', { name: 'Menu' });

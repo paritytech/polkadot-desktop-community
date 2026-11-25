@@ -1,8 +1,7 @@
-import { Dialog } from '@novasamatech/tr-ui';
 import { Search } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 
-import { Input } from '@/shared/components';
+import { Dialog, Input } from '@/shared/components';
 import { useTransformer } from '@/shared/di';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
@@ -157,14 +156,14 @@ export const AddWidgetModalDb = ({
   );
 
   return (
-    <Dialog
+    <Dialog.Root
       modal
       open={isOpen}
       onOpenChange={open => {
         if (!open) handleClose();
       }}
     >
-      <Dialog.Content showCloseButton variant="default" size="xl" aria-describedby={undefined}>
+      <Dialog.Content width="xl" aria-describedby={undefined}>
         <div className="flex h-170 bg-bg-surface-container">
           <div className="flex w-[320px] shrink-0 flex-col gap-4 border-e border-stroke-primary bg-bg-surface-container pe-6">
             <Input
@@ -218,6 +217,6 @@ export const AddWidgetModalDb = ({
           )}
         </div>
       </Dialog.Content>
-    </Dialog>
+    </Dialog.Root>
   );
 };

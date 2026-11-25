@@ -1,7 +1,7 @@
-import { DropdownMenu } from '@novasamatech/tr-ui';
 import { useNavigate } from '@tanstack/react-router';
 import { Maximize2, RotateCw } from 'lucide-react';
 
+import { DropdownMenu } from '@/shared/components';
 import { isElectron } from '@/shared/env';
 import { createFeature } from '@/shared/feature';
 import { TEST_IDS } from '@/shared/test-ids';

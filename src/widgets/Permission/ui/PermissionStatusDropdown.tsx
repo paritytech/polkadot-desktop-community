@@ -1,6 +1,6 @@
-import { DropdownMenu } from '@novasamatech/tr-ui';
 import { Check, ChevronDown } from 'lucide-react';
 
+import { DropdownMenu } from '@/shared/components';
 import { useTranslation } from '@/shared/translation';
 import { type PermissionStatus } from '@/domains/product';
 import { STATUS_LABEL_KEYS } from '../metadata';
@@ -16,7 +16,7 @@ export const PermissionStatusDropdown = ({ value, onChange }: Props) => {
   const { t } = useTranslation();
 
   return (
-    <DropdownMenu>
+    <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild>
         <button className="flex h-6 shrink-0 items-center gap-1 rounded border border-stroke-primary bg-bg-action-primary-inverted px-2 py-1">
           <span className="text-xs leading-4 font-medium text-fg-primary">{t(STATUS_LABEL_KEYS[value])}</span>
@@ -31,6 +31,6 @@ export const PermissionStatusDropdown = ({ value, onChange }: Props) => {
           </DropdownMenu.Item>
         ))}
       </DropdownMenu.Content>
-    </DropdownMenu>
+    </DropdownMenu.Root>
   );
 };

@@ -1,6 +1,5 @@
 // @vitest-environment happy-dom
 
-import { DropdownMenu } from '@novasamatech/tr-ui';
 import { Outlet, RouterProvider, createMemoryHistory, createRootRoute, createRoute, createRouter } from '@tanstack/react-router';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -16,6 +15,7 @@ vi.mock('@novasamatech/tr-ui', async () => {
   return { ...actual, toastError: (...args: unknown[]) => toastErrorMock(...args) };
 });
 
+import { DropdownMenu } from '@/shared/components';
 import { TranslationProvider } from '@/shared/translation';
 import { type ProductChatRoom, roomsResource } from '@/domains/chat';
 import { type AccountId } from '@/domains/network';
@@ -67,12 +67,12 @@ function seedRooms(rooms: ProductChatRoom[]) {
 // The item is a Radix `DropdownMenu.Item`, which only renders inside an open menu; a
 // real one is mounted around it so the item's own selection handling is what runs.
 const MenuHost = ({ children }: PropsWithChildren) => (
-  <DropdownMenu open>
+  <DropdownMenu.Root open>
     <DropdownMenu.Trigger asChild>
       <button type="button">menu</button>
     </DropdownMenu.Trigger>
     <DropdownMenu.Content>{children}</DropdownMenu.Content>
-  </DropdownMenu>
+  </DropdownMenu.Root>
 );
 
 // Both open hooks navigate through `useNavigate`, so the item renders inside a real

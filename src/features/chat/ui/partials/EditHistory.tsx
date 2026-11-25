@@ -1,6 +1,6 @@
-import { Dialog } from '@novasamatech/tr-ui';
 import { Fragment } from 'react';
 
+import { Dialog } from '@/shared/components';
 import { useTranslation } from '@/shared/translation';
 import { type EditHistoryEntry } from '../helpers/message';
 
@@ -20,8 +20,8 @@ export const EditHistory = ({ isOpen, originalText, entries, onClose }: EditHist
   const earlierTexts = versions.slice(1);
 
   return (
-    <Dialog modal open={isOpen} onOpenChange={open => !open && onClose()}>
-      <Dialog.Content showCloseButton aria-describedby={undefined}>
+    <Dialog.Root modal open={isOpen} onOpenChange={open => !open && onClose()}>
+      <Dialog.Content aria-describedby={undefined}>
         <Dialog.Title>
           <span className="text-2xl leading-8 font-semibold text-fg-primary">{t('feature.chat.editHistory')}</span>
         </Dialog.Title>
@@ -38,7 +38,7 @@ export const EditHistory = ({ isOpen, originalText, entries, onClose }: EditHist
           ))}
         </div>
       </Dialog.Content>
-    </Dialog>
+    </Dialog.Root>
   );
 };
 

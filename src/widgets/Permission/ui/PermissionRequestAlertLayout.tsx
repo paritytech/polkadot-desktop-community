@@ -1,6 +1,7 @@
-import { Dialog, ProductHeader } from '@novasamatech/tr-ui';
+import { ProductHeader } from '@novasamatech/tr-ui';
 import { type AnimationEvent, type ReactNode } from 'react';
 
+import { Dialog } from '@/shared/components';
 import { useTranslation } from '@/shared/translation';
 import { useDisplayedProduct } from '@/domains/product';
 import { useProductHeaderProps } from '@/widgets/ProductHeader';
@@ -45,10 +46,9 @@ export const PermissionRequestAlertLayout = ({
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Content
         aria-describedby={undefined}
-        variant="default"
         showCloseButton={false}
         onAnimationEnd={handleAnimationEnd}
         onOpenAutoFocus={event => event.preventDefault()}
@@ -82,6 +82,6 @@ export const PermissionRequestAlertLayout = ({
 
         <div className="flex w-full min-w-0 gap-2">{footer}</div>
       </Dialog.Content>
-    </Dialog>
+    </Dialog.Root>
   );
 };

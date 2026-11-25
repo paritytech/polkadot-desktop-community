@@ -1,10 +1,11 @@
 // @vitest-environment happy-dom
 
-import { DropdownMenu } from '@novasamatech/tr-ui';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createRef } from 'react';
 import { describe, expect, it, vi } from 'vitest';
+
+import { DropdownMenu } from '../DropdownMenu/DropdownMenu';
 
 import { Button } from './Button';
 
@@ -64,11 +65,11 @@ describe('Button', () => {
 
   it('keeps its own classes under a tr-ui menu trigger', () => {
     render(
-      <DropdownMenu>
+      <DropdownMenu.Root>
         <DropdownMenu.Trigger asChild>
           <Button>Save</Button>
         </DropdownMenu.Trigger>
-      </DropdownMenu>,
+      </DropdownMenu.Root>,
     );
 
     const button = screen.getByRole('button', { name: 'Save' });

@@ -1,10 +1,9 @@
-import { DropdownMenu } from '@novasamatech/tr-ui';
 import { Ban, Ellipsis, LogOut, Search, ShieldOff } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useObservable } from 'react-rx';
 import { of } from 'rxjs';
 
-import { Button, IconButton } from '@/shared/components';
+import { Button, DropdownMenu, IconButton } from '@/shared/components';
 import { Slot } from '@/shared/di';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
@@ -272,7 +271,7 @@ export const Room = ({ session, initialSearch, onDeleted }: ChatConversationView
               <IconButton size="sm" label={t('feature.chat.search')} onClick={handleOpenSearch}>
                 <Search strokeWidth={1.75} className="size-5" />
               </IconButton>
-              <DropdownMenu>
+              <DropdownMenu.Root>
                 <DropdownMenu.Trigger asChild>
                   <IconButton data-testid={TEST_IDS.chatRoomHeaderMenuTrigger} size="sm" label={t('feature.chat.roomActions')}>
                     <Ellipsis strokeWidth={1.75} className="size-5" />
@@ -281,16 +280,16 @@ export const Room = ({ session, initialSearch, onDeleted }: ChatConversationView
                 <DropdownMenu.Content align="end">
                   {canBlock && (
                     <DropdownMenu.Item onClick={handleToggleBlocked}>
-                      {isBlocked ? <ShieldOff className="me-2 size-4" /> : <Ban className="me-2 size-4" />}
+                      {isBlocked ? <ShieldOff className="size-4" /> : <Ban className="size-4" />}
                       {isBlocked ? t('feature.chat.unblockUser') : t('feature.chat.blockUser')}
                     </DropdownMenu.Item>
                   )}
-                  <DropdownMenu.Item data-testid={TEST_IDS.chatRoomHeaderMenuDelete} variant="destructive" onClick={handleDelete}>
-                    <LogOut className="me-2 size-4" />
+                  <DropdownMenu.Item data-testid={TEST_IDS.chatRoomHeaderMenuDelete} variant="danger" onClick={handleDelete}>
+                    <LogOut className="size-4" />
                     {t('feature.chat.leaveChat')}
                   </DropdownMenu.Item>
                 </DropdownMenu.Content>
-              </DropdownMenu>
+              </DropdownMenu.Root>
             </div>
           </div>
         </div>

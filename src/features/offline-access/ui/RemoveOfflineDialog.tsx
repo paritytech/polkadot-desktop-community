@@ -1,6 +1,4 @@
-import { Dialog } from '@novasamatech/tr-ui';
-
-import { Button } from '@/shared/components';
+import { Button, Dialog } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { usePersistedProductById, useUnpinProduct } from '@/domains/product';
@@ -27,13 +25,13 @@ export const RemoveOfflineDialog = ({ productId, onClose }: Props) => {
     });
 
   return (
-    <Dialog
+    <Dialog.Root
       open
       onOpenChange={open => {
         if (!open) onClose();
       }}
     >
-      <Dialog.Content aria-describedby={undefined} variant="default">
+      <Dialog.Content aria-describedby={undefined}>
         <ProductDialogHeader product={record} />
         <div className="flex flex-col gap-2">
           <span className="text-2xl leading-8 font-semibold text-fg-primary">
@@ -64,6 +62,6 @@ export const RemoveOfflineDialog = ({ productId, onClose }: Props) => {
           </div>
         </Dialog.Footer>
       </Dialog.Content>
-    </Dialog>
+    </Dialog.Root>
   );
 };

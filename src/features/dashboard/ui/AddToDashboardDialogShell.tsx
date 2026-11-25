@@ -1,5 +1,6 @@
-import { Dialog } from '@novasamatech/tr-ui';
 import { type PropsWithChildren } from 'react';
+
+import { Dialog } from '@/shared/components';
 
 type AddToDashboardDialogShellProps = PropsWithChildren<{
   isOpen: boolean;
@@ -11,22 +12,16 @@ type AddToDashboardDialogShellProps = PropsWithChildren<{
 // source for that shell so the markup stays in one place.
 export const AddToDashboardDialogShell = ({ isOpen, onClose, children }: AddToDashboardDialogShellProps) => {
   return (
-    <Dialog
+    <Dialog.Root
       modal
       open={isOpen}
       onOpenChange={open => {
         if (!open) onClose();
       }}
     >
-      <Dialog.Content
-        showCloseButton
-        variant="default"
-        size="lg"
-        aria-describedby={undefined}
-        onOpenAutoFocus={event => event.preventDefault()}
-      >
+      <Dialog.Content width="lg" aria-describedby={undefined} onOpenAutoFocus={event => event.preventDefault()}>
         <div className="flex h-170 bg-bg-surface-container">{children}</div>
       </Dialog.Content>
-    </Dialog>
+    </Dialog.Root>
   );
 };

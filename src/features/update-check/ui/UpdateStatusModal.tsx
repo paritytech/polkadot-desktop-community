@@ -1,8 +1,7 @@
-import { Dialog } from '@novasamatech/tr-ui';
 import { AlertCircle, CheckCircle, Loader } from 'lucide-react';
 import { type ReactNode, memo } from 'react';
 
-import { Button } from '@/shared/components';
+import { Button, Dialog } from '@/shared/components';
 import { useTranslation } from '@/shared/translation';
 
 export type UpdateStatus = 'idle' | 'checking' | 'up-to-date' | 'downloading' | 'ready-to-install' | 'error' | 'unsupported';
@@ -81,7 +80,7 @@ export const UpdateStatusModal = memo(
     }
 
     return (
-      <Dialog modal open={isOpen} onOpenChange={handleOpenChange}>
+      <Dialog.Root modal open={isOpen} onOpenChange={handleOpenChange}>
         <Dialog.Content>
           <Dialog.Header>
             {icon}
@@ -127,7 +126,7 @@ export const UpdateStatusModal = memo(
             ) : null}
           </Dialog.Footer>
         </Dialog.Content>
-      </Dialog>
+      </Dialog.Root>
     );
   },
 );

@@ -1,9 +1,9 @@
 import { type DragEndEvent, DndContext, PointerSensor, closestCenter, useSensor, useSensors } from '@dnd-kit/core';
 import { SortableContext, arrayMove, rectSortingStrategy } from '@dnd-kit/sortable';
-import { DropdownMenu } from '@novasamatech/tr-ui';
 import { ArrowUpRight, MoreHorizontal, Trash2 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
+import { DropdownMenu } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { cnTw } from '@/shared/utils';
@@ -73,7 +73,7 @@ const FolderGridItem = ({
         <FolderItemContent itemId={itemId} iconSize={iconSize} />
       </button>
 
-      <DropdownMenu open={isMenuOpen} onOpenChange={open => onMenuOpenChange(menuId, open)}>
+      <DropdownMenu.Root open={isMenuOpen} onOpenChange={open => onMenuOpenChange(menuId, open)}>
         <DropdownMenu.Trigger asChild>
           <button
             type="button"
@@ -90,7 +90,7 @@ const FolderGridItem = ({
         </DropdownMenu.Trigger>
         <DropdownMenu.Content align="end">
           <div className="w-52.5">
-            <DropdownMenu.Item variant="destructive" onClick={handleRemoveWidget}>
+            <DropdownMenu.Item variant="danger" onClick={handleRemoveWidget}>
               <div className="flex h-8 w-full items-center gap-2 rounded-md">
                 <Trash2 className="size-4 text-fg-error" />
                 <span className="flex-1 text-sm leading-5 font-medium">{removeLabel}</span>
@@ -98,7 +98,7 @@ const FolderGridItem = ({
             </DropdownMenu.Item>
           </div>
         </DropdownMenu.Content>
-      </DropdownMenu>
+      </DropdownMenu.Root>
     </div>
   );
 };
