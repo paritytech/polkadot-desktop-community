@@ -1,11 +1,11 @@
-import { toastError, useTheme } from '@novasamatech/tr-ui';
+import { useTheme } from '@novasamatech/tr-ui';
 import { useNavigate } from '@tanstack/react-router';
 import { Loader, Smartphone } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import PolkadotLogo from '@/shared/assets/images/logo.svg?jsx';
 import { AUTOTEST_ENABLED } from '@/shared/autotest';
-import { Button, LoadingScreen, QrCode, Spinner } from '@/shared/components';
+import { Button, LoadingScreen, QrCode, Spinner, toast } from '@/shared/components';
 import { isProductionBuild, reloadApp } from '@/shared/env';
 import { useRxState } from '@/shared/rxstate';
 import { TEST_IDS } from '@/shared/test-ids';
@@ -81,7 +81,7 @@ export const OnboardingScreen = () => {
     // are surfaced by the connection panel, so suppress the toast unless we are
     // deferring to the plain pairing flow.
     if (hasError && errorContent && errorContent.kind !== 'noFreeSlots' && connectionState === 'pairing') {
-      toastError({ title: errorContent.title });
+      toast.error({ title: errorContent.title });
     }
   }, [hasError, errorContent, connectionState]);
 

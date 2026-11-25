@@ -1,7 +1,6 @@
-import { toast } from '@novasamatech/tr-ui';
 import { useEffect, useMemo, useState } from 'react';
 
-import { ScrollArea } from '@/shared/components';
+import { ScrollArea, toast } from '@/shared/components';
 import { useTranslation } from '@/shared/translation';
 import { cnTw } from '@/shared/utils';
 import { type DashboardCard, type WidgetSizeIconVariant, dashboardLayoutService } from '@/domains/application';
@@ -80,7 +79,7 @@ export const AddWidgetModalNativePanel = ({
 
     const outcome = await favorites!.onAdd(entry);
     if (!outcome.ok) {
-      toast.error(t('feature.dashboard.addWidget.toast.favoritesAddFailed'));
+      toast.error({ title: t('feature.dashboard.addWidget.toast.favoritesAddFailed') });
       return;
     }
 
@@ -101,7 +100,7 @@ export const AddWidgetModalNativePanel = ({
 
     const outcome = await onAddNativeCard(entry, WIDGET_SIZE_CONFIG[variant].size);
     if (!outcome.ok) {
-      toast.error(t('feature.dashboard.addWidget.toast.widgetAddFailed'));
+      toast.error({ title: t('feature.dashboard.addWidget.toast.widgetAddFailed') });
       return;
     }
 

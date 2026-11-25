@@ -1,7 +1,7 @@
-import { toastError } from '@novasamatech/tr-ui';
 import { useEffect, useRef, useState } from 'react';
 import { useSyncObservable } from 'react-rx';
 
+import { toast } from '@/shared/components';
 import { useLooseRef } from '@/shared/hooks';
 import { useTranslation } from '@/shared/translation';
 import {
@@ -87,7 +87,7 @@ export const RemotePermissionPromptHost = () => {
       }
     }
     if (effect.toast) {
-      toastError({ title: tRef()('feature.productPermissions.externalBlockedToast', { origin: shown.origin }) });
+      toast.error({ title: tRef()('feature.productPermissions.externalBlockedToast', { origin: shown.origin }) });
     }
 
     finalStatusRef.current = effect.status;

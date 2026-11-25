@@ -1,15 +1,11 @@
 // @vitest-environment happy-dom
 
+import { render, screen } from '@testing-library/react';
+import { createElement } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-const { toastSuccessMock } = vi.hoisted(() => ({ toastSuccessMock: vi.fn() }));
-
-vi.mock('@novasamatech/tr-ui', async () => {
-  const actual = await vi.importActual<object>('@novasamatech/tr-ui');
-
-  return { ...actual, toastSuccess: (args: unknown) => toastSuccessMock(args) };
-});
-
+import { Toaster } from '@/shared/components';
+import { TranslationProvider } from '@/shared/translation';
 import { foldersUseCase } from '@/domains/application';
 import { resolveProductUseCase } from '@/domains/product';
 import { productManagementUseCase } from '@/aggregates/product-management';
@@ -30,6 +26,7 @@ describe('triggerProductDashboardShortcut', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     isIconInFavoritesMock.mockResolvedValue(false);
+    render(createElement(TranslationProvider, null, createElement(Toaster)));
   });
 
   it('opens the add-to-dashboard dialog for widget products', async () => {
@@ -48,7 +45,7 @@ describe('triggerProductDashboardShortcut', () => {
 
     expect(isIconInFavoritesMock).toHaveBeenCalledWith('app.dot');
     expect(addProductToDashboardMock).toHaveBeenCalledWith(expect.objectContaining({ baseName: 'app.dot' }), { w: 1, h: 1 });
-    expect(toastSuccessMock).toHaveBeenCalled();
+    await screen.findByText('feature.dashboard.menu.toast.addedToFavorites');
   });
 
   it('removes a non-widget product from favorites when it is already there', async () => {
@@ -59,7 +56,7 @@ describe('triggerProductDashboardShortcut', () => {
 
     expect(removeIconMock).toHaveBeenCalledWith('app.dot');
     expect(addProductToDashboardMock).not.toHaveBeenCalled();
-    expect(toastSuccessMock).toHaveBeenCalled();
+    await screen.findByText('feature.dashboard.menu.toast.removedFromFavorites');
   });
 
   it('keeps the favorites path for a resolved product even when its id is a native addable id', async () => {

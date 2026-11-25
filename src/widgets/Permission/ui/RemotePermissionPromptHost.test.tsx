@@ -1,12 +1,11 @@
 // @vitest-environment happy-dom
 
-import type * as trUi from '@novasamatech/tr-ui';
 import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { type PropsWithChildren } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { ConfirmationProvider } from '@/shared/components';
+import { ConfirmationProvider, Toaster } from '@/shared/components';
 import { TranslationProvider } from '@/shared/translation';
 import { _resetRemotePermissionBroker, permissionsUseCase, requestExternalUrlAccess } from '@/domains/product';
 
@@ -15,19 +14,11 @@ import { RemotePermissionPromptHost } from './RemotePermissionPromptHost';
 // The write is core-backed (an injected adapter, not a resource); the use-case method
 // behind `useSetPermissionStatus` is spied in place and the hook itself stays real.
 const mockRemoteRun = vi.spyOn(permissionsUseCase, 'setPermissionStatus').mockResolvedValue();
-const mockToastError = vi.fn();
-
-vi.mock('@novasamatech/tr-ui', async () => {
-  const actual = await vi.importActual<typeof trUi>('@novasamatech/tr-ui');
-  return {
-    ...actual,
-    toastError: (...args: unknown[]) => mockToastError(...args),
-  };
-});
 
 const Providers = ({ children }: PropsWithChildren) => (
   <TranslationProvider>
     <ConfirmationProvider>{children}</ConfirmationProvider>
+    <Toaster />
   </TranslationProvider>
 );
 
@@ -35,7 +26,6 @@ describe('RemotePermissionPromptHost', () => {
   beforeEach(() => {
     _resetRemotePermissionBroker();
     mockRemoteRun.mockClear();
-    mockToastError.mockClear();
   });
 
   it('renders nothing when there are no pending permission requests', () => {
@@ -151,7 +141,7 @@ describe('RemotePermissionPromptHost', () => {
       request: { tag: 'Remote', value: { permission: { tag: 'Remote', value: { domains: ['storage.googleapis.com'] } } } },
       status: 'denied',
     });
-    expect(mockToastError).toHaveBeenCalled();
+    await screen.findByText('Blocked network request to https://storage.googleapis.com. Change in App Permissions.');
   });
 
   it('shows a dialog for the next pending request after the first is resolved', async () => {

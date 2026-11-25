@@ -1,9 +1,8 @@
-import { toastSuccess } from '@novasamatech/tr-ui';
 import { useNavigate } from '@tanstack/react-router';
 import { ChevronLeft, ExternalLink, Grid2X2, Link2, Paintbrush, Trash2 } from 'lucide-react';
 import { type ReactNode, useState } from 'react';
 
-import { Button, Dialog, ScrollArea } from '@/shared/components';
+import { Button, Dialog, ScrollArea, toast } from '@/shared/components';
 import { Slot } from '@/shared/di';
 import { useTranslation } from '@/shared/translation';
 import { formatBytes } from '@/shared/utils';
@@ -48,7 +47,7 @@ export const ProductSettingsPage = ({ productId, backLabel, onBack }: Props) => 
   const handleForget = () => {
     forgetProduct(productId);
     setForgetDialogOpen(false);
-    toastSuccess({ title: t('feature.productSettings.toast.appReset', { productName }) });
+    toast.success({ title: t('feature.productSettings.toast.appReset', { productName }) });
     onBack();
   };
 
@@ -60,7 +59,7 @@ export const ProductSettingsPage = ({ productId, backLabel, onBack }: Props) => 
     }
 
     setClearCacheDialogOpen(false);
-    toastSuccess({ title: t('feature.productSettings.toast.cacheCleared', { productName }) });
+    toast.success({ title: t('feature.productSettings.toast.cacheCleared', { productName }) });
   };
 
   const requestedPermissions = buildRequestedPermissions(permissionEntries, accountAccess, t);

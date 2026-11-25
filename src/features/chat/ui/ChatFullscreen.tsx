@@ -1,9 +1,8 @@
-import { toastInfo } from '@novasamatech/tr-ui';
 import { ChevronLeft, MessagesSquare } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import LastChatsIcon from '@/shared/assets/images/header/last-chats.svg?jsx';
-import { widgetSpanWidthCss } from '@/shared/components';
+import { toast, widgetSpanWidthCss } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import {
@@ -262,7 +261,7 @@ export const ChatFullscreen = ({ selected, onSelect, onDeselect }: Props) => {
     const wasSelected = declineTarget.peerId === selected;
     try {
       await declineRequest(declineTarget.requestId);
-      toastInfo({ title: t('feature.chat.request.declinedToast', { name }) });
+      toast.info({ title: t('feature.chat.request.declinedToast', { name }) });
       if (wasSelected) onDeselect?.();
     } catch (e) {
       console.error('[chat] Failed to decline request:', e);

@@ -1,10 +1,9 @@
-import { toastError, toastSuccess } from '@novasamatech/tr-ui';
 import { Trash2 } from 'lucide-react';
 import { memo, useId, useState } from 'react';
 import { firstValueFrom } from 'rxjs';
 import * as v from 'valibot';
 
-import { Button, IconButton, Input, Label, SettingsList, SettingsSection } from '@/shared/components';
+import { Button, IconButton, Input, Label, SettingsList, SettingsSection, toast } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { genesisHash, useCustomChains, useDiscoverAndAddChain, useRemoveCustomChain } from '@/domains/network';
@@ -33,7 +32,7 @@ export const CustomChainsSettings = memo(() => {
   const handleAdd = async () => {
     const trimmedEndpoint = endpoint.trim();
     if (!isValidWsUrl(trimmedEndpoint)) {
-      toastError({
+      toast.error({
         title: t('feature.customChains.errors.invalidUrlTitle'),
         description: t('feature.customChains.errors.invalidUrlDescription'),
       });
@@ -44,25 +43,25 @@ export const CustomChainsSettings = memo(() => {
 
     switch (result.status) {
       case 'duplicate-builtin':
-        toastError({
+        toast.error({
           title: t('feature.customChains.errors.duplicateBuiltinTitle'),
           description: t('feature.customChains.errors.duplicateBuiltinDescription'),
         });
         return;
       case 'duplicate-custom':
-        toastError({
+        toast.error({
           title: t('feature.customChains.errors.duplicateCustomTitle'),
           description: t('feature.customChains.errors.duplicateCustomDescription'),
         });
         return;
       case 'failed':
-        toastError({
+        toast.error({
           title: t('feature.customChains.errors.connectionFailedTitle'),
           description: result.message || t('feature.customChains.errors.unknownError'),
         });
         return;
       case 'added':
-        toastSuccess({
+        toast.success({
           title: t('feature.customChains.addedToastTitle'),
           description: t('feature.customChains.addedToastDescription', {
             name: result.name,

@@ -7,15 +7,7 @@ import { type PropsWithChildren } from 'react';
 import { of } from 'rxjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-const toastErrorMock = vi.fn();
-
-vi.mock('@novasamatech/tr-ui', async () => {
-  const actual = await vi.importActual<object>('@novasamatech/tr-ui');
-
-  return { ...actual, toastError: (...args: unknown[]) => toastErrorMock(...args) };
-});
-
-import { DropdownMenu } from '@/shared/components';
+import { DropdownMenu, Toaster } from '@/shared/components';
 import { TranslationProvider } from '@/shared/translation';
 import { type ProductChatRoom, roomsResource } from '@/domains/chat';
 import { type AccountId } from '@/domains/network';
@@ -30,6 +22,7 @@ import { ProceedInChatMenuItem } from './ProceedInChatMenuItem';
 const commitRunMock = vi.spyOn(commitmentUseCase, 'commitProductByIdentifier').mockResolvedValue(null);
 
 const PRODUCT_ID = 'my-app.dot';
+const ERROR_TITLE = "Couldn't create the chat room";
 const USER_ID = '0x1111111111111111111111111111111111111111111111111111111111111111' as AccountId;
 
 // The rooms read is keyed by the signed-in user, so a connected session is what
@@ -85,6 +78,7 @@ const renderItem = async () => {
           <MenuHost>
             <ProceedInChatMenuItem productId={PRODUCT_ID} closeMenu={vi.fn()} />
           </MenuHost>
+          <Toaster />
         </TranslationProvider>
         <Outlet />
       </>
@@ -128,7 +122,7 @@ describe('ProceedInChatMenuItem', () => {
     await waitFor(() => expect(router.state.location.pathname).toBe('/chat'));
     expect(commitRunMock).toHaveBeenCalledWith(PRODUCT_ID);
     expect(browserTabs.selectedTabId$.get()).toBe('chat');
-    expect(toastErrorMock).not.toHaveBeenCalled();
+    expect(screen.queryByText(ERROR_TITLE)).toBeNull();
   });
 
   it('surfaces an error when the product cannot be resolved, so no room will ever arrive', async () => {
@@ -137,7 +131,7 @@ describe('ProceedInChatMenuItem', () => {
 
     await userEvent.click(await screen.findByRole('menuitem'));
 
-    expect(toastErrorMock).toHaveBeenCalled();
+    await screen.findByText(ERROR_TITLE);
   });
 
   it('surfaces an error when the commit itself fails', async () => {
@@ -146,6 +140,6 @@ describe('ProceedInChatMenuItem', () => {
 
     await userEvent.click(await screen.findByRole('menuitem'));
 
-    expect(toastErrorMock).toHaveBeenCalled();
+    await screen.findByText(ERROR_TITLE);
   });
 });

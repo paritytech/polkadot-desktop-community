@@ -1,5 +1,6 @@
-import { toastError, toastSuccess } from '@novasamatech/tr-ui';
 import { type Observable } from 'rxjs';
+
+import { toast } from '@/shared/components';
 
 type Options = {
   successTitle: string;
@@ -14,12 +15,12 @@ export function runConfirmAction<T>(action$: Observable<T | null>, options: Opti
   action$.subscribe({
     next: result => {
       if (!result) {
-        toastError({ title: options.errorTitle });
+        toast.error({ title: options.errorTitle });
         return;
       }
-      toastSuccess({ title: options.successTitle });
+      toast.success({ title: options.successTitle });
       options.onSuccess?.();
     },
-    error: () => toastError({ title: options.errorTitle }),
+    error: () => toast.error({ title: options.errorTitle }),
   });
 }

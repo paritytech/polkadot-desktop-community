@@ -1,6 +1,6 @@
-import { toast } from '@novasamatech/tr-ui';
 import { useEffect } from 'react';
 
+import { toast } from '@/shared/components';
 import { useTransformer } from '@/shared/di';
 import { useRxState } from '@/shared/rxstate';
 import { useTranslation } from '@/shared/translation';
@@ -19,7 +19,7 @@ const HostInner = ({ targetId }: { targetId: string }) => {
   // and close the dialog so it can't get stuck open with nothing rendered.
   useEffect(() => {
     if (node) return;
-    toast.error(t('feature.dashboard.addToDashboard.toast.targetUnresolved'));
+    toast.error({ title: t('feature.dashboard.addToDashboard.toast.targetUnresolved') });
     closeAddToDashboardDialog();
   }, [node, t]);
 
