@@ -1,5 +1,6 @@
 @import '@novasamatech/tr-ui/styles.css';
 @import 'tailwindcss';
+@import './shared/theme/chrome.css';
 
 @config '../tailwind.config.ts';
 

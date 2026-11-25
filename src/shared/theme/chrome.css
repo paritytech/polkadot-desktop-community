@@ -1,0 +1,114 @@
+/*
+ * The chrome's colours: the header, its tab strip and its address pill, one value per palette and mode. Every text
+ * pair meets APCA on the chrome's surfaces: Lc 90 for text, 75 for muted text, 30 for disabled. The palette is the
+ * data-theme attribute ThemeNameSyncer writes on <html>; the mode is the dark class tr-ui's ThemeProvider toggles.
+ * The names start with --chrome- because tr-ui writes its own variables inline on :root, which no rule here can beat.
+ */
+:root {
+  --chrome-top: #ffffff;
+  --chrome-bottom: #fafafb;
+  --chrome-text: #0b0c0f;
+  --chrome-text-muted: #393b42;
+  --chrome-text-faint: #b9bbc2;
+  --chrome-well: rgba(0, 0, 0, 0.05);
+  --chrome-well-strong: rgba(0, 0, 0, 0.06);
+  --chrome-fill: rgba(0, 0, 0, 0.05);
+  --chrome-fill-strong: #ffffff;
+  --chrome-line: rgba(0, 0, 0, 0.08);
+  --chrome-ring: rgba(0, 0, 0, 0.14);
+  --chrome-focus: #2f6fe4;
+  --chrome-ok: #15803d;
+  --chrome-glass: linear-gradient(180deg, var(--chrome-top) 0%, var(--chrome-bottom) 100%);
+  --chrome-shadow-raised: inset 0 0 0 1px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.14);
+  --chrome-shadow-inset: inset 0 1px 2px rgba(0, 0, 0, 0.06), inset 0 0 0 1px rgba(0, 0, 0, 0.03);
+  --chrome-shadow-pill: inset 0 0 0 1px var(--chrome-ring), var(--chrome-shadow-inset);
+  --chrome-shadow-edge: inset 0 -1px 0 var(--chrome-line);
+}
+
+:root.dark {
+  --chrome-top: #2c2e34;
+  --chrome-bottom: #121317;
+  --chrome-text: #f4f4f5;
+  --chrome-text-muted: #d4d5db;
+  --chrome-text-faint: #80838a;
+  --chrome-well: rgba(0, 0, 0, 0.3);
+  --chrome-well-strong: rgba(0, 0, 0, 0.48);
+  --chrome-fill: rgba(255, 255, 255, 0.07);
+  --chrome-fill-strong: rgba(255, 255, 255, 0.12);
+  --chrome-line: rgba(255, 255, 255, 0.08);
+  --chrome-ring: rgba(255, 255, 255, 0.16);
+  --chrome-focus: #78a9ff;
+  --chrome-ok: #6bc880;
+  --chrome-shadow-raised:
+    inset 0 1px 0 rgba(255, 255, 255, 0.12), inset 0 0 0 1px rgba(255, 255, 255, 0.16), 0 1px 3px rgba(0, 0, 0, 0.3);
+  --chrome-shadow-inset: inset 0 1px 2px rgba(0, 0, 0, 0.35), inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+  --chrome-shadow-edge: inset 0 1px 0 rgba(255, 255, 255, 0.12), inset 0 -1px 0 var(--chrome-line);
+}
+
+:root[data-theme='tokyo'] {
+  --chrome-top: #fff5f6;
+  --chrome-bottom: #fff0f1;
+  --chrome-text: #0b070e;
+  --chrome-text-muted: #373040;
+  --chrome-text-faint: #b5aebd;
+}
+
+:root.dark[data-theme='tokyo'] {
+  --chrome-top: #2b2533;
+  --chrome-bottom: #120d16;
+  --chrome-text: #f7f5f8;
+  --chrome-text-muted: #e2dee5;
+  --chrome-text-faint: #847c8e;
+}
+
+:root[data-theme='lisbon'] {
+  --chrome-top: #fffbf5;
+  --chrome-bottom: #fff7eb;
+  --chrome-text: #0e0907;
+  --chrome-text-muted: #3c362f;
+  --chrome-text-faint: #bab4ad;
+}
+
+:root.dark[data-theme='lisbon'] {
+  --chrome-top: #302a24;
+  --chrome-bottom: #16110e;
+  --chrome-text: #f7f7f6;
+  --chrome-text-muted: #e5e1de;
+  --chrome-text-faint: #88827a;
+}
+
+:root[data-theme='malta'] {
+  --chrome-top: #f5fffa;
+  --chrome-bottom: #eafef4;
+  --chrome-text: #090d0b;
+  --chrome-text-muted: #363e3b;
+  --chrome-text-faint: #b3bcb7;
+}
+
+:root.dark[data-theme='malta'] {
+  --chrome-top: #2a322f;
+  --chrome-bottom: #111614;
+  --chrome-text: #f6f8f7;
+  --chrome-text-muted: #e0e5e2;
+  --chrome-text-faint: #828c86;
+}
+
+@theme inline {
+  --color-chrome-top: var(--chrome-top);
+  --color-chrome-bottom: var(--chrome-bottom);
+  --color-chrome-well: var(--chrome-well);
+  --color-chrome-well-strong: var(--chrome-well-strong);
+  --color-chrome-fill: var(--chrome-fill);
+  --color-chrome-fill-strong: var(--chrome-fill-strong);
+  --color-chrome-line: var(--chrome-line);
+  --color-chrome-ring: var(--chrome-ring);
+  --color-chrome-text: var(--chrome-text);
+  --color-chrome-muted: var(--chrome-text-muted);
+  --color-chrome-faint: var(--chrome-text-faint);
+  --color-chrome-focus: var(--chrome-focus);
+  --color-chrome-ok: var(--chrome-ok);
+  --shadow-chrome-raised: var(--chrome-shadow-raised);
+  --shadow-chrome-inset: var(--chrome-shadow-inset);
+  --shadow-chrome-pill: var(--chrome-shadow-pill);
+  --shadow-chrome-edge: var(--chrome-shadow-edge);
+}
