@@ -1,9 +1,8 @@
-import { AppIcon } from '@novasamatech/tr-ui';
 import { Outlet } from '@tanstack/react-router';
 import { memo } from 'react';
 
 import SettingsIcon from '@/shared/assets/images/header/cog-8-tooth.svg?jsx';
-import { SettingsHeader, Sidebar, widgetSpanWidthCss } from '@/shared/components';
+import { AppIcon, SettingsHeader, Sidebar, widgetSpanWidthCss } from '@/shared/components';
 import { Slot } from '@/shared/di';
 import { isProductionBuild } from '@/shared/env';
 import { useTranslation } from '@/shared/translation';
@@ -23,7 +22,7 @@ export const SettingsPage = memo(() => {
         <SettingsHeader
           variant="list"
           icon={
-            <AppIcon size="sm" alt="">
+            <AppIcon size="24" alt="">
               <SettingsIcon className="size-4" />
             </AppIcon>
           }

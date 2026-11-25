@@ -1,7 +1,7 @@
-import { AppIcon } from '@novasamatech/tr-ui';
 import { Star } from 'lucide-react';
 import { FormattedMessage } from 'react-intl';
 
+import { AppIcon } from '@/shared/components';
 import { createFeature } from '@/shared/feature';
 import { TEST_IDS } from '@/shared/test-ids';
 import { type DashboardCardLayoutRules, FAVORITES_FOLDER_ID, cardsUseCase, dashboardLayoutService } from '@/domains/application';
@@ -89,7 +89,7 @@ type FolderPayload = {
 
 const FOLDER_METADATA: DashboardCardMetadata = {
   icon: (
-    <AppIcon size="sm" alt="">
+    <AppIcon size="24" alt="">
       <Star className="size-4" aria-hidden />
     </AppIcon>
   ),

@@ -1,11 +1,10 @@
 import { type DragEndEvent, DndContext, PointerSensor, closestCenter, useSensor, useSensors } from '@dnd-kit/core';
 import { SortableContext, arrayMove, rectSortingStrategy } from '@dnd-kit/sortable';
-import { AppIcon } from '@novasamatech/tr-ui';
 import { Plus, Search, SearchX, Star, StarOff } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 
-import { Button, Input } from '@/shared/components';
+import { AppIcon, Button, Input } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { cnTw } from '@/shared/utils';
@@ -93,7 +92,7 @@ export const FavoritesFullscreen = () => {
       className="flex h-full w-full flex-col overflow-hidden bg-bg-surface-container p-2"
     >
       <div className="flex items-center gap-2 px-2">
-        <AppIcon size="sm" alt="">
+        <AppIcon size="24" alt="">
           <Star className="size-4" aria-hidden />
         </AppIcon>
         <span className="flex-1 text-sm leading-5 font-semibold text-fg-primary">
