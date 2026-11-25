@@ -411,6 +411,9 @@ describe('managerV2Factory incoming chat request verification', () => {
 
     await waitForWarning('identity proof does not match', 'req-forged');
     expect(await p2pChatDatabase.requests.get('req-forged')).toBeUndefined();
+
+    incoming.onRequest(v2RequestFromPeer('req-forged', key(0xd9)));
+    expect(getPeerChatKey).toHaveBeenCalledTimes(1);
   });
 
   it('drops a v2 request whose sender has no chat key, and checks a later delivery again', async () => {
@@ -436,6 +439,9 @@ describe('managerV2Factory incoming chat request verification', () => {
 
     await waitForWarning('addIncomingRequest: dropped', 'req-throw');
     expect(await p2pChatDatabase.requests.get('req-throw')).toBeUndefined();
+
+    incoming.onRequest(v2RequestFromPeer('req-throw'));
+    expect(getPeerChatKey).toHaveBeenCalledTimes(1);
   });
 
   it('drops a verified v2 request from a blocked peer', async () => {

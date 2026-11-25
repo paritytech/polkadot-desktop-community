@@ -13,7 +13,7 @@ import { substrateSlotSecretFromSeedBytes } from '@novasamatech/substrate-slot-s
 import { errAsync, okAsync } from 'neverthrow';
 import { toHex } from 'polkadot-api/utils';
 import { type CodecType } from 'scale-ts';
-import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
+import { type MockInstance, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { p2pService } from '../service';
 
@@ -230,6 +230,15 @@ describe('chatRequestGateway.decryptAndValidateRequestV2 (inner signature)', () 
     tag: 'v1' as const,
     value: { pushToken: undefined, welcomeMessage: { text: 'hi', attachments: undefined } },
   };
+  let warn: MockInstance<typeof console.warn>;
+
+  beforeEach(() => {
+    warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    warn.mockRestore();
+  });
 
   it('decodes a v1 request signed for this receiver, keyed by its signer', () => {
     const device = makeDevice(0x07);
@@ -261,6 +270,7 @@ describe('chatRequestGateway.decryptAndValidateRequestV2 (inner signature)', () 
     });
 
     expect(chatRequestGateway.decryptAndValidateRequestV2(data, bobUserChat.priv, bobUserAccountId)).toBeNull();
+    expect(warn).toHaveBeenCalledWith('[chat-request-v2] inner signature invalid');
   });
 
   it('drops a v2 request signed for another receiver', () => {
@@ -283,6 +293,7 @@ describe('chatRequestGateway.decryptAndValidateRequestV2 (inner signature)', () 
     });
 
     expect(chatRequestGateway.decryptAndValidateRequestV2(data, bobUserChat.priv, bobUserAccountId)).toBeNull();
+    expect(warn).toHaveBeenCalledWith('[chat-request-v2] inner signature invalid');
   });
 });
 
