@@ -19,7 +19,7 @@ const Languages = ({ value, onValueChange = vi.fn() }: Props) => (
   </RadioGroup.Root>
 );
 
-const radio = (name: RegExp) => screen.getByRole('radio', { name });
+const radio = (name: string) => screen.getByRole('radio', { name });
 
 describe('RadioGroup', () => {
   it('names the group and its radios', () => {
@@ -27,15 +27,16 @@ describe('RadioGroup', () => {
 
     expect(screen.getByRole('radiogroup', { name: 'Language' })).toBeInTheDocument();
     expect(screen.getAllByRole('radio')).toHaveLength(3);
-    expect(radio(/Spanish/)).toBeInTheDocument();
+    expect(radio('Spanish')).toBeInTheDocument();
+    expect(radio('Spanish')).toHaveAccessibleDescription('Español');
   });
 
   it('checks the item whose value it is given', () => {
     render(<Languages value="es" />);
 
-    expect(radio(/Spanish/)).toBeChecked();
-    expect(radio(/English/)).not.toBeChecked();
-    expect(radio(/French/)).not.toBeChecked();
+    expect(radio('Spanish')).toBeChecked();
+    expect(radio('English')).not.toBeChecked();
+    expect(radio('French')).not.toBeChecked();
   });
 
   it('reports a pick and leaves the choice to the owner', async () => {
@@ -43,11 +44,11 @@ describe('RadioGroup', () => {
     const onValueChange = vi.fn();
     render(<Languages value="en" onValueChange={onValueChange} />);
 
-    await user.click(radio(/French/));
+    await user.click(radio('French'));
 
     expect(onValueChange).toHaveBeenCalledWith('fr');
-    expect(radio(/English/)).toBeChecked();
-    expect(radio(/French/)).not.toBeChecked();
+    expect(radio('English')).toBeChecked();
+    expect(radio('French')).not.toBeChecked();
   });
 
   it('checks nothing for a value no item has', () => {

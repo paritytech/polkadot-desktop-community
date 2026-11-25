@@ -37,16 +37,15 @@ export const CopyButton = ({ value, label, disabled }: CopyButtonProps) => {
     setPressCount(count => count + 1);
   };
 
+  const feedback = {
+    idle: { label, icon: <Copy aria-hidden className="size-4" /> },
+    copied: { label: t('common.action.copied'), icon: <Check aria-hidden className="size-4" /> },
+    failed: { label: t('common.action.copyFailed'), icon: <X aria-hidden className="size-4" /> },
+  }[status];
+
   return (
-    <IconButton
-      disabled={disabled}
-      label={status === 'copied' ? t('common.action.copied') : status === 'failed' ? t('common.action.copyFailed') : label}
-      size="sm"
-      onClick={handleClick}
-    >
-      {status === 'copied' && <Check aria-hidden className="size-4" />}
-      {status === 'failed' && <X aria-hidden className="size-4" />}
-      {status === 'idle' && <Copy aria-hidden className="size-4" />}
+    <IconButton disabled={disabled} label={feedback.label} size="sm" onClick={handleClick}>
+      {feedback.icon}
     </IconButton>
   );
 };

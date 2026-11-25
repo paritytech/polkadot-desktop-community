@@ -45,6 +45,8 @@ const RadioGroupItem = ({ value, title, description }: RadioGroupItemProps) => {
   }
 
   const checked = context.value === value;
+  const titleId = useId();
+  const descriptionId = useId();
 
   return (
     <label
@@ -61,6 +63,8 @@ const RadioGroupItem = ({ value, title, description }: RadioGroupItemProps) => {
         name={context.name}
         value={value}
         checked={checked}
+        aria-labelledby={titleId}
+        aria-describedby={description ? descriptionId : undefined}
         data-no-app-focus
         onChange={() => context.onValueChange(value)}
       />
@@ -75,8 +79,14 @@ const RadioGroupItem = ({ value, title, description }: RadioGroupItemProps) => {
         {checked && <span className="size-1.5 rounded-full bg-chrome-on-primary" />}
       </span>
       <span className="flex min-w-0 flex-col gap-1">
-        <span className="text-sm font-semibold">{title}</span>
-        {description && <span className="text-xs text-chrome-muted">{description}</span>}
+        <span id={titleId} className="text-sm font-semibold">
+          {title}
+        </span>
+        {description && (
+          <span id={descriptionId} className="text-xs text-chrome-muted">
+            {description}
+          </span>
+        )}
       </span>
     </label>
   );

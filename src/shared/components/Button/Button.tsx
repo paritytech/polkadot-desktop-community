@@ -9,6 +9,7 @@ type ButtonProps = Omit<ComponentProps<'button'>, 'className'> & {
 };
 
 export const Button = ({ variant = 'secondary', size = 'md', block, type, disabled, style, ...rest }: ButtonProps) => {
+  // The reduced start padding assumes an icon leads the label: CSS cannot see text nodes, so a trailing icon matches too.
   return (
     <button
       {...rest}

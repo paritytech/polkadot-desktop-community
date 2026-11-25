@@ -40,6 +40,15 @@ describe('Button', () => {
     expect(onClick).toHaveBeenCalledTimes(1);
   });
 
+  it('opts out of the app focus ring and merges a caller style with no-drag', () => {
+    render(<Button style={{ color: 'red' }}>Save</Button>);
+
+    const button = screen.getByRole('button', { name: 'Save' });
+    expect(button).toHaveAttribute('data-no-app-focus');
+    expect(button.style.color).toBe('red');
+    expect(button.style.getPropertyValue('app-region')).toBe('no-drag');
+  });
+
   it('blocks clicks while disabled', async () => {
     const user = userEvent.setup();
     const onClick = vi.fn();

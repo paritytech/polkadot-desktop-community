@@ -17,7 +17,7 @@ function stubClipboardWrite(result: 'resolves' | 'rejects') {
 }
 
 function renderCopyButton(disabled?: boolean) {
-  render(
+  return render(
     <TranslationProvider>
       <CopyButton disabled={disabled} label="Copy address" value="0xabc" />
     </TranslationProvider>,
@@ -68,6 +68,33 @@ describe('CopyButton', () => {
     act(() => vi.advanceTimersByTime(1200));
 
     expect(screen.getByRole('button', { name: 'Copy address' })).toBeInTheDocument();
+  });
+
+  it('returns to its label after 1200 ms when the copy failed', async () => {
+    const user = setupWithFakeTimers();
+    stubClipboardWrite('rejects');
+    renderCopyButton();
+
+    await user.click(screen.getByRole('button', { name: 'Copy address' }));
+    await screen.findByRole('button', { name: 'Copy failed' });
+
+    act(() => vi.advanceTimersByTime(1200));
+
+    expect(screen.getByRole('button', { name: 'Copy address' })).toBeInTheDocument();
+  });
+
+  it('leaves no pending timer after unmounting during the feedback', async () => {
+    const user = setupWithFakeTimers();
+    stubClipboardWrite('resolves');
+    const { unmount } = renderCopyButton();
+
+    await user.click(screen.getByRole('button', { name: 'Copy address' }));
+    await screen.findByRole('button', { name: 'Copied' });
+    expect(vi.getTimerCount()).toBeGreaterThan(0);
+
+    unmount();
+
+    expect(vi.getTimerCount()).toBe(0);
   });
 
   it('restarts the 1200 ms on a second press', async () => {
