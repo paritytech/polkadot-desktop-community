@@ -3,6 +3,7 @@ export { Badge } from './Badge/Badge';
 export { Box } from './Box/Box';
 export { Button } from './Button/Button';
 export { ConfirmationProvider, useConfirmation } from './Confirmation/Confirmation';
+export { CopyButton } from './CopyButton/CopyButton';
 export { DismissOverlay } from './DismissOverlay/DismissOverlay';
 export {
   DASHBOARD_GRID_SNAP_Y_STEP,
