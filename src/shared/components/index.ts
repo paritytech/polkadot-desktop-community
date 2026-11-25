@@ -42,3 +42,4 @@ export { AppIconPlaceholder } from './AppIconPlaceholder/AppIconPlaceholder';
 export { Input } from './Input/Input';
 export { Label } from './Label/Label';
 export { Switch } from './Switch/Switch';
+export { RadioGroup } from './RadioGroup/RadioGroup';
