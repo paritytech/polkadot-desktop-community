@@ -263,7 +263,6 @@ export const TEST_IDS = {
 
   // Network connection settings
   networkConnectionChainRow: 'network-connection-chain-row',
-  networkConnectionChainTabs: 'network-connection-chain-tabs',
   productLoadNotice: 'product-load-notice',
   productLoadReloadButton: 'product-load-reload-button',
   productLoadSwitchButton: 'product-load-switch-button',
