@@ -93,6 +93,7 @@ Not every line needs the full context of the system around it. When in doubt, le
 - Avoid using px units in Tailwind classes, use default grid values instead.
 - All tailwind classes outside JSX must be wrapped in `cnTw` call for correct ordering and parsing.
 - Do not extract Tailwind classes into a variable or a shared constant.
+- The size steps are dot.li's desktop scale, set in `src/index.css`: `text-xs` 12 px, `text-sm` 13, `text-base` 14, `text-lg` 16, `text-xl` 18, `text-2xl` 24. Pick the step by role (caption, small, body, title, heading), not by a pixel size; no arbitrary font sizes for a role the scale covers.
 - Reuse UI by composing components, never by sharing pieces of another component's implementation. A repeated look is a component that wants extracting: give it a name, props, and a single owner, then use it in both places. Copying its class string, importing its class constant, or passing a `className` that reproduces it spreads one visual decision across files that nothing keeps in sync.
 
 ## i18n

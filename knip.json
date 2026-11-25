@@ -1,17 +1,9 @@
 {
   "$schema": "https://unpkg.com/knip@6/schema.json",
-  "entry": [
-    "src/**/index.{ts,tsx}",
-    "main/index.ts",
-    "main/preload.ts"
-  ],
-  "project": [
-    "src/**/*.{js,ts,tsx}",
-    "main/**/*.{js,ts,tsx}"
-  ],
+  "entry": ["src/**/index.{ts,tsx}", "main/index.ts", "main/preload.ts"],
+  "project": ["src/**/*.{js,ts,tsx}", "main/**/*.{js,ts,tsx}"],
   "ignoreDependencies": [
     "@electron/notarize",
-    "@fontsource/inter",
     "@svgr/plugin-svgo",
     "@tailwindcss/language-server",
     "@types/react-grid-layout",
@@ -33,11 +25,7 @@
     "config": "./vitest.config.ts"
   },
   "vite": {
-    "config": [
-      "./vite.config.renderer.ts",
-      "./vite.config.main.ts",
-      "./vite.config.preload.ts"
-    ]
+    "config": ["./vite.config.renderer.ts", "./vite.config.main.ts", "./vite.config.preload.ts"]
   },
   "prettier": true,
   "eslint": true,

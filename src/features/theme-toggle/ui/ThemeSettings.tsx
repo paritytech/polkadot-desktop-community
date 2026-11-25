@@ -1,13 +1,9 @@
-import { SettingsList } from '@/shared/components';
+import { SectionLabel, SettingsList } from '@/shared/components';
 import { useTranslation } from '@/shared/translation';
 
 import { ColorModeControl } from './ColorModeControl';
 import { ThemePicker } from './ThemePicker';
 import { ThemePreview } from './ThemePreview';
-
-const SectionLabel = ({ children }: { children: string }) => (
-  <h2 className="text-sm leading-5 font-semibold text-fg-primary">{children}</h2>
-);
 
 export const ThemeSettings = () => {
   const { t } = useTranslation();
