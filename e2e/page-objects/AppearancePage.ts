@@ -8,12 +8,12 @@ import { DashboardPage } from './DashboardPage';
 /**
  * Page Object for Settings → Appearance (post-redesign, PR #744).
  *
- * The page hosts two radiogroups with disjoint accessible names:
- *  - "Color mode" — Device / Day / Night (segmented control);
- *  - "Theme" — Berlin / Tokyo / Lisbon / Malta (swatch cards, aria-label).
+ * The page hosts two groups with disjoint accessible names:
+ *  - "Color mode" — Device / Day / Night (segmented control of aria-pressed buttons);
+ *  - "Theme" — Berlin / Tokyo / Lisbon / Malta (radiogroup of swatch cards, aria-label).
  * Plus a decorative chat-mock preview (aria-hidden, located by testid).
  *
- * Applied-state signals (what the app actually renders, beyond aria-checked):
+ * Applied-state signals (what the app actually renders, beyond aria-checked / aria-pressed):
  *  - dark/light: tr-ui toggles the `dark` class on <html>, and ThemeSyncer
  *    mirrors the resolved mode into `color-scheme` on <html>;
  *  - theme palette: tr-ui writes the theme's CSS variables inline on <html>,
@@ -34,7 +34,29 @@ export class AppearancePage {
     await appearanceLink.click();
   }
 
-  // --- Radios (color mode and theme share the locator shape; names are disjoint) ---
+  // --- Color mode (pressed buttons) ------------------------------------------
+
+  colorMode(name: string) {
+    return this.page.getByRole('button', { name, exact: true });
+  }
+
+  async expectColorModesVisible(names: string[]) {
+    for (const name of names) {
+      await expect(this.colorMode(name)).toBeVisible({ timeout: DEFAULT_TIMEOUT });
+    }
+  }
+
+  async selectColorMode(name: string) {
+    const option = this.colorMode(name);
+    await expect(option).toBeVisible({ timeout: DEFAULT_TIMEOUT });
+    await option.click();
+  }
+
+  async expectColorModeSelected(name: string) {
+    await expect(this.colorMode(name)).toHaveAttribute('aria-pressed', 'true', { timeout: DEFAULT_TIMEOUT });
+  }
+
+  // --- Theme picker (radios) -------------------------------------------------
 
   radio(name: string) {
     return this.page.getByRole('radio', { name, exact: true });

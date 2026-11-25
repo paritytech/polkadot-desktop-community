@@ -77,7 +77,7 @@ export class DashboardPage {
     await expect(appearanceLink).toBeVisible({ timeout: DEFAULT_TIMEOUT });
     await appearanceLink.click();
 
-    const themeOption = this.page.getByRole('radio', { name: theme, exact: true });
+    const themeOption = this.page.getByRole('button', { name: theme, exact: true });
     await expect(themeOption).toBeVisible({ timeout: DEFAULT_TIMEOUT });
     await themeOption.click();
 

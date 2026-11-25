@@ -27,15 +27,15 @@ When('the app reloads back to the appearance settings', async ({ electronApp }) 
 // --- Color mode (Device / Day / Night) --------------------------------------
 
 Then('the browser color mode options Device, Day and Night are available', async ({ electronApp }) => {
-  await new AppearancePage(electronApp.window).expectRadiosVisible(['Device', 'Day', 'Night']);
+  await new AppearancePage(electronApp.window).expectColorModesVisible(['Device', 'Day', 'Night']);
 });
 
 When('the user selects the {string} browser color mode', async ({ electronApp }, name: string) => {
-  await new AppearancePage(electronApp.window).selectRadio(name);
+  await new AppearancePage(electronApp.window).selectColorMode(name);
 });
 
 Then('the {string} browser color mode is selected', async ({ electronApp }, name: string) => {
-  await new AppearancePage(electronApp.window).expectRadioSelected(name);
+  await new AppearancePage(electronApp.window).expectColorModeSelected(name);
 });
 
 Then('the app renders in dark appearance', async ({ electronApp }) => {
