@@ -30,12 +30,10 @@ export const NetworkChangeLogoutDialog = memo(({ open, onConfirm, onCancel }: Pr
           </div>
         </AlertDialog.Header>
         <AlertDialog.Footer>
-          <div className="flex w-full gap-2 p-1">
-            <AlertDialog.Cancel onClick={onCancel}>{t('common.action.cancel')}</AlertDialog.Cancel>
-            <AlertDialog.Action onClick={onConfirm}>
-              {t('feature.statementStoreNetwork.changeNetworkDialog.confirm')}
-            </AlertDialog.Action>
-          </div>
+          <AlertDialog.Cancel onClick={onCancel}>{t('common.action.cancel')}</AlertDialog.Cancel>
+          <AlertDialog.Action onClick={onConfirm}>
+            {t('feature.statementStoreNetwork.changeNetworkDialog.confirm')}
+          </AlertDialog.Action>
         </AlertDialog.Footer>
       </AlertDialog.Content>
     </AlertDialog.Root>

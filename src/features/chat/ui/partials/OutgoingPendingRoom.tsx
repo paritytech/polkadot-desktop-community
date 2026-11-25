@@ -36,7 +36,7 @@ export const OutgoingPendingRoom = ({ request, onCancel }: Props) => {
     <div className="flex min-w-111 flex-1 flex-col overflow-hidden rounded-xl border border-stroke-primary bg-bg-surface-container">
       <RequestRoomHeader
         name={name}
-        actionIcon={<Trash2 className="me-2 size-4" />}
+        actionIcon={<Trash2 className="size-4" />}
         actionLabel={t('feature.chat.request.cancelRequest')}
         onAction={() => setConfirmingCancel(true)}
       />

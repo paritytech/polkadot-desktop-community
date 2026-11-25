@@ -33,7 +33,7 @@ export const IncomingRequestRoom = (props: IncomingRequestRoomProps) => {
       {actions ? (
         <RequestRoomHeader
           name={name}
-          actionIcon={<X className="me-2 size-4" />}
+          actionIcon={<X className="size-4" />}
           actionLabel={t('feature.chat.request.decline')}
           onAction={actions.onDecline}
         />

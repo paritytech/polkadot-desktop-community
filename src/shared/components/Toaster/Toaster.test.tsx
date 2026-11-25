@@ -38,6 +38,16 @@ describe('Toaster', () => {
     expect(screen.getByText('Just saying')).toBeInTheDocument();
   });
 
+  it('fills the toaster column with a card outside the drag region', async () => {
+    renderToaster();
+
+    act(() => toast.success({ title: 'Saved' }));
+    const title = await screen.findByText('Saved');
+
+    expect(title.closest('[data-sonner-toast]')).toHaveClass('w-full');
+    expect(title.parentElement?.parentElement?.style.getPropertyValue('app-region')).toBe('no-drag');
+  });
+
   it('runs an action without dismissing', async () => {
     const user = userEvent.setup();
     const actionSpy = vi.fn();
