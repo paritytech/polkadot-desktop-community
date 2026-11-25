@@ -1,6 +1,7 @@
-import { ScrollArea, toast } from '@novasamatech/tr-ui';
+import { toast } from '@novasamatech/tr-ui';
 import { useEffect, useMemo, useState } from 'react';
 
+import { ScrollArea } from '@/shared/components';
 import { useTranslation } from '@/shared/translation';
 import { type WidgetSizeIconVariant, dashboardLayoutService } from '@/domains/application';
 import { type Product, productService, resolveProductUseCase } from '@/domains/product';

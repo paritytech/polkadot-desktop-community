@@ -1,8 +1,7 @@
-import { ScrollArea } from '@novasamatech/tr-ui';
 import { ChevronLeft, ChevronRight, Grid2X2, Link2 } from 'lucide-react';
 import { type ReactNode, useState } from 'react';
 
-import { Button } from '@/shared/components';
+import { Button, ScrollArea } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { useDisplayedProduct } from '@/domains/product';

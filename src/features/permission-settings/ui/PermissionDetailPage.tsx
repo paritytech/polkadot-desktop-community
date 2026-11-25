@@ -1,8 +1,8 @@
-import { ScrollArea } from '@novasamatech/tr-ui';
 import { useNavigate } from '@tanstack/react-router';
 import { ChevronLeft, ChevronRight, Grid2X2, Shield } from 'lucide-react';
 import { cloneElement, useMemo } from 'react';
 
+import { ScrollArea } from '@/shared/components';
 import { useTranslation } from '@/shared/translation';
 import { type AppPermissionEntry, useDisplayedProduct, useWatchAggregatedPermissions } from '@/domains/product';
 import { getPermissionMeta } from '@/widgets/Permission';

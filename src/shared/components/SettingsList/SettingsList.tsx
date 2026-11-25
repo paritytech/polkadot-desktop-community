@@ -1,5 +1,6 @@
-import { ScrollArea } from '@novasamatech/tr-ui';
 import { type PropsWithChildren, type ReactNode } from 'react';
+
+import { ScrollArea } from '../ScrollArea/ScrollArea';
 
 import { SettingsHeader } from './SettingsHeader';
 

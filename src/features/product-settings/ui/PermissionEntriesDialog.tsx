@@ -1,4 +1,4 @@
-import { Dialog, ScrollArea } from '@novasamatech/tr-ui';
+import { Dialog } from '@novasamatech/tr-ui';
 import { type ReactNode } from 'react';
 
 import { cnTw } from '@/shared/utils';
@@ -32,26 +32,24 @@ export const PermissionEntriesDialog = ({ open, title, icon, entries, onOpenChan
           <span className="block pe-8">{title}</span>
         </Dialog.Title>
       </Dialog.Header>
-      <ScrollArea>
-        <div className="flex max-h-[60vh] flex-col gap-1 pe-1">
-          {entries.map(entry => (
-            <div
-              key={entry.key}
-              className={cnTw('flex items-center gap-4 rounded-xl bg-bg-surface-container p-3', icon ? 'h-16' : 'h-12')}
-            >
-              {icon ? (
-                <div className="flex size-10 shrink-0 items-center justify-center rounded-md bg-bg-action-secondary text-fg-primary">
-                  {icon}
-                </div>
-              ) : null}
-              <div className="flex min-w-0 flex-1 flex-col">
-                <span className="truncate text-sm leading-5 font-medium text-fg-primary">{entry.label}</span>
+      <div className="flex max-h-[60vh] flex-col gap-1 overflow-y-auto overscroll-contain pe-1">
+        {entries.map(entry => (
+          <div
+            key={entry.key}
+            className={cnTw('flex items-center gap-4 rounded-xl bg-bg-surface-container p-3', icon ? 'h-16' : 'h-12')}
+          >
+            {icon ? (
+              <div className="flex size-10 shrink-0 items-center justify-center rounded-md bg-bg-action-secondary text-fg-primary">
+                {icon}
               </div>
-              <PermissionStatusDropdown value={entry.status} onChange={status => onStatusChange(entry.key, status)} />
+            ) : null}
+            <div className="flex min-w-0 flex-1 flex-col">
+              <span className="truncate text-sm leading-5 font-medium text-fg-primary">{entry.label}</span>
             </div>
-          ))}
-        </div>
-      </ScrollArea>
+            <PermissionStatusDropdown value={entry.status} onChange={status => onStatusChange(entry.key, status)} />
+          </div>
+        ))}
+      </div>
     </Dialog.Content>
   </Dialog>
 );

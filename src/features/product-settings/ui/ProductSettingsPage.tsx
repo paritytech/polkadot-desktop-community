@@ -1,9 +1,9 @@
-import { Dialog, ScrollArea, toastSuccess } from '@novasamatech/tr-ui';
+import { Dialog, toastSuccess } from '@novasamatech/tr-ui';
 import { useNavigate } from '@tanstack/react-router';
 import { ChevronLeft, ExternalLink, Grid2X2, Link2, Paintbrush, Trash2 } from 'lucide-react';
 import { type ReactNode, useState } from 'react';
 
-import { Button } from '@/shared/components';
+import { Button, ScrollArea } from '@/shared/components';
 import { Slot } from '@/shared/di';
 import { useTranslation } from '@/shared/translation';
 import { formatBytes } from '@/shared/utils';
