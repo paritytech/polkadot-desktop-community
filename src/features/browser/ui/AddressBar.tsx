@@ -46,7 +46,7 @@ export const AddressBar = ({ size = 'sm' }: AddressBarProps) => {
   const productRoute = rawRoute.startsWith('/') ? rawRoute.slice(1) : rawRoute;
   const fullProductPath = productId && productRoute ? `${productId}/${productRoute}` : (productId ?? '');
 
-  const { name, rest } = browserService.splitDisplayAddress(fullProductPath);
+  const { prefix, name, rest } = browserService.splitDisplayAddress(fullProductPath);
 
   const [loadingIdentifiers] = useRxState(productLoading.identifiers$);
   const isLoading = resolvedProductId != null && loadingIdentifiers.has(resolvedProductId);
@@ -112,6 +112,7 @@ export const AddressBar = ({ size = 'sm' }: AddressBarProps) => {
                 />
               )}
               <span className="min-w-0 truncate">
+                <span className="text-chrome-muted">{prefix}</span>
                 <span className="font-semibold">{name}</span>
                 <span className="text-chrome-muted">{rest}</span>
               </span>

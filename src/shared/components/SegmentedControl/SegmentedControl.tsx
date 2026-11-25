@@ -96,7 +96,6 @@ type SegmentedControlRootProps = PropsWithChildren<{
   holdIndicator?: boolean;
   /** The rail that holds the items, for a consumer that scrolls it. */
   railRef?: Ref<HTMLDivElement>;
-  testId?: string;
 }>;
 
 const SegmentedControlRoot = ({
@@ -105,7 +104,6 @@ const SegmentedControlRoot = ({
   onChange,
   holdIndicator = false,
   railRef,
-  testId,
   children,
 }: SegmentedControlRootProps) => {
   const ownRailRef = useRef<HTMLDivElement>(null);
@@ -183,9 +181,8 @@ const SegmentedControlRoot = ({
       <div
         role="group"
         aria-label={label}
-        data-testid={testId}
         style={{ appRegion: 'no-drag' }}
-        className="flex min-w-0 rounded-full bg-chrome-well p-0.5 shadow-[var(--chrome-shadow-inset),inset_0_0_0_1px_var(--chrome-line)]"
+        className="flex min-w-0 rounded-full bg-chrome-well p-0.5 shadow-chrome-track"
         onKeyDown={handleKeyDown}
         onBlur={handleBlur}
       >
@@ -217,11 +214,9 @@ const SegmentedControlRoot = ({
 
 type SegmentedControlItemProps = PropsWithChildren<{
   value: string;
-  ref?: Ref<HTMLButtonElement>;
-  testId?: string;
 }>;
 
-const SegmentedControlItem = ({ value, ref, testId, children }: SegmentedControlItemProps) => {
+const SegmentedControlItem = ({ value, children }: SegmentedControlItemProps) => {
   const context = useContext(SegmentedControlContext);
   if (!context) {
     throw new Error('SegmentedControl.Item must be rendered inside SegmentedControl.Root');
@@ -232,7 +227,6 @@ const SegmentedControlItem = ({ value, ref, testId, children }: SegmentedControl
 
   return (
     <button
-      ref={ref}
       type="button"
       data-segment-item
       data-segment-value={value}
@@ -240,7 +234,6 @@ const SegmentedControlItem = ({ value, ref, testId, children }: SegmentedControl
       data-filled={filled ? '' : undefined}
       aria-pressed={pressed}
       tabIndex={context.stopValue === value ? 0 : -1}
-      data-testid={testId}
       className={cnTw(
         'relative flex h-6 w-full min-w-0 cursor-pointer items-center justify-center gap-1.5 rounded-full px-2 text-xs font-medium text-chrome-muted transition-colors duration-150 select-none hover:text-chrome-text focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-chrome-focus',
         pressed && 'text-chrome-text',
