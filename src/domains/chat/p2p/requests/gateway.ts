@@ -27,7 +27,6 @@ import {
   createEncryption,
   createExpiryAllocator,
   deriveSlotAccountPublicKey,
-  khash,
   signSlotAccountSecret,
   verifySr25519Signature,
 } from '@novasamatech/statement-store';
@@ -39,7 +38,7 @@ import { p2pService } from '../service';
 import { transportGateway } from '../session-transport/gateway';
 import { trackedSubscribeStatements } from '../subscription-registry';
 
-import { EncryptedRemoteModel, IDENTITY_PROOF_CONTEXT, IdentityProofPayload, ProofPayload, RemoteModel } from './schemas';
+import { EncryptedRemoteModel, ProofPayload, RemoteModel } from './schemas';
 import { chatRequestService } from './service';
 
 /**
@@ -139,12 +138,7 @@ const sendChatRequestV2 = async (params: {
   //    holding its own identity chat priv, recomputes the same K and matches.
   const signerPubKey = deriveSlotAccountPublicKey(senderDeviceSeed);
   const identityProofSharedSecret = p2pService.computeSharedSecret(senderIdentityChatPrivateKey, recipientChatPubKey);
-  const identityProofPayload = IdentityProofPayload.enc({
-    identityAccountId: senderIdentityAccountId,
-    statementAccountId: signerPubKey,
-    context: IDENTITY_PROOF_CONTEXT,
-  });
-  const identityProof = khash(identityProofSharedSecret, identityProofPayload);
+  const identityProof = chatRequestService.computeIdentityProof(identityProofSharedSecret, senderIdentityAccountId, signerPubKey);
 
   // 3. Inner request message — V2 content per v0.2 spec.
   const requestId = nanoid(12);
@@ -319,7 +313,8 @@ export type IncomingRequestHandlers = {
  * the V1 `ValidatedRequest` or the extended `ValidatedRequestV2` shape, a
  * cancel to `{ tag: 'cancel' }`.
  *
- * `ownAccountId` is the `requestAcceptorId` a cancel's inner signature covers.
+ * The inner signature is checked for every content against `ownAccountId`, the
+ * `requestAcceptorId` it covers; a statement that fails it decodes to `null`.
  *
  * `ownChatPrivateKey` is the recipient's user chat X25519 private key
  * (V1-derived from the wallet ssSecret). On desktop after V2 SSO this is
@@ -371,14 +366,15 @@ const decryptAndValidateRequestV2 = (
       return null;
     }
 
+    const signed = ProofPayload.enc({ message: remote.message, requestAcceptorId: ownAccountId });
+    if (!verifySr25519Signature(signed, remote.proof.value.signature, remote.proof.value.signer)) {
+      console.warn('[chat-request-v2] inner signature invalid');
+      return null;
+    }
+
     const content = remote.message.content;
 
     if (content.tag === 'cancel') {
-      const signed = ProofPayload.enc({ message: remote.message, requestAcceptorId: ownAccountId });
-      if (!verifySr25519Signature(signed, remote.proof.value.signature, remote.proof.value.signer)) {
-        console.warn('[chat-request-v2] cancel inner signature invalid');
-        return null;
-      }
       return {
         tag: 'cancel',
         value: {
@@ -425,11 +421,9 @@ const decryptAndValidateRequestV2 = (
     // V2 content: identity acct goes onto senderAccountId so contact
     // resolution lands on the user, not the publishing device. The device
     // sr25519 stays available on `senderDeviceStatementAccountId` for the
-    // caller's per-device roster (Contact.devices[]). Identity-proof
-    // verification (kHash(K(B,A), SCALE(IdentityProofPayload)) == received
-    // proof) requires the recipient's identityChatPrivateKey, which the
-    // caller has but this decoder doesn't, so verification lives in the
-    // subscriber callback that owns those keys.
+    // caller's per-device roster (Contact.devices[]). The identity proof is
+    // checked by the manager's `addIncomingRequest`, which holds the
+    // receiver's identity chat key and the resolver.
     if (content.value.welcomeMessage) base.welcomeMessage = content.value.welcomeMessage.text;
     if (content.value.pushToken) {
       const platform = content.value.pushToken.platform;

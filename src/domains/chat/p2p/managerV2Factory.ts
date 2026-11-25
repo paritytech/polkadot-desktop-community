@@ -923,59 +923,94 @@ export const createP2PChatManagerV2 = async (params: P2PChatManagerV2Params): Pr
     'senderDevicePubKey' in r && r.senderDevicePubKey instanceof Uint8Array;
 
   const addIncomingRequest = (validated: ValidatedRequest | ValidatedRequestV2): void => {
-    if (seenRequestIds.has(validated.requestId)) {
+    const { requestId } = validated;
+    if (seenRequestIds.has(requestId)) {
       return;
     }
-    seenRequestIds.add(validated.requestId);
+    seenRequestIds.add(requestId);
 
     // For V2 the upstream decoder rewrites `senderAccountId` to the user
     // identity (so contact resolution lands on the user, not the device).
     const senderAccountIdStr = AccountIdCodec().dec(validated.senderAccountId);
 
-    // Persistent dedup. The in-memory `seenRequestIds` set is wiped on every
-    // manager re-init; without a Dexie-level check, a stale on-chain request
-    // (from a previous round the user has already removed via `removeSession`)
-    // would resurface as a fresh incoming after each reload. We keep tombstones
-    // ('removed' status) so subsequent sightings of the same requestId are
-    // silently ignored. The check and the write share one transaction: a cancel's
-    // `cancelled` tombstone committed between them would otherwise be overwritten
-    // by this copy, reviving a request its sender withdrew.
-    void p2pChatDatabase.requests.db.transaction('rw', p2pChatDatabase.requests, p2pChatDatabase.rooms, async () => {
-      const existing = await p2pChatDatabase.requests.get(validated.requestId);
-      if (existing) return;
+    void (async () => {
+      try {
+        if (isV2Validated(validated)) {
+          const peerChatKey = await resolver.getPeerChatKey(senderAccountIdStr);
+          if (!peerChatKey) {
+            // `getPeerChatKey` returns `null` for a failed lookup too, so a later
+            // delivery of this id must be checked again.
+            seenRequestIds.delete(requestId);
+            console.warn('[p2p-managerV2] addIncomingRequest: ignoring requestId=%s — sender has no chat key', requestId);
+            return;
+          }
 
-      // Mirrors Android's BlockedContactsRepository — drop incoming requests from
-      // peers the user has blocked. Block state lives on the existing room row.
-      const room = await p2pChatDatabase.rooms.where('peerId').equals(senderAccountIdStr).first();
-      if (room?.isBlocked) return;
-
-      const newRequest: P2PChatRequest = {
-        requestId: validated.requestId,
-        peerId: senderAccountIdStr,
-        direction: 'incoming',
-        status: 'pending',
-        welcomeMessage: validated.welcomeMessage,
-        timestamp: validated.timestamp,
-        channelTopic: validated.channelTopic,
-        userId,
-        pushToken: validated.pushToken,
-        pushPlatform: validated.pushPlatform,
-        senderDevicePubKey: isV2Validated(validated) ? toHex(validated.senderDevicePubKey) : undefined,
-        senderDeviceStatementAccountId: isV2Validated(validated) ? toHex(validated.senderDeviceStatementAccountId) : undefined,
-        lastUpdate: Date.now(),
-      };
-
-      await p2pChatDatabase.requests.put(newRequest);
-    });
-
-    resolver
-      .getUsername(senderAccountIdStr)
-      .then(username => {
-        if (username) {
-          p2pChatDatabase.requests.update(validated.requestId, { peerUsername: username }).catch(() => {});
+          const sharedSecret = p2pService.computeSharedSecret(userIdentity.identityChatPrivateKey, peerChatKey);
+          const identityProof = { identityAccountId: validated.senderIdentityAccountId, proof: validated.senderIdentityProof };
+          if (!chatRequestService.isIdentityProofValid(sharedSecret, identityProof, validated.senderDeviceStatementAccountId)) {
+            console.warn('[p2p-managerV2] addIncomingRequest: ignoring requestId=%s — identity proof does not match', requestId);
+            return;
+          }
         }
-      })
-      .catch(() => {});
+
+        // Persistent dedup. The in-memory `seenRequestIds` set is wiped on every
+        // manager re-init; without a Dexie-level check, a stale on-chain request
+        // (from a previous round the user has already removed via `removeSession`)
+        // would resurface as a fresh incoming after each reload. We keep tombstones
+        // ('removed' status) so subsequent sightings of the same requestId are
+        // silently ignored. The check and the write share one transaction: a cancel's
+        // `cancelled` tombstone committed between them would otherwise be overwritten
+        // by this copy, reviving a request its sender withdrew.
+        const written = await p2pChatDatabase.requests.db.transaction(
+          'rw',
+          p2pChatDatabase.requests,
+          p2pChatDatabase.rooms,
+          async () => {
+            const existing = await p2pChatDatabase.requests.get(requestId);
+            if (existing) return false;
+
+            // Mirrors Android's BlockedContactsRepository — drop incoming requests from
+            // peers the user has blocked. Block state lives on the existing room row.
+            const room = await p2pChatDatabase.rooms.where('peerId').equals(senderAccountIdStr).first();
+            if (room?.isBlocked) return false;
+
+            const newRequest: P2PChatRequest = {
+              requestId,
+              peerId: senderAccountIdStr,
+              direction: 'incoming',
+              status: 'pending',
+              welcomeMessage: validated.welcomeMessage,
+              timestamp: validated.timestamp,
+              channelTopic: validated.channelTopic,
+              userId,
+              pushToken: validated.pushToken,
+              pushPlatform: validated.pushPlatform,
+              senderDevicePubKey: isV2Validated(validated) ? toHex(validated.senderDevicePubKey) : undefined,
+              senderDeviceStatementAccountId: isV2Validated(validated)
+                ? toHex(validated.senderDeviceStatementAccountId)
+                : undefined,
+              lastUpdate: Date.now(),
+            };
+
+            await p2pChatDatabase.requests.put(newRequest);
+
+            return true;
+          },
+        );
+        if (!written) return;
+
+        resolver
+          .getUsername(senderAccountIdStr)
+          .then(username => {
+            if (username) {
+              p2pChatDatabase.requests.update(requestId, { peerUsername: username }).catch(() => {});
+            }
+          })
+          .catch(() => {});
+      } catch (err) {
+        console.warn('[p2p-managerV2] addIncomingRequest: dropped requestId=%s — %o', requestId, err);
+      }
+    })();
   };
 
   // Ship each sibling's `deviceAdded` to `peerId` on the per-peer-device
