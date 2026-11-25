@@ -6,8 +6,9 @@ of rooms/messages/requests into Dexie.
 
 ## Sub-modules
 
-- `requests/` — chat-request wire format (`schemas`), topic derivation and the cancel proof (`service`), and the
-  send/decrypt/subscribe wire I/O (`gateway`).
+- `requests/` — chat-request wire format (`schemas`), topic derivation and the identity and cancel proofs (`service`),
+  and the send/decrypt/subscribe wire I/O, which checks the inner signature of every request (`gateway`). The manager
+  keeps a v2 request only when its identity proof matches the sender's chain chat key.
 - `session-transport/` — statement-store sign-and-submit + the device-channel one-shot fallback
   (`gateway`), and SDK↔UI content mapping plus identity-channel event interpretation (`service`).
   The `ChatMessage` wire codec is the SDK's (`@novasamatech/host-chat/codec/message`); the
