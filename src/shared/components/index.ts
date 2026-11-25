@@ -27,8 +27,6 @@ export { SettingsList } from './SettingsList/SettingsList';
 export { SettingsSection } from './SettingsList/SettingsSection';
 export { FullscreenButton } from './FullscreenButton/FullscreenButton';
 export { CloseButton } from './CloseButton/CloseButton';
-export { HeaderButton, iconBase } from './HeaderButton/HeaderButton';
-export { HeaderLink } from './HeaderLink/HeaderLink';
 export { HistoryNavigationButtons } from './HistoryNavigationButtons/HistoryNavigationButtons';
 export { IconButton } from './IconButton/IconButton';
 export { LoadingScreen } from './LoadingScreen/LoadingScreen';

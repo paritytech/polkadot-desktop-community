@@ -1,13 +1,15 @@
+import { useNavigate } from '@tanstack/react-router';
+
 import HomeIcon from '@/shared/assets/images/header/home.svg?jsx';
-import { HeaderLink, iconBase } from '@/shared/components';
+import { IconButton } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
-import { cnTw } from '@/shared/utils';
+import { useTranslation } from '@/shared/translation';
 import { useSetMainActivePage } from '@/domains/application';
 import { dashboardUseCase } from '@/aggregates/browser-tabs';
 
-const homeIconClassName = cnTw('size-4', iconBase);
-
 export const HomeButton = () => {
+  const { t } = useTranslation();
+  const navigate = useNavigate();
   const setMainActivePage = useSetMainActivePage();
 
   const handleClick = () => {
@@ -17,9 +19,16 @@ export const HomeButton = () => {
 
   return (
     <div className="ms-2 me-1">
-      <HeaderLink to="/dashboard" variant="icon" testId={TEST_IDS.homeButton} disableActive onClick={handleClick}>
-        <HomeIcon className={homeIconClassName} aria-hidden />
-      </HeaderLink>
+      <IconButton
+        label={t('feature.dashboard.home')}
+        data-testid={TEST_IDS.homeButton}
+        onClick={() => {
+          handleClick();
+          void navigate({ to: '/dashboard' });
+        }}
+      >
+        <HomeIcon className="size-4" aria-hidden />
+      </IconButton>
     </div>
   );
 };
