@@ -40,8 +40,8 @@ const FOCUS_KEYS: Partial<Record<string, (index: number, count: number) => numbe
 
 const RTL_KEYS: Partial<Record<string, string>> = { ArrowLeft: 'ArrowRight', ArrowRight: 'ArrowLeft' };
 
-function itemsOf(rail: HTMLElement): HTMLButtonElement[] {
-  return Array.from(rail.querySelectorAll<HTMLButtonElement>(ITEM_SELECTOR));
+function enabledItemsOf(rail: HTMLElement): HTMLButtonElement[] {
+  return Array.from(rail.querySelectorAll<HTMLButtonElement>(ITEM_SELECTOR)).filter(item => !item.disabled);
 }
 
 // Layout offsets, not client rects, so a transform on the item or a parent (a drag, a popover's opening) never skews
@@ -73,10 +73,12 @@ function isSameBox(a: Nullable<IndicatorBox>, b: Nullable<IndicatorBox>): boolea
   return a.x === b.x && a.y === b.y && a.width === b.width && a.height === b.height;
 }
 
-// dot.li's tab stop: the focused item while focus is inside the group, else the pressed one, else the first. A value
-// no rendered item has (an item removed while it has focus fires no focusout) falls through to the next rule.
+// dot.li's tab stop: the focused item while focus is inside the group, else the pressed one, else the first. Only an
+// enabled item counts, as a disabled button cannot take focus: a disabled pressed item passes the stop to the first
+// enabled one, and a group whose items are all disabled has none. A value no enabled item has (an item removed while
+// it has focus fires no focusout) falls through to the next rule.
 function pickStopValue(rail: HTMLElement, focusedValue: Nullable<string>, value: Nullable<string>): Nullable<string> {
-  const values = itemsOf(rail).map(item => item.dataset['segmentValue']);
+  const values = enabledItemsOf(rail).map(item => item.dataset['segmentValue']);
   const rendered = (candidate: Nullable<string>) => candidate !== null && values.includes(candidate);
 
   if (rendered(focusedValue)) return focusedValue;
@@ -156,7 +158,7 @@ const SegmentedControlRoot = ({
 
     const isRtl = getComputedStyle(event.currentTarget).direction === 'rtl';
     const move = FOCUS_KEYS[isRtl ? (RTL_KEYS[event.key] ?? event.key) : event.key];
-    const items = itemsOf(rail);
+    const items = enabledItemsOf(rail);
     const index = items.findIndex(item => item === event.target);
     if (!move || index < 0) return;
 
@@ -214,9 +216,11 @@ const SegmentedControlRoot = ({
 
 type SegmentedControlItemProps = PropsWithChildren<{
   value: string;
+  /** A disabled item cannot be picked or focused; the arrow keys, Home and End skip it. */
+  disabled?: boolean;
 }>;
 
-const SegmentedControlItem = ({ value, children }: SegmentedControlItemProps) => {
+const SegmentedControlItem = ({ value, disabled = false, children }: SegmentedControlItemProps) => {
   const context = useContext(SegmentedControlContext);
   if (!context) {
     throw new Error('SegmentedControl.Item must be rendered inside SegmentedControl.Root');
@@ -233,9 +237,10 @@ const SegmentedControlItem = ({ value, children }: SegmentedControlItemProps) =>
       data-no-app-focus
       data-filled={filled ? '' : undefined}
       aria-pressed={pressed}
+      disabled={disabled}
       tabIndex={context.stopValue === value ? 0 : -1}
       className={cnTw(
-        'relative flex h-6 w-full min-w-0 cursor-pointer items-center justify-center gap-1.5 rounded-full px-2 text-xs font-medium text-chrome-muted transition-colors duration-150 select-none hover:text-chrome-text focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-chrome-focus',
+        'relative flex h-6 w-full min-w-0 cursor-pointer items-center justify-center gap-1.5 rounded-full px-2 text-xs font-medium text-chrome-muted transition-colors duration-150 select-none hover:text-chrome-text focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-chrome-focus disabled:cursor-default disabled:text-chrome-faint disabled:hover:text-chrome-faint',
         pressed && 'text-chrome-text',
         filled && 'bg-chrome-fill-strong shadow-chrome-raised',
       )}

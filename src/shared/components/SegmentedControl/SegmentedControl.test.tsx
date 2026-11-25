@@ -12,12 +12,13 @@ type Props = {
   onChange?: (value: string) => void;
   holdIndicator?: boolean;
   values?: string[];
+  disabled?: string[];
 };
 
-const Things = ({ value, onChange = vi.fn(), holdIndicator, values = ['a', 'b', 'c'] }: Props) => (
+const Things = ({ value, onChange = vi.fn(), holdIndicator, values = ['a', 'b', 'c'], disabled = [] }: Props) => (
   <SegmentedControl.Root label="Things" value={value} holdIndicator={holdIndicator} onChange={onChange}>
     {values.map(item => (
-      <SegmentedControl.Item key={item} value={item}>
+      <SegmentedControl.Item key={item} value={item} disabled={disabled.includes(item)}>
         {item.toUpperCase()}
       </SegmentedControl.Item>
     ))}
@@ -172,6 +173,55 @@ describe('SegmentedControl', () => {
     expect(item('C')).toHaveAttribute('tabIndex', '-1');
     expect(screen.queryByRole('button', { pressed: true })).toBeNull();
     expect(indicator()).not.toHaveAttribute('data-placed');
+  });
+
+  it('does not pick a disabled item', () => {
+    const onChange = vi.fn();
+    render(<Things value="a" disabled={['b']} onChange={onChange} />);
+
+    fireEvent.click(item('B'));
+
+    expect(item('B')).toBeDisabled();
+    expect(onChange).not.toHaveBeenCalled();
+  });
+
+  it('skips a disabled item with the arrow keys, Home and End', () => {
+    const { unmount } = render(<Things value="a" disabled={['b']} />);
+    act(() => item('A').focus());
+    fireEvent.keyDown(item('A'), { key: 'ArrowRight' });
+    expect(item('C')).toHaveFocus();
+    unmount();
+
+    const { unmount: unmountEnd } = render(<Things value="a" disabled={['c']} />);
+    act(() => item('A').focus());
+    fireEvent.keyDown(item('A'), { key: 'End' });
+    expect(item('B')).toHaveFocus();
+    unmountEnd();
+
+    render(<Things value="c" disabled={['a']} />);
+    act(() => item('C').focus());
+    fireEvent.keyDown(item('C'), { key: 'Home' });
+    expect(item('B')).toHaveFocus();
+  });
+
+  it('leaves no Tab stop and moves nothing when every item is disabled', async () => {
+    const onChange = vi.fn();
+    render(<Things value="b" disabled={['a', 'b', 'c']} onChange={onChange} />);
+
+    await waitFor(() => expect(indicator()).toHaveAttribute('data-placed'));
+    for (const name of ['A', 'B', 'C']) {
+      expect(item(name)).toHaveAttribute('tabIndex', '-1');
+    }
+    fireEvent.click(item('A'));
+    expect(onChange).not.toHaveBeenCalled();
+  });
+
+  it('puts the Tab stop on the first enabled item when the pressed one is disabled', async () => {
+    render(<Things value="a" disabled={['a']} />);
+
+    await waitFor(() => expect(item('B')).toHaveAttribute('tabIndex', '0'));
+    expect(item('A')).toHaveAttribute('tabIndex', '-1');
+    expect(item('C')).toHaveAttribute('tabIndex', '-1');
   });
 
   it('swaps ArrowLeft and ArrowRight in a right-to-left layout', () => {
