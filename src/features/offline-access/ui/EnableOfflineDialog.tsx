@@ -1,5 +1,6 @@
-import { Button, Dialog } from '@novasamatech/tr-ui';
+import { Dialog } from '@novasamatech/tr-ui';
 
+import { Button } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { useDisplayedProduct, usePinProduct } from '@/domains/product';
@@ -43,15 +44,15 @@ export const EnableOfflineDialog = ({ productId, onClose }: Props) => {
         <Dialog.Footer>
           <div className="flex w-full gap-2">
             <div className="flex-1">
-              <Button data-testid={TEST_IDS.offlineAccessDialogCancel} variant="outline" fullWidth onClick={onClose}>
+              <Button data-testid={TEST_IDS.offlineAccessDialogCancel} block onClick={onClose}>
                 {t('common.cancel')}
               </Button>
             </div>
             <div className="flex-1">
               <Button
                 data-testid={TEST_IDS.offlineAccessEnableConfirm}
-                variant="default"
-                fullWidth
+                variant="primary"
+                block
                 disabled={pending}
                 onClick={handleConfirm}
               >

@@ -1,7 +1,6 @@
-import { Button } from '@novasamatech/tr-ui';
-
 import AddToDashboardIcon from '@/shared/assets/images/add-to-dashboard.svg?jsx';
 import LogoIcon from '@/shared/assets/images/logo.svg?jsx';
+import { Button } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 
@@ -27,8 +26,8 @@ export const EmptyDashboardView = ({ onAddWidget }: EmptyDashboardViewProps) => 
         </div>
 
         <div data-testid={TEST_IDS.dashboardEmptyStateAddWidget}>
-          <Button type="button" variant="default" size="sm" aria-label={addWidgetLabel} onClick={onAddWidget}>
-            <AddToDashboardIcon className="h-2.75 w-[10.7px] shrink-0 -scale-y-100 text-fg-primary-inverted" aria-hidden />
+          <Button type="button" variant="primary" size="sm" aria-label={addWidgetLabel} onClick={onAddWidget}>
+            <AddToDashboardIcon className="size-2.75 shrink-0 -scale-y-100" aria-hidden />
             <span>{addWidgetLabel}</span>
           </Button>
         </div>

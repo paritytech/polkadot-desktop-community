@@ -1,8 +1,8 @@
-import { Button } from '@novasamatech/tr-ui';
 import { Download, RefreshCw, XOctagon } from 'lucide-react';
 
 import { isElectron, reloadApp } from '@/shared/env';
 import { useTranslation } from '@/shared/translation';
+import { Button } from '../Button/Button';
 
 export const FallbackScreen = () => {
   const { t } = useTranslation();
@@ -29,7 +29,7 @@ export const FallbackScreen = () => {
         )}
       </div>
       <div className="flex flex-col items-center gap-4 self-stretch" style={{ appRegion: 'no-drag' }}>
-        <Button variant="outline" onClick={handleRetry}>
+        <Button onClick={handleRetry}>
           <RefreshCw className="h-4 w-4" />
           {t('common.action.retry')}
         </Button>

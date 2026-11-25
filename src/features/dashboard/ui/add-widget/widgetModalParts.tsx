@@ -1,6 +1,6 @@
-import { Button } from '@novasamatech/tr-ui';
 import { Star } from 'lucide-react';
 
+import { Button } from '@/shared/components';
 import { useTranslation } from '@/shared/translation';
 import { cnTw } from '@/shared/utils';
 import { type WidgetSizeIconVariant } from '@/domains/application';
@@ -18,7 +18,7 @@ export const AddWidgetFavoritesButton = ({ isInFavorites, onAdd }: { isInFavorit
     : t('feature.dashboard.addWidget.addToFavorites');
 
   return (
-    <Button type="button" variant="outline" size="sm" disabled={isInFavorites} aria-label={label} onClick={onAdd}>
+    <Button type="button" size="sm" disabled={isInFavorites} aria-label={label} onClick={onAdd}>
       <span className="inline-flex items-center gap-1 text-xs leading-4 font-normal">
         <Star
           className={cnTw('size-4 shrink-0', isInFavorites ? 'fill-current text-fg-secondary' : 'text-fg-primary')}
@@ -136,8 +136,8 @@ export const AddWidgetModalCard = ({
             </div>
 
             <Button
+              variant="primary"
               type="button"
-              size="default"
               aria-label={
                 isWidgetAlreadyOnDashboard ? t('feature.dashboard.addWidget.open') : t('feature.dashboard.addWidget.add')
               }

@@ -1,8 +1,7 @@
-import { Button } from '@novasamatech/tr-ui';
 import { Clock, WifiOff } from 'lucide-react';
 import { type ReactNode } from 'react';
 
-import { Spinner } from '@/shared/components';
+import { Button, Spinner } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { type OnboardingConnectionState } from '../types';
@@ -37,7 +36,7 @@ export const OnboardingConnectionPanel = ({ state, onRetry }: Props) => {
         <p className="text-center text-sm text-fg-secondary">{t(`feature.onboarding.connection.${state}.subtitle`)}</p>
       </div>
       {state === 'accountSetup' && (
-        <Button type="button" size="sm" data-testid={TEST_IDS.onboardingRetryButton} onClick={onRetry}>
+        <Button variant="primary" type="button" size="sm" data-testid={TEST_IDS.onboardingRetryButton} onClick={onRetry}>
           {t('common.action.retry')}
         </Button>
       )}

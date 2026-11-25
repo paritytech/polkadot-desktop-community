@@ -1,4 +1,6 @@
-import { Button, Dialog } from '@novasamatech/tr-ui';
+import { Dialog } from '@novasamatech/tr-ui';
+
+import { Button } from '@/shared/components';
 
 type RequestConfirmDialogProps = {
   isOpen: boolean;
@@ -30,10 +32,8 @@ export const RequestConfirmDialog = ({
           <h3 className="text-xl leading-7 font-semibold text-fg-primary">{title}</h3>
           <p className="text-sm leading-4.5 text-fg-secondary">{description}</p>
           <div className="flex items-center justify-end gap-2">
-            <Button variant="outline" onClick={onClose}>
-              {cancelLabel}
-            </Button>
-            <Button data-testid={confirmTestId} onClick={onConfirm}>
+            <Button onClick={onClose}>{cancelLabel}</Button>
+            <Button variant="primary" data-testid={confirmTestId} onClick={onConfirm}>
               {confirmLabel}
             </Button>
           </div>

@@ -1,6 +1,6 @@
-import { Button } from '@novasamatech/tr-ui';
 import { memo } from 'react';
 
+import { Button } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 
@@ -37,26 +37,20 @@ export const RemotePermissionRequestDialog = memo(
         footer={
           <>
             <div className="min-w-0 flex-1">
-              <Button type="button" variant="outline" fullWidth data-testid={TEST_IDS.permissionDialogDeny} onClick={onDeny}>
+              <Button type="button" block data-testid={TEST_IDS.permissionDialogDeny} onClick={onDeny}>
                 {t('feature.productPermissions.permissionRequest.deny')}
               </Button>
             </div>
             <div className="min-w-0 flex-1">
-              <Button
-                type="button"
-                variant="outline"
-                fullWidth
-                data-testid={TEST_IDS.permissionDialogAllowOnce}
-                onClick={onAllowOnce}
-              >
+              <Button type="button" block data-testid={TEST_IDS.permissionDialogAllowOnce} onClick={onAllowOnce}>
                 {t('feature.productPermissions.permissionRequest.allowOnce')}
               </Button>
             </div>
             <div className="min-w-0 flex-1">
               <Button
                 type="button"
-                variant="default"
-                fullWidth
+                variant="primary"
+                block
                 data-testid={TEST_IDS.permissionDialogAllowAlways}
                 onClick={onAllowAlways}
               >

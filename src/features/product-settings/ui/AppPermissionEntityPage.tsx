@@ -1,7 +1,8 @@
-import { Button, ScrollArea } from '@novasamatech/tr-ui';
+import { ScrollArea } from '@novasamatech/tr-ui';
 import { ChevronLeft, ChevronRight, Grid2X2, Link2 } from 'lucide-react';
 import { type ReactNode, useState } from 'react';
 
+import { Button } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { useDisplayedProduct } from '@/domains/product';
@@ -138,7 +139,7 @@ export const AppPermissionEntityPage = ({ productId, permissionId, backLabel, on
               </div>
 
               <div className="flex gap-2">
-                <Button variant="outline" data-testid={TEST_IDS.permissionResetButton} onClick={handleResetToDefault}>
+                <Button data-testid={TEST_IDS.permissionResetButton} onClick={handleResetToDefault}>
                   {t('feature.productSettings.appPermission.resetToDefault')}
                 </Button>
               </div>

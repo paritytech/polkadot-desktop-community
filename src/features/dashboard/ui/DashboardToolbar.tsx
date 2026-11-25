@@ -1,6 +1,5 @@
-import { Button } from '@novasamatech/tr-ui';
-
 import AddToDashboardIcon from '@/shared/assets/images/add-to-dashboard.svg?jsx';
+import { Button } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 
@@ -52,8 +51,8 @@ export const DashboardToolbar = ({ pageCount, activePageIndex, onSelectPage, onA
       </div>
 
       <div className="flex shrink-0 items-center" data-testid={TEST_IDS.dashboardAddWidgetButton}>
-        <Button type="button" variant="outline" size="mini" aria-label={addWidgetLabel} onClick={onAddWidget}>
-          <AddToDashboardIcon className="h-2.75 w-[10.7px] shrink-0 -scale-y-100 text-fg-primary" aria-hidden />
+        <Button type="button" size="sm" aria-label={addWidgetLabel} onClick={onAddWidget}>
+          <AddToDashboardIcon className="size-2.75 shrink-0 -scale-y-100" aria-hidden />
           <span>{addWidgetLabel}</span>
         </Button>
       </div>

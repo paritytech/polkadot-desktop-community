@@ -1,8 +1,9 @@
-import { Button, DropdownMenu } from '@novasamatech/tr-ui';
+import { DropdownMenu } from '@novasamatech/tr-ui';
 import { useNavigate } from '@tanstack/react-router';
 import { MoreHorizontal, Settings } from 'lucide-react';
 import { useCallback, useState } from 'react';
 
+import { Button } from '@/shared/components';
 import { Slot } from '@/shared/di';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
@@ -38,8 +39,7 @@ export const ProductActionsMenu = ({ productId }: Props) => {
           <div className="px-1 pt-1">
             <Button
               data-testid={TEST_IDS.productActionsMenuOpenSettings}
-              variant="outline"
-              fullWidth
+              block
               onClick={() => {
                 setOpen(false);
                 void navigate({ to: '/settings/privacy/apps/$productId', params: { productId } });

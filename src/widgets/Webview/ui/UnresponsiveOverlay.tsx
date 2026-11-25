@@ -1,6 +1,6 @@
-import { Button } from '@novasamatech/tr-ui';
 import { Loader2, RefreshCw } from 'lucide-react';
 
+import { Button } from '@/shared/components';
 import { useTranslation } from '@/shared/translation';
 import { type WebviewUnresponsiveInfo } from '@/aggregates/webview-registry';
 
@@ -32,7 +32,7 @@ export const UnresponsiveOverlay = ({ info, onReload }: Props) => {
           </p>
         </div>
 
-        <Button data-testid="unresponsive-overlay-reload" variant="outline" onClick={onReload}>
+        <Button data-testid="unresponsive-overlay-reload" onClick={onReload}>
           <RefreshCw className="h-4 w-4" />
           {t('widget.webview.unresponsive.reload')}
         </Button>

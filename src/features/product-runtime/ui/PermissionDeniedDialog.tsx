@@ -1,6 +1,7 @@
-import { Button, Dialog } from '@novasamatech/tr-ui';
+import { Dialog } from '@novasamatech/tr-ui';
 import { cloneElement, memo } from 'react';
 
+import { Button } from '@/shared/components';
 import { useTranslation } from '@/shared/translation';
 import { getPermissionMeta } from '@/widgets/Permission';
 
@@ -42,10 +43,10 @@ export const PermissionDeniedDialog = memo(({ permission, onOpenSettings, onClos
         </div>
 
         <div className="flex w-full gap-2">
-          <Button type="button" variant="outline" fullWidth onClick={onClose}>
+          <Button type="button" block onClick={onClose}>
             {t('common.action.cancel')}
           </Button>
-          <Button type="button" variant="default" fullWidth onClick={() => void handleOpenSettings()}>
+          <Button type="button" variant="primary" block onClick={() => void handleOpenSettings()}>
             {t('feature.productRuntime.permissionDenied.systemDeviceSettings')}
           </Button>
         </div>

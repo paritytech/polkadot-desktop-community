@@ -1,7 +1,7 @@
-import { Button, Select } from '@novasamatech/tr-ui';
+import { Select } from '@novasamatech/tr-ui';
 import { memo, useEffect, useState } from 'react';
 
-import { Box, SettingsList, SettingsSection } from '@/shared/components';
+import { Box, Button, SettingsList, SettingsSection } from '@/shared/components';
 import { useTranslation } from '@/shared/translation';
 
 import { useUpdateCheck } from './UpdateCheckContext';
@@ -58,7 +58,7 @@ export const AutoUpdateSettings = memo(() => {
             </span>
           </Box>
           {isSupported && (
-            <Button variant="outline" size="sm" onClick={openUpdateCheck}>
+            <Button size="sm" onClick={openUpdateCheck}>
               {t('feature.updateCheck.checkForUpdates')}
             </Button>
           )}

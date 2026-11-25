@@ -1,6 +1,4 @@
-import { Button } from '@novasamatech/tr-ui';
-
-import { ProductLoadingPhrase } from '@/shared/components';
+import { Button, ProductLoadingPhrase } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { useConnectionSettings, useSetConnectionPreference } from '@/domains/network';
@@ -54,12 +52,12 @@ export const ProductLoadNotice = ({ identifier, phase }: Props) => {
       </div>
       <div className="flex items-start gap-3">
         {failed && (
-          <Button data-testid={TEST_IDS.productLoadReloadButton} size="mini" variant="secondary" onClick={handleReload}>
+          <Button data-testid={TEST_IDS.productLoadReloadButton} size="sm" onClick={handleReload}>
             {t('feature.networkConnection.loadFailed.reload')}
           </Button>
         )}
         {canSwitch && (
-          <Button data-testid={TEST_IDS.productLoadSwitchButton} size="mini" onClick={handleSwitch}>
+          <Button variant="primary" data-testid={TEST_IDS.productLoadSwitchButton} size="sm" onClick={handleSwitch}>
             {t('feature.networkConnection.slowLoad.action')}
           </Button>
         )}

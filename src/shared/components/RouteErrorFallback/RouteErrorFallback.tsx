@@ -1,4 +1,3 @@
-import { Button } from '@novasamatech/tr-ui';
 import { type ErrorComponentProps } from '@tanstack/react-router';
 import { Download, RefreshCw, XOctagon } from 'lucide-react';
 import { useEffect } from 'react';
@@ -6,6 +5,7 @@ import { useEffect } from 'react';
 import { isElectron } from '@/shared/env';
 import { Sentry } from '@/shared/sentry';
 import { useTranslation } from '@/shared/translation';
+import { Button } from '../Button/Button';
 
 export const RouteErrorFallback = ({ error, info, reset }: ErrorComponentProps) => {
   const { t } = useTranslation();
@@ -33,7 +33,7 @@ export const RouteErrorFallback = ({ error, info, reset }: ErrorComponentProps) 
         )}
       </div>
       <div className="flex flex-col items-center gap-4 self-stretch" style={{ appRegion: 'no-drag' }}>
-        <Button variant="outline" onClick={reset}>
+        <Button onClick={reset}>
           <RefreshCw className="h-4 w-4" />
           {t('common.action.retry')}
         </Button>

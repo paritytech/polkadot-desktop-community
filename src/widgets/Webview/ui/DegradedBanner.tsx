@@ -1,7 +1,7 @@
-import { Button } from '@novasamatech/tr-ui';
 import { AlertTriangle, RefreshCw, X } from 'lucide-react';
 import { type FC, useState } from 'react';
 
+import { Button } from '@/shared/components';
 import { useTranslation } from '@/shared/translation';
 import { type WebviewHealthReason } from '@/aggregates/webview-registry';
 
@@ -27,8 +27,8 @@ export const DegradedBanner: FC<Props> = ({ reason, onReload }) => {
         <span>{t('widget.webview.degraded.title')}</span>
       </span>
       <div className="flex items-center gap-2">
-        <Button data-testid="degraded-banner-reload" variant="outline" onClick={onReload}>
-          <RefreshCw className="h-3 w-3" />
+        <Button data-testid="degraded-banner-reload" onClick={onReload}>
+          <RefreshCw className="size-3" />
           {t('widget.webview.degraded.reload')}
         </Button>
         <button

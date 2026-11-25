@@ -1,10 +1,11 @@
 import { type DragEndEvent, DndContext, PointerSensor, closestCenter, useSensor, useSensors } from '@dnd-kit/core';
 import { SortableContext, arrayMove, rectSortingStrategy } from '@dnd-kit/sortable';
-import { AppIcon, Button, Input } from '@novasamatech/tr-ui';
+import { AppIcon, Input } from '@novasamatech/tr-ui';
 import { Plus, Search, SearchX, Star, StarOff } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 
+import { Button } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { cnTw } from '@/shared/utils';
@@ -131,7 +132,7 @@ export const FavoritesFullscreen = () => {
           title={<FormattedMessage id="feature.favorites.emptyTitle" />}
           description={<FormattedMessage id="feature.favorites.emptyDescription" />}
           action={
-            <Button size="sm" data-testid={TEST_IDS.favoritesBrowseApps} onClick={openAddToFavoritesDialog}>
+            <Button variant="primary" size="sm" data-testid={TEST_IDS.favoritesBrowseApps} onClick={openAddToFavoritesDialog}>
               <FormattedMessage id="feature.favorites.browseApps" />
             </Button>
           }

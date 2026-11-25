@@ -1,5 +1,6 @@
-import { Button, Dialog } from '@novasamatech/tr-ui';
+import { Dialog } from '@novasamatech/tr-ui';
 
+import { Button } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { usePersistedProductById, useUnpinProduct } from '@/domains/product';
@@ -45,15 +46,15 @@ export const RemoveOfflineDialog = ({ productId, onClose }: Props) => {
         <Dialog.Footer>
           <div className="flex w-full gap-2">
             <div className="flex-1">
-              <Button variant="outline" fullWidth onClick={onClose}>
+              <Button block onClick={onClose}>
                 {t('common.cancel')}
               </Button>
             </div>
             <div className="flex-1">
               <Button
                 data-testid={TEST_IDS.offlineAccessRemoveConfirm}
-                variant="destructive"
-                fullWidth
+                variant="danger"
+                block
                 disabled={pending}
                 onClick={handleConfirm}
               >

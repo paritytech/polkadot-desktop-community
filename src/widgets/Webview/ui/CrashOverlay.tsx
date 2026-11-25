@@ -1,6 +1,6 @@
-import { Button } from '@novasamatech/tr-ui';
 import { RefreshCw, XOctagon } from 'lucide-react';
 
+import { Button } from '@/shared/components';
 import { isElectron } from '@/shared/env';
 import { useTranslation } from '@/shared/translation';
 import { type WebviewCrashInfo } from '@/aggregates/webview-registry';
@@ -26,7 +26,7 @@ export const CrashOverlay = ({ crash, onReload }: Props) => {
       </div>
 
       <div className="flex flex-col items-center gap-4 self-stretch" style={{ appRegion: 'no-drag' }}>
-        <Button data-testid="crash-overlay-reload" variant="outline" onClick={onReload}>
+        <Button data-testid="crash-overlay-reload" onClick={onReload}>
           <RefreshCw className="h-4 w-4" />
           {t('widget.webview.crash.reload')}
         </Button>

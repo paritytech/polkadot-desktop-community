@@ -1,11 +1,11 @@
-import { Button, toastError, useTheme } from '@novasamatech/tr-ui';
+import { toastError, useTheme } from '@novasamatech/tr-ui';
 import { useNavigate } from '@tanstack/react-router';
 import { Loader, Smartphone } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import PolkadotLogo from '@/shared/assets/images/logo.svg?jsx';
 import { AUTOTEST_ENABLED } from '@/shared/autotest';
-import { LoadingScreen, QrCode, Spinner } from '@/shared/components';
+import { Button, LoadingScreen, QrCode, Spinner } from '@/shared/components';
 import { isProductionBuild, reloadApp } from '@/shared/env';
 import { useRxState } from '@/shared/rxstate';
 import { TEST_IDS } from '@/shared/test-ids';
@@ -156,7 +156,7 @@ export const OnboardingScreen = () => {
         >
           <p className="text-center text-base font-medium text-fg-primary">{errorContent.title}</p>
           <p className="text-center text-sm leading-5 text-fg-secondary">{errorContent.description}</p>
-          <Button type="button" size="sm" onClick={handleRetry}>
+          <Button variant="primary" type="button" size="sm" onClick={handleRetry}>
             {t('common.action.retry')}
           </Button>
         </div>

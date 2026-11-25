@@ -1,9 +1,9 @@
-import { Button, Dialog, Input } from '@novasamatech/tr-ui';
+import { Dialog, Input } from '@novasamatech/tr-ui';
 import { CircleAlert, LayoutGrid, RotateCw, Search, SearchX, Star, StarOff } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 
-import { Spinner } from '@/shared/components';
+import { Button, Spinner } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { cnTw } from '@/shared/utils';
@@ -122,7 +122,6 @@ export const AddToFavoritesDialog = ({ isOpen, onClose }: Props) => {
               title={<FormattedMessage id="feature.favorites.addDialog.error.title" />}
               action={
                 <Button
-                  variant="secondary"
                   size="sm"
                   data-testid={TEST_IDS.addToFavoritesRetry}
                   onClick={() => {
