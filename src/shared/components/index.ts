@@ -1,5 +1,6 @@
 export { BlurhashCanvas } from './BlurhashCanvas/BlurhashCanvas';
 export { Box } from './Box/Box';
+export { Button } from './Button/Button';
 export { ConfirmationProvider, useConfirmation } from './Confirmation/Confirmation';
 export { DismissOverlay } from './DismissOverlay/DismissOverlay';
 export {
