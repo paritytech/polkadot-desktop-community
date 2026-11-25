@@ -1,7 +1,8 @@
 /*
- * The chrome's colours: the header, its tab strip and its address pill, one value per palette and mode. Every text
- * pair meets APCA on the chrome's surfaces: Lc 90 for text, 75 for muted text, 30 for disabled. The palette is the
- * data-theme attribute on <html>; the mode is the dark class on it.
+ * The colours of the chrome and of every shared control: the header, its tab strip and its address pill, and the
+ * buttons, fields, switches and choices. One value per palette and mode. The targets are APCA Lc 75 for control labels
+ * and body text, 30 for disabled text and 45 for non-text marks, measured on the chrome's surfaces and on tr-ui's main,
+ * container and nested surfaces. The palette is the data-theme attribute on <html>; the mode is the dark class on it.
  * The names start with --chrome- because tr-ui writes its own variables inline on :root, which no rule here can beat.
  */
 :root {
@@ -9,7 +10,7 @@
   --chrome-bottom: #fafafb;
   --chrome-text: #0b0c0f;
   --chrome-text-muted: #393b42;
-  --chrome-text-faint: #b9bbc2;
+  --chrome-text-faint: #acaeb4;
   --chrome-well: rgba(0, 0, 0, 0.05);
   --chrome-well-strong: rgba(0, 0, 0, 0.06);
   --chrome-fill: rgba(0, 0, 0, 0.05);
@@ -24,6 +25,24 @@
   --chrome-shadow-pill: inset 0 0 0 1px var(--chrome-ring), var(--chrome-shadow-inset);
   --chrome-shadow-edge: inset 0 -1px 0 var(--chrome-line);
   --chrome-shadow-track: var(--chrome-shadow-inset), inset 0 0 0 1px var(--chrome-line);
+  --chrome-ring-strong: rgba(0, 0, 0, 0.48);
+  --chrome-danger-fill: #c81e1e;
+  --chrome-danger-fill-strong: #b91c1c;
+  --chrome-danger-ring: #b91c1c;
+  --chrome-danger-text: #ffffff;
+  --chrome-switch-track: rgba(0, 0, 0, 0.12);
+  --chrome-knob: #ffffff;
+  --chrome-primary-top: #2c2e34;
+  --chrome-primary-bottom: #0b0c0f;
+  --chrome-on-primary: #f4f4f5;
+  --chrome-primary: linear-gradient(180deg, var(--chrome-primary-top) 0%, var(--chrome-primary-bottom) 100%);
+  --chrome-primary-hover: linear-gradient(180deg, var(--chrome-primary-top) 0%, var(--chrome-primary-top) 100%);
+  --chrome-shadow-primary: inset 0 1px 0 rgba(255, 255, 255, 0.16), 0 1px 3px rgba(0, 0, 0, 0.2);
+  --chrome-shadow-knob: 0 1px 2px rgba(0, 0, 0, 0.25);
+  --chrome-shadow-ring: inset 0 0 0 1px var(--chrome-ring);
+  --chrome-shadow-line: inset 0 0 0 1px var(--chrome-line);
+  --chrome-shadow-selected: inset 0 0 0 2px var(--chrome-ring-strong);
+  --chrome-shadow-danger: inset 0 0 0 1px var(--chrome-danger-ring);
 }
 
 :root.dark {
@@ -44,6 +63,18 @@
     inset 0 1px 0 rgba(255, 255, 255, 0.12), inset 0 0 0 1px rgba(255, 255, 255, 0.16), 0 1px 3px rgba(0, 0, 0, 0.3);
   --chrome-shadow-inset: inset 0 1px 2px rgba(0, 0, 0, 0.35), inset 0 0 0 1px rgba(255, 255, 255, 0.06);
   --chrome-shadow-edge: inset 0 1px 0 rgba(255, 255, 255, 0.12), inset 0 -1px 0 var(--chrome-line);
+  --chrome-ring-strong: rgba(255, 255, 255, 0.48);
+  --chrome-danger-fill: rgba(250, 139, 133, 0.16);
+  --chrome-danger-fill-strong: rgba(250, 139, 133, 0.22);
+  --chrome-danger-ring: rgba(250, 139, 133, 0.45);
+  --chrome-danger-text: #ffdad7;
+  --chrome-switch-track: rgba(255, 255, 255, 0.12);
+  --chrome-knob: var(--chrome-text);
+  --chrome-primary-top: #f4f4f5;
+  --chrome-primary-bottom: #d4d5db;
+  --chrome-on-primary: #0b0c0f;
+  --chrome-shadow-primary: inset 0 1px 0 rgba(255, 255, 255, 0.9), 0 1px 3px rgba(0, 0, 0, 0.35);
+  --chrome-shadow-knob: 0 1px 2px rgba(0, 0, 0, 0.35);
 }
 
 :root[data-theme='tokyo'] {
@@ -51,7 +82,10 @@
   --chrome-bottom: #fff0f1;
   --chrome-text: #0b070e;
   --chrome-text-muted: #373040;
-  --chrome-text-faint: #b5aebd;
+  --chrome-text-faint: #a59eac;
+  --chrome-primary-top: #2b2533;
+  --chrome-primary-bottom: #0b070e;
+  --chrome-on-primary: #f7f5f8;
 }
 
 :root.dark[data-theme='tokyo'] {
@@ -60,6 +94,9 @@
   --chrome-text: #f7f5f8;
   --chrome-text-muted: #e2dee5;
   --chrome-text-faint: #847c8e;
+  --chrome-primary-top: #f7f5f8;
+  --chrome-primary-bottom: #e2dee5;
+  --chrome-on-primary: #0b070e;
 }
 
 :root[data-theme='lisbon'] {
@@ -67,7 +104,10 @@
   --chrome-bottom: #fff7eb;
   --chrome-text: #0e0907;
   --chrome-text-muted: #3c362f;
-  --chrome-text-faint: #bab4ad;
+  --chrome-text-faint: #aba69f;
+  --chrome-primary-top: #302a24;
+  --chrome-primary-bottom: #0e0907;
+  --chrome-on-primary: #f7f7f6;
 }
 
 :root.dark[data-theme='lisbon'] {
@@ -76,6 +116,9 @@
   --chrome-text: #f7f7f6;
   --chrome-text-muted: #e5e1de;
   --chrome-text-faint: #88827a;
+  --chrome-primary-top: #f7f7f6;
+  --chrome-primary-bottom: #e5e1de;
+  --chrome-on-primary: #0e0907;
 }
 
 :root[data-theme='malta'] {
@@ -83,7 +126,10 @@
   --chrome-bottom: #eafef4;
   --chrome-text: #090d0b;
   --chrome-text-muted: #363e3b;
-  --chrome-text-faint: #b3bcb7;
+  --chrome-text-faint: #a3aba7;
+  --chrome-primary-top: #2a322f;
+  --chrome-primary-bottom: #090d0b;
+  --chrome-on-primary: #f6f8f7;
 }
 
 :root.dark[data-theme='malta'] {
@@ -92,6 +138,9 @@
   --chrome-text: #f6f8f7;
   --chrome-text-muted: #e0e5e2;
   --chrome-text-faint: #828c86;
+  --chrome-primary-top: #f6f8f7;
+  --chrome-primary-bottom: #e0e5e2;
+  --chrome-on-primary: #090d0b;
 }
 
 @theme inline {
@@ -108,9 +157,21 @@
   --color-chrome-faint: var(--chrome-text-faint);
   --color-chrome-focus: var(--chrome-focus);
   --color-chrome-ok: var(--chrome-ok);
+  --color-chrome-danger-fill: var(--chrome-danger-fill);
+  --color-chrome-danger-fill-strong: var(--chrome-danger-fill-strong);
+  --color-chrome-danger-text: var(--chrome-danger-text);
+  --color-chrome-switch-track: var(--chrome-switch-track);
+  --color-chrome-knob: var(--chrome-knob);
+  --color-chrome-on-primary: var(--chrome-on-primary);
   --shadow-chrome-raised: var(--chrome-shadow-raised);
   --shadow-chrome-inset: var(--chrome-shadow-inset);
   --shadow-chrome-pill: var(--chrome-shadow-pill);
   --shadow-chrome-edge: var(--chrome-shadow-edge);
   --shadow-chrome-track: var(--chrome-shadow-track);
+  --shadow-chrome-primary: var(--chrome-shadow-primary);
+  --shadow-chrome-knob: var(--chrome-shadow-knob);
+  --shadow-chrome-ring: var(--chrome-shadow-ring);
+  --shadow-chrome-line: var(--chrome-shadow-line);
+  --shadow-chrome-selected: var(--chrome-shadow-selected);
+  --shadow-chrome-danger: var(--chrome-shadow-danger);
 }
