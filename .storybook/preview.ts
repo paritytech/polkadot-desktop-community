@@ -9,8 +9,8 @@ const preview: Preview = {
     backgrounds: {
       default: 'surface-main',
       values: [
-        { name: 'surface-main', value: 'hsl(var(--bg-surface-main))' },
-        { name: 'surface-container', value: 'hsl(var(--bg-surface-container))' },
+        { name: 'surface-main', value: 'var(--bg-surface-main)' },
+        { name: 'surface-container', value: 'var(--bg-surface-container)' },
       ],
     },
   },
