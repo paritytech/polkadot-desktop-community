@@ -81,7 +81,7 @@
     "lint": "npm run lint:generic ./src ./main ./e2e",
     "lint:fix": "npm run lint:generic -- ./src ./main ./e2e --fix && npm run fmt:fix",
     "storybook": "storybook dev -p 6006",
-    "storybook:build": "storybook build -o $(npm run --silent run config folders.storybookBuild)",
+    "storybook:build": "storybook build -o $(node config/bin.js folders.storybookBuild)",
     "githook:pre-commit": "lint-staged --relative",
     "prepare": "husky",
     "run-s": "npm-run-all",
