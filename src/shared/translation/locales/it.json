@@ -413,7 +413,8 @@
           "title": "Il tuo account è ancora in fase di configurazione",
           "subtitle": "Riprova più tardi"
         }
-      }
+      },
+      "networkLabel": "Rete"
     },
     "dashboard": {
       "title": "Dashboard",

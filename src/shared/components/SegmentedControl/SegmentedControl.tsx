@@ -218,9 +218,11 @@ type SegmentedControlItemProps = PropsWithChildren<{
   value: string;
   /** A disabled item cannot be picked or focused; the arrow keys, Home and End skip it. */
   disabled?: boolean;
+  /** Written as `data-testid` on the item's button. */
+  testId?: string;
 }>;
 
-const SegmentedControlItem = ({ value, disabled = false, children }: SegmentedControlItemProps) => {
+const SegmentedControlItem = ({ value, disabled = false, testId, children }: SegmentedControlItemProps) => {
   const context = useContext(SegmentedControlContext);
   if (!context) {
     throw new Error('SegmentedControl.Item must be rendered inside SegmentedControl.Root');
@@ -233,6 +235,7 @@ const SegmentedControlItem = ({ value, disabled = false, children }: SegmentedCo
     <button
       type="button"
       data-segment-item
+      data-testid={testId}
       data-segment-value={value}
       data-no-app-focus
       data-filled={filled ? '' : undefined}

@@ -413,7 +413,8 @@
           "title": "Dein Konto wird noch eingerichtet",
           "subtitle": "Bitte versuche es später erneut"
         }
-      }
+      },
+      "networkLabel": "Netzwerk"
     },
     "dashboard": {
       "title": "Dashboard",

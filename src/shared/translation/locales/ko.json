@@ -413,7 +413,8 @@
           "title": "계정을 아직 설정하는 중입니다",
           "subtitle": "잠시 후 다시 시도해 주세요"
         }
-      }
+      },
+      "networkLabel": "네트워크"
     },
     "dashboard": {
       "title": "대시보드",

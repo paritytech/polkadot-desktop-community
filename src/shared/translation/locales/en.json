@@ -414,7 +414,8 @@
           "title": "Your account is still being set up",
           "subtitle": "Please try again later"
         }
-      }
+      },
+      "networkLabel": "Network"
     },
     "dashboard": {
       "title": "Dashboard",

@@ -60,6 +60,18 @@ describe('SegmentedControl', () => {
     expect(item('C')).toHaveAttribute('aria-pressed', 'false');
   });
 
+  it('writes an item testId as data-testid on its button', () => {
+    render(
+      <SegmentedControl.Root label="Things" value="a" onChange={vi.fn()}>
+        <SegmentedControl.Item value="a" testId="thing-a">
+          A
+        </SegmentedControl.Item>
+      </SegmentedControl.Root>,
+    );
+
+    expect(screen.getByTestId('thing-a')).toBe(item('A'));
+  });
+
   it('calls onChange with a newly picked value only', () => {
     const onChange = vi.fn();
     render(<Things value="b" onChange={onChange} />);

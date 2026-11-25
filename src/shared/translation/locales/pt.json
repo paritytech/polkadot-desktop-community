@@ -413,7 +413,8 @@
           "title": "Sua conta ainda está sendo configurada",
           "subtitle": "Tente novamente mais tarde"
         }
-      }
+      },
+      "networkLabel": "Rede"
     },
     "dashboard": {
       "title": "Painel",

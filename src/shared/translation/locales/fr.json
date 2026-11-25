@@ -413,7 +413,8 @@
           "title": "Votre compte est encore en cours de configuration",
           "subtitle": "Réessayez plus tard"
         }
-      }
+      },
+      "networkLabel": "Réseau"
     },
     "dashboard": {
       "title": "Tableau de bord",

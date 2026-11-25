@@ -4,12 +4,11 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import PolkadotLogo from '@/shared/assets/images/logo.svg?jsx';
 import { AUTOTEST_ENABLED } from '@/shared/autotest';
-import { Button, LoadingScreen, QrCode, Spinner, toast } from '@/shared/components';
+import { Button, LoadingScreen, QrCode, SegmentedControl, Spinner, toast } from '@/shared/components';
 import { isProductionBuild, reloadApp } from '@/shared/env';
 import { useRxState } from '@/shared/rxstate';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
-import { cnTw } from '@/shared/utils';
 import { type EnvironmentId, environmentService, useThemeVariant } from '@/domains/application';
 import { networkSettings } from '@/aggregates/network-settings';
 import { truapiRuntimeUseCase, useTruapiAuthState } from '@/aggregates/truapi-runtime';
@@ -191,32 +190,23 @@ export const OnboardingScreen = () => {
 
         <div className="flex w-full max-w-100.5 flex-col items-center gap-2">
           {!isProductionBuild() && environments.length > 1 && (
-            <div className="h-17 w-full rounded-3xl border border-stroke-primary bg-bg-surface-container p-3.75 shadow-[0px_1px_2px_0px_var(--shadow-soft)]">
-              <div className="flex h-9 items-center rounded-lg bg-bg-surface-nested p-1">
-                {environments.map(env => {
-                  const isActive = settings.environmentId === env.id;
-
-                  return (
-                    <button
-                      key={env.id}
-                      data-testid={`${TEST_IDS.networkButton}-${env.id}`}
-                      aria-pressed={isActive}
-                      className={cnTw(
-                        'h-7 flex-1 rounded-md px-2 text-sm font-medium transition',
-                        isActive
-                          ? 'bg-bg-action-primary-inverted text-fg-primary shadow-[0px_1px_3px_0px_var(--shadow-soft),0px_1px_2px_-1px_var(--shadow-soft)]'
-                          : 'bg-transparent text-fg-secondary',
-                        !isActive && !isNetworkSelectionDisabled && 'hover:text-fg-primary',
-                        isNetworkSelectionDisabled && 'cursor-not-allowed opacity-50',
-                      )}
-                      disabled={isNetworkSelectionDisabled}
-                      onClick={() => handleEnvironmentChange(env.id)}
-                    >
-                      {env.name}
-                    </button>
-                  );
-                })}
-              </div>
+            <div className="flex h-17 w-full flex-col justify-center rounded-3xl border border-stroke-primary bg-bg-surface-container p-3.75 shadow-[0px_1px_2px_0px_var(--shadow-soft)]">
+              <SegmentedControl.Root
+                label={t('feature.onboarding.networkLabel')}
+                value={settings.environmentId}
+                onChange={value => handleEnvironmentChange(value)}
+              >
+                {environments.map(env => (
+                  <SegmentedControl.Item
+                    key={env.id}
+                    value={env.id}
+                    testId={`${TEST_IDS.networkButton}-${env.id}`}
+                    disabled={isNetworkSelectionDisabled}
+                  >
+                    {env.name}
+                  </SegmentedControl.Item>
+                ))}
+              </SegmentedControl.Root>
             </div>
           )}
 

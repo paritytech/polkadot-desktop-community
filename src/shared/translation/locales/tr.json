@@ -413,7 +413,8 @@
           "title": "Hesabın hâlâ hazırlanıyor",
           "subtitle": "Lütfen daha sonra yeniden dene"
         }
-      }
+      },
+      "networkLabel": "Ağ"
     },
     "dashboard": {
       "title": "Pano",

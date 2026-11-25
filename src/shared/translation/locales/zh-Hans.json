@@ -413,7 +413,8 @@
           "title": "你的账户仍在设置中",
           "subtitle": "请稍后重试"
         }
-      }
+      },
+      "networkLabel": "网络"
     },
     "dashboard": {
       "title": "仪表板",
