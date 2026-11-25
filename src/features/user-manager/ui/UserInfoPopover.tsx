@@ -1,11 +1,10 @@
-import { Avatar } from '@novasamatech/tr-ui';
 import { type SessionUiInfo } from '@parity/truapi-host';
 import { useNavigate } from '@tanstack/react-router';
 import { LogIn, LogOut, Settings, WifiOff } from 'lucide-react';
 import { type PropsWithChildren, type ReactNode, memo, useEffect, useState } from 'react';
 
 import PolkadotLogo from '@/shared/assets/images/logo-icon.svg?jsx';
-import { DismissOverlay, Popover, Spinner } from '@/shared/components';
+import { Avatar, DismissOverlay, Popover, Spinner } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { browserTabs } from '@/aggregates/browser-tabs';

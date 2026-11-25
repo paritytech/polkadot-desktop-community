@@ -1,5 +1,4 @@
-import { Avatar as TrUiAvatar } from '@novasamatech/tr-ui';
-
+import { Avatar as SharedAvatar } from '@/shared/components';
 import { type AvatarSize, avatarSizeMap, getAvatarTone } from '../helpers/avatar';
 
 type AvatarProps = {
@@ -8,5 +7,5 @@ type AvatarProps = {
 };
 
 export const Avatar = ({ name, size = 'medium' }: AvatarProps) => (
-  <TrUiAvatar label={name} alt={name} tone={getAvatarTone(name)} size={avatarSizeMap[size]} />
+  <SharedAvatar label={name} alt={name} tone={getAvatarTone(name)} size={avatarSizeMap[size]} />
 );
