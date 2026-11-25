@@ -361,7 +361,7 @@ export const TEST_IDS = {
 } as const;
 ```
 
-Some `@novasamatech/tr-ui` components don't forward rest props, so wrap those with a `<div>`. The local `Button` and `IconButton` (`@/shared/components`) take `data-testid` directly:
+The local controls in `@/shared/components` (`Button`, `IconButton`, `SegmentedControl.Item` through `testId`) put the test id on the control itself:
 
 ```tsx
 <IconButton data-testid={TEST_IDS.myButton} label="My action" onClick={handleClick}>

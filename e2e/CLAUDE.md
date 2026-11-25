@@ -137,8 +137,7 @@ export class MyPage {
 
   async clickMyButton() {
     await expect(this.myButton).toBeVisible({ timeout: DEFAULT_TIMEOUT });
-    // A local control (Button, IconButton) carries the testid on the button itself. Only a tr-ui component that
-    // doesn't forward rest props puts it on a wrapper div, and then the click goes to `.locator('button')`.
+    // A local control (Button, IconButton, SegmentedControl.Item) carries the testid on the control itself.
     await this.myButton.click();
   }
 }
@@ -161,7 +160,7 @@ export const TEST_IDS = {
 } as const;
 ```
 
-Some `@novasamatech/tr-ui` components don't forward rest props. Wrap those with a `<div>`. The local `Button` and `IconButton` (`@/shared/components`) take `data-testid` directly:
+The local controls in `@/shared/components` (`Button`, `IconButton`, `SegmentedControl.Item` through `testId`) put the test id on the control itself:
 
 ```tsx
 import { TEST_IDS } from '@/shared/test-ids';
