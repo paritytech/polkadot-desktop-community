@@ -91,4 +91,36 @@ describe('Room', () => {
     });
     await waitFor(() => expect(markAsRead).toHaveBeenCalledTimes(1));
   });
+
+  it('reads the chat only while it is scrolled to the bottom', async () => {
+    const markAsRead = vi.fn(async () => {});
+    const messages = new BehaviorSubject<ChatMessage[]>([incomingText('m-1', 'first', 1_700_000_000_000)]);
+    renderRoom(makeSession(undefined, { messages, markAsRead }));
+
+    await waitFor(() => expect(markAsRead).toHaveBeenCalled());
+
+    // happy-dom does no layout, so the scroll container gets a fixed geometry.
+    const scroller = (await screen.findByText('first')).closest<HTMLElement>('.overflow-y-auto');
+    if (!scroller) throw new Error('scroll container not found');
+    Object.defineProperty(scroller, 'scrollHeight', { configurable: true, value: 2000 });
+    Object.defineProperty(scroller, 'clientHeight', { configurable: true, value: 500 });
+    const scrollTo = async (top: number) => {
+      scroller.scrollTop = top;
+      act(() => {
+        scroller.dispatchEvent(new Event('scroll'));
+      });
+      await act(() => new Promise(resolve => requestAnimationFrame(() => resolve(undefined))));
+    };
+
+    await scrollTo(0);
+    markAsRead.mockClear();
+    act(() => {
+      messages.next([...messages.value, incomingText('m-2', 'second', 1_700_000_001_000)]);
+    });
+    await screen.findByText('second');
+    expect(markAsRead).not.toHaveBeenCalled();
+
+    await scrollTo(1500);
+    await waitFor(() => expect(markAsRead).toHaveBeenCalledTimes(1));
+  });
 });
