@@ -1,10 +1,9 @@
-import { ProductHeader } from '@novasamatech/tr-ui';
 import { type AnimationEvent, type ReactNode } from 'react';
 
 import { Dialog } from '@/shared/components';
 import { useTranslation } from '@/shared/translation';
 import { useDisplayedProduct } from '@/domains/product';
-import { useProductHeaderProps } from '@/widgets/ProductHeader';
+import { ProductHeader, useProductHeaderProps } from '@/widgets/ProductHeader';
 
 type Props = {
   open: boolean;

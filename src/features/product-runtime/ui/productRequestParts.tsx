@@ -1,4 +1,3 @@
-import { ProductHeader } from '@novasamatech/tr-ui';
 import JsonView from '@uiw/react-json-view';
 import { AlertTriangle, ChevronLeft, Info } from 'lucide-react';
 import { type CSSProperties, type PropsWithChildren, type ReactNode, memo, useMemo } from 'react';
@@ -8,7 +7,7 @@ import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { cnTw } from '@/shared/utils';
 import { useDisplayedProduct, useDotNsTld } from '@/domains/product';
-import { useProductHeaderProps } from '@/widgets/ProductHeader';
+import { ProductHeader, useProductHeaderProps } from '@/widgets/ProductHeader';
 
 /**
  * The pieces every product-request modal is assembled from.
