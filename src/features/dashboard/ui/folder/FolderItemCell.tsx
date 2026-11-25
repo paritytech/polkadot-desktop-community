@@ -1,7 +1,6 @@
-import { AppIcon } from '@novasamatech/tr-ui';
 import { type ReactNode } from 'react';
 
-import { AppIconPlaceholder } from '@/shared/components';
+import { AppIcon } from '@/shared/components';
 import { cnTw } from '@/shared/utils';
 import { type FolderItemIconSize } from '../../types';
 
@@ -34,9 +33,7 @@ export const FolderItemCell = ({ iconUrl, iconNode, name, iconSize }: Props) => 
             >
               {iconNode}
             </span>
-          ) : (
-            <AppIconPlaceholder size={iconSize} />
-          )}
+          ) : null}
         </AppIcon>
       </span>
       <span className="flex w-full shrink-0 items-center justify-center overflow-hidden p-2">
