@@ -1,6 +1,6 @@
-import { Button } from '@novasamatech/tr-ui';
 import { type LucideIcon, Grid2x2, Import, MessageCircle, Scan } from 'lucide-react';
 
+import { Button } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { type ExecutableKind, type SemVer, manifestService, useDisplayedProduct, useIsPinned } from '@/domains/product';
@@ -62,7 +62,7 @@ const UpdateRow = ({ productId, kind, fromVersion, toVersion }: UpdateRowProps) 
           </span>
         ) : null}
       </div>
-      <Button data-testid={TEST_IDS.offlineAccessUpdateButton} variant="default" size="mini" onClick={handleUpdate}>
+      <Button data-testid={TEST_IDS.offlineAccessUpdateButton} variant="primary" size="sm" onClick={handleUpdate}>
         {t('feature.offlineAccess.section.update')}
       </Button>
     </section>
@@ -88,8 +88,8 @@ export const OfflineAccessSection = ({ productId }: Props) => {
           <span className="text-xs leading-4 font-medium text-fg-tertiary">{t('feature.offlineAccess.section.description')}</span>
         </div>
         <Button
-          variant={pinned ? 'secondary' : 'default'}
-          size="mini"
+          variant={pinned ? 'secondary' : 'primary'}
+          size="sm"
           onClick={() => openOfflineAccessDialog({ kind: pinned ? 'remove' : 'enable', productId })}
         >
           {pinned ? t('feature.offlineAccess.section.remove') : t('feature.offlineAccess.section.enable')}

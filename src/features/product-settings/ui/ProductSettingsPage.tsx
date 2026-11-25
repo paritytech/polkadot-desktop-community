@@ -1,8 +1,9 @@
-import { Button, Dialog, ScrollArea, toastSuccess } from '@novasamatech/tr-ui';
+import { Dialog, ScrollArea, toastSuccess } from '@novasamatech/tr-ui';
 import { useNavigate } from '@tanstack/react-router';
 import { ChevronLeft, ExternalLink, Grid2X2, Link2, Paintbrush, Trash2 } from 'lucide-react';
 import { type ReactNode, useState } from 'react';
 
+import { Button } from '@/shared/components';
 import { Slot } from '@/shared/di';
 import { useTranslation } from '@/shared/translation';
 import { formatBytes } from '@/shared/utils';
@@ -105,11 +106,11 @@ export const ProductSettingsPage = ({ productId, backLabel, onBack }: Props) => 
               </div>
 
               <div className="flex gap-2">
-                <Button variant="outline" size="sm" onClick={() => setClearCacheDialogOpen(true)}>
+                <Button size="sm" onClick={() => setClearCacheDialogOpen(true)}>
                   <Paintbrush size={16} />
                   {t('feature.productSettings.clearCache')}
                 </Button>
-                <Button variant="outline" size="sm" onClick={() => setForgetDialogOpen(true)}>
+                <Button size="sm" onClick={() => setForgetDialogOpen(true)}>
                   <Trash2 size={16} />
                   {t('feature.productSettings.forgetApp')}
                 </Button>
@@ -157,7 +158,7 @@ export const ProductSettingsPage = ({ productId, backLabel, onBack }: Props) => 
 
       <ConfirmDialog
         confirmLabel={t('feature.productSettings.clearCache')}
-        confirmVariant="default"
+        confirmVariant="primary"
         description={t('feature.productSettings.clearCacheDialog.description')}
         open={clearCacheDialogOpen}
         title={t('feature.productSettings.clearCacheDialog.title', { productName })}
@@ -168,7 +169,7 @@ export const ProductSettingsPage = ({ productId, backLabel, onBack }: Props) => 
 
       <ConfirmDialog
         confirmLabel={t('feature.productSettings.forgetApp')}
-        confirmVariant="destructive"
+        confirmVariant="danger"
         description={t('feature.productSettings.forgetDialog.description', { productName })}
         open={forgetDialogOpen}
         title={t('feature.productSettings.forgetDialog.title', { productName })}
@@ -195,7 +196,7 @@ const ConfirmDialog = ({
   title: string;
   description: string;
   confirmLabel: string;
-  confirmVariant: 'default' | 'destructive';
+  confirmVariant: 'primary' | 'danger';
   cancelLabel: string;
   onConfirm: VoidFunction;
 }) => (
@@ -215,13 +216,11 @@ const ConfirmDialog = ({
         <div className="flex w-full gap-2">
           <div className="flex-1">
             <Dialog.Close asChild>
-              <Button variant="outline" fullWidth>
-                {cancelLabel}
-              </Button>
+              <Button block>{cancelLabel}</Button>
             </Dialog.Close>
           </div>
           <div className="flex-1">
-            <Button variant={confirmVariant} fullWidth onClick={onConfirm}>
+            <Button variant={confirmVariant} block onClick={onConfirm}>
               {confirmLabel}
             </Button>
           </div>
