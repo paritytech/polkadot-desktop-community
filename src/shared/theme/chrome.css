@@ -1,9 +1,8 @@
 /*
- * The colours of the chrome and of every shared control: the header, its tab strip and its address pill, and the
- * buttons, fields, switches and choices. One value per palette and mode. The targets are APCA Lc 75 for control labels
- * and body text, 30 for disabled text and 45 for non-text marks, measured on the chrome's surfaces and on tr-ui's main,
- * container and nested surfaces. The palette is the data-theme attribute on <html>; the mode is the dark class on it.
- * The names start with --chrome- because tr-ui writes its own variables inline on :root, which no rule here can beat.
+ * The app's colours, the chrome's and the content's, one value per palette and mode. The palette is the data-theme
+ * attribute on <html>; the mode is the dark class on it. The content tokens (--fg-*, --bg-*, --stroke-*) are mixes of
+ * the chrome palette, so a palette block tints both. The APCA targets are Lc 75 for body text and control labels, 60 for
+ * tertiary and status text, 45 for non-text marks and tertiary text on inverted surfaces, and 30 for disabled text.
  * The floating layers draw on --chrome-surface (anchored layers) and --chrome-glass (dialogs, toasts), and keep a 0.01 ms
  * exit animation under reduced motion because Radix unmounts a closing layer on animationend.
  */
@@ -158,6 +157,98 @@
   --chrome-on-primary: #090d0b;
 }
 
+:root {
+  --bg-surface-main: color-mix(in srgb, var(--chrome-text) 4%, var(--chrome-bottom));
+  --bg-surface-container: var(--chrome-top);
+  --bg-surface-nested: color-mix(in srgb, var(--chrome-text) 4%, var(--chrome-top));
+  --bg-selection-container-hover: color-mix(in srgb, var(--chrome-text) 4%, var(--chrome-top));
+  --bg-selection-container-active: color-mix(in srgb, var(--chrome-text) 8%, var(--chrome-top));
+  --bg-action-secondary: color-mix(in srgb, var(--chrome-text) 10%, var(--chrome-top));
+  --bg-action-secondary-hover: color-mix(in srgb, var(--chrome-text) 14%, var(--chrome-top));
+  --bg-action-tertiary: color-mix(in srgb, var(--chrome-text) 12%, var(--chrome-top));
+  --bg-action-active: color-mix(in srgb, var(--chrome-text) 8%, var(--chrome-top));
+  --bg-illustration-light: color-mix(in srgb, var(--chrome-text) 6%, var(--chrome-top));
+  --stroke-primary: color-mix(in srgb, var(--chrome-text) 10%, var(--chrome-top));
+  --stroke-secondary: color-mix(in srgb, var(--chrome-text) 16%, var(--chrome-top));
+  --stroke-tertiary: color-mix(in srgb, var(--chrome-text) 45%, var(--chrome-top));
+  --fg-primary: var(--chrome-text);
+  --fg-secondary: var(--chrome-text-muted);
+  --fg-tertiary: color-mix(in srgb, var(--chrome-text) 62%, var(--chrome-top));
+  --bg-surface-container-inverted: var(--chrome-text);
+  --bg-surface-nested-inverted: color-mix(in srgb, var(--chrome-top) 14%, var(--chrome-text));
+  --bg-selection-container-hover-inverted: color-mix(in srgb, var(--chrome-top) 10%, var(--chrome-text));
+  --bg-action-secondary-inverted: color-mix(in srgb, var(--chrome-top) 20%, var(--chrome-text));
+  --stroke-primary-inverted: color-mix(in srgb, var(--chrome-top) 24%, var(--chrome-text));
+  --bg-illustration-dark: var(--chrome-text);
+  --fg-primary-inverted: var(--chrome-on-primary);
+  --fg-secondary-inverted: color-mix(in srgb, var(--chrome-on-primary) 82%, var(--chrome-text));
+  --fg-tertiary-inverted: color-mix(in srgb, var(--chrome-on-primary) 68%, var(--chrome-text));
+  --bg-action-primary: var(--chrome-primary-bottom);
+  --bg-action-primary-hover: var(--chrome-primary-top);
+  --bg-action-primary-inverted: var(--chrome-top);
+  --fg-static-white: #ffffff;
+  --fg-error: var(--chrome-err);
+  --fg-success: var(--chrome-ok);
+  --fg-warning: #a15c07;
+  --fg-link: color-mix(in srgb, var(--chrome-info) 85%, var(--chrome-text));
+  --fg-link-hover: color-mix(in srgb, var(--chrome-info) 70%, var(--chrome-text));
+  --bg-accent: var(--chrome-info);
+  --bg-status-error: #c81e1e;
+  --bg-status-error-hover: #b91c1c;
+  --bg-status-warning: color-mix(in srgb, var(--fg-warning) 24%, transparent);
+  --stroke-success: var(--chrome-ok);
+  --focus-ring: var(--chrome-focus);
+  --shadow-soft: rgba(0, 0, 0, 0.12);
+  --avatar-bg-amethyst: #7c3aed;
+  --avatar-fg-amethyst: #ede9fe;
+  --avatar-bg-opal: #1e1b4b;
+  --avatar-fg-opal: #a5b4fc;
+  --avatar-bg-turquoise: #0891b2;
+  --avatar-fg-turquoise: #cffafe;
+  --avatar-bg-onyx: #1e293b;
+  --avatar-fg-onyx: #e5e7eb;
+  --avatar-bg-pearl: #262626;
+  --avatar-fg-pearl: #f5f5f5;
+  --avatar-bg-emerald: #064e3b;
+  --avatar-fg-emerald: #d1fae5;
+  --avatar-bg-topaz: #c24c1b;
+  --avatar-fg-topaz: #ffedd5;
+  --avatar-bg-ruby: #9f1239;
+  --avatar-fg-ruby: #ffe4e6;
+  --avatar-bg-sapphire: #1e3a8a;
+  --avatar-fg-sapphire: #dbeafe;
+  --avatar-bg-garnet: #7f1d1d;
+  --avatar-fg-garnet: #fee2e2;
+}
+
+:root.dark {
+  --bg-surface-main: color-mix(in srgb, var(--chrome-bottom) 60%, var(--chrome-top));
+  --bg-surface-container: color-mix(in srgb, var(--chrome-text) 7%, var(--bg-surface-main));
+  --bg-surface-nested: color-mix(in srgb, var(--chrome-text) 12%, var(--bg-surface-main));
+  --bg-selection-container-hover: color-mix(in srgb, var(--chrome-text) 10%, var(--bg-surface-main));
+  --bg-selection-container-active: color-mix(in srgb, var(--chrome-text) 15%, var(--bg-surface-main));
+  --bg-action-secondary: color-mix(in srgb, var(--chrome-text) 18%, var(--bg-surface-main));
+  --bg-action-secondary-hover: color-mix(in srgb, var(--chrome-text) 24%, var(--bg-surface-main));
+  --bg-action-tertiary: color-mix(in srgb, var(--chrome-text) 20%, var(--bg-surface-main));
+  --bg-action-active: color-mix(in srgb, var(--chrome-text) 15%, var(--bg-surface-main));
+  --bg-illustration-light: color-mix(in srgb, var(--chrome-text) 12%, var(--bg-surface-main));
+  --stroke-primary: color-mix(in srgb, var(--chrome-text) 12%, var(--bg-surface-main));
+  --stroke-secondary: color-mix(in srgb, var(--chrome-text) 20%, var(--bg-surface-main));
+  --stroke-tertiary: color-mix(in srgb, var(--chrome-text) 45%, var(--bg-surface-main));
+  --fg-secondary: color-mix(in srgb, var(--chrome-text) 40%, var(--chrome-text-muted));
+  --fg-tertiary: color-mix(in srgb, var(--chrome-text) 78%, var(--bg-surface-main));
+  --bg-surface-nested-inverted: color-mix(in srgb, var(--bg-surface-main) 12%, var(--chrome-text));
+  --bg-selection-container-hover-inverted: color-mix(in srgb, var(--bg-surface-main) 8%, var(--chrome-text));
+  --bg-action-secondary-inverted: color-mix(in srgb, var(--bg-surface-main) 16%, var(--chrome-text));
+  --stroke-primary-inverted: color-mix(in srgb, var(--bg-surface-main) 22%, var(--chrome-text));
+  --fg-error: color-mix(in srgb, var(--chrome-err) 70%, var(--chrome-text));
+  --fg-success: color-mix(in srgb, var(--chrome-ok) 70%, var(--chrome-text));
+  --fg-warning: color-mix(in srgb, #e69f42 70%, var(--chrome-text));
+  --fg-link: color-mix(in srgb, var(--chrome-info) 70%, var(--chrome-text));
+  --fg-link-hover: color-mix(in srgb, var(--chrome-info) 55%, var(--chrome-text));
+  --shadow-soft: rgba(0, 0, 0, 0.4);
+}
+
 @theme inline {
   --color-chrome-top: var(--chrome-top);
   --color-chrome-bottom: var(--chrome-bottom);
@@ -183,6 +274,65 @@
   --color-chrome-danger-ink: var(--chrome-danger-ink);
   --color-chrome-err: var(--chrome-err);
   --color-chrome-info: var(--chrome-info);
+  --color-fg-primary: var(--fg-primary);
+  --color-fg-secondary: var(--fg-secondary);
+  --color-fg-tertiary: var(--fg-tertiary);
+  --color-fg-primary-inverted: var(--fg-primary-inverted);
+  --color-fg-secondary-inverted: var(--fg-secondary-inverted);
+  --color-fg-tertiary-inverted: var(--fg-tertiary-inverted);
+  --color-fg-static-white: var(--fg-static-white);
+  --color-fg-error: var(--fg-error);
+  --color-fg-success: var(--fg-success);
+  --color-fg-warning: var(--fg-warning);
+  --color-fg-link: var(--fg-link);
+  --color-fg-link-hover: var(--fg-link-hover);
+  --color-bg-surface-main: var(--bg-surface-main);
+  --color-bg-surface-container: var(--bg-surface-container);
+  --color-bg-surface-nested: var(--bg-surface-nested);
+  --color-bg-surface-container-inverted: var(--bg-surface-container-inverted);
+  --color-bg-surface-nested-inverted: var(--bg-surface-nested-inverted);
+  --color-bg-selection-container-hover: var(--bg-selection-container-hover);
+  --color-bg-selection-container-active: var(--bg-selection-container-active);
+  --color-bg-selection-container-hover-inverted: var(--bg-selection-container-hover-inverted);
+  --color-bg-action-primary: var(--bg-action-primary);
+  --color-bg-action-primary-hover: var(--bg-action-primary-hover);
+  --color-bg-action-primary-inverted: var(--bg-action-primary-inverted);
+  --color-bg-action-secondary: var(--bg-action-secondary);
+  --color-bg-action-secondary-hover: var(--bg-action-secondary-hover);
+  --color-bg-action-secondary-inverted: var(--bg-action-secondary-inverted);
+  --color-bg-action-tertiary: var(--bg-action-tertiary);
+  --color-bg-action-active: var(--bg-action-active);
+  --color-bg-accent: var(--bg-accent);
+  --color-bg-status-error: var(--bg-status-error);
+  --color-bg-status-error-hover: var(--bg-status-error-hover);
+  --color-bg-status-warning: var(--bg-status-warning);
+  --color-bg-illustration-light: var(--bg-illustration-light);
+  --color-bg-illustration-dark: var(--bg-illustration-dark);
+  --color-stroke-primary: var(--stroke-primary);
+  --color-stroke-secondary: var(--stroke-secondary);
+  --color-stroke-tertiary: var(--stroke-tertiary);
+  --color-stroke-primary-inverted: var(--stroke-primary-inverted);
+  --color-focus-ring: var(--focus-ring);
+  --color-avatar-bg-amethyst: var(--avatar-bg-amethyst);
+  --color-avatar-fg-amethyst: var(--avatar-fg-amethyst);
+  --color-avatar-bg-opal: var(--avatar-bg-opal);
+  --color-avatar-fg-opal: var(--avatar-fg-opal);
+  --color-avatar-bg-turquoise: var(--avatar-bg-turquoise);
+  --color-avatar-fg-turquoise: var(--avatar-fg-turquoise);
+  --color-avatar-bg-onyx: var(--avatar-bg-onyx);
+  --color-avatar-fg-onyx: var(--avatar-fg-onyx);
+  --color-avatar-bg-pearl: var(--avatar-bg-pearl);
+  --color-avatar-fg-pearl: var(--avatar-fg-pearl);
+  --color-avatar-bg-emerald: var(--avatar-bg-emerald);
+  --color-avatar-fg-emerald: var(--avatar-fg-emerald);
+  --color-avatar-bg-topaz: var(--avatar-bg-topaz);
+  --color-avatar-fg-topaz: var(--avatar-fg-topaz);
+  --color-avatar-bg-ruby: var(--avatar-bg-ruby);
+  --color-avatar-fg-ruby: var(--avatar-fg-ruby);
+  --color-avatar-bg-sapphire: var(--avatar-bg-sapphire);
+  --color-avatar-fg-sapphire: var(--avatar-fg-sapphire);
+  --color-avatar-bg-garnet: var(--avatar-bg-garnet);
+  --color-avatar-fg-garnet: var(--avatar-fg-garnet);
   --shadow-chrome-raised: var(--chrome-shadow-raised);
   --shadow-chrome-inset: var(--chrome-shadow-inset);
   --shadow-chrome-pill: var(--chrome-shadow-pill);
