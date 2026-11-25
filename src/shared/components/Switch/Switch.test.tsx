@@ -27,4 +27,23 @@ describe('Switch', () => {
     expect(onCheckedChange).toHaveBeenCalledWith(true);
     expect(screen.getByRole('switch', { name: 'Hide' })).not.toBeChecked();
   });
+
+  it('moves a checked knob towards the start in a right-to-left layout', () => {
+    render(
+      <div dir="rtl">
+        <Switch checked label="Hide" onCheckedChange={vi.fn()} />
+      </div>,
+    );
+
+    expect(screen.getByRole('switch', { name: 'Hide' })).toHaveClass('after:translate-x-4', 'rtl:after:-translate-x-4');
+  });
+
+  // `transition-colors` animates outline-color too, so the ring would fade in from the text colour.
+  it('draws its focus ring in the focus colour without fading it in', () => {
+    render(<Switch checked={false} label="Hide" onCheckedChange={vi.fn()} />);
+
+    const control = screen.getByRole('switch', { name: 'Hide' });
+    expect(control).toHaveClass('focus-visible:outline-chrome-focus');
+    expect(control).not.toHaveClass('transition-colors');
+  });
 });

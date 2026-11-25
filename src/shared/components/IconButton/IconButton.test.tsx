@@ -32,6 +32,19 @@ describe('IconButton', () => {
     expect(button.style.getPropertyValue('app-region')).toBe('no-drag');
   });
 
+  // `transition-colors` animates outline-color too, so the ring would fade in from the text colour.
+  it('draws its focus ring in the focus colour without fading it in', () => {
+    render(
+      <IconButton label="Close">
+        <svg />
+      </IconButton>,
+    );
+
+    const button = screen.getByRole('button', { name: 'Close' });
+    expect(button).toHaveClass('focus-visible:outline-chrome-focus');
+    expect(button).not.toHaveClass('transition-colors');
+  });
+
   it('takes the open state a trigger passes', () => {
     const ref = createRef<HTMLButtonElement>();
     const onMouseDown = vi.fn();

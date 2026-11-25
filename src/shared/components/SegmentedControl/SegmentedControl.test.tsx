@@ -298,6 +298,22 @@ describe('SegmentedControl', () => {
     expect(railRef).toHaveBeenCalledWith(item('A').parentElement);
   });
 
+  // `transition-colors` animates outline-color too, so the ring would fade in from the text colour.
+  it('draws its focus ring in the focus colour without fading it in', () => {
+    render(<Things value="a" />);
+
+    expect(item('A')).toHaveClass('focus-visible:outline-chrome-focus');
+    expect(item('A')).not.toHaveClass('transition-colors');
+  });
+
+  // Equal-width items split a row's natural width evenly, so the longer label would overflow its half.
+  it('keeps an item label on one line and sizes the item by its label', () => {
+    render(<Things value="a" />);
+
+    expect(item('A')).toHaveClass('whitespace-nowrap', 'flex-auto');
+    expect(item('A')).not.toHaveClass('w-full');
+  });
+
   it('throws when an item is rendered outside the root', () => {
     const error = vi.spyOn(console, 'error').mockImplementation(() => {});
 

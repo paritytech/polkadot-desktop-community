@@ -240,7 +240,7 @@ const SegmentedControlItem = ({ value, disabled = false, children }: SegmentedCo
       disabled={disabled}
       tabIndex={context.stopValue === value ? 0 : -1}
       className={cnTw(
-        'relative flex h-6 w-full min-w-0 cursor-pointer items-center justify-center gap-1.5 rounded-full px-2 text-xs font-medium text-chrome-muted transition-colors duration-150 select-none hover:text-chrome-text focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-chrome-focus disabled:cursor-default disabled:text-chrome-faint disabled:hover:text-chrome-faint',
+        'relative flex h-6 min-w-0 flex-auto cursor-pointer items-center justify-center gap-1.5 rounded-full px-2 text-xs font-medium whitespace-nowrap text-chrome-muted transition-[color,background-color] duration-150 select-none hover:text-chrome-text focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-chrome-focus disabled:cursor-default disabled:text-chrome-faint disabled:hover:text-chrome-faint',
         pressed && 'text-chrome-text',
         filled && 'bg-chrome-fill-strong shadow-chrome-raised',
       )}

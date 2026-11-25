@@ -59,7 +59,7 @@ const RadioGroupItem = ({ value, title, description }: RadioGroupItemProps) => {
     >
       <input
         type="radio"
-        className="sr-only"
+        className="sr-only outline-none"
         name={context.name}
         value={value}
         checked={checked}

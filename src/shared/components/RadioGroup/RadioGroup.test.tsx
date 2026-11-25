@@ -58,4 +58,12 @@ describe('RadioGroup', () => {
       expect(item).not.toBeChecked();
     }
   });
+
+  it('draws the focus ring on the card, not on the hidden radio', () => {
+    render(<Languages value="en" />);
+
+    const input = radio('English');
+    expect(input).toHaveClass('outline-none');
+    expect(input.closest('label')).toHaveClass('has-[:focus-visible]:outline-chrome-focus');
+  });
 });
