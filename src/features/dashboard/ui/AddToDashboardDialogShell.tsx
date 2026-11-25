@@ -20,7 +20,7 @@ export const AddToDashboardDialogShell = ({ isOpen, onClose, children }: AddToDa
       }}
     >
       <Dialog.Content width="lg" aria-describedby={undefined} onOpenAutoFocus={event => event.preventDefault()}>
-        <div className="flex h-170 bg-bg-surface-container">{children}</div>
+        <div className="flex h-170">{children}</div>
       </Dialog.Content>
     </Dialog.Root>
   );

@@ -126,10 +126,7 @@ export const QuickChat = memo(({ open, onOpenChange, children }: QuickChatProps)
       <DismissOverlay open={open} testId={TEST_IDS.dismissOverlay} onDismiss={() => onOpenChange(false)} />
       <Popover.Trigger asChild>{children}</Popover.Trigger>
       <Popover.Content sideOffset={8} align="end" alignOffset={8}>
-        <div
-          data-testid={TEST_IDS.quickChatPopover}
-          className="flex h-137.5 w-89 flex-col overflow-hidden rounded-xl border border-stroke-primary bg-bg-surface-container shadow-lg"
-        >
+        <div data-testid={TEST_IDS.quickChatPopover} className="flex h-137.5 w-89 flex-col overflow-hidden">
           {showList ? (
             <ChatList
               chatListEntries={chatListEntries}
@@ -181,7 +178,7 @@ const QuickChatPageHeader = ({ session, onBack, onExpand }: QuickChatPageHeaderP
   const sessionName = session ? chatService.formatPeerName(rawSessionName, session.roomId) : '';
 
   return (
-    <div className="flex h-10 shrink-0 items-center gap-2 bg-bg-surface-container p-2">
+    <div className="flex h-10 shrink-0 items-center gap-2 p-2">
       {onBack ? (
         <>
           <button

@@ -33,7 +33,7 @@ export const ProductActionsMenu = ({ productId }: Props) => {
         </DropdownMenu.Trigger>
       </span>
       <DropdownMenu.Content align="start">
-        <div className="flex w-52.5 flex-col gap-0.5 p-1">
+        <div className="flex w-52.5 flex-col gap-0.5">
           <Slot id={productActionsMenuItemsSlot} props={{ productId, closeMenu }} />
           <div className="px-1 pt-1">
             <Button

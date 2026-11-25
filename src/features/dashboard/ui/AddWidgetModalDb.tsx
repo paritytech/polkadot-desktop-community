@@ -164,8 +164,8 @@ export const AddWidgetModalDb = ({
       }}
     >
       <Dialog.Content width="xl" aria-describedby={undefined}>
-        <div className="flex h-170 bg-bg-surface-container">
-          <div className="flex w-[320px] shrink-0 flex-col gap-4 border-e border-stroke-primary bg-bg-surface-container pe-6">
+        <div className="flex h-170">
+          <div className="flex w-[320px] shrink-0 flex-col gap-4 border-e border-stroke-primary pe-6">
             <Input
               leading={<Search />}
               type="search"
@@ -211,7 +211,7 @@ export const AddWidgetModalDb = ({
               <SelectedEntryPanel entry={selectedEntry} context={panelContext} />
             </div>
           ) : (
-            <div className="flex min-h-0 min-w-0 flex-1 items-center justify-center bg-bg-surface-container ps-6 text-fg-secondary">
+            <div className="flex min-h-0 min-w-0 flex-1 items-center justify-center ps-6 text-fg-secondary">
               <p>{t('feature.dashboard.addWidget.selectWidget')}</p>
             </div>
           )}
