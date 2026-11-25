@@ -114,6 +114,7 @@
       "newTab": "新标签页",
       "newTabPrompt": "输入 {tld} 地址",
       "closeTab": "关闭标签页",
+      "tabsAria": "已打开的标签页",
       "signTransaction": "签署交易",
       "signingRequestTitle": "{call} 签名请求",
       "operationTitle": {

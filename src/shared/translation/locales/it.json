@@ -114,6 +114,7 @@
       "newTab": "Nuova scheda",
       "newTabPrompt": "Inserisci un indirizzo {tld}",
       "closeTab": "Chiudi scheda",
+      "tabsAria": "Schede aperte",
       "signTransaction": "Firma transazione",
       "signingRequestTitle": "Richiesta di firma {call}",
       "operationTitle": {

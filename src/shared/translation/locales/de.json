@@ -114,6 +114,7 @@
       "newTab": "Neuer Tab",
       "newTabPrompt": "{tld}-Adresse eingeben",
       "closeTab": "Tab schließen",
+      "tabsAria": "Geöffnete Tabs",
       "signTransaction": "Transaktion signieren",
       "signingRequestTitle": "Signaturanfrage für {call}",
       "operationTitle": {

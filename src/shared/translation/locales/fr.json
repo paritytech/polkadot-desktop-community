@@ -114,6 +114,7 @@
       "newTab": "Nouvel onglet",
       "newTabPrompt": "Saisissez une adresse {tld}",
       "closeTab": "Fermer l'onglet",
+      "tabsAria": "Onglets ouverts",
       "signTransaction": "Signer la transaction",
       "signingRequestTitle": "Demande de signature {call}",
       "operationTitle": {

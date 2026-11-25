@@ -114,6 +114,7 @@
       "newTab": "Новая вкладка",
       "newTabPrompt": "Введите {tld}-адрес",
       "closeTab": "Закрыть вкладку",
+      "tabsAria": "Открытые вкладки",
       "signTransaction": "Подписать транзакцию",
       "signingRequestTitle": "Запрос на подпись: {call}",
       "operationTitle": {

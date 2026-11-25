@@ -114,6 +114,7 @@
       "newTab": "नया टैब",
       "newTabPrompt": "{tld} पता दर्ज करें",
       "closeTab": "टैब बंद करें",
+      "tabsAria": "खुले टैब",
       "signTransaction": "लेनदेन पर हस्ताक्षर करें",
       "signingRequestTitle": "{call} हस्ताक्षर अनुरोध",
       "operationTitle": {

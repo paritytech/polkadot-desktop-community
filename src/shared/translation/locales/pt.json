@@ -114,6 +114,7 @@
       "newTab": "Nova aba",
       "newTabPrompt": "Digite um endereço {tld}",
       "closeTab": "Fechar aba",
+      "tabsAria": "Abas abertas",
       "signTransaction": "Assinar transação",
       "signingRequestTitle": "Solicitação de assinatura de {call}",
       "operationTitle": {

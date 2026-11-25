@@ -114,6 +114,7 @@
       "newTab": "Nueva pestaña",
       "newTabPrompt": "Introduce una dirección {tld}",
       "closeTab": "Cerrar pestaña",
+      "tabsAria": "Pestañas abiertas",
       "signTransaction": "Firmar transacción",
       "signingRequestTitle": "Solicitud de firma de {call}",
       "operationTitle": {

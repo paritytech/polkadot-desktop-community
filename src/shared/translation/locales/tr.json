@@ -114,6 +114,7 @@
       "newTab": "Yeni sekme",
       "newTabPrompt": "{tld} adresi gir",
       "closeTab": "Sekmeyi kapat",
+      "tabsAria": "Açık sekmeler",
       "signTransaction": "İşlemi imzala",
       "signingRequestTitle": "{call} imzalama isteği",
       "operationTitle": {

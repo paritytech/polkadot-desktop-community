@@ -114,6 +114,7 @@
       "newTab": "새 탭",
       "newTabPrompt": "{tld} 주소 입력",
       "closeTab": "탭 닫기",
+      "tabsAria": "열린 탭",
       "signTransaction": "트랜잭션 서명",
       "signingRequestTitle": "{call} 서명 요청",
       "operationTitle": {

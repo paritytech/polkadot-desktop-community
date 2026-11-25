@@ -114,6 +114,7 @@
       "newTab": "علامة تبويب جديدة",
       "newTabPrompt": "أدخل عنوان ‎{tld}",
       "closeTab": "إغلاق علامة التبويب",
+      "tabsAria": "علامات التبويب المفتوحة",
       "signTransaction": "توقيع المعاملة",
       "signingRequestTitle": "طلب توقيع {call}",
       "operationTitle": {

@@ -114,6 +114,7 @@
       "newTab": "新しいタブ",
       "newTabPrompt": "{tld} アドレスを入力",
       "closeTab": "タブを閉じる",
+      "tabsAria": "開いているタブ",
       "signTransaction": "トランザクションに署名",
       "signingRequestTitle": "{call} の署名リクエスト",
       "operationTitle": {
