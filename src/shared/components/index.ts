@@ -53,3 +53,4 @@ export { Select } from './Select/Select';
 export { Tooltip } from './Tooltip/Tooltip';
 export { Toaster } from './Toaster/Toaster';
 export { type ToastContent, toast } from './Toaster/toast';
+export { AppIcon } from './AppIcon/AppIcon';
