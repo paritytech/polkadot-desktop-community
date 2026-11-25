@@ -1,9 +1,9 @@
-import { Dialog, Input } from '@novasamatech/tr-ui';
+import { Dialog } from '@novasamatech/tr-ui';
 import { CircleAlert, LayoutGrid, RotateCw, Search, SearchX, Star, StarOff } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 
-import { Button, Spinner } from '@/shared/components';
+import { Button, Input, Spinner } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { cnTw } from '@/shared/utils';
@@ -90,17 +90,16 @@ export const AddToFavoritesDialog = ({ isOpen, onClose }: Props) => {
           <FormattedMessage id="feature.favorites.addDialog.title" />
         </h2>
 
-        <div className="relative min-h-9 shrink-0">
-          <Search className="pointer-events-none absolute start-3 top-1/2 size-5 -translate-y-1/2 text-fg-secondary" />
-          <div className="[&_input]:min-h-9 [&_input]:ps-9" data-testid={TEST_IDS.addToFavoritesSearchInput}>
-            <Input
-              type="search"
-              value={query}
-              placeholder={t('feature.favorites.addDialog.searchPlaceholder')}
-              aria-label={t('feature.favorites.addDialog.searchAriaLabel')}
-              onChange={event => setQuery(event.target.value)}
-            />
-          </div>
+        <div className="shrink-0">
+          <Input
+            leading={<Search />}
+            type="search"
+            data-testid={TEST_IDS.addToFavoritesSearchInput}
+            value={query}
+            placeholder={t('feature.favorites.addDialog.searchPlaceholder')}
+            aria-label={t('feature.favorites.addDialog.searchAriaLabel')}
+            onChange={event => setQuery(event.target.value)}
+          />
         </div>
 
         {/* Fixed-height scroll area: the frame stays put while the results/empty

@@ -136,8 +136,8 @@ describe('AddToFavoritesDialog', () => {
   it('shows the "no results" state when the search matches nothing', async () => {
     renderDialog();
     await screen.findByText('coinflip');
-    const input = screen.getByTestId('add-to-favorites-search-input').querySelector('input');
-    fireEvent.change(input as HTMLInputElement, { target: { value: 'zzz' } });
+    const input = screen.getByTestId('add-to-favorites-search-input');
+    fireEvent.change(input, { target: { value: 'zzz' } });
     expect(screen.getByTestId('add-to-favorites-no-results')).toBeInTheDocument();
     expect(screen.queryByTestId('add-to-favorites-nothing-to-add')).not.toBeInTheDocument();
   });

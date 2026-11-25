@@ -1,11 +1,11 @@
 import { type DragEndEvent, DndContext, PointerSensor, closestCenter, useSensor, useSensors } from '@dnd-kit/core';
 import { SortableContext, arrayMove, rectSortingStrategy } from '@dnd-kit/sortable';
-import { AppIcon, Input } from '@novasamatech/tr-ui';
+import { AppIcon } from '@novasamatech/tr-ui';
 import { Plus, Search, SearchX, Star, StarOff } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 
-import { Button } from '@/shared/components';
+import { Button, Input } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { cnTw } from '@/shared/utils';
@@ -111,17 +111,16 @@ export const FavoritesFullscreen = () => {
       </div>
 
       <div className="pt-4">
-        <div className="relative px-2">
-          <Search className="pointer-events-none absolute start-5 top-1/2 size-5 -translate-y-1/2 text-fg-secondary" />
-          <div className="[&_input]:ps-9" data-testid={TEST_IDS.favoritesSearchInput}>
-            <Input
-              type="search"
-              value={query}
-              placeholder={t('feature.favorites.searchPlaceholder')}
-              aria-label={t('feature.favorites.searchAriaLabel')}
-              onChange={event => setQuery(event.target.value)}
-            />
-          </div>
+        <div className="px-2">
+          <Input
+            leading={<Search />}
+            type="search"
+            data-testid={TEST_IDS.favoritesSearchInput}
+            value={query}
+            placeholder={t('feature.favorites.searchPlaceholder')}
+            aria-label={t('feature.favorites.searchAriaLabel')}
+            onChange={event => setQuery(event.target.value)}
+          />
         </div>
       </div>
 
