@@ -27,7 +27,6 @@ import {
   createEncryption,
   createExpiryAllocator,
   deriveSlotAccountPublicKey,
-  khash,
   signSlotAccountSecret,
   verifySr25519Signature,
 } from '@novasamatech/statement-store';
@@ -39,7 +38,7 @@ import { p2pService } from '../service';
 import { transportGateway } from '../session-transport/gateway';
 import { trackedSubscribeStatements } from '../subscription-registry';
 
-import { EncryptedRemoteModel, IDENTITY_PROOF_CONTEXT, IdentityProofPayload, ProofPayload, RemoteModel } from './schemas';
+import { EncryptedRemoteModel, ProofPayload, RemoteModel } from './schemas';
 import { chatRequestService } from './service';
 
 /**
@@ -139,12 +138,7 @@ const sendChatRequestV2 = async (params: {
   //    holding its own identity chat priv, recomputes the same K and matches.
   const signerPubKey = deriveSlotAccountPublicKey(senderDeviceSeed);
   const identityProofSharedSecret = p2pService.computeSharedSecret(senderIdentityChatPrivateKey, recipientChatPubKey);
-  const identityProofPayload = IdentityProofPayload.enc({
-    identityAccountId: senderIdentityAccountId,
-    statementAccountId: signerPubKey,
-    context: IDENTITY_PROOF_CONTEXT,
-  });
-  const identityProof = khash(identityProofSharedSecret, identityProofPayload);
+  const identityProof = chatRequestService.computeIdentityProof(identityProofSharedSecret, senderIdentityAccountId, signerPubKey);
 
   // 3. Inner request message — V2 content per v0.2 spec.
   const requestId = nanoid(12);

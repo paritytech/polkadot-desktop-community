@@ -196,3 +196,42 @@ describe('cancel proof', () => {
     );
   });
 });
+
+describe('identity proof', () => {
+  const identityAccountId = new Uint8Array(32).fill(7);
+  const statementAccountId = new Uint8Array(32).fill(9);
+  const sharedSecret = new Uint8Array(32).fill(0x33);
+  const encoder = new TextEncoder();
+
+  it('is khash of the SCALE payload laid out as the spec fixes', () => {
+    const payload = new Uint8Array([...identityAccountId, ...statementAccountId, 0x40, ...encoder.encode('mds-chat-request')]);
+
+    expect(chatRequestService.computeIdentityProof(sharedSecret, identityAccountId, statementAccountId)).toEqual(
+      khash(sharedSecret, payload),
+    );
+  });
+
+  it('accepts its own proof', () => {
+    const proof = chatRequestService.computeIdentityProof(sharedSecret, identityAccountId, statementAccountId);
+
+    expect(chatRequestService.isIdentityProofValid(sharedSecret, { identityAccountId, proof }, statementAccountId)).toBe(true);
+  });
+
+  it('rejects another device, another identity and another key', () => {
+    const proof = chatRequestService.computeIdentityProof(sharedSecret, identityAccountId, statementAccountId);
+
+    expect(chatRequestService.isIdentityProofValid(sharedSecret, { identityAccountId, proof }, new Uint8Array(32).fill(10))).toBe(
+      false,
+    );
+    expect(
+      chatRequestService.isIdentityProofValid(
+        sharedSecret,
+        { identityAccountId: new Uint8Array(32).fill(8), proof },
+        statementAccountId,
+      ),
+    ).toBe(false);
+    expect(
+      chatRequestService.isIdentityProofValid(new Uint8Array(32).fill(0x44), { identityAccountId, proof }, statementAccountId),
+    ).toBe(false);
+  });
+});
