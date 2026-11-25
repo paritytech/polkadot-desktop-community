@@ -8,24 +8,17 @@ import { chatService } from '../../service';
 
 import { RequestBanner } from './RequestBanner';
 import { RequestRoomHeader } from './RequestRoomHeader';
+import { RequestRoomNotice } from './RequestRoomNotice';
 
 type IncomingRequestRoomProps = {
   request: P2PChatRequest;
   hideByDefault: boolean;
-  disabled?: boolean;
-  onAccept: VoidFunction;
-  onDecline: VoidFunction;
   onReveal: (request: P2PChatRequest) => void;
-};
+} & ({ cancelled: true } | { cancelled?: false; disabled?: boolean; onAccept: VoidFunction; onDecline: VoidFunction });
 
-export const IncomingRequestRoom = ({
-  request,
-  hideByDefault,
-  disabled,
-  onAccept,
-  onDecline,
-  onReveal,
-}: IncomingRequestRoomProps) => {
+export const IncomingRequestRoom = (props: IncomingRequestRoomProps) => {
+  const { request, hideByDefault, onReveal } = props;
+  const actions = props.cancelled ? null : props;
   const { t } = useTranslation();
   const name = chatService.formatPeerName(request.peerUsername, request.peerId);
 
@@ -37,21 +30,25 @@ export const IncomingRequestRoom = ({
 
   return (
     <div className="flex min-w-111 flex-1 flex-col overflow-hidden rounded-xl border border-stroke-primary bg-bg-surface-container">
-      <RequestRoomHeader
-        name={name}
-        actionIcon={<X className="me-2 size-4" />}
-        actionLabel={t('feature.chat.request.decline')}
-        onAction={onDecline}
-      />
+      {actions ? (
+        <RequestRoomHeader
+          name={name}
+          actionIcon={<X className="me-2 size-4" />}
+          actionLabel={t('feature.chat.request.decline')}
+          onAction={actions.onDecline}
+        />
+      ) : (
+        <RequestRoomHeader name={name} />
+      )}
 
-      {bannerPlacement === 'top' && (
+      {actions && bannerPlacement === 'top' && (
         <RequestBanner
           name={name}
           placement="top"
-          disabled={disabled}
+          disabled={actions.disabled}
           acceptTestId={TEST_IDS.chatRequestAcceptButton}
-          onAccept={onAccept}
-          onDecline={onDecline}
+          onAccept={actions.onAccept}
+          onDecline={actions.onDecline}
         />
       )}
 
@@ -80,16 +77,18 @@ export const IncomingRequestRoom = ({
         )}
       </div>
 
-      {bannerPlacement === 'bottom' && (
+      {actions && bannerPlacement === 'bottom' && (
         <RequestBanner
           name={name}
           placement="bottom"
-          disabled={disabled}
+          disabled={actions.disabled}
           acceptTestId={TEST_IDS.chatRequestAcceptButton}
-          onAccept={onAccept}
-          onDecline={onDecline}
+          onAccept={actions.onAccept}
+          onDecline={actions.onDecline}
         />
       )}
+
+      {!actions && <RequestRoomNotice textId="feature.chat.request.cancelledByPeer" name={name} />}
     </div>
   );
 };

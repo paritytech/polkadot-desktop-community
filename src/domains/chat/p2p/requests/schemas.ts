@@ -67,6 +67,18 @@ export const IdentityProof = Struct({
   proof: Bytes(32),
 });
 
+// RFC 0007 cancel: the proof binds a request id to the identity, keyed by K(A,B) like `IdentityProof`.
+export const CANCEL_PROOF_CONTEXT = 'mds-chat-request-cancel';
+
+export const CancelProofPayload = Struct({
+  identityAccountId: AccountIdCodec,
+  requestId: str,
+  context: str,
+});
+
+// RFC 0007 cancel content, `VersionedRequestContent` index 2.
+const RequestContentCancel = Struct({ identityProof: IdentityProof });
+
 // v0.2 spec layout — must match android's `RequestContentV2` field-for-field.
 const RequestContentV2 = Struct({
   identityProof: IdentityProof,
@@ -78,6 +90,7 @@ const RequestContentV2 = Struct({
 const VersionedRequestContent = Enum({
   v1: RequestContentV1,
   v2: RequestContentV2,
+  cancel: RequestContentCancel,
 });
 
 const RequestMessage = Struct({

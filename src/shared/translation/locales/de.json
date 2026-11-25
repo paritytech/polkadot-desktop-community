@@ -294,7 +294,14 @@
         "inviteHint": "In dieser Einladung kannst du nur eine Nachricht senden",
         "inviteFailed": "Die Einladung konnte nicht gesendet werden. Prüfe deine Verbindung und versuche es erneut.",
         "waitForAccept": "Warte, bis <b>{name}</b> deine Anfrage annimmt, bevor du die nächste Nachricht sendest.",
-        "today": "Heute"
+        "today": "Heute",
+        "cancelRequest": "Anfrage abbrechen",
+        "cancelTitle": "Anfrage abbrechen?",
+        "cancelBody": "{name} sieht deine Anfrage nicht mehr.",
+        "keepRequest": "Anfrage behalten",
+        "cancelledByPeer": "<b>{name}</b> hat diese Chat-Anfrage abgebrochen.",
+        "declineTitle": "Nachrichtenanfrage ablehnen?",
+        "declineBody": "Nachrichtenanfrage von {name}"
       },
       "contactSearch": {
         "searchEntry": "Suchen",

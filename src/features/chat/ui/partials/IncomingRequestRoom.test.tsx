@@ -21,7 +21,7 @@ const baseRequest: P2PChatRequest = {
   lastUpdate: 0,
 };
 
-const renderRoom = (props: Partial<Parameters<typeof IncomingRequestRoom>[0]> = {}) =>
+const renderRoom = (props: Partial<Extract<Parameters<typeof IncomingRequestRoom>[0], { cancelled?: false }>> = {}) =>
   render(
     <TranslationProvider>
       <IncomingRequestRoom
@@ -33,6 +33,10 @@ const renderRoom = (props: Partial<Parameters<typeof IncomingRequestRoom>[0]> = 
       />
     </TranslationProvider>,
   );
+
+// The Radix trigger is the only button carrying aria-expanded.
+const getHeaderMenuTrigger = () => screen.getByRole('button', { expanded: false });
+const queryHeaderMenuTrigger = () => screen.queryByRole('button', { expanded: false });
 
 describe('IncomingRequestRoom', () => {
   it('hides the message and offers View message when hidden by default', () => {
@@ -74,5 +78,31 @@ describe('IncomingRequestRoom', () => {
     expect(onAccept).toHaveBeenCalledOnce();
     await userEvent.click(screen.getByRole('button', { name: 'Decline' }));
     expect(onDecline).toHaveBeenCalledOnce();
+  });
+
+  it('offers Decline in the header menu while pending', async () => {
+    const onDecline = vi.fn();
+    renderRoom({ onDecline });
+
+    await userEvent.click(getHeaderMenuTrigger());
+    await userEvent.click(await screen.findByRole('menuitem', { name: 'Decline' }));
+    expect(onDecline).toHaveBeenCalledOnce();
+  });
+
+  it('shows the cancel notice and no accept button when cancelled', () => {
+    render(
+      <TranslationProvider>
+        <IncomingRequestRoom cancelled request={baseRequest} hideByDefault={false} onReveal={vi.fn()} />
+      </TranslationProvider>,
+    );
+
+    expect(
+      screen.getByText((_, element) => element?.textContent === 'mysticRiver.88 cancelled this chat request.', {
+        selector: 'p',
+      }),
+    ).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Accept' })).not.toBeInTheDocument();
+    expect(screen.getByText("Hi! Here's the update we discussed.")).toBeInTheDocument();
+    expect(queryHeaderMenuTrigger()).not.toBeInTheDocument();
   });
 });

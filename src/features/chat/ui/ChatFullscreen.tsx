@@ -1,7 +1,6 @@
 import { toastInfo } from '@novasamatech/tr-ui';
-import { ChevronLeft, MessagesSquare, Trash2 } from 'lucide-react';
-import { type ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { FormattedMessage } from 'react-intl';
+import { ChevronLeft, MessagesSquare } from 'lucide-react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import LastChatsIcon from '@/shared/assets/images/header/last-chats.svg?jsx';
 import { widgetSpanWidthCss } from '@/shared/components';
@@ -36,16 +35,15 @@ import { SyncStatusBanner } from './SyncStatusBanner';
 import { ChatItem } from './partials/ChatItem';
 import { ChatItemSkeleton } from './partials/ChatItemSkeleton';
 import { ChatListSearchBar } from './partials/ChatListSearchBar';
-import { DeclineDialog } from './partials/DeclineDialog';
 import { DraftInvitationRoom } from './partials/DraftInvitationRoom';
 import { IncomingRequestRoom } from './partials/IncomingRequestRoom';
-import { DateSeparator } from './partials/MessageBubble';
 import { NewRequestsItem } from './partials/NewRequestsItem';
 import { NoData } from './partials/NoData';
+import { OutgoingPendingRoom } from './partials/OutgoingPendingRoom';
 import { OutgoingRequestItem } from './partials/OutgoingRequestItem';
 import { RecentContactsRow } from './partials/RecentContactsRow';
+import { RequestConfirmDialog } from './partials/RequestConfirmDialog';
 import { RequestItem } from './partials/RequestItem';
-import { RequestRoomHeader } from './partials/RequestRoomHeader';
 import { Room } from './partials/Room';
 import { RoomList } from './partials/RoomList';
 import { SearchResultsPanel } from './partials/SearchResultsPanel';
@@ -65,14 +63,12 @@ type Props = {
 // Match the chat list to a single widget column so it lines up with the settings side menu.
 const sideMenuStyle = { width: widgetSpanWidthCss(1) };
 
-const boldText = (chunks: ReactNode) => <span className="font-semibold text-fg-primary">{chunks}</span>;
-
 export const ChatFullscreen = ({ selected, onSelect, onDeselect }: Props) => {
   const { t } = useTranslation();
   const userId = useTruapiUserId();
   const { data: productSessions, pending: pendingProduct } = useProductSessions(userId);
   const { data: p2pSessions, pending: pendingP2P } = useP2PSessions();
-  const { data: pendingRequests, outgoing: outgoingRequests } = useP2PChatRequests();
+  const { data: pendingRequests, outgoing: outgoingRequests, cancelledIncoming } = useP2PChatRequests();
   const manager = useP2PChatManager();
   const acceptRequest = useAcceptRequest();
   const declineRequest = useDeclineRequest();
@@ -91,6 +87,7 @@ export const ChatFullscreen = ({ selected, onSelect, onDeselect }: Props) => {
   const [jumpTarget, setJumpTarget] = useState<JumpTarget | null>(null);
   const [showRequests, setShowRequests] = useState(false);
   const [declineTarget, setDeclineTarget] = useState<P2PChatRequest | null>(null);
+  const [declineOpen, setDeclineOpen] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const leftPanelRef = useRef<HTMLDivElement>(null);
 
@@ -110,6 +107,17 @@ export const ChatFullscreen = ({ selected, onSelect, onDeselect }: Props) => {
     () => pendingRequests.find(r => r.peerId === selected) ?? null,
     [pendingRequests, selected],
   );
+  const selectedCancelledRequest = useMemo(
+    () => chatService.findCancelledRequest(cancelledIncoming, selected),
+    [cancelledIncoming, selected],
+  );
+  const pane = chatService.chooseRoomPane({
+    hasDraft: draftInvitation !== null,
+    outgoing: selectedOutgoingRequest,
+    incoming: selectedIncomingRequest,
+    session: selectedSession,
+    cancelled: selectedCancelledRequest,
+  });
   const requesterNames = useMemo(() => chatService.formatRequesterNames(pendingRequests), [pendingRequests]);
   const connectedIds = useMemo(() => new Set(sessions.map(s => s.sessionId)), [sessions]);
   const chatListEntries = useSortedChatList(sessions, outgoingRequests, pendingRequests);
@@ -243,6 +251,11 @@ export const ChatFullscreen = ({ selected, onSelect, onDeselect }: Props) => {
     [revealRequest],
   );
 
+  const openDecline = useCallback((request: P2PChatRequest) => {
+    setDeclineTarget(request);
+    setDeclineOpen(true);
+  }, []);
+
   const handleDeclineConfirm = useCallback(async () => {
     if (!declineTarget) return;
     const name = chatService.formatPeerName(declineTarget.peerUsername, declineTarget.peerId);
@@ -254,16 +267,16 @@ export const ChatFullscreen = ({ selected, onSelect, onDeselect }: Props) => {
     } catch (e) {
       console.error('[chat] Failed to decline request:', e);
     }
-    setDeclineTarget(null);
+    setDeclineOpen(false);
   }, [declineRequest, declineTarget, selected, onDeselect, t]);
 
-  const handleRemoveOutgoingRequest = useCallback(
+  const handleCancelOutgoingRequest = useCallback(
     async (request: P2PChatRequest) => {
       try {
         await cancelOutgoingRequest(request.requestId, request.peerId);
         onDeselect?.();
       } catch (e) {
-        console.error('[chat] Failed to remove outgoing request:', e);
+        console.error('[chat] Failed to cancel outgoing request:', e);
       }
     },
     [cancelOutgoingRequest, onDeselect],
@@ -283,7 +296,7 @@ export const ChatFullscreen = ({ selected, onSelect, onDeselect }: Props) => {
             hideByDefault={hideRequestsByDefault}
             onBack={() => setShowRequests(false)}
             onSelect={onSelect}
-            onDecline={setDeclineTarget}
+            onDecline={openDecline}
           />
         ) : (
           <>
@@ -366,38 +379,49 @@ export const ChatFullscreen = ({ selected, onSelect, onDeselect }: Props) => {
         )}
       </div>
 
-      {draftInvitation ? (
+      {pane.kind === 'draft' && draftInvitation ? (
         <DraftInvitationRoom
           name={draftInvitation.username}
           sendError={inviteError}
           onSend={handleSendInvitation}
           onCancel={handleCancelDraft}
         />
-      ) : selectedOutgoingRequest ? (
-        <OutgoingPendingRoom
-          request={selectedOutgoingRequest}
-          onRemove={() => handleRemoveOutgoingRequest(selectedOutgoingRequest)}
-        />
-      ) : selectedIncomingRequest ? (
+      ) : pane.kind === 'outgoing' ? (
+        <OutgoingPendingRoom request={pane.request} onCancel={handleCancelOutgoingRequest} />
+      ) : pane.kind === 'incoming' ? (
         <IncomingRequestRoom
-          request={selectedIncomingRequest}
+          request={pane.request}
           hideByDefault={hideRequestsByDefault}
           disabled={!manager}
-          onAccept={() => handleAcceptRequest(selectedIncomingRequest)}
-          onDecline={() => setDeclineTarget(selectedIncomingRequest)}
+          onAccept={() => handleAcceptRequest(pane.request)}
+          onDecline={() => openDecline(pane.request)}
           onReveal={handleRevealRequest}
         />
-      ) : selectedSession ? (
-        <Room session={selectedSession} initialSearch={roomInitialSearch} onDeleted={onDeselect} />
+      ) : pane.kind === 'session' ? (
+        <Room session={pane.session} initialSearch={roomInitialSearch} onDeleted={onDeselect} />
+      ) : pane.kind === 'cancelled' ? (
+        <IncomingRequestRoom
+          cancelled
+          request={pane.request}
+          hideByDefault={hideRequestsByDefault}
+          onReveal={handleRevealRequest}
+        />
       ) : (
         <NoData icon={MessagesSquare} title={t('feature.chat.noChatSelected')} description={t('feature.chat.selectChatToView')} />
       )}
 
-      <DeclineDialog
-        isOpen={declineTarget !== null}
-        peerName={declineTarget?.peerUsername ?? declineTarget?.peerId.slice(0, 12) ?? ''}
-        onClose={() => setDeclineTarget(null)}
-        onDecline={handleDeclineConfirm}
+      <RequestConfirmDialog
+        isOpen={declineOpen}
+        title={t('feature.chat.request.declineTitle')}
+        description={t('feature.chat.request.declineBody', {
+          name: declineTarget ? chatService.formatPeerName(declineTarget.peerUsername, declineTarget.peerId) : '',
+        })}
+        cancelLabel={t('feature.chat.request.cancel')}
+        confirmLabel={t('feature.chat.request.decline')}
+        testId={TEST_IDS.chatDeclineDialog}
+        confirmTestId={TEST_IDS.chatDeclineDialogConfirm}
+        onClose={() => setDeclineOpen(false)}
+        onConfirm={handleDeclineConfirm}
       />
     </div>
   );
@@ -483,49 +507,6 @@ const RequestsListView = ({ requests, selected, hideByDefault, onBack, onSelect,
         ))}
       </div>
     </>
-  );
-};
-
-const OutgoingPendingRoom = ({ request, onRemove }: { request: P2PChatRequest; onRemove: VoidFunction }) => {
-  const { t } = useTranslation();
-  const name = chatService.formatPeerName(request.peerUsername, request.peerId);
-  const sentAt = new Date(request.timestamp);
-  const dayLabel =
-    sentAt.toDateString() === new Date().toDateString()
-      ? t('feature.chat.request.today')
-      : sentAt.toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' });
-
-  return (
-    <div className="flex min-w-111 flex-1 flex-col overflow-hidden rounded-xl border border-stroke-primary bg-bg-surface-container">
-      <RequestRoomHeader
-        name={name}
-        actionIcon={<Trash2 className="me-2 size-4" />}
-        actionLabel={t('feature.chat.leaveChat')}
-        onAction={onRemove}
-      />
-
-      <div className="flex flex-1 flex-col gap-1 overflow-y-auto px-4 py-4">
-        <DateSeparator text={dayLabel} />
-        <div className="flex w-full items-center justify-center py-2">
-          <span className="text-center text-sm leading-5 font-medium text-fg-secondary">
-            <FormattedMessage id="feature.chat.request.youSent" values={{ b: boldText }} />
-          </span>
-        </div>
-        {request.welcomeMessage && (
-          <div className="flex w-full flex-col items-end">
-            <div className="max-w-130 rounded-2xl bg-bg-surface-container-inverted px-3 pt-2 pb-3">
-              <p className="text-base leading-5 text-fg-primary-inverted">{request.welcomeMessage}</p>
-            </div>
-          </div>
-        )}
-      </div>
-
-      <div className="shrink-0 border-t border-stroke-primary px-4 py-3">
-        <p className="text-sm leading-4.5 text-fg-secondary">
-          <FormattedMessage id="feature.chat.request.waitForAccept" values={{ name, b: boldText }} />
-        </p>
-      </div>
-    </div>
   );
 };
 

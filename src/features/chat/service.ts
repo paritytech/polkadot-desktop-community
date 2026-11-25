@@ -1,5 +1,13 @@
-import { type ChatSession, type P2PChatRequest } from '@/domains/chat';
+import { type ChatSession, type P2PChatRequest, p2pService } from '@/domains/chat';
 import { type DotNsUrl, dotNsService } from '@/domains/product';
+
+type RoomPane =
+  | { kind: 'draft' }
+  | { kind: 'outgoing'; request: P2PChatRequest }
+  | { kind: 'incoming'; request: P2PChatRequest }
+  | { kind: 'session'; session: ChatSession }
+  | { kind: 'cancelled'; request: P2PChatRequest }
+  | { kind: 'empty' };
 
 export type ChatItemDensity = 'regular' | 'compact';
 
@@ -46,6 +54,40 @@ function excludePendingSessions(
   const pendingPeerIds = new Set([...outgoingRequests, ...pendingRequests].map(request => request.peerId));
 
   return sessions.filter(session => !pendingPeerIds.has(session.sessionId));
+}
+
+function findCancelledRequest(requests: P2PChatRequest[], peerId: string | null): P2PChatRequest | null {
+  if (peerId === null) return null;
+
+  let newest: P2PChatRequest | null = null;
+  for (const request of requests) {
+    if (
+      p2pService.isCancelledIncomingRequest(request) &&
+      request.peerId === peerId &&
+      (newest === null || request.timestamp > newest.timestamp)
+    ) {
+      newest = request;
+    }
+  }
+
+  return newest;
+}
+
+// A session outranks a cancelled tombstone so a later accepted chat is never hidden by it.
+function chooseRoomPane(selection: {
+  hasDraft: boolean;
+  outgoing: P2PChatRequest | null;
+  incoming: P2PChatRequest | null;
+  session: ChatSession | null;
+  cancelled: P2PChatRequest | null;
+}): RoomPane {
+  if (selection.hasDraft) return { kind: 'draft' };
+  if (selection.outgoing) return { kind: 'outgoing', request: selection.outgoing };
+  if (selection.incoming) return { kind: 'incoming', request: selection.incoming };
+  if (selection.session) return { kind: 'session', session: selection.session };
+  if (selection.cancelled) return { kind: 'cancelled', request: selection.cancelled };
+
+  return { kind: 'empty' };
 }
 
 // Density follows the widget SIZE, not measured height: the small widget (2 items,
@@ -187,6 +229,8 @@ export const chatService = {
   formatPeerName,
   formatRequesterNames,
   excludePendingSessions,
+  findCancelledRequest,
+  chooseRoomPane,
   chatItemDensityForCount,
   formatMessageDate,
   formatLastMessageDate,

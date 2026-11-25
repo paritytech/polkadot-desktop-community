@@ -24,10 +24,10 @@ const message: ChatMessage = {
   status: { direction: 'outgoing', state: 'sent' },
 };
 
-const renderBubble = () =>
+const renderBubble = (isSeen = false) =>
   render(
     <TranslationProvider>
-      <CoinageTransferMessageBubble message={message} content={content} isMe />
+      <CoinageTransferMessageBubble message={message} content={content} isMe isSeen={isSeen} />
     </TranslationProvider>,
   );
 
@@ -47,5 +47,13 @@ describe('CoinageTransferMessageBubble', () => {
 
     expect(screen.getByText(symbol)).toBeTruthy();
     expect(screen.getByText(amount)).toBeTruthy();
+  });
+
+  it('shows a double check on my transfer the peer has seen', () => {
+    assetMock.mockReturnValue({ assetId: 1, symbol: 'CASH', precision: 6, palletName: 'Assets' });
+
+    const { container } = renderBubble(true);
+
+    expect(container.querySelector('.lucide-check-check')).not.toBeNull();
   });
 });

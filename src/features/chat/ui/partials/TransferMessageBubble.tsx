@@ -12,6 +12,7 @@ type Props = {
   message: ChatMessage;
   content: TransferContent;
   isMe: boolean;
+  isSeen?: boolean;
   onContextMenu?: (e: MouseEvent<HTMLDivElement>) => void;
 };
 
@@ -20,7 +21,7 @@ type Props = {
 // 10 = Polkadot/Paseo standard, matches the active environment.
 const NATIVE_PRECISION = 10;
 
-export const TransferMessageBubble = ({ message, content, isMe, onContextMenu }: Props) => {
+export const TransferMessageBubble = ({ message, content, isMe, isSeen = false, onContextMenu }: Props) => {
   const { t } = useTranslation();
 
   const formattedAmount = amountToString(content.amount, NATIVE_PRECISION);
@@ -70,7 +71,7 @@ export const TransferMessageBubble = ({ message, content, isMe, onContextMenu }:
         </span>
         {isMe && (
           <div className="flex size-3.5 items-center justify-center">
-            <StatusIcon status={message.status} className="size-3.5 text-fg-secondary-inverted" />
+            <StatusIcon status={message.status} isSeen={isSeen} className="size-3.5 text-fg-secondary-inverted" />
           </div>
         )}
       </div>

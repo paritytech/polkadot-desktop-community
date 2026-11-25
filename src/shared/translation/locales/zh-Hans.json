@@ -294,7 +294,14 @@
         "inviteHint": "此邀请中只能发送一条消息",
         "inviteFailed": "无法发送邀请。请检查网络连接后重试。",
         "waitForAccept": "请等待 <b>{name}</b> 接受你的请求消息后再发送下一条消息。",
-        "today": "今天"
+        "today": "今天",
+        "cancelRequest": "取消请求",
+        "cancelTitle": "取消请求？",
+        "cancelBody": "{name} 将不再看到你的请求。",
+        "keepRequest": "保留请求",
+        "cancelledByPeer": "<b>{name}</b> 已取消此聊天请求。",
+        "declineTitle": "拒绝消息请求？",
+        "declineBody": "来自 {name} 的消息请求"
       },
       "contactSearch": {
         "searchEntry": "搜索",

@@ -21,15 +21,15 @@ one place that also nudges device-sync, so a local change propagates to the user
 - **Roster topic** — the per-contact topic a user broadcasts their roster events on; recipients subscribe (matchAny) to every
   known contact's roster topic. Derived by `contactService.computeRosterTopic`.
 - **Removal tombstone** — a marker written on a _local_ contact deletion so device-sync replicates the removal to the user's own
-  devices; cleared on re-add. An _inbound_ sync removal writes no tombstone (no echo).
+  devices; cleared on re-add. A removal through `deleteContactWithoutSync` — an inbound sync removal or a chat request cancel — writes no tombstone.
 
 ## Scope
 
 This domain owns:
 
 - **The contact list + tombstones** — Dexie persistence in `identity/repository.ts` (reads and raw writes).
-- **Contact write commands** — `contactWriteUseCase` (`upsertContact` / `deleteContact` / `applyRemoteContactDelete`): the write
-  chokepoint that persists _and_ signals device-sync (except inbound sync removals, which must not echo).
+- **Contact write commands** — `contactWriteUseCase` (`upsertContact` / `deleteContact` / `deleteContactWithoutSync`): the write
+  chokepoint that persists _and_ signals device-sync (except `deleteContactWithoutSync`, for a removal every own device applies on its own).
 - **Roster event decoding + application** — `identity/schemas.ts` (codecs) and `contactService.applyRosterEvent` (fold an event
   into a `Contact`).
 - **The roster subscriber** — `rosterUseCase.startRosterSubscriber`: subscribes to known contacts' roster topics, verifies each
@@ -39,7 +39,7 @@ This domain owns:
 
 Reads go through `contactRepository` (`get` / `list` / `listChangedSince` / `listRemovalsSince`). **Writes go through
 `contactWriteUseCase`, not the repository** — `upsertContact` / `deleteContact` persist and then poke device-sync's local-change
-pump; `applyRemoteContactDelete` persists a sync-driven removal _without_ signalling. Roster events arrive via
+pump; `deleteContactWithoutSync` drops the contact with no tombstone and no signal, for a removal every own device applies on its own — an inbound `ChatsRemoved`, and a chat request cancel, which every own device receives itself. Roster events arrive via
 `rosterUseCase.startRosterSubscriber` and are applied through the same write path.
 
 Rule of thumb: mutating the contact list = call `contactWriteUseCase`; only reads touch `contactRepository` directly.

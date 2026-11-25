@@ -294,7 +294,14 @@
         "inviteHint": "Bu davette yalnızca bir mesaj gönderebilirsin",
         "inviteFailed": "Davet gönderilemedi. Bağlantını kontrol et ve yeniden dene.",
         "waitForAccept": "Sonraki mesajı göndermeden önce <b>{name}</b> kişisinin isteğini kabul etmesini bekle.",
-        "today": "Bugün"
+        "today": "Bugün",
+        "cancelRequest": "İsteği iptal et",
+        "cancelTitle": "İstek iptal edilsin mi?",
+        "cancelBody": "{name} artık isteğini görmeyecek.",
+        "keepRequest": "İsteği koru",
+        "cancelledByPeer": "<b>{name}</b> bu sohbet isteğini iptal etti.",
+        "declineTitle": "Mesaj isteği reddedilsin mi?",
+        "declineBody": "{name} kişisinden mesaj isteği"
       },
       "contactSearch": {
         "searchEntry": "Ara",

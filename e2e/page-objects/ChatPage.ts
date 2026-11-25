@@ -462,5 +462,8 @@ export class ChatPage {
     const remove = this.page.getByTestId(TEST_IDS.chatOutgoingPendingRoomRemove);
     await expect(remove).toBeVisible({ timeout: DEFAULT_TIMEOUT });
     await remove.click();
+    const confirm = this.page.getByTestId(TEST_IDS.chatCancelRequestDialogConfirm);
+    await expect(confirm).toBeVisible({ timeout: DEFAULT_TIMEOUT });
+    await confirm.click();
   }
 }

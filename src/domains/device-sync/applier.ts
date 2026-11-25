@@ -207,7 +207,7 @@ export async function applySyncEntities(entities: SyncEntity[], ctx: ApplierCont
       for (const chatId of entity.value) {
         const ss58 = decodeChatIdToSs58(chatId);
         if (!ss58) continue;
-        await contactWriteUseCase.applyRemoteContactDelete(ss58);
+        await contactWriteUseCase.deleteContactWithoutSync(ss58);
         // Drop the room too so the chat list reflects the removal. Messages
         // under the (now-orphaned) sessionId stay until a future cleanup pass.
         await p2pChatDatabase.rooms.delete(ss58);

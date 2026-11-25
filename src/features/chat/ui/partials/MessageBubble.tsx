@@ -20,6 +20,7 @@ type MessageBubbleProps = {
   roomId: string;
   message: ChatMessage;
   isMe: boolean;
+  isSeen?: boolean;
   isLastInGroup?: boolean;
   quotedMessage?: ChatMessage | null;
   quotedSenderName?: string;
@@ -31,15 +32,24 @@ type MessageBubbleProps = {
   onViewEditHistory?: VoidFunction;
 };
 
-export const StatusIcon = ({ status, className }: { status: ChatMessageStatus; className?: string }) => {
+export const StatusIcon = ({
+  status,
+  isSeen = false,
+  className,
+}: {
+  status: ChatMessageStatus;
+  isSeen?: boolean;
+  className?: string;
+}) => {
   if (status.direction === 'incoming') return null;
+  // Matches the Android client: one check for sent and delivered, a double check only for Seen.
+  if (isSeen) return <CheckCheck className={className} />;
   switch (status.state) {
     case 'new':
       return <Clock className={className} />;
     case 'sent':
-      return <Check className={className} />;
     case 'delivered':
-      return <CheckCheck className={className} />;
+      return <Check className={className} />;
   }
 };
 
@@ -48,6 +58,7 @@ export const MessageBubble = ({
   roomId,
   message,
   isMe,
+  isSeen = false,
   isLastInGroup,
   quotedMessage,
   quotedSenderName,
@@ -179,7 +190,7 @@ export const MessageBubble = ({
             </span>
             {isMe && (
               <div className="flex size-3 items-center justify-center">
-                <StatusIcon status={message.status} className="size-3 text-fg-secondary-inverted" />
+                <StatusIcon status={message.status} isSeen={isSeen} className="size-3 text-fg-secondary-inverted" />
               </div>
             )}
           </div>

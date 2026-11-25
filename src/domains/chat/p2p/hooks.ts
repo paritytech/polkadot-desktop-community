@@ -28,7 +28,8 @@ export const useP2PRooms = (userId: string | null): { data: P2PRoom[]; pending: 
 };
 
 /**
- * Returns pending P2P chat requests (incoming + outgoing).
+ * Returns three lists of P2P chat requests: `data` (pending incoming), `outgoing` (pending outgoing) and
+ * `cancelledIncoming` (incoming requests the sender cancelled).
  */
 export const useP2PRequests = (userId: string | null) => {
   const { data: requests, pending: pendingRequests } = useRead(p2pRequestsResource, {
@@ -41,5 +42,7 @@ export const useP2PRequests = (userId: string | null) => {
 
   const pendingOutgoing = useMemo(() => requests.filter(p2pService.isPendingOutgoingRequest), [requests]);
 
-  return { data: pendingIncoming, outgoing: pendingOutgoing, pending: pendingRequests };
+  const cancelledIncoming = useMemo(() => requests.filter(p2pService.isCancelledIncomingRequest), [requests]);
+
+  return { data: pendingIncoming, outgoing: pendingOutgoing, cancelledIncoming, pending: pendingRequests };
 };

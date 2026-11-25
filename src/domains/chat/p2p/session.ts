@@ -31,6 +31,12 @@ export const createP2PChatSession = (peer: P2PPeer, room: P2PRoom, manager: P2PC
   // stream resource. `?? room.isBlocked` covers the brief window before the
   // stream emits its first value.
   const isBlocked = liveRoom$.pipe(map(r => r?.isBlocked ?? room.isBlocked ?? false));
+  const peerSeen = liveRoom$.pipe(
+    map(r => r?.peerSeen ?? null),
+    distinctUntilChanged(
+      (a, b) => a === b || (a !== null && b !== null && chatMessageService.compareMessagePositions(a, b) === 0),
+    ),
+  );
   const lastMessage = messages.pipe(
     map(x => {
       for (let i = x.length - 1; i >= 0; i--) {
@@ -65,6 +71,7 @@ export const createP2PChatSession = (peer: P2PPeer, room: P2PRoom, manager: P2PC
     lastMessage,
     unreadCount,
     isBlocked,
+    peerSeen,
 
     async setBlocked(blocked: boolean) {
       await manager.setBlocked(room.peerId, blocked);

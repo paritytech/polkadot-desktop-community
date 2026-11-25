@@ -1,13 +1,16 @@
 import { MessagesSquare } from 'lucide-react';
 import { type MouseEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useObservable } from 'react-rx';
+import { type Observable, of } from 'rxjs';
 
+import { useWindowFocus } from '@/shared/hooks';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { cnTw } from '@/shared/utils';
 import {
   type ChatMessage,
   type ChatSession,
+  type MessagePosition,
   chatMessageService,
   useCurrentUserPeer,
   useMessageReactions,
@@ -34,6 +37,8 @@ type ChatConversationViewProps = {
   onEdit?(message: ChatMessage, displayText: string): void;
 };
 
+const NO_PEER_SEEN: Observable<MessagePosition | null> = of(null);
+
 type ContextMenuState = {
   message: ChatMessage;
   position: { x: number; y: number };
@@ -44,6 +49,7 @@ export const MessageFlow = ({ session, onReply, onEdit }: ChatConversationViewPr
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const messages = useObservable(session.messages, []);
+  const peerSeen = useObservable(session.peerSeen ?? NO_PEER_SEEN, null);
   // Event rows (contactAdded/leftChat) carry the peer's accountId as `peer.name`; resolve the
   // room's attested username instead so the event line matches the header and list.
   const peerName = chatService.formatPeerName(useObservable(session.name, ''), session.roomId);
@@ -74,9 +80,12 @@ export const MessageFlow = ({ session, onReply, onEdit }: ChatConversationViewPr
 
   const hasMessages = groupedMessages.length > 0;
 
+  const isWindowFocused = useWindowFocus();
+
+  // A read sends a seen receipt (RFC 0006), and Seen means displayed, so an unfocused window must not read.
   useEffect(() => {
-    session.markAsRead();
-  }, [session, groupedMessages]);
+    if (isWindowFocused) session.markAsRead();
+  }, [session, groupedMessages, isWindowFocused]);
 
   const handleContextMenu = useCallback((e: MouseEvent, message: ChatMessage) => {
     e.preventDefault();
@@ -147,6 +156,7 @@ export const MessageFlow = ({ session, onReply, onEdit }: ChatConversationViewPr
                             message={message}
                             content={content}
                             isMe={isMe}
+                            isSeen={chatMessageService.isSeenByPeer(message, peerSeen)}
                             onContextMenu={e => handleContextMenu(e, message)}
                           />
                         </div>
@@ -167,6 +177,7 @@ export const MessageFlow = ({ session, onReply, onEdit }: ChatConversationViewPr
                             content={content}
                             state={callState}
                             isMe={isMe}
+                            isSeen={chatMessageService.isSeenByPeer(message, peerSeen)}
                             onContextMenu={e => handleContextMenu(e, message)}
                           />
                         </div>
@@ -202,6 +213,7 @@ export const MessageFlow = ({ session, onReply, onEdit }: ChatConversationViewPr
                           message={message}
                           isMe={isMe}
                           isLastInGroup={isLastInGroup}
+                          isSeen={chatMessageService.isSeenByPeer(message, peerSeen)}
                           quotedMessage={quotedMessage}
                           quotedSenderName={quotedSenderName}
                           reactions={messageReactions.get(message.messageId) ?? []}

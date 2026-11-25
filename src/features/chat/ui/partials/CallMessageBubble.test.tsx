@@ -24,10 +24,10 @@ const buildMessage = (isMe: boolean): ChatMessage => ({
 // The call feature answers the probe with a plain handler; the test plays that role.
 const callAvailableHandler = { key: 'test: calls available', available: () => true, body: () => true };
 
-const renderBubble = (state: CallState, isMe: boolean) =>
+const renderBubble = (state: CallState, isMe: boolean, isSeen = false) =>
   render(
     <TranslationProvider>
-      <CallMessageBubble message={buildMessage(isMe)} content={content} state={state} isMe={isMe} />
+      <CallMessageBubble message={buildMessage(isMe)} content={content} state={state} isMe={isMe} isSeen={isSeen} />
     </TranslationProvider>,
   );
 
@@ -96,6 +96,12 @@ describe('CallMessageBubble', () => {
         expect(screen.getByText(tap)).toBeTruthy();
       });
     }
+  });
+
+  it('shows a double check on my call the peer has seen', () => {
+    const { container } = renderBubble({ kind: 'calling' }, true, true);
+
+    expect(container.querySelector('.lucide-check-check')).not.toBeNull();
   });
 
   it('keeps showing the duration for a finished call', () => {

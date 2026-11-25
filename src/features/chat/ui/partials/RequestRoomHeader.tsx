@@ -7,16 +7,20 @@ import { Avatar } from './Avatar';
 type RequestRoomHeaderProps = {
   /** Already-formatted display name (see `formatPeerName`). */
   name: string;
-  /** Single destructive action in the overflow menu (decline / leave). */
-  actionIcon: ReactNode;
-  actionLabel: string;
-  onAction: VoidFunction;
-};
+} & (
+  | {
+      /** Single destructive action in the overflow menu (decline / cancel / leave). */
+      actionIcon: ReactNode;
+      actionLabel: string;
+      onAction: VoidFunction;
+    }
+  | { actionIcon?: never; actionLabel?: never; onAction?: never }
+);
 
 /**
  * Shared chat-header for the request rooms (incoming request, draft invitation,
- * outgoing pending): avatar + name, a search control, and an overflow
- * menu with a single destructive action that each room supplies.
+ * outgoing pending): avatar + name, a search control, and, when the room
+ * supplies one, an overflow menu with a single destructive action.
  */
 export const RequestRoomHeader = ({ name, actionIcon, actionLabel, onAction }: RequestRoomHeaderProps) => {
   return (
@@ -31,19 +35,21 @@ export const RequestRoomHeader = ({ name, actionIcon, actionLabel, onAction }: R
             <Button variant="ghost" size="icon-sm">
               <Search strokeWidth={1.75} className="size-5" />
             </Button>
-            <DropdownMenu>
-              <DropdownMenu.Trigger asChild>
-                <Button variant="ghost" size="icon-sm">
-                  <Ellipsis strokeWidth={1.75} className="size-5" />
-                </Button>
-              </DropdownMenu.Trigger>
-              <DropdownMenu.Content align="end">
-                <DropdownMenu.Item variant="destructive" onClick={onAction}>
-                  {actionIcon}
-                  {actionLabel}
-                </DropdownMenu.Item>
-              </DropdownMenu.Content>
-            </DropdownMenu>
+            {onAction && (
+              <DropdownMenu>
+                <DropdownMenu.Trigger asChild>
+                  <Button variant="ghost" size="icon-sm">
+                    <Ellipsis strokeWidth={1.75} className="size-5" />
+                  </Button>
+                </DropdownMenu.Trigger>
+                <DropdownMenu.Content align="end">
+                  <DropdownMenu.Item variant="destructive" onClick={onAction}>
+                    {actionIcon}
+                    {actionLabel}
+                  </DropdownMenu.Item>
+                </DropdownMenu.Content>
+              </DropdownMenu>
+            )}
           </div>
         </div>
       </div>

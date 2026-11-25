@@ -14,6 +14,7 @@ import {
 } from '@novasamatech/statement-store';
 import { substrateSlotSecretFromSeedBytes } from '@novasamatech/substrate-slot-sr25519-wasm';
 import { toHex } from 'polkadot-api/utils';
+import { type CodecType } from 'scale-ts';
 import { beforeAll, describe, expect, it, vi } from 'vitest';
 
 import { createChatPeerSessionV2 } from './chatSessionV2';
@@ -124,6 +125,62 @@ function createPair() {
   return { store, hostDevice, hostSession, peerSession, onMessage, onDelivered, onSent, onBatchDelivered, dispose };
 }
 
+/**
+ * The host side of `createPair` with the peer offline until `bringPeerOnline()`. The SDK's
+ * in-memory store does not replay a channel to a session that subscribes later, so a peer
+ * created up front would never see what replaced a message it was already sent.
+ */
+function createHostOnly() {
+  const store = createInMemoryStatementStore();
+  const host = createIdentity();
+  const peer = createIdentity();
+  const hostSecret = substrateSlotSecretFromSeedBytes(randomBytes(32));
+  const hostDevice = createDevice(deriveSlotAccountPublicKey(hostSecret));
+  const peerDevice = createDevice();
+
+  const onMessage = vi.fn();
+  const onDelivered = vi.fn();
+  const onSent = vi.fn();
+  const onBatchDelivered = vi.fn();
+
+  const hostSession = createChatPeerSessionV2({
+    identityChatPrivateKey: host.chatPrivateKey,
+    ownIdentityAccountId: host.accountId,
+    ownDeviceStatementAccountId: hostDevice.statementAccountId,
+    ownDeviceEncryptionPrivateKey: hostDevice.encryptionPrivateKey,
+    ownDeviceSeed: hostSecret,
+    peerIdentityAccountId: peer.accountId,
+    peerIdentityChatPublicKey: peer.chatPublicKey,
+    peerRoster: rosterOf(peerDevice),
+    statementStore: store,
+    onMessage,
+    onDelivered,
+    onSent,
+    onBatchDelivered,
+  });
+
+  function bringPeerOnline() {
+    const received: CodecType<typeof ChatMessageCodec>[] = [];
+    const peerSession = createMultiDeviceSession({
+      localDevice: { statementAccountId: peerDevice.statementAccountId, encryptionPrivateKey: peerDevice.encryptionPrivateKey },
+      localIdentity: { accountId: createAccountId(peer.accountId), chatPrivateKey: peer.chatPrivateKey },
+      remoteIdentity: { accountId: createAccountId(host.accountId), chatPublicKey: host.chatPublicKey },
+      peerRoster: rosterOf(hostDevice),
+      statementStore: store,
+      prover: createSr25519Prover(createSr25519Secret(randomBytes(32))),
+    });
+    peerSession.respondToRequests(ChatMessageCodec, request => {
+      if (request.payload.status === 'parsed') received.push(request.payload.value);
+
+      return 'success';
+    });
+
+    return { received, dispose: () => peerSession.dispose() };
+  }
+
+  return { hostSession, onMessage, onDelivered, onSent, onBatchDelivered, bringPeerOnline };
+}
+
 describe('createChatPeerSessionV2 — acknowledgement', () => {
   it('acks a request it could decode', async () => {
     const { peerSession, onMessage, dispose } = createPair();
@@ -204,5 +261,63 @@ describe('createChatPeerSessionV2 — statement signer', () => {
     expect(signers).toContain(toHex(hostDevice.statementAccountId));
 
     dispose();
+  });
+});
+
+describe('createChatPeerSessionV2 — seen receipts', () => {
+  it('resolves delivered when the peer answers, and reports no sent message', async () => {
+    const { hostSession, peerSession, onSent, onDelivered, dispose } = createPair();
+    await settle();
+
+    const received: CodecType<typeof ChatMessageCodec>[] = [];
+    peerSession.respondToRequests(ChatMessageCodec, request => {
+      if (request.payload.status === 'parsed') received.push(request.payload.value);
+
+      return 'success';
+    });
+
+    await expect(hostSession.sendSeen({ messageId: 'm-9', timestamp: 1_700_000_000_123 })).resolves.toBe('delivered');
+    expect(received.map(message => message.versioned.value)).toEqual([
+      { tag: 'seen', value: { messageId: 'm-9', timestamp: 1_700_000_000_123n } },
+    ]);
+    expect(onSent).not.toHaveBeenCalled();
+    expect(onDelivered).not.toHaveBeenCalled();
+
+    dispose();
+  });
+
+  it('resolves failed when the peer cannot decode the receipt', async () => {
+    const { hostSession, peerSession, dispose } = createPair();
+    await settle();
+
+    peerSession.respondToRequests(ChatMessageCodec, () => 'decodingFailed');
+
+    await expect(hostSession.sendSeen({ messageId: 'm-9', timestamp: 1_700_000_000_123 })).resolves.toBe('failed');
+
+    dispose();
+  });
+
+  it('replaces a receipt the peer has not answered yet', async () => {
+    const { hostSession, bringPeerOnline } = createHostOnly();
+    await settle();
+
+    // The SDK rejects and forgets a replaced waiter at submit, so the first receipt's waiter
+    // must exist before the second one is submitted.
+    const first = hostSession.sendSeen({ messageId: 'm-1', timestamp: 1 });
+    await settle();
+    const second = hostSession.sendSeen({ messageId: 'm-2', timestamp: 2 });
+    await settle();
+
+    await expect(first).resolves.toBe('replaced');
+
+    const peer = bringPeerOnline();
+
+    await expect(second).resolves.toBe('delivered');
+    expect(peer.received.map(message => message.versioned.value)).toEqual([
+      { tag: 'seen', value: { messageId: 'm-2', timestamp: 2n } },
+    ]);
+
+    hostSession.dispose();
+    peer.dispose();
   });
 });

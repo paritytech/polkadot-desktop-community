@@ -13,6 +13,7 @@ type Props = {
   message: ChatMessage;
   content: TransferContent;
   isMe: boolean;
+  isSeen?: boolean;
   onContextMenu?: (e: MouseEvent<HTMLDivElement>) => void;
 };
 
@@ -38,7 +39,7 @@ const STATUS_ROWS: Record<CoinageStatus, StatusRow> = {
   claimed: { Icon: CheckCheck, labelKey: 'feature.chat.transfer.coinage.claimed', isClaimed: true },
 };
 
-export const CoinageTransferMessageBubble = ({ message, content, isMe, onContextMenu }: Props) => {
+export const CoinageTransferMessageBubble = ({ message, content, isMe, isSeen = false, onContextMenu }: Props) => {
   const { t } = useTranslation();
 
   // `content.amount` is plancks of the active channel's digital-dollar; precision
@@ -121,7 +122,7 @@ export const CoinageTransferMessageBubble = ({ message, content, isMe, onContext
         </span>
         {isMe && (
           <div className="flex size-3.5 items-center justify-center">
-            <StatusIcon status={message.status} className="size-3.5 text-fg-secondary-inverted" />
+            <StatusIcon status={message.status} isSeen={isSeen} className="size-3.5 text-fg-secondary-inverted" />
           </div>
         )}
       </div>
