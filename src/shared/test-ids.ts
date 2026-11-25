@@ -262,7 +262,6 @@ export const TEST_IDS = {
   callVideoButton: 'call-video-button',
 
   // Network connection settings
-  networkConnectionPreference: 'network-connection-preference',
   networkConnectionChainRow: 'network-connection-chain-row',
   networkConnectionChainTabs: 'network-connection-chain-tabs',
   productLoadNotice: 'product-load-notice',

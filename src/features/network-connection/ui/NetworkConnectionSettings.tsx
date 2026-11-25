@@ -1,8 +1,6 @@
-import { RadioGroup } from '@novasamatech/tr-ui';
 import { memo, useMemo } from 'react';
 
-import { SettingsList } from '@/shared/components';
-import { TEST_IDS } from '@/shared/test-ids';
+import { RadioGroup, SettingsList } from '@/shared/components';
 import { useTranslation } from '@/shared/translation';
 import { useActiveEnvironment } from '@/domains/application';
 import {
@@ -16,7 +14,6 @@ import {
 } from '@/domains/network';
 
 import { ChainConnectionRow } from './ChainConnectionRow';
-import { ConnectionPreferenceItem } from './ConnectionPreferenceItem';
 
 export const NetworkConnectionSettings = memo(() => {
   const { t } = useTranslation();
@@ -43,29 +40,27 @@ export const NetworkConnectionSettings = memo(() => {
   return (
     <SettingsList title={t('feature.networkConnection.title')}>
       <div className="flex flex-col gap-1">
-        <RadioGroup
-          data-testid={TEST_IDS.networkConnectionPreference}
+        <RadioGroup.Root
+          label={t('feature.networkConnection.title')}
           value={settings.preference}
           onValueChange={handlePreferenceChange}
         >
-          <div className="flex flex-col gap-1">
-            <ConnectionPreferenceItem
-              value="light-client"
-              title={t('feature.networkConnection.mode.lightClient')}
-              description={t('feature.networkConnection.mode.lightClientHint')}
-            />
-            <ConnectionPreferenceItem
-              value="rpc"
-              title={t('feature.networkConnection.mode.rpc')}
-              description={t('feature.networkConnection.mode.rpcHint')}
-            />
-            <ConnectionPreferenceItem
-              value="advanced"
-              title={t('feature.networkConnection.advanced.title')}
-              description={t('feature.networkConnection.advanced.description')}
-            />
-          </div>
-        </RadioGroup>
+          <RadioGroup.Item
+            value="light-client"
+            title={t('feature.networkConnection.mode.lightClient')}
+            description={t('feature.networkConnection.mode.lightClientHint')}
+          />
+          <RadioGroup.Item
+            value="rpc"
+            title={t('feature.networkConnection.mode.rpc')}
+            description={t('feature.networkConnection.mode.rpcHint')}
+          />
+          <RadioGroup.Item
+            value="advanced"
+            title={t('feature.networkConnection.advanced.title')}
+            description={t('feature.networkConnection.advanced.description')}
+          />
+        </RadioGroup.Root>
 
         {settings.preference === 'advanced' && (
           <div className="flex flex-col">

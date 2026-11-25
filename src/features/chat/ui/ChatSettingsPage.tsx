@@ -1,6 +1,4 @@
-import { Switch } from '@novasamatech/tr-ui';
-
-import { SettingsList, SettingsSection } from '@/shared/components';
+import { SettingsList, SettingsSection, Switch } from '@/shared/components';
 import { useTranslation } from '@/shared/translation';
 import { useHideRequestsByDefault, useSetHideRequestsByDefault } from '@/domains/chat';
 
@@ -17,7 +15,11 @@ export const ChatSettingsPage = () => {
             <span className="text-sm leading-5 font-medium text-fg-primary">{t('feature.chat.settings.hideByDefault')}</span>
             <span className="text-sm leading-4.5 text-fg-secondary">{t('feature.chat.settings.hideByDefaultHint')}</span>
           </div>
-          <Switch checked={hideByDefault} onCheckedChange={value => setHideByDefault({ value })} />
+          <Switch
+            checked={hideByDefault}
+            label={t('feature.chat.settings.hideByDefault')}
+            onCheckedChange={value => setHideByDefault({ value })}
+          />
         </div>
       </SettingsSection>
     </SettingsList>

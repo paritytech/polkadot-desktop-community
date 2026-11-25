@@ -1,6 +1,4 @@
-import { ListItem, RadioGroup } from '@novasamatech/tr-ui';
-
-import { SettingsList } from '@/shared/components';
+import { RadioGroup, SettingsList } from '@/shared/components';
 import { SUPPORTED_LOCALES, saveLocale, useLocalePreference, useTranslation } from '@/shared/translation';
 
 export const LanguageSettings = () => {
@@ -16,17 +14,11 @@ export const LanguageSettings = () => {
 
   return (
     <SettingsList title={t('feature.languageSettings.title')}>
-      <RadioGroup value={locale} onValueChange={handleChange}>
+      <RadioGroup.Root label={t('feature.languageSettings.title')} value={locale} onValueChange={handleChange}>
         {SUPPORTED_LOCALES.map(({ id, nativeName }) => (
-          <ListItem
-            key={id}
-            variant="radio"
-            value={id}
-            title={t(`feature.languageSettings.locale.${id}`)}
-            description={nativeName}
-          />
+          <RadioGroup.Item key={id} value={id} title={t(`feature.languageSettings.locale.${id}`)} description={nativeName} />
         ))}
-      </RadioGroup>
+      </RadioGroup.Root>
     </SettingsList>
   );
 };
