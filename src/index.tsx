@@ -1,11 +1,11 @@
 import './index.css';
 
-import { ThemeProvider, Toaster, berlinTheme, themes } from '@novasamatech/tr-ui';
+import { ThemeProvider, berlinTheme, themes } from '@novasamatech/tr-ui';
 import { Suspense, useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { ErrorBoundary } from 'react-error-boundary';
 
-import { ElectronSplashScreen, FallbackScreen, WebSplashScreen } from '@/shared/components';
+import { ElectronSplashScreen, FallbackScreen, Toaster, WebSplashScreen } from '@/shared/components';
 import { isElectron, isProductionBuild, reloadApp } from '@/shared/env';
 import { resetFeatureStatuses, updateFeatureStatus } from '@/shared/feature-config';
 import { silenceDebugConsole } from '@/shared/logger';

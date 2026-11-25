@@ -1,5 +1,4 @@
-import { toast, toastSuccess } from '@novasamatech/tr-ui';
-
+import { toast } from '@/shared/components';
 import { useTranslation } from '@/shared/translation';
 
 /**
@@ -12,11 +11,12 @@ export const useWidgetAddedToast = (onNavigateToDashboardPage: (pageIndex: numbe
 
   return (title: string, pageIndex?: number) => {
     if (pageIndex === undefined) {
-      toastSuccess({ title });
+      toast.success({ title });
       return;
     }
 
-    toast.success(title, {
+    toast.success({
+      title,
       action: {
         label: t('feature.dashboard.addWidget.toast.viewAction'),
         onClick: () => onNavigateToDashboardPage(pageIndex),

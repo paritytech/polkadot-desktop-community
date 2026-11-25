@@ -33,41 +33,18 @@ body {
  * occasionally fails to inject (react-style-singleton ref-count desync after
  * a portal cycle), leaving the modal visible but unclickable.
  *
- * Force pointer events on top of the body lock for our own dialog content
- * so the modal stays interactive regardless of whether the upstream style
- * was injected.
+ * Force pointer events on top of the body lock for the local dialog cards
+ * (`data-modal-surface`) so the modal stays interactive regardless of whether
+ * the upstream style was injected.
  *
  * Remove once we own the scroll lock ourselves (centralized controller) or
  * the upstream bug is fixed.
  */
-[data-slot='dialog-content'],
-[data-slot='dialog-content'] *,
+[data-modal-surface],
+[data-modal-surface] *,
 [data-sonner-toaster],
 [data-sonner-toaster] * {
   pointer-events: auto !important;
-}
-
-/*
- * Every layer below renders in a portal under <body>, so it can be painted over a
- * `app-region: drag` region — the toolbar (Header) and the whole onboarding screen
- * are both drag regions. Chromium hands presses on a drag region to the OS for window
- * dragging *before* the renderer hit-tests them, so a layer that overlaps one never
- * receives the click (and a double press maximizes the window instead).
- *
- * A portal is a sibling of #app, which is where the drag region is declared
- * (src/index.html), so it inherits no region of its own — and inheriting nothing does
- * not subtract the region painted underneath. Each layer has to say `no-drag`, which
- * subtracts its rect, for presses to land in the renderer.
- *
- * The popper wrapper covers popover / dropdown-menu / select / tooltip / context-menu
- * in one selector. Toasts are scoped to the toast element rather than the container so
- * the container's empty background stays draggable.
- */
-[data-radix-popper-content-wrapper],
-[data-slot='dialog-content'],
-[data-slot='alert-dialog-content'],
-[data-sonner-toast] {
-  -webkit-app-region: no-drag;
 }
 
 :root {

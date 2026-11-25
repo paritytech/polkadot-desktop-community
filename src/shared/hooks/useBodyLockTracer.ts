@@ -11,7 +11,7 @@ const OVERLAY_SELECTORS = [
   '[role="alertdialog"]',
   '[role="menu"]',
   '[role="listbox"]',
-  '[data-slot="dialog-overlay"]',
+  '[data-modal-surface]',
   '[data-radix-popper-content-wrapper]',
   '[data-radix-popover-content-wrapper]',
   '[data-radix-dropdown-menu-content-wrapper]',
