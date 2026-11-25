@@ -1,6 +1,5 @@
 // @vitest-environment happy-dom
 
-import { ThemeProvider, berlinTheme } from '@novasamatech/tr-ui';
 import { act, render, waitFor } from '@testing-library/react';
 import { BehaviorSubject, of } from 'rxjs';
 import { afterEach, describe, expect, it } from 'vitest';
@@ -9,12 +8,7 @@ import { type Theme, themeResource } from '@/domains/application';
 
 import { ThemeNameSyncer } from './ThemeNameSyncer';
 
-const renderSyncer = () =>
-  render(
-    <ThemeProvider theme={berlinTheme}>
-      <ThemeNameSyncer />
-    </ThemeProvider>,
-  );
+const renderSyncer = () => render(<ThemeNameSyncer />);
 
 afterEach(() => {
   delete document.documentElement.dataset['theme'];
