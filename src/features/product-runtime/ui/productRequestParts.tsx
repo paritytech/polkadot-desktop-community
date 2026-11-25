@@ -1,8 +1,9 @@
-import { Button, Copy, Dialog, ProductHeader } from '@novasamatech/tr-ui';
+import { Dialog, ProductHeader } from '@novasamatech/tr-ui';
 import JsonView from '@uiw/react-json-view';
-import { AlertTriangle, ChevronLeft, Copy as CopyIcon, Info } from 'lucide-react';
+import { AlertTriangle, ChevronLeft, Info } from 'lucide-react';
 import { type CSSProperties, type PropsWithChildren, type ReactNode, memo, useMemo } from 'react';
 
+import { Button, CopyButton } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { cnTw } from '@/shared/utils';
@@ -240,17 +241,7 @@ export const RequestAccountDetailsSection = memo(({ label, address, failed = fal
     <section className="flex flex-col gap-2">
       <div className="flex items-center justify-between gap-3">
         <span className="text-base leading-6 text-fg-secondary">{label}</span>
-        <Copy value={address ?? ''}>
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon"
-            disabled={address == null}
-            aria-label={t('feature.browser.copyAccountAddress')}
-          >
-            <CopyIcon className="size-4" />
-          </Button>
-        </Copy>
+        <CopyButton value={address ?? ''} label={t('feature.browser.copyAccountAddress')} disabled={address == null} />
       </div>
       <RequestCodeBlock>
         <RequestMonoLine>
@@ -342,11 +333,7 @@ export const RequestDetailSection = memo(
     <section className="flex flex-col gap-3" data-testid={testId}>
       <div className="flex items-center justify-between gap-3">
         <span className="text-base leading-6 text-fg-secondary">{label}</span>
-        <Copy value={copyValue}>
-          <Button type="button" variant="ghost" size="icon" aria-label={copyLabel}>
-            <CopyIcon className="size-4" />
-          </Button>
-        </Copy>
+        <CopyButton value={copyValue} label={copyLabel} />
       </div>
       <RequestCodeBlock>{children}</RequestCodeBlock>
     </section>
@@ -371,12 +358,19 @@ export const RequestFooter = memo(
       <Dialog.Footer>
         <div className="flex w-full min-w-0 flex-row gap-2">
           <div className="min-w-0 flex-1">
-            <Button type="button" variant="outline" fullWidth data-testid={TEST_IDS.productRequestDeny} onClick={onCancel}>
+            <Button type="button" block data-testid={TEST_IDS.productRequestDeny} onClick={onCancel}>
               {cancelLabel}
             </Button>
           </div>
           <div className="min-w-0 flex-1">
-            <Button type="button" fullWidth disabled={primaryDisabled} data-testid={primaryTestId} onClick={onPrimary}>
+            <Button
+              type="button"
+              variant="primary"
+              block
+              disabled={primaryDisabled}
+              data-testid={primaryTestId}
+              onClick={onPrimary}
+            >
               {primaryLabel}
             </Button>
           </div>
