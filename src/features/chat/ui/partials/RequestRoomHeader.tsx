@@ -1,6 +1,9 @@
-import { Button, DropdownMenu } from '@novasamatech/tr-ui';
+import { DropdownMenu } from '@novasamatech/tr-ui';
 import { Ellipsis, Search } from 'lucide-react';
 import { type ReactNode } from 'react';
+
+import { IconButton } from '@/shared/components';
+import { useTranslation } from '@/shared/translation';
 
 import { Avatar } from './Avatar';
 
@@ -23,6 +26,8 @@ type RequestRoomHeaderProps = {
  * supplies one, an overflow menu with a single destructive action.
  */
 export const RequestRoomHeader = ({ name, actionIcon, actionLabel, onAction }: RequestRoomHeaderProps) => {
+  const { t } = useTranslation();
+
   return (
     <div className="h-14 shrink-0 border-b border-stroke-primary">
       <div className="flex h-full items-center gap-2 py-2 ps-4 pe-0">
@@ -32,15 +37,15 @@ export const RequestRoomHeader = ({ name, actionIcon, actionLabel, onAction }: R
             <span className="w-full min-w-0 truncate text-base leading-6 font-semibold text-fg-primary">{name}</span>
           </div>
           <div className="flex shrink-0 items-center gap-2">
-            <Button variant="ghost" size="icon-sm">
+            <IconButton size="sm" label={t('feature.chat.search')}>
               <Search strokeWidth={1.75} className="size-5" />
-            </Button>
+            </IconButton>
             {onAction && (
               <DropdownMenu>
                 <DropdownMenu.Trigger asChild>
-                  <Button variant="ghost" size="icon-sm">
+                  <IconButton size="sm" label={t('feature.chat.roomActions')}>
                     <Ellipsis strokeWidth={1.75} className="size-5" />
-                  </Button>
+                  </IconButton>
                 </DropdownMenu.Trigger>
                 <DropdownMenu.Content align="end">
                   <DropdownMenu.Item variant="destructive" onClick={onAction}>

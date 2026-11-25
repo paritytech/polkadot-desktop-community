@@ -1,6 +1,8 @@
-import { Button } from '@novasamatech/tr-ui';
 import { ChevronDown, ChevronUp, Search, X } from 'lucide-react';
 import { type Ref } from 'react';
+
+import { IconButton } from '@/shared/components';
+import { useTranslation } from '@/shared/translation';
 
 type Props = {
   query: string;
@@ -14,6 +16,7 @@ type Props = {
 };
 
 export const ChatSearchBar = ({ query, inputRef, resultCount, resultIndex, onQueryChange, onPrev, onNext, onClose }: Props) => {
+  const { t } = useTranslation();
   const hasQuery = query.trim().length > 0;
   const hasResults = resultCount > 0;
   const canNavigate = hasQuery && hasResults;
@@ -47,15 +50,15 @@ export const ChatSearchBar = ({ query, inputRef, resultCount, resultIndex, onQue
           </span>
         )}
       </div>
-      <Button variant="ghost" size="icon-sm" disabled={!canNavigate} onClick={onPrev}>
+      <IconButton size="sm" label={t('feature.chat.searchPrevious')} disabled={!canNavigate} onClick={onPrev}>
         <ChevronUp strokeWidth={1.75} className="size-5" />
-      </Button>
-      <Button variant="ghost" size="icon-sm" disabled={!canNavigate} onClick={onNext}>
+      </IconButton>
+      <IconButton size="sm" label={t('feature.chat.searchNext')} disabled={!canNavigate} onClick={onNext}>
         <ChevronDown strokeWidth={1.75} className="size-5" />
-      </Button>
-      <Button variant="ghost" size="icon-sm" onClick={onClose}>
+      </IconButton>
+      <IconButton size="sm" label={t('common.aria.close')} onClick={onClose}>
         <X strokeWidth={1.75} className="size-5" />
-      </Button>
+      </IconButton>
     </div>
   );
 };

@@ -1,9 +1,10 @@
-import { Button, DropdownMenu } from '@novasamatech/tr-ui';
+import { DropdownMenu } from '@novasamatech/tr-ui';
 import { Ban, Ellipsis, LogOut, Search, ShieldOff } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useObservable } from 'react-rx';
 import { of } from 'rxjs';
 
+import { Button, IconButton } from '@/shared/components';
 import { Slot } from '@/shared/di';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
@@ -268,14 +269,14 @@ export const Room = ({ session, initialSearch, onDeleted }: ChatConversationView
             </div>
             <div className="flex shrink-0 items-center gap-2">
               <Slot id={chatRoomHeaderActionsSlot} props={{ session }} />
-              <Button variant="ghost" size="icon-sm" onClick={handleOpenSearch}>
+              <IconButton size="sm" label={t('feature.chat.search')} onClick={handleOpenSearch}>
                 <Search strokeWidth={1.75} className="size-5" />
-              </Button>
+              </IconButton>
               <DropdownMenu>
                 <DropdownMenu.Trigger asChild>
-                  <Button data-testid={TEST_IDS.chatRoomHeaderMenuTrigger} variant="ghost" size="icon-sm">
+                  <IconButton data-testid={TEST_IDS.chatRoomHeaderMenuTrigger} size="sm" label={t('feature.chat.roomActions')}>
                     <Ellipsis strokeWidth={1.75} className="size-5" />
-                  </Button>
+                  </IconButton>
                 </DropdownMenu.Trigger>
                 <DropdownMenu.Content align="end">
                   {canBlock && (

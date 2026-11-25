@@ -1,8 +1,8 @@
-import { Button } from '@novasamatech/tr-ui';
 import { Phone, Video } from 'lucide-react';
 import { useIntl } from 'react-intl';
 import { useObservable } from 'react-rx';
 
+import { IconButton } from '@/shared/components';
 import { isElectron } from '@/shared/env';
 import { useRxState } from '@/shared/rxstate';
 import { TEST_IDS } from '@/shared/test-ids';
@@ -37,26 +37,24 @@ export const CallButtons = ({ session }: Props) => {
 
   return (
     <>
-      <Button
-        variant="ghost"
-        size="icon-sm"
+      <IconButton
+        size="sm"
         disabled={inCall}
         data-testid={TEST_IDS.callAudioButton}
-        aria-label={intl.formatMessage({ id: 'feature.call.audioCall' })}
+        label={intl.formatMessage({ id: 'feature.call.audioCall' })}
         onClick={() => handleCall('audio')}
       >
         <Phone strokeWidth={1.75} className="size-5" />
-      </Button>
-      <Button
-        variant="ghost"
-        size="icon-sm"
+      </IconButton>
+      <IconButton
+        size="sm"
         disabled={inCall}
         data-testid={TEST_IDS.callVideoButton}
-        aria-label={intl.formatMessage({ id: 'feature.call.videoCall' })}
+        label={intl.formatMessage({ id: 'feature.call.videoCall' })}
         onClick={() => handleCall('video')}
       >
         <Video strokeWidth={1.75} className="size-5" />
-      </Button>
+      </IconButton>
     </>
   );
 };
