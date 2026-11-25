@@ -2,7 +2,7 @@ import 'fake-indexeddb/auto';
 
 import { AccountId as AccountIdCodec } from '@polkadot-api/substrate-bindings';
 import Dexie from 'dexie';
-import { fromHex } from 'polkadot-api/utils';
+import { fromHex, toHex } from 'polkadot-api/utils';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { environmentUseCase } from '@/domains/application';
@@ -16,6 +16,7 @@ import {
   type IncomingRequestHandlers,
   type ValidatedRequest,
   type ValidatedRequestCancel,
+  type ValidatedRequestV2,
   chatRequestGateway,
 } from './requests/gateway';
 import { chatRequestService } from './requests/service';
@@ -125,6 +126,21 @@ const requestFromPeer = (requestId: string, timestamp: number): ValidatedRequest
   welcomeMessage: 'hello',
   timestamp,
 });
+
+const PEER_DEVICE = key(0xd1);
+
+const v2RequestFromPeer = (requestId: string, provenDevice = PEER_DEVICE): ValidatedRequestV2 => {
+  const identityAccountId = AccountIdCodec().enc(PEER_ID);
+  const sharedSecret = p2pService.computeSharedSecret(key(0x66), key(0xcc));
+
+  return {
+    ...requestFromPeer(requestId, 10),
+    senderIdentityAccountId: identityAccountId,
+    senderIdentityProof: chatRequestService.computeIdentityProof(sharedSecret, identityAccountId, provenDevice),
+    senderDevicePubKey: key(0xd2),
+    senderDeviceStatementAccountId: PEER_DEVICE,
+  };
+};
 
 const incomingRow = (requestId: string, status: P2PChatRequest['status']): P2PChatRequest => ({
   requestId,
@@ -369,6 +385,89 @@ describe('managerV2Factory incoming chat request cancel', () => {
 
     expect(await p2pChatDatabase.rooms.get(PEER_ID)).toBeUndefined();
     expect((await p2pChatDatabase.requests.get('req-gone'))?.status).toBe('cancelled');
+  });
+});
+
+describe('managerV2Factory incoming chat request verification', () => {
+  it('stores a v2 request whose identity proof matches', async () => {
+    const { incoming } = await startManager();
+
+    incoming.onRequest(v2RequestFromPeer('req-v2'));
+
+    await vi.waitFor(async () => {
+      expect(await p2pChatDatabase.requests.get('req-v2')).toMatchObject({
+        status: 'pending',
+        peerId: PEER_ID,
+        senderDeviceStatementAccountId: toHex(PEER_DEVICE),
+      });
+    });
+    expect(getPeerChatKey).toHaveBeenCalledWith(PEER_ID);
+  });
+
+  it('drops a v2 request whose identity proof binds another device', async () => {
+    const { incoming } = await startManager();
+
+    incoming.onRequest(v2RequestFromPeer('req-forged', key(0xd9)));
+
+    await waitForWarning('identity proof does not match', 'req-forged');
+    expect(await p2pChatDatabase.requests.get('req-forged')).toBeUndefined();
+  });
+
+  it('drops a v2 request whose sender has no chat key, and checks a later delivery again', async () => {
+    getPeerChatKey.mockResolvedValueOnce(null);
+    const { incoming } = await startManager();
+
+    incoming.onRequest(v2RequestFromPeer('req-retry'));
+    await waitForWarning('sender has no chat key', 'req-retry');
+    expect(await p2pChatDatabase.requests.get('req-retry')).toBeUndefined();
+
+    incoming.onRequest(v2RequestFromPeer('req-retry'));
+
+    await vi.waitFor(async () => {
+      expect((await p2pChatDatabase.requests.get('req-retry'))?.status).toBe('pending');
+    });
+  });
+
+  it('drops a v2 request when the chat key lookup throws', async () => {
+    getPeerChatKey.mockRejectedValueOnce(new Error('rpc'));
+    const { incoming } = await startManager();
+
+    incoming.onRequest(v2RequestFromPeer('req-throw'));
+
+    await waitForWarning('addIncomingRequest: dropped', 'req-throw');
+    expect(await p2pChatDatabase.requests.get('req-throw')).toBeUndefined();
+  });
+
+  it('drops a verified v2 request from a blocked peer', async () => {
+    await p2pChatDatabase.rooms.put({
+      sessionId: PEER_ID,
+      peerId: PEER_ID,
+      peerUsername: 'peer',
+      userId: OWN_USER_ID,
+      createdAt: 10,
+      lastUpdate: 10,
+      isBlocked: true,
+    });
+    const { incoming } = await startManager();
+
+    const addRequest = vi.spyOn(p2pChatDatabase.requests.db, 'transaction');
+    incoming.onRequest(v2RequestFromPeer('req-blocked'));
+    await vi.waitFor(() => expect(addRequest).toHaveBeenCalled());
+    await addRequest.mock.results[0]?.value;
+    addRequest.mockRestore();
+
+    expect(await p2pChatDatabase.requests.get('req-blocked')).toBeUndefined();
+  });
+
+  it('stores a v1 request without a chat key lookup', async () => {
+    const { incoming } = await startManager();
+
+    incoming.onRequest(requestFromPeer('req-v1', 10));
+
+    await vi.waitFor(async () => {
+      expect((await p2pChatDatabase.requests.get('req-v1'))?.status).toBe('pending');
+    });
+    expect(getPeerChatKey).not.toHaveBeenCalled();
   });
 });
 
