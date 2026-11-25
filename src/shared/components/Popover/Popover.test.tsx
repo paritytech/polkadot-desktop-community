@@ -53,6 +53,18 @@ describe('Popover', () => {
     expect(screen.getByRole('dialog').style.getPropertyValue('app-region')).toBe('no-drag');
   });
 
+  it('shortens both the entry and the exit animation under reduced motion', async () => {
+    const user = userEvent.setup();
+    renderPopover();
+
+    await open(user);
+
+    expect(screen.getByRole('dialog')).toHaveClass(
+      'motion-reduce:[animation-duration:0.01ms]',
+      'motion-reduce:data-[state=closed]:[animation-duration:0.01ms]',
+    );
+  });
+
   it('clears a leftover body lock after the last layer closes', async () => {
     const user = userEvent.setup();
     renderPopover();

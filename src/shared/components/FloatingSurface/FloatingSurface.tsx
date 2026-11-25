@@ -13,7 +13,7 @@ export const FloatingSurface = ({ inset = 'none', style, ...rest }: FloatingSurf
     <div
       {...rest}
       className={cnTw(
-        'z-50 animate-float-in bg-chrome-surface text-chrome-text shadow-chrome-pop backdrop-blur-2xl backdrop-saturate-150 outline-none data-[side=top]:[--float-slide:0.5rem] data-[state=closed]:animate-float-out motion-reduce:[animation-duration:0.01ms]',
+        'z-50 animate-float-in bg-chrome-surface text-chrome-text shadow-chrome-pop backdrop-blur-2xl backdrop-saturate-150 outline-none data-[side=top]:[--float-slide:0.5rem] data-[state=closed]:animate-float-out motion-reduce:[animation-duration:0.01ms] motion-reduce:data-[state=closed]:[animation-duration:0.01ms]',
         inset === 'none' && 'rounded-2xl',
         inset === 'menu' && 'min-w-48 overflow-y-auto rounded-2xl p-1.5',
         inset === 'tip' && 'rounded-xl px-2.5 py-1.5 text-xs',
