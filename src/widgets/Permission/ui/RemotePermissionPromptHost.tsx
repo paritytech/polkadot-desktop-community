@@ -25,8 +25,8 @@ const DECISION_EFFECTS: Record<Decision, { persist: PermissionStatus | null; toa
 
 // Advance fallback for environments that don't fire CSS `animationend`
 // (jsdom/happy-dom, OS reduce-motion, broken styles). Must exceed the
-// dialog's exit animation (`animate-dialog-out`, 150ms in `chrome.css`) so the animation-driven
-// path wins in real browsers; 500ms gives generous slack.
+// dialog's exit animation (`animate-dialog-out`, 150 ms in `chrome.css`) so the animation-driven
+// path wins in real browsers; 500 ms gives generous slack.
 const EXIT_FALLBACK_MS = 500;
 
 export const RemotePermissionPromptHost = () => {

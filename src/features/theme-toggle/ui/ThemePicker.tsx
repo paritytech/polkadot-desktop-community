@@ -35,7 +35,7 @@ export const ThemePicker = () => {
             >
               <span
                 aria-hidden
-                className="flex size-12 items-center justify-center rounded-full"
+                className="flex size-12 items-center justify-center rounded-full shadow-chrome-line"
                 style={{ backgroundColor: THEME_SWATCH_COLORS[name] }}
               >
                 {selected && <Check className="size-5 text-fg-static-white" strokeWidth={2.5} />}

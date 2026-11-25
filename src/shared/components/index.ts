@@ -40,7 +40,6 @@ export { TabHoverTitle } from './TabHoverTitle/TabHoverTitle';
 export { WebSplashScreen } from './WebSplashScreen/WebSplashScreen';
 export { Web3SummitEndedScreen } from './Web3SummitEndedScreen/Web3SummitEndedScreen';
 export { QrCode } from './QrCode/QrCode';
-export { AppIconPlaceholder } from './AppIconPlaceholder/AppIconPlaceholder';
 export { Input } from './Input/Input';
 export { Label } from './Label/Label';
 export { Switch } from './Switch/Switch';

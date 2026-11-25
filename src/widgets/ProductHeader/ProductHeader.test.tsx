@@ -1,6 +1,6 @@
 // @vitest-environment happy-dom
 
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
 import { ProductHeader } from './ProductHeader';
@@ -22,7 +22,15 @@ describe('ProductHeader', () => {
   it('omits the description when it is empty', () => {
     const { container } = render(<ProductHeader name="Wallet" description="" />);
 
-    expect(container.querySelectorAll('span.truncate')).toHaveLength(1);
+    expect(container.querySelector('[data-slot=product-header]')).toHaveTextContent(/^Wallet$/);
+  });
+
+  it('shows the icon when the icon image fails to load', () => {
+    render(<ProductHeader name="Wallet" iconSrc="x.png" icon={<span data-testid="fallback-icon" />} />);
+
+    fireEvent.error(screen.getByRole('img', { name: 'Wallet' }));
+
+    expect(screen.getByTestId('fallback-icon')).toBeInTheDocument();
   });
 
   it('renders the icon when there is no icon image', () => {

@@ -46,6 +46,7 @@ export const Avatar = ({ label, alt, tone = 'amethyst', size = '40' }: Props) =>
       tone === 'garnet' && 'bg-avatar-bg-garnet text-avatar-fg-garnet',
     )}
   >
+    {/* eslint-disable-next-line formatjs/no-literal-string-in-jsx -- a placeholder glyph, not copy */}
     {label.trim().charAt(0).toLocaleUpperCase() || '?'}
   </span>
 );

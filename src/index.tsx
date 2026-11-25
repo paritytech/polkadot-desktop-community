@@ -153,33 +153,31 @@ const Root = () => {
 
   return (
     <TranslationProvider locale={locale}>
-      <>
-        <ThemeNameSyncer />
-        {!isCallWindow && (
-          <>
-            <ThemeSyncer />
-            <NativeThemeSyncer />
-          </>
-        )}
-        <ErrorBoundary
-          FallbackComponent={FallbackScreen}
-          onError={(error, errorInfo) => {
-            Sentry.captureException(error, { extra: { componentStack: errorInfo.componentStack } });
-            const message = error ? error.toString() : '';
-            console.error(message);
-            console.error(errorInfo.componentStack);
-            if (message.includes('Failed to fetch dynamically imported module')) {
-              reloadApp();
-            }
-          }}
-        >
-          <Suspense fallback={splashScreen}>
-            <App onReady={() => setAppLoaded(true)} />
-            {loadingDelay && <LoadingDelay suspense={loadingDelay} />}
-          </Suspense>
-        </ErrorBoundary>
-        <Toaster />
-      </>
+      <ThemeNameSyncer />
+      {!isCallWindow && (
+        <>
+          <ThemeSyncer />
+          <NativeThemeSyncer />
+        </>
+      )}
+      <ErrorBoundary
+        FallbackComponent={FallbackScreen}
+        onError={(error, errorInfo) => {
+          Sentry.captureException(error, { extra: { componentStack: errorInfo.componentStack } });
+          const message = error ? error.toString() : '';
+          console.error(message);
+          console.error(errorInfo.componentStack);
+          if (message.includes('Failed to fetch dynamically imported module')) {
+            reloadApp();
+          }
+        }}
+      >
+        <Suspense fallback={splashScreen}>
+          <App onReady={() => setAppLoaded(true)} />
+          {loadingDelay && <LoadingDelay suspense={loadingDelay} />}
+        </Suspense>
+      </ErrorBoundary>
+      <Toaster />
     </TranslationProvider>
   );
 };
