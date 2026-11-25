@@ -1,12 +1,11 @@
-import { AppIcon, ProductHeader } from '@novasamatech/tr-ui';
 import { type ReactNode } from 'react';
 
 import { type Product } from '@/domains/product';
-import { type ProductHeaderViewModel, useProductHeaderProps } from '@/widgets/ProductHeader';
+import { type ProductHeaderViewModel, ProductHeader, useProductHeaderProps } from '@/widgets/ProductHeader';
 
 type Props = {
   product?: Nullable<Product>;
-  /** AppIcon fallback when `iconSrc` is unavailable (native products, add-widget entries). */
+  /** The icon tile's fallback when the product has no icon image (native products, add-widget entries). */
   icon?: ReactNode;
 } & Partial<ProductHeaderViewModel>;
 
@@ -17,29 +16,16 @@ export const ProductDialogHeader = ({ product, icon, name, description, iconSrc 
     fallbackDomain: description,
   });
 
-  const header: ProductHeaderViewModel = {
-    name: name ?? fromProduct.name,
-    description: description ?? fromProduct.description,
-    iconSrc: iconSrc ?? fromProduct.iconSrc,
-  };
-
-  const showDescription = Boolean(header.description && header.description !== header.name);
-
-  if (icon && !header.iconSrc) {
-    return (
-      <div data-slot="product-header" className="flex min-w-0 gap-4">
-        <AppIcon alt={header.name} size="lg">
+  return (
+    <ProductHeader
+      name={name ?? fromProduct.name}
+      description={description ?? fromProduct.description}
+      iconSrc={iconSrc ?? fromProduct.iconSrc}
+      icon={
+        icon ? (
           <span className="flex size-7 items-center justify-center overflow-hidden [&_svg]:size-full">{icon}</span>
-        </AppIcon>
-        <div className="flex min-w-0 flex-col justify-center">
-          <span className="truncate text-base leading-6 font-semibold text-fg-primary">{header.name}</span>
-          {showDescription ? (
-            <span className="truncate text-sm leading-5 font-normal text-fg-secondary">{header.description}</span>
-          ) : null}
-        </div>
-      </div>
-    );
-  }
-
-  return <ProductHeader {...header} />;
+        ) : undefined
+      }
+    />
+  );
 };
