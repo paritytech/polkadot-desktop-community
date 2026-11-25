@@ -6,8 +6,7 @@ import { Popover } from '@novasamatech/tr-ui';
 import { Pin, X } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import RotateCwIcon from '@/shared/assets/images/header/rotate-cw.svg?jsx';
-import { HeaderButton, SegmentedControl, iconBase } from '@/shared/components';
+import { SegmentedControl } from '@/shared/components';
 import { Slot } from '@/shared/di';
 import { isElectron } from '@/shared/env';
 import { useRxState } from '@/shared/rxstate';
@@ -16,7 +15,6 @@ import { useTranslation } from '@/shared/translation';
 import { cnTw } from '@/shared/utils';
 import { useIsPinned } from '@/domains/product';
 import { type Tab, browserTabs, isSystemTabType } from '@/aggregates/browser-tabs';
-import { onProductRefreshRequestedSideEffect } from '@/aggregates/product-loading';
 import { webviewRegistry } from '@/aggregates/webview-registry';
 import { tabContentSlot, tabHoverSlot } from '../di';
 import { useTabs } from '../hooks/useTabs';
@@ -357,29 +355,4 @@ const formatMemory = (bytes: number): string => {
   if (mb >= 1024) return `${(mb / 1024).toFixed(1)}GB`;
   if (mb >= 10) return `${Math.round(mb)}MB`;
   return `${mb.toFixed(1)}MB`;
-};
-
-export const BrowserRefreshButton = () => {
-  const { t } = useTranslation();
-  const { tabs, selectedTabId } = useTabs();
-  const [spinning, setSpinning] = useState(false);
-
-  if (tabs.length === 0) return null;
-
-  const handleRefresh = () => {
-    if (selectedTabId) {
-      setSpinning(true);
-      void onProductRefreshRequestedSideEffect.apply({ identifier: selectedTabId });
-    }
-  };
-
-  return (
-    <HeaderButton variant="icon" ariaLabel={t('common.aria.reload')} onClick={handleRefresh}>
-      <RotateCwIcon
-        className={cnTw('h-3.75 w-3.75', iconBase, spinning && 'animate-[spin_0.5s_ease-in-out]')}
-        aria-hidden
-        onAnimationEnd={() => setSpinning(false)}
-      />
-    </HeaderButton>
-  );
 };

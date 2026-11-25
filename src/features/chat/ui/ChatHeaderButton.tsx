@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 
 import ChatBubbleIcon from '@/shared/assets/images/header/chat-bubble.svg?jsx';
-import { HeaderButton, iconBase } from '@/shared/components';
+import { IconButton } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { useProductSessions, useTotalUnreadCount } from '@/domains/chat';
@@ -9,8 +9,6 @@ import { useP2PSessions } from '@/aggregates/p2p-chat';
 import { useTruapiUserId } from '@/aggregates/truapi-runtime';
 
 import { QuickChat } from './QuickChat';
-
-const chatIconClassName = `size-4 ${iconBase}`;
 
 export const ChatHeaderButton = () => {
   const { t } = useTranslation();
@@ -28,8 +26,8 @@ export const ChatHeaderButton = () => {
         {/* The icon is the whole button, so without a label the button is
             anonymous to a screen reader. The dot needs `role` for its own label
             to apply at all — `aria-label` on a bare span is ignored. */}
-        <HeaderButton variant="icon" active={isOpen} ariaLabel={t('feature.chat.quickChat')}>
-          <ChatBubbleIcon className={chatIconClassName} aria-hidden />
+        <IconButton label={t('feature.chat.quickChat')}>
+          <ChatBubbleIcon className="size-4" aria-hidden />
           {totalUnread > 0 && (
             <span
               role="status"
@@ -37,7 +35,7 @@ export const ChatHeaderButton = () => {
               className="absolute end-1.5 top-1.5 block size-1.5 rounded-full bg-chrome-ok"
             />
           )}
-        </HeaderButton>
+        </IconButton>
       </QuickChat>
     </div>
   );

@@ -1,6 +1,6 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
-import { HeaderButton } from '../HeaderButton/HeaderButton';
+import { IconButton } from '../IconButton/IconButton';
 
 type Props = {
   canGoBack: boolean;
@@ -25,18 +25,12 @@ export const HistoryNavigationButtons = ({
 }: Props) => {
   return (
     <div className="flex items-center gap-1">
-      <HeaderButton variant="icon" testId={backTestId} ariaLabel={backAriaLabel} disabled={!canGoBack} onClick={goBack}>
+      <IconButton label={backAriaLabel} data-testid={backTestId} disabled={!canGoBack} onClick={goBack}>
         <ChevronLeft size={16} aria-hidden />
-      </HeaderButton>
-      <HeaderButton
-        variant="icon"
-        testId={forwardTestId}
-        ariaLabel={forwardAriaLabel}
-        disabled={!canGoForward}
-        onClick={goForward}
-      >
+      </IconButton>
+      <IconButton label={forwardAriaLabel} data-testid={forwardTestId} disabled={!canGoForward} onClick={goForward}>
         <ChevronRight size={16} aria-hidden />
-      </HeaderButton>
+      </IconButton>
     </div>
   );
 };
