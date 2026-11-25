@@ -1,4 +1,3 @@
-import { useTheme } from '@novasamatech/tr-ui';
 import { useNavigate } from '@tanstack/react-router';
 import { Loader, Smartphone } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -11,7 +10,7 @@ import { useRxState } from '@/shared/rxstate';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { cnTw } from '@/shared/utils';
-import { type EnvironmentId, environmentService } from '@/domains/application';
+import { type EnvironmentId, environmentService, useThemeVariant } from '@/domains/application';
 import { networkSettings } from '@/aggregates/network-settings';
 import { truapiRuntimeUseCase, useTruapiAuthState } from '@/aggregates/truapi-runtime';
 import { useOnboardingConnection } from '../hooks/useOnboardingConnection';
@@ -24,7 +23,7 @@ export const OnboardingScreen = () => {
   const { t } = useTranslation();
   const [settings] = useRxState(networkSettings.settings$);
 
-  const { mode } = useTheme();
+  const mode = useThemeVariant();
 
   const navigate = useNavigate();
 

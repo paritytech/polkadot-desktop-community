@@ -1,13 +1,9 @@
-import { themes } from '@novasamatech/tr-ui';
 import { Check } from 'lucide-react';
 
 import { useTranslation } from '@/shared/translation';
 import { cnTw } from '@/shared/utils';
-import { type ThemeName, THEME_NAMES, useSetThemeName, useThemeName } from '@/domains/application';
-
-// Each theme's signature swatch = its light `bg-action-primary` (a primitive var,
-// global across themes) so every card renders its own colour regardless of the active theme.
-const swatchColor = (name: ThemeName): string => themes[name]?.light?.['--bg-action-primary'] ?? 'transparent';
+import { THEME_NAMES, useSetThemeName, useThemeName } from '@/domains/application';
+import { THEME_SWATCH_COLORS } from '../constants';
 
 export const ThemePicker = () => {
   const { t } = useTranslation();
@@ -40,7 +36,7 @@ export const ThemePicker = () => {
               <span
                 aria-hidden
                 className="flex size-12 items-center justify-center rounded-full"
-                style={{ backgroundColor: swatchColor(name) }}
+                style={{ backgroundColor: THEME_SWATCH_COLORS[name] }}
               >
                 {selected && <Check className="size-5 text-fg-static-white" strokeWidth={2.5} />}
               </span>
