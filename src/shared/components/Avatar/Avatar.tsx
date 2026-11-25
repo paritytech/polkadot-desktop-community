@@ -1,6 +1,6 @@
 import { cnTw } from '@/shared/utils';
 
-/** In tr-ui's order, so a name hashed over the list keeps its tone. */
+/** Order is load-bearing: chat hashes a name to an index in this list, so reordering changes every contact's colour. */
 export const AVATAR_TONES = [
   'amethyst',
   'opal',
