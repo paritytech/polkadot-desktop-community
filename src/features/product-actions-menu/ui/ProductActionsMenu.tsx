@@ -25,10 +25,11 @@ export const ProductActionsMenu = ({ productId }: Props) => {
           type="button"
           aria-label={t('feature.productActionsMenu.trigger')}
           data-testid={TEST_IDS.productActionsMenuTrigger}
-          className="-ms-2 -me-1 flex size-6 shrink-0 items-center justify-center rounded-full transition-colors duration-200 hover:bg-bg-action-secondary-hover"
+          data-no-app-focus
+          className="-ms-2 -me-1 flex size-6 shrink-0 cursor-pointer items-center justify-center rounded-full transition-colors duration-200 hover:bg-chrome-fill focus-visible:outline-2 focus-visible:outline-chrome-focus"
           onMouseDown={e => e.preventDefault()}
         >
-          <MoreHorizontal className="size-4 text-fg-secondary" aria-hidden />
+          <MoreHorizontal className="size-4" aria-hidden />
         </button>
       </DropdownMenu.Trigger>
       <DropdownMenu.Content align="start">

@@ -13,7 +13,7 @@ export const ProductTabHover = ({ id }: Props) => {
 
   return (
     <div className="flex min-w-0 flex-col">
-      <div className="flex min-w-0 items-center gap-1">
+      <div className="flex min-w-0 items-center gap-1 text-fg-secondary">
         <TabHoverTitle title={title} />
         <PinIndicator productId={product?.baseName ?? id} />
       </div>
