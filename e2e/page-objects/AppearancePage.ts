@@ -15,11 +15,9 @@ import { DashboardPage } from './DashboardPage';
  * Plus a decorative chat-mock preview (aria-hidden, located by testid).
  *
  * Applied-state signals (what the app actually renders, beyond aria-checked / aria-pressed):
- *  - dark/light: tr-ui toggles the `dark` class on <html>, and ThemeSyncer
- *    mirrors the resolved mode into `color-scheme` on <html>;
- *  - theme palette: tr-ui writes the theme's CSS variables inline on <html>,
- *    so `--bg-action-primary` changes with the selected theme. Assertions
- *    check that the value *changes* rather than pin exact tr-ui var names.
+ *  - dark/light: `ThemeSyncer` toggles the `dark` class on <html> and mirrors the mode into `color-scheme`;
+ *  - theme palette: `ThemeNameSyncer` writes `data-theme` on <html>, and `chrome.css` gives each palette its own
+ *    `--chrome-top`; assertions check that the computed value changes.
  */
 export class AppearancePage {
   constructor(private readonly page: Page) {}
@@ -73,6 +71,8 @@ export class AppearancePage {
     const radio = this.radio(name);
     await expect(radio).toBeVisible({ timeout: DEFAULT_TIMEOUT });
     await radio.click();
+    // `aria-checked` follows the stored theme row, so a caller that reloads next does not lose the choice.
+    await expect(radio).toBeChecked({ timeout: DEFAULT_TIMEOUT });
   }
 
   async expectRadioSelected(name: string) {
@@ -84,8 +84,7 @@ export class AppearancePage {
   /** The resolved dark/light mode actually rendered by the app shell. */
   async expectAppliedMode(mode: 'dark' | 'light') {
     const html = this.page.locator('html');
-    // tr-ui applies the mode inside requestAnimationFrame — web-first
-    // assertions poll until it lands.
+    // the syncer applies the mode in an effect after the stored row is read
     if (mode === 'dark') {
       await expect(html).toHaveClass(/(?:^|\s)dark(?:\s|$)/, { timeout: DEFAULT_TIMEOUT });
     } else {
@@ -94,9 +93,9 @@ export class AppearancePage {
     await expect(html).toHaveCSS('color-scheme', mode, { timeout: DEFAULT_TIMEOUT });
   }
 
-  /** Inline value of the theme's signature CSS variable on <html>. */
+  /** Computed value of the palette's signature CSS variable on <html>. */
   readPrimaryPaletteVar(): Promise<string> {
-    return this.page.evaluate(() => document.documentElement.style.getPropertyValue('--bg-action-primary'));
+    return this.page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--chrome-top').trim());
   }
 
   /** Poll until the applied palette differs from a previously captured value. */
