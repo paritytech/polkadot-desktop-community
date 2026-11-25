@@ -12,9 +12,9 @@ import { DEFAULT_TIMEOUT } from '../helpers/timeouts';
  * one before any of these pages list anything. See permission-settings.feature.
  *
  * Rows on the apps list (`ProductListSettingsPage`) and the permission list
- * (`PermissionListPage`) render as clickable `ListItem` divs with no test-id;
+ * (`PermissionListPage`) render as `ListItem` buttons with no test-id;
  * they are matched by their visible product/permission text (the click bubbles
- * to the row's `onClick`). The modality status rows and the reset button on the
+ * to the button). The modality status rows and the reset button on the
  * per-app entity page do carry test-ids.
  */
 export class PermissionSettingsPage {

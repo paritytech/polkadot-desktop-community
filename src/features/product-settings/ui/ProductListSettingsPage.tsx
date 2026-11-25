@@ -89,7 +89,6 @@ const ProductRow = ({
 }) => (
   <ListItem
     icon={<ProductIcon icon={icon} className="size-full rounded-xl object-cover" fallback={<Grid2X2 size={16} />} />}
-    variant="icon"
     label={label}
     description={description}
     onClick={onClick}

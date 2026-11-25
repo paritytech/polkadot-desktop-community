@@ -34,7 +34,6 @@ export const PermissionListPage = () => {
               {aggregatedByCategory.map(({ meta, agg }) => (
                 <ListItem
                   key={meta.id}
-                  variant="icon"
                   icon={meta.icon}
                   label={t(meta.labelKey)}
                   description={
