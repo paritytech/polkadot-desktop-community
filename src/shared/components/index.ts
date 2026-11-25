@@ -1,4 +1,5 @@
 export { BlurhashCanvas } from './BlurhashCanvas/BlurhashCanvas';
+export { Badge } from './Badge/Badge';
 export { Box } from './Box/Box';
 export { Button } from './Button/Button';
 export { ConfirmationProvider, useConfirmation } from './Confirmation/Confirmation';
@@ -16,6 +17,7 @@ export { layoutInteractionSession } from './DashboardGrid/layoutInteractionSessi
 export { ElectronSplashScreen } from './ElectronSplashScreen/ElectronSplashScreen';
 export { FallbackScreen } from './FallbackScreen/FallbackScreen';
 export { ListItem } from './ListItem/ListItem';
+export { ScrollArea } from './ScrollArea/ScrollArea';
 export { RouteErrorFallback } from './RouteErrorFallback/RouteErrorFallback';
 export { Sidebar } from './Sidebar/Sidebar';
 export { SegmentedControl } from './SegmentedControl/SegmentedControl';
