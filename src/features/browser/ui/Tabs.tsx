@@ -255,8 +255,8 @@ const SortableTab = ({ tab, isActive, onClose }: SortableTabProps) => {
           data-tab-id={tab.id}
           style={style}
           className={cnTw(
-            'group @container relative flex min-w-0 items-center rounded-full',
-            isActive ? 'min-w-37 flex-1' : 'min-w-16.25 flex-1',
+            'group @container relative flex flex-1 items-center rounded-full',
+            isActive ? 'min-w-37' : 'min-w-16.25',
             isDragging && 'z-10 opacity-90',
           )}
           onAuxClick={e => {

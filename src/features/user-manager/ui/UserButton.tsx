@@ -58,7 +58,7 @@ export const UserButton = memo(() => {
               <button
                 type="button"
                 aria-label={session ? t('feature.userManager.aria.account') : t('feature.userManager.aria.connectAccount')}
-                className="inline-flex h-8 items-center"
+                className="inline-flex h-8 cursor-pointer items-center"
               >
                 <ConnectionStatus state={state} letter={state === 'no-connection' ? 'N' : letter} />
               </button>

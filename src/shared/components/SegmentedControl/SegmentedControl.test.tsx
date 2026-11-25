@@ -2,6 +2,7 @@
 
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { createRef } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { SegmentedControl } from './SegmentedControl';
@@ -195,5 +196,65 @@ describe('SegmentedControl', () => {
 
     await waitFor(() => expect(item('B')).toHaveAttribute('tabIndex', '0'));
     expect(item('A')).toHaveAttribute('tabIndex', '-1');
+  });
+
+  it('re-measures the indicator when the rail resizes', async () => {
+    const callbacks: VoidFunction[] = [];
+    class ResizeObserverDouble {
+      constructor(callback: VoidFunction) {
+        callbacks.push(callback);
+      }
+      observe() {}
+      disconnect() {}
+    }
+    const original = globalThis.ResizeObserver;
+    globalThis.ResizeObserver = ResizeObserverDouble as unknown as typeof ResizeObserver;
+
+    try {
+      render(<Things value="b" />);
+      await waitFor(() => expect(indicator()).toHaveAttribute('data-placed'));
+      expect(indicator()).toHaveStyle({ width: '40px' });
+
+      measureItemsAs(60, 24);
+      act(() => {
+        for (const callback of callbacks) callback();
+      });
+
+      expect(indicator()).toHaveStyle({ width: '60px' });
+    } finally {
+      globalThis.ResizeObserver = original;
+    }
+  });
+
+  it('hands the rail element to an object railRef', () => {
+    const railRef = createRef<HTMLDivElement>();
+    render(
+      <SegmentedControl.Root label="Things" value="a" railRef={railRef} onChange={vi.fn()}>
+        <SegmentedControl.Item value="a">A</SegmentedControl.Item>
+      </SegmentedControl.Root>,
+    );
+
+    expect(railRef.current).toBe(item('A').parentElement);
+  });
+
+  it('hands the rail element to a callback railRef', () => {
+    const railRef = vi.fn();
+    render(
+      <SegmentedControl.Root label="Things" value="a" railRef={railRef} onChange={vi.fn()}>
+        <SegmentedControl.Item value="a">A</SegmentedControl.Item>
+      </SegmentedControl.Root>,
+    );
+
+    expect(railRef).toHaveBeenCalledWith(item('A').parentElement);
+  });
+
+  it('throws when an item is rendered outside the root', () => {
+    const error = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+    expect(() => render(<SegmentedControl.Item value="a">A</SegmentedControl.Item>)).toThrow(
+      'SegmentedControl.Item must be rendered inside SegmentedControl.Root',
+    );
+
+    error.mockRestore();
   });
 });

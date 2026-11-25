@@ -74,7 +74,7 @@ function isSameBox(a: Nullable<IndicatorBox>, b: Nullable<IndicatorBox>): boolea
 }
 
 // dot.li's tab stop: the focused item while focus is inside the group, else the pressed one, else the first. A value
-// no rendered item has (Cmd/Ctrl+W can remove the focused item without a focusout) falls through to the next rule.
+// no rendered item has (an item removed while it has focus fires no focusout) falls through to the next rule.
 function pickStopValue(rail: HTMLElement, focusedValue: Nullable<string>, value: Nullable<string>): Nullable<string> {
   const values = itemsOf(rail).map(item => item.dataset['segmentValue']);
   const rendered = (candidate: Nullable<string>) => candidate !== null && values.includes(candidate);
@@ -139,6 +139,7 @@ const SegmentedControlRoot = ({
     placeIndicator();
     const nextStopValue = pickStopValue(rail, focusedValue, value);
     if (nextStopValue !== stopValue) setStopValue(nextStopValue);
+    if (focusedValue !== null && nextStopValue !== focusedValue) setFocusedValue(null);
   });
 
   useEffect(() => {

@@ -5,11 +5,9 @@ import { act, render, waitFor } from '@testing-library/react';
 import { BehaviorSubject, of } from 'rxjs';
 import { afterEach, describe, expect, it } from 'vitest';
 
-import { type ResolvedTheme, type ThemeName, themeResource } from '@/domains/application';
+import { type Theme, themeResource } from '@/domains/application';
 
 import { ThemeNameSyncer } from './ThemeNameSyncer';
-
-type ThemeState = { preference: ResolvedTheme; variant: ResolvedTheme; name: ThemeName };
 
 const renderSyncer = () =>
   render(
@@ -32,7 +30,7 @@ describe('ThemeNameSyncer', () => {
   });
 
   it('follows a change of the theme name', async () => {
-    const theme$ = new BehaviorSubject<ThemeState>({ preference: 'dark', variant: 'dark', name: 'lisbon' });
+    const theme$ = new BehaviorSubject<Theme>({ preference: 'dark', variant: 'dark', name: 'lisbon' });
     themeResource.instead(() => theme$);
 
     renderSyncer();
@@ -44,7 +42,7 @@ describe('ThemeNameSyncer', () => {
   });
 
   it('writes a name it has no palette for', async () => {
-    themeResource.instead(() => of({ preference: 'dark', variant: 'dark', name: 'unknown' as ThemeName }));
+    themeResource.instead(() => of({ preference: 'dark', variant: 'dark', name: 'unknown' as Theme['name'] }));
 
     renderSyncer();
 

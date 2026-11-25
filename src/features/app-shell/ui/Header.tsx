@@ -26,7 +26,7 @@ export const Header = memo(() => {
     // the Electron 42.4.0 fix for the AppKit `sendEvent:` regression (#51576).
     <header
       className={cnTw(
-        'flex w-full shrink-0 flex-col text-chrome-text shadow-chrome-edge transition-colors duration-200',
+        'flex w-full shrink-0 flex-col text-chrome-text shadow-chrome-edge',
         tintUnfocused ? 'bg-chrome-bottom' : 'bg-(image:--chrome-glass)',
       )}
       style={{ appRegion: 'drag' }}

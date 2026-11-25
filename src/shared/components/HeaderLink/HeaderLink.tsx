@@ -31,7 +31,7 @@ export const HeaderLink = ({ ref, to, variant = 'default', children, testId = 'H
               'relative flex shrink-0 cursor-pointer appearance-none items-center justify-center rounded-full bg-transparent text-chrome-text transition-colors duration-150 select-none hover:bg-chrome-fill active:bg-chrome-fill-strong',
               variant === 'icon' && 'size-9',
               variant === 'default' && 'h-9 px-3 text-xs',
-              showActive && 'bg-chrome-fill-strong font-semibold shadow-chrome-raised',
+              showActive && 'bg-chrome-fill-strong font-semibold shadow-chrome-raised hover:bg-chrome-fill-strong',
             )}
           >
             {children}

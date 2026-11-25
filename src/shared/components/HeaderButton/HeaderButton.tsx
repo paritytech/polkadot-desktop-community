@@ -40,7 +40,7 @@ export const HeaderButton = ({
         'disabled:cursor-default disabled:bg-transparent disabled:text-chrome-faint',
         variant === 'icon' && 'size-9',
         variant === 'default' && 'h-9 px-3 text-xs',
-        active && 'bg-chrome-fill-strong font-semibold shadow-chrome-raised',
+        active && 'bg-chrome-fill-strong font-semibold shadow-chrome-raised hover:bg-chrome-fill-strong',
       )}
       style={{ appRegion: 'no-drag' }}
       disabled={disabled}

@@ -1,7 +1,7 @@
 /*
  * The chrome's colours: the header, its tab strip and its address pill, one value per palette and mode. Every text
  * pair meets APCA on the chrome's surfaces: Lc 90 for text, 75 for muted text, 30 for disabled. The palette is the
- * data-theme attribute ThemeNameSyncer writes on <html>; the mode is the dark class tr-ui's ThemeProvider toggles.
+ * data-theme attribute on <html>; the mode is the dark class on it.
  * The names start with --chrome- because tr-ui writes its own variables inline on :root, which no rule here can beat.
  */
 :root {
