@@ -33,12 +33,8 @@ export const DashboardContextMenu = ({ children, showCleanup, onAddWidget, onCle
       <ContextMenu.Content>
         <div className="w-52.5">
           <ContextMenu.Item onSelect={onAddWidget}>
-            <div className="flex h-8 w-full items-center gap-2 rounded-md">
-              <AddToDashboardIcon className="size-4 -scale-y-100 text-fg-primary" aria-hidden />
-              <span className="flex-1 text-sm leading-5 font-medium text-fg-primary">
-                {t('feature.dashboard.addWidget.title')}
-              </span>
-            </div>
+            <AddToDashboardIcon className="size-4 -scale-y-100" aria-hidden />
+            <span className="flex-1">{t('feature.dashboard.addWidget.title')}</span>
           </ContextMenu.Item>
 
           {showCleanup ? (
@@ -46,12 +42,8 @@ export const DashboardContextMenu = ({ children, showCleanup, onAddWidget, onCle
               <ContextMenu.Separator />
 
               <ContextMenu.Item onSelect={onCleanup}>
-                <div className="flex h-8 w-full items-center gap-2 rounded-md">
-                  <LayoutDashboard className="size-4" />
-                  <span className="flex-1 text-sm leading-5 font-medium text-fg-primary">
-                    {t('feature.dashboard.widgetMenu.cleanup')}
-                  </span>
-                </div>
+                <LayoutDashboard className="size-4" />
+                <span className="flex-1">{t('feature.dashboard.widgetMenu.cleanup')}</span>
               </ContextMenu.Item>
             </>
           ) : null}

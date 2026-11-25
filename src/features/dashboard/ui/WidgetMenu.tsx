@@ -96,11 +96,9 @@ export const WidgetMenu = ({
                     disabled={isSizeLocked}
                     onClick={isSizeLocked ? undefined : handleResize(variant)}
                   >
-                    <div className="flex h-8 w-full items-center gap-2 rounded-md">
-                      <WidgetSizeIcon variant={variant} className="size-4" />
-                      <span className="flex-1 text-sm leading-5 font-medium text-fg-primary">{t(labelKey)}</span>
-                      {isActive ? <Check className="size-4" /> : null}
-                    </div>
+                    <WidgetSizeIcon variant={variant} className="size-4" />
+                    <span className="flex-1">{t(labelKey)}</span>
+                    {isActive ? <Check className="size-4" /> : null}
                   </DropdownMenu.Item>
                 );
               })}
@@ -112,12 +110,8 @@ export const WidgetMenu = ({
               <DropdownMenu.Separator />
 
               <DropdownMenu.Item onClick={onCleanup}>
-                <div className="flex h-8 w-full items-center gap-2 rounded-md">
-                  <LayoutDashboard className="size-4" />
-                  <span className="flex-1 text-sm leading-5 font-medium text-fg-primary">
-                    {t('feature.dashboard.widgetMenu.cleanup')}
-                  </span>
-                </div>
+                <LayoutDashboard className="size-4" />
+                <span className="flex-1">{t('feature.dashboard.widgetMenu.cleanup')}</span>
               </DropdownMenu.Item>
             </>
           ) : null}
@@ -127,10 +121,8 @@ export const WidgetMenu = ({
           {menuItems}
 
           <DropdownMenu.Item data-testid={TEST_IDS.dashboardWidgetMenuRemove} variant="danger" onClick={onRemove}>
-            <div className="flex h-8 w-full items-center gap-2 rounded-md">
-              <Trash2 className="size-4 text-fg-error" />
-              <span className="flex-1 text-sm leading-5 font-medium">{removeLabel}</span>
-            </div>
+            <Trash2 className="size-4" />
+            <span className="flex-1">{removeLabel}</span>
           </DropdownMenu.Item>
         </div>
       </DropdownMenu.Content>

@@ -91,10 +91,8 @@ const FolderGridItem = ({
         <DropdownMenu.Content align="end">
           <div className="w-52.5">
             <DropdownMenu.Item variant="danger" onClick={handleRemoveWidget}>
-              <div className="flex h-8 w-full items-center gap-2 rounded-md">
-                <Trash2 className="size-4 text-fg-error" />
-                <span className="flex-1 text-sm leading-5 font-medium">{removeLabel}</span>
-              </div>
+              <Trash2 className="size-4" />
+              <span className="flex-1">{removeLabel}</span>
             </DropdownMenu.Item>
           </div>
         </DropdownMenu.Content>

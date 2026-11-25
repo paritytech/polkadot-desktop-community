@@ -158,10 +158,8 @@ const WidgetMenuItems = ({ productId }: { productId: string }) => {
       data-testid={TEST_IDS.productWidgetReloadButton}
       onClick={() => void onProductRefreshRequestedSideEffect.apply({ identifier: productId })}
     >
-      <div className="flex h-8 w-full items-center gap-2 rounded-md">
-        <RotateCw className="size-4" />
-        <span className="flex-1 text-sm leading-5 font-medium text-fg-primary">{t('feature.dashboard.widgetMenu.reload')}</span>
-      </div>
+      <RotateCw className="size-4" />
+      <span className="flex-1">{t('feature.dashboard.widgetMenu.reload')}</span>
     </DropdownMenu.Item>
   );
 };
