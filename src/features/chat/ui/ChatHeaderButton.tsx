@@ -34,7 +34,7 @@ export const ChatHeaderButton = () => {
             <span
               role="status"
               aria-label={t('feature.chat.unreadMessagesAria')}
-              className="absolute end-1.25 top-1.25 block size-2.5 rounded-full border border-bg-surface-container bg-fg-success"
+              className="absolute end-1.5 top-1.5 block size-1.5 rounded-full bg-chrome-ok"
             />
           )}
         </HeaderButton>

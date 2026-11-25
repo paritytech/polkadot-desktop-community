@@ -22,33 +22,33 @@ export const ConnectionStatus = ({ state, letter, className }: Props) => {
       data-testid={TEST_IDS.userConnectionStatus}
       data-state={state}
       className={cnTw(
-        'relative h-8 w-15 shrink-0 overflow-hidden rounded-full border border-stroke-primary bg-bg-surface-container transition-colors select-none hover:bg-bg-action-secondary-hover',
+        'relative h-8 w-15 shrink-0 overflow-hidden rounded-full bg-chrome-fill transition-colors select-none hover:bg-chrome-fill-strong',
         className,
       )}
       style={{ appRegion: 'no-drag' }}
     >
       {state === 'connected' && (
         <span className="absolute start-1.5 top-1.5 flex size-5 items-center justify-center">
-          <PolkadotLogo className="size-4.5 text-fg-primary" />
+          <PolkadotLogo className="size-4.5 text-chrome-text" />
         </span>
       )}
       {state === 'reconnecting' && (
-        <span className="absolute start-1.5 top-1.5 flex size-5 items-center justify-center text-fg-primary">
+        <span className="absolute start-1.5 top-1.5 flex size-5 items-center justify-center text-chrome-text">
           <Spinner size={18} />
         </span>
       )}
       {state === 'no-connection' && (
         <span className="absolute start-1.5 top-1.5 flex size-5 items-center justify-center">
-          <PolkadotLogo className="size-4.5 text-fg-primary opacity-50" />
+          <PolkadotLogo className="size-4.5 text-chrome-text opacity-50" />
           <span
             aria-hidden
-            className="absolute h-px w-6 rotate-45 bg-fg-primary"
-            style={{ boxShadow: '0 -1.5px 0 var(--bg-surface-container)' }}
+            className="absolute h-px w-6 rotate-45 bg-chrome-text"
+            style={{ boxShadow: '0 -1.5px 0 var(--chrome-top)' }}
           />
         </span>
       )}
       {state === 'offline' && (
-        <span className="absolute start-1.5 top-1.5 flex size-5 items-center justify-center text-fg-secondary">
+        <span className="absolute start-1.5 top-1.5 flex size-5 items-center justify-center text-chrome-muted">
           <WifiOff className="size-4.5" />
         </span>
       )}
