@@ -17,6 +17,7 @@ export { FallbackScreen } from './FallbackScreen/FallbackScreen';
 export { ListItem } from './ListItem/ListItem';
 export { RouteErrorFallback } from './RouteErrorFallback/RouteErrorFallback';
 export { Sidebar } from './Sidebar/Sidebar';
+export { SegmentedControl } from './SegmentedControl/SegmentedControl';
 export { SettingsHeader } from './SettingsList/SettingsHeader';
 export { SettingsList } from './SettingsList/SettingsList';
 export { SettingsSection } from './SettingsList/SettingsSection';
