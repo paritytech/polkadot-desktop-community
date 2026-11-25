@@ -7,7 +7,7 @@ export class ChatPage {
   constructor(private readonly page: Page) {}
 
   /**
-   * Toolbar quick-chat button's wrapper that opens the QuickChat popover.
+   * Toolbar quick-chat button that opens the QuickChat popover.
    */
   get quickChatTrigger() {
     return this.page.getByTestId(TEST_IDS.quickChatButton);

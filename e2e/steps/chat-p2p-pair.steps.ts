@@ -131,7 +131,7 @@ When('Bob accepts the incoming request', async ({ bob }) => {
   await requestItem.click();
   const acceptButton = bob.app.window.getByTestId(TEST_IDS.chatRequestAcceptButton).first();
   await expect(acceptButton).toBeVisible({ timeout: DEFAULT_TIMEOUT });
-  await acceptButton.locator('button').click();
+  await acceptButton.click();
 });
 
 Then("a chat session with Alice appears in Bob's chat sidebar", async ({ bob }) => {

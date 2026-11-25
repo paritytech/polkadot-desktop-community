@@ -41,7 +41,7 @@ export class DashboardPage {
   }
 
   async openAddWidgetModal() {
-    await this.addWidgetButton.locator('button').click({ timeout: DEFAULT_TIMEOUT });
+    await this.addWidgetButton.click({ timeout: DEFAULT_TIMEOUT });
   }
 
   get homeButton() {
@@ -86,7 +86,7 @@ export class DashboardPage {
   }
 
   async openQuickChat() {
-    await this.quickChatButton.locator('button').click({ timeout: DEFAULT_TIMEOUT });
+    await this.quickChatButton.click({ timeout: DEFAULT_TIMEOUT });
   }
 
   async openSettings() {
