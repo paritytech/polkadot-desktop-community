@@ -1,6 +1,6 @@
 import { cnTw } from '@/shared/utils';
 
-/** Order is load-bearing: chat hashes a name to an index in this list, so reordering changes every contact's colour. */
+/** Order is load-bearing: callers hash a name to an index in this list, so reordering changes the tone each name gets. */
 export const AVATAR_TONES = [
   'amethyst',
   'opal',
