@@ -49,9 +49,10 @@ describe('AlertDialog', () => {
   it('leaves its title unpadded, having no close button', async () => {
     renderAlertDialog();
 
-    await screen.findByRole('alertdialog', { name: 'Log out?' });
+    const dialog = await screen.findByRole('alertdialog', { name: 'Log out?' });
 
-    expect(screen.getByRole('heading', { name: 'Log out?' })).not.toHaveClass('group-data-[closable]/dialog:pe-8');
+    expect(dialog).not.toHaveAttribute('data-closable');
+    expect(screen.getByRole('heading', { name: 'Log out?' })).not.toHaveClass('pe-8');
   });
 
   it('cancels', async () => {
