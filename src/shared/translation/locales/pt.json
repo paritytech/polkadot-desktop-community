@@ -22,7 +22,9 @@
       "all": "Tudo",
       "electronics": "Eletrônicos",
       "fashion": "Moda",
-      "downloadLogs": "Baixar registros"
+      "downloadLogs": "Baixar registros",
+      "copied": "Copiado",
+      "copyFailed": "Falha ao copiar"
     },
     "label": {
       "signer": "Signatário",
@@ -374,7 +376,10 @@
           "tapToCallBack": "Toque para retornar a ligação",
           "tapToCallAgain": "Toque para ligar de novo"
         }
-      }
+      },
+      "searchPrevious": "Correspondência anterior",
+      "searchNext": "Próxima correspondência",
+      "roomActions": "Ações do chat"
     },
     "productActionsMenu": {
       "trigger": "Ações do produto",
@@ -499,7 +504,8 @@
         "cleanup": "Limpar o painel",
         "reload": "Recarregar widget",
         "removeWidget": "Remover widget"
-      }
+      },
+      "home": "Início"
     },
     "ticketApp": {
       "title": "Ticket App",

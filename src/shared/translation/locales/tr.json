@@ -22,7 +22,9 @@
       "all": "Tümü",
       "electronics": "Elektronik",
       "fashion": "Moda",
-      "downloadLogs": "Günlükleri indir"
+      "downloadLogs": "Günlükleri indir",
+      "copied": "Kopyalandı",
+      "copyFailed": "Kopyalanamadı"
     },
     "label": {
       "signer": "İmzalayan",
@@ -374,7 +376,10 @@
           "tapToCallBack": "Geri aramak için dokun",
           "tapToCallAgain": "Tekrar aramak için dokun"
         }
-      }
+      },
+      "searchPrevious": "Önceki eşleşme",
+      "searchNext": "Sonraki eşleşme",
+      "roomActions": "Sohbet işlemleri"
     },
     "productActionsMenu": {
       "trigger": "Ürün işlemleri",
@@ -499,7 +504,8 @@
         "cleanup": "Panoyu düzenle",
         "reload": "Widget'ı yeniden yükle",
         "removeWidget": "Widget'ı kaldır"
-      }
+      },
+      "home": "Ana sayfa"
     },
     "ticketApp": {
       "title": "Ticket App",

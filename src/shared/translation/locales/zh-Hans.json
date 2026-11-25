@@ -22,7 +22,9 @@
       "all": "全部",
       "electronics": "电子产品",
       "fashion": "时尚",
-      "downloadLogs": "下载日志"
+      "downloadLogs": "下载日志",
+      "copied": "已复制",
+      "copyFailed": "复制失败"
     },
     "label": {
       "signer": "签名者",
@@ -374,7 +376,10 @@
           "tapToCallBack": "点按以回拨",
           "tapToCallAgain": "点按以再次通话"
         }
-      }
+      },
+      "searchPrevious": "上一个匹配项",
+      "searchNext": "下一个匹配项",
+      "roomActions": "聊天操作"
     },
     "productActionsMenu": {
       "trigger": "产品操作",
@@ -499,7 +504,8 @@
         "cleanup": "整理仪表板",
         "reload": "重新加载小组件",
         "removeWidget": "移除小组件"
-      }
+      },
+      "home": "主页"
     },
     "ticketApp": {
       "title": "Ticket App",

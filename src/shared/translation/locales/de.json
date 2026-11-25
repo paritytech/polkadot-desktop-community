@@ -22,7 +22,9 @@
       "all": "Alle",
       "electronics": "Elektronik",
       "fashion": "Mode",
-      "downloadLogs": "Protokolle herunterladen"
+      "downloadLogs": "Protokolle herunterladen",
+      "copied": "Kopiert",
+      "copyFailed": "Kopieren fehlgeschlagen"
     },
     "label": {
       "signer": "Unterzeichner",
@@ -374,7 +376,10 @@
           "tapToCallBack": "Zum Zurückrufen tippen",
           "tapToCallAgain": "Zum erneuten Anrufen tippen"
         }
-      }
+      },
+      "searchPrevious": "Vorheriger Treffer",
+      "searchNext": "Nächster Treffer",
+      "roomActions": "Chat-Aktionen"
     },
     "productActionsMenu": {
       "trigger": "Produktaktionen",
@@ -499,7 +504,8 @@
         "cleanup": "Dashboard aufräumen",
         "reload": "Widget neu laden",
         "removeWidget": "Widget entfernen"
-      }
+      },
+      "home": "Startseite"
     },
     "ticketApp": {
       "title": "Ticket App",

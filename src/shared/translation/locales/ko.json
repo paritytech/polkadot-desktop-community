@@ -22,7 +22,9 @@
       "all": "전체",
       "electronics": "전자제품",
       "fashion": "패션",
-      "downloadLogs": "로그 다운로드"
+      "downloadLogs": "로그 다운로드",
+      "copied": "복사됨",
+      "copyFailed": "복사 실패"
     },
     "label": {
       "signer": "서명자",
@@ -374,7 +376,10 @@
           "tapToCallBack": "탭하여 다시 걸기",
           "tapToCallAgain": "탭하여 다시 통화"
         }
-      }
+      },
+      "searchPrevious": "이전 일치 항목",
+      "searchNext": "다음 일치 항목",
+      "roomActions": "채팅 작업"
     },
     "productActionsMenu": {
       "trigger": "제품 작업",
@@ -499,7 +504,8 @@
         "cleanup": "대시보드 정리",
         "reload": "위젯 새로고침",
         "removeWidget": "위젯 제거"
-      }
+      },
+      "home": "홈"
     },
     "ticketApp": {
       "title": "Ticket App",

@@ -22,7 +22,9 @@
       "all": "الكل",
       "electronics": "إلكترونيات",
       "fashion": "أزياء",
-      "downloadLogs": "تنزيل السجلات"
+      "downloadLogs": "تنزيل السجلات",
+      "copied": "تم النسخ",
+      "copyFailed": "فشل النسخ"
     },
     "label": {
       "signer": "الموقّع",
@@ -374,7 +376,10 @@
           "tapToCallBack": "اضغط لمعاودة الاتصال",
           "tapToCallAgain": "اضغط للاتصال مرة أخرى"
         }
-      }
+      },
+      "searchPrevious": "التطابق السابق",
+      "searchNext": "التطابق التالي",
+      "roomActions": "إجراءات الدردشة"
     },
     "productActionsMenu": {
       "trigger": "إجراءات المنتج",
@@ -499,7 +504,8 @@
         "cleanup": "تنظيم لوحة التحكم",
         "reload": "إعادة تحميل الأداة",
         "removeWidget": "إزالة الأداة"
-      }
+      },
+      "home": "الرئيسية"
     },
     "ticketApp": {
       "title": "Ticket App",

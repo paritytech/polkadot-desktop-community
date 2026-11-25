@@ -22,7 +22,9 @@
       "all": "All",
       "electronics": "Electronics",
       "fashion": "Fashion",
-      "downloadLogs": "Download Logs"
+      "downloadLogs": "Download Logs",
+      "copied": "Copied",
+      "copyFailed": "Copy failed"
     },
     "label": {
       "signer": "Signer",
@@ -375,7 +377,10 @@
           "tapToCallBack": "Tap to call back",
           "tapToCallAgain": "Tap to call again"
         }
-      }
+      },
+      "searchPrevious": "Previous match",
+      "searchNext": "Next match",
+      "roomActions": "Chat actions"
     },
     "productActionsMenu": {
       "trigger": "Product actions",
@@ -500,7 +505,8 @@
         "cleanup": "Cleanup Dashboard",
         "reload": "Reload widget",
         "removeWidget": "Remove Widget"
-      }
+      },
+      "home": "Home"
     },
     "ticketApp": {
       "title": "Ticket App",

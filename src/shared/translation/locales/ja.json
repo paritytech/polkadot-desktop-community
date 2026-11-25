@@ -22,7 +22,9 @@
       "all": "すべて",
       "electronics": "家電",
       "fashion": "ファッション",
-      "downloadLogs": "ログをダウンロード"
+      "downloadLogs": "ログをダウンロード",
+      "copied": "コピーしました",
+      "copyFailed": "コピーできませんでした"
     },
     "label": {
       "signer": "署名者",
@@ -374,7 +376,10 @@
           "tapToCallBack": "タップしてかけ直す",
           "tapToCallAgain": "タップしてもう一度発信"
         }
-      }
+      },
+      "searchPrevious": "前の一致",
+      "searchNext": "次の一致",
+      "roomActions": "チャットの操作"
     },
     "productActionsMenu": {
       "trigger": "プロダクトの操作",
@@ -499,7 +504,8 @@
         "cleanup": "ダッシュボードを整理",
         "reload": "ウィジェットを再読み込み",
         "removeWidget": "ウィジェットを削除"
-      }
+      },
+      "home": "ホーム"
     },
     "ticketApp": {
       "title": "Ticket App",

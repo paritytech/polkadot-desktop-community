@@ -22,7 +22,9 @@
       "all": "Все",
       "electronics": "Электроника",
       "fashion": "Мода",
-      "downloadLogs": "Скачать логи"
+      "downloadLogs": "Скачать логи",
+      "copied": "Скопировано",
+      "copyFailed": "Не удалось скопировать"
     },
     "label": {
       "signer": "Подписант",
@@ -374,7 +376,10 @@
           "tapToCallBack": "Нажмите, чтобы перезвонить",
           "tapToCallAgain": "Нажмите, чтобы позвонить снова"
         }
-      }
+      },
+      "searchPrevious": "Предыдущее совпадение",
+      "searchNext": "Следующее совпадение",
+      "roomActions": "Действия с чатом"
     },
     "productActionsMenu": {
       "trigger": "Действия с продуктом",
@@ -499,7 +504,8 @@
         "cleanup": "Очистить панель",
         "reload": "Перезагрузить виджет",
         "removeWidget": "Удалить виджет"
-      }
+      },
+      "home": "Главная"
     },
     "ticketApp": {
       "title": "Ticket App",

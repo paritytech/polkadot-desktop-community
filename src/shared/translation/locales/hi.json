@@ -22,7 +22,9 @@
       "all": "सभी",
       "electronics": "इलेक्ट्रॉनिक्स",
       "fashion": "फ़ैशन",
-      "downloadLogs": "लॉग डाउनलोड करें"
+      "downloadLogs": "लॉग डाउनलोड करें",
+      "copied": "कॉपी किया गया",
+      "copyFailed": "कॉपी नहीं हो सका"
     },
     "label": {
       "signer": "हस्ताक्षरकर्ता",
@@ -374,7 +376,10 @@
           "tapToCallBack": "वापस कॉल करने के लिए टैप करें",
           "tapToCallAgain": "फिर कॉल करने के लिए टैप करें"
         }
-      }
+      },
+      "searchPrevious": "पिछला मिलान",
+      "searchNext": "अगला मिलान",
+      "roomActions": "चैट क्रियाएँ"
     },
     "productActionsMenu": {
       "trigger": "प्रोडक्ट क्रियाएँ",
@@ -499,7 +504,8 @@
         "cleanup": "डैशबोर्ड साफ़ करें",
         "reload": "विजेट रीलोड करें",
         "removeWidget": "विजेट हटाएँ"
-      }
+      },
+      "home": "होम"
     },
     "ticketApp": {
       "title": "Ticket App",
