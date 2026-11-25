@@ -4,6 +4,8 @@
  * and body text, 30 for disabled text and 45 for non-text marks, measured on the chrome's surfaces and on tr-ui's main,
  * container and nested surfaces. The palette is the data-theme attribute on <html>; the mode is the dark class on it.
  * The names start with --chrome- because tr-ui writes its own variables inline on :root, which no rule here can beat.
+ * The floating layers draw on --chrome-surface (anchored layers) and --chrome-glass (dialogs, toasts), and keep a 0.01 ms
+ * exit animation under reduced motion because Radix unmounts a closing layer on animationend.
  */
 :root {
   --chrome-top: #ffffff;
@@ -43,6 +45,12 @@
   --chrome-shadow-line: inset 0 0 0 1px var(--chrome-line);
   --chrome-shadow-selected: inset 0 0 0 2px var(--chrome-ring-strong);
   --chrome-shadow-danger: inset 0 0 0 1px var(--chrome-danger-ring);
+  --chrome-surface: color-mix(in srgb, color-mix(in srgb, var(--chrome-top) 75%, var(--chrome-bottom)) 97%, transparent);
+  --chrome-scrim: rgba(0, 0, 0, 0.32);
+  --chrome-danger-ink: #a11b1b;
+  --chrome-err: #c81e1e;
+  --chrome-info: #2f6fe4;
+  --chrome-shadow-pop: inset 0 0 0 1px rgba(0, 0, 0, 0.06), 0 24px 48px rgba(0, 0, 0, 0.16), 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 :root.dark {
@@ -75,6 +83,13 @@
   --chrome-on-primary: #0b0c0f;
   --chrome-shadow-primary: inset 0 1px 0 rgba(255, 255, 255, 0.9), 0 1px 3px rgba(0, 0, 0, 0.35);
   --chrome-shadow-knob: 0 1px 2px rgba(0, 0, 0, 0.35);
+  --chrome-scrim: rgba(0, 0, 0, 0.48);
+  --chrome-danger-ink: #ffcfca;
+  --chrome-err: #fa8b85;
+  --chrome-info: #7eafff;
+  --chrome-shadow-pop:
+    inset 0 1px 0 rgba(255, 255, 255, 0.1), inset 0 0 0 1px rgba(255, 255, 255, 0.09), 0 24px 48px rgba(0, 0, 0, 0.32),
+    0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 :root[data-theme='tokyo'] {
@@ -163,6 +178,11 @@
   --color-chrome-switch-track: var(--chrome-switch-track);
   --color-chrome-knob: var(--chrome-knob);
   --color-chrome-on-primary: var(--chrome-on-primary);
+  --color-chrome-surface: var(--chrome-surface);
+  --color-chrome-scrim: var(--chrome-scrim);
+  --color-chrome-danger-ink: var(--chrome-danger-ink);
+  --color-chrome-err: var(--chrome-err);
+  --color-chrome-info: var(--chrome-info);
   --shadow-chrome-raised: var(--chrome-shadow-raised);
   --shadow-chrome-inset: var(--chrome-shadow-inset);
   --shadow-chrome-pill: var(--chrome-shadow-pill);
@@ -174,4 +194,58 @@
   --shadow-chrome-line: var(--chrome-shadow-line);
   --shadow-chrome-selected: var(--chrome-shadow-selected);
   --shadow-chrome-danger: var(--chrome-shadow-danger);
+  --shadow-chrome-pop: var(--chrome-shadow-pop);
+}
+
+@theme {
+  --animate-float-in: float-in 260ms cubic-bezier(0.2, 0.9, 0.25, 1.08) both;
+  --animate-float-out: float-out 150ms ease-out both;
+  --animate-dialog-in: dialog-in 260ms cubic-bezier(0.2, 0.9, 0.25, 1.08) both;
+  --animate-dialog-out: dialog-out 150ms ease-out both;
+  --animate-scrim-in: scrim-in 260ms ease-out both;
+  --animate-scrim-out: scrim-out 150ms ease-out both;
+  --animate-toast-in: toast-in 260ms cubic-bezier(0.2, 0.9, 0.25, 1.08) both;
+
+  @keyframes float-in {
+    from {
+      translate: 0 var(--float-slide, -0.5rem);
+      scale: 0.97;
+      opacity: 0;
+    }
+  }
+  @keyframes float-out {
+    to {
+      scale: 0.97;
+      opacity: 0;
+    }
+  }
+  @keyframes dialog-in {
+    from {
+      translate: 0 0.5rem;
+      scale: 0.96;
+      opacity: 0;
+    }
+  }
+  @keyframes dialog-out {
+    to {
+      scale: 0.98;
+      opacity: 0;
+    }
+  }
+  @keyframes scrim-in {
+    from {
+      opacity: 0;
+    }
+  }
+  @keyframes scrim-out {
+    to {
+      opacity: 0;
+    }
+  }
+  @keyframes toast-in {
+    from {
+      translate: 0 -0.75rem;
+      opacity: 0;
+    }
+  }
 }
