@@ -17,9 +17,10 @@ export const HeaderLink = ({ ref, to, variant = 'default', children, testId = 'H
     <Link
       ref={ref}
       to={to}
-      className="inline-flex appearance-none items-center justify-center rounded-lg text-xs"
+      className="inline-flex appearance-none items-center justify-center rounded-full text-xs focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-chrome-focus"
       style={{ appRegion: 'no-drag' }}
       data-testid={testId}
+      data-no-app-focus
       onClick={onClick}
     >
       {({ isActive }) => {
@@ -27,11 +28,10 @@ export const HeaderLink = ({ ref, to, variant = 'default', children, testId = 'H
         return (
           <div
             className={cnTw(
-              'flex appearance-none items-center justify-center rounded-lg text-xs select-none',
-              'cursor-pointer bg-transparent transition-colors hover:bg-bg-action-secondary-hover',
-              showActive ? 'bg-bg-surface-nested font-semibold text-fg-primary' : 'text-fg-secondary',
-              variant === 'icon' && 'h-8 w-8 shrink-0',
-              variant === 'default' && 'h-8 px-2',
+              'relative flex shrink-0 cursor-pointer appearance-none items-center justify-center rounded-full bg-transparent text-chrome-text transition-colors duration-150 select-none hover:bg-chrome-fill active:bg-chrome-fill-strong',
+              variant === 'icon' && 'size-9',
+              variant === 'default' && 'h-9 px-3 text-xs',
+              showActive && 'bg-chrome-fill-strong font-semibold shadow-chrome-raised',
             )}
           >
             {children}
