@@ -50,7 +50,7 @@ const RadioGroupItem = ({ value, title, description }: RadioGroupItemProps) => {
     <label
       style={{ appRegion: 'no-drag' }}
       className={cnTw(
-        'flex w-full cursor-pointer items-start gap-2 rounded-xl bg-chrome-well px-3 py-2 text-start text-chrome-text transition-shadow duration-150 has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-chrome-focus motion-reduce:transition-none',
+        'relative flex w-full cursor-pointer items-start gap-2 rounded-xl bg-chrome-well px-3 py-2 text-start text-chrome-text transition-shadow duration-150 has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-chrome-focus motion-reduce:transition-none',
         checked && 'shadow-chrome-selected',
         !checked && 'shadow-chrome-line hover:shadow-chrome-ring',
       )}
