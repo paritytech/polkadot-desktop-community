@@ -258,10 +258,10 @@
     "wait-on": "9.5.1"
   },
   "overrides": {
-    "@radix-ui/react-direction": "1.2.0",
     "@peterek/vite-plugin-favicons": {
       "vite": "^8"
     },
+    "@radix-ui/react-direction": "1.2.0",
     "eslint-plugin-react": {
       "eslint": ">=9"
     }

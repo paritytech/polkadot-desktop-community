@@ -12,7 +12,7 @@ export type ToastContent = {
 };
 
 function show(tone: ToastTone, { id, duration, onDismiss, action, ...card }: ToastContent): void {
-  // A custom toast can only leave through toast.dismiss, which runs onDismiss; an action is not a dismissal.
+  // The card's close and its action both leave through toast.dismiss, which runs onDismiss; the action is not a dismissal.
   let acted = false;
 
   sonnerToast.custom(

@@ -39,7 +39,11 @@ describe('AlertDialog', () => {
   it('is an alert dialog named by its title', async () => {
     renderAlertDialog();
 
-    expect(await screen.findByRole('alertdialog', { name: 'Log out?' })).toBeInTheDocument();
+    const dialog = await screen.findByRole('alertdialog', { name: 'Log out?' });
+
+    expect(dialog).toBeInTheDocument();
+    expect(dialog).toHaveAttribute('data-modal-surface');
+    expect(dialog.style.getPropertyValue('app-region')).toBe('no-drag');
   });
 
   it('cancels', async () => {

@@ -1,13 +1,13 @@
 // @vitest-environment happy-dom
 
 import { Outlet, RouterProvider, createMemoryHistory, createRootRoute, createRoute, createRouter } from '@tanstack/react-router';
-import { render, screen, waitFor } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { type PropsWithChildren } from 'react';
 import { of } from 'rxjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { DropdownMenu, Toaster } from '@/shared/components';
+import { DropdownMenu, Toaster, toast } from '@/shared/components';
 import { TranslationProvider } from '@/shared/translation';
 import { type ProductChatRoom, roomsResource } from '@/domains/chat';
 import { type AccountId } from '@/domains/network';
@@ -122,6 +122,9 @@ describe('ProceedInChatMenuItem', () => {
     await waitFor(() => expect(router.state.location.pathname).toBe('/chat'));
     expect(commitRunMock).toHaveBeenCalledWith(PRODUCT_ID);
     expect(browserTabs.selectedTabId$.get()).toBe('chat');
+    // sonner renders toasts a macrotask late, in call order: once the marker is on screen, an error toast would be too.
+    act(() => toast.info({ title: 'marker' }));
+    await screen.findByText('marker');
     expect(screen.queryByText(ERROR_TITLE)).toBeNull();
   });
 

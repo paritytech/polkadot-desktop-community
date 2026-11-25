@@ -63,7 +63,7 @@ describe('Button', () => {
     expect(onClick).not.toHaveBeenCalled();
   });
 
-  it('keeps its own classes under a tr-ui menu trigger', () => {
+  it('keeps its own classes under a menu trigger', () => {
     render(
       <DropdownMenu.Root>
         <DropdownMenu.Trigger asChild>

@@ -305,9 +305,7 @@ describe('UpdateCheckContext', () => {
       await userEvent.click(screen.getByRole('button', { name: 'Relaunch' }));
       emitUpdateEvent('error', { message: 'signature' });
       // Close the modal (status resets, relaunch flag cleared).
-      const closeButtons = screen.getAllByRole('button', { name: 'Close' });
-      const lastClose = closeButtons[closeButtons.length - 1];
-      if (lastClose) await userEvent.click(lastClose);
+      await userEvent.click(within(screen.getByRole('dialog')).getByText('Close'));
 
       // A later unrelated background check error must NOT pop an install-failure toast.
       emitUpdateEvent('error', { message: 'network blip' });
@@ -371,6 +369,7 @@ describe('UpdateCheckContext', () => {
       await screen.findByText('Polkadot Desktop updated!');
       expect(screen.getByText('Version 2.1.0 installed')).toBeInTheDocument();
       expect(readPendingVersion()).toBeNull();
+      await settleToasts();
       expect(screen.queryByText(READY_TITLE)).toBeNull();
     });
 
@@ -432,6 +431,7 @@ describe('UpdateCheckContext', () => {
       emitUpdateEvent('error', { message: 'Code signature failed' });
 
       await screen.findByText('Update failed');
+      await settleToasts();
       expect(screen.getAllByText('Update failed')).toHaveLength(1);
     });
 

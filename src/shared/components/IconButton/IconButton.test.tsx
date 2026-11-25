@@ -63,7 +63,7 @@ describe('IconButton', () => {
     expect(onMouseDown).toHaveBeenCalledTimes(1);
   });
 
-  it('keeps its own classes under a tr-ui menu trigger', async () => {
+  it('keeps its own classes under a menu trigger', async () => {
     const user = userEvent.setup();
     const onClick = vi.fn();
     render(
