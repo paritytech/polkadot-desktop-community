@@ -21,6 +21,7 @@ export { ListItem } from './ListItem/ListItem';
 export { ScrollArea } from './ScrollArea/ScrollArea';
 export { RouteErrorFallback } from './RouteErrorFallback/RouteErrorFallback';
 export { Sidebar } from './Sidebar/Sidebar';
+export { SectionLabel } from './SectionLabel/SectionLabel';
 export { SegmentedControl } from './SegmentedControl/SegmentedControl';
 export { SettingsHeader } from './SettingsList/SettingsHeader';
 export { SettingsList } from './SettingsList/SettingsList';
