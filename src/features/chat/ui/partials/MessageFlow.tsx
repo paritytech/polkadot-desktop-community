@@ -82,10 +82,11 @@ export const MessageFlow = ({ session, onReply, onEdit }: ChatConversationViewPr
 
   const isWindowFocused = useWindowFocus();
 
-  // A read sends a seen receipt (RFC 0006), and Seen means displayed, so an unfocused window must not read.
+  // A read sends a seen receipt (RFC 0006), and Seen means displayed: an unfocused window, or a view scrolled up
+  // while new messages land below it, must not read.
   useEffect(() => {
-    if (isWindowFocused) session.markAsRead();
-  }, [session, groupedMessages, isWindowFocused]);
+    if (isWindowFocused && isAtBottom) session.markAsRead();
+  }, [session, groupedMessages, isWindowFocused, isAtBottom]);
 
   const handleContextMenu = useCallback((e: MouseEvent, message: ChatMessage) => {
     e.preventDefault();
