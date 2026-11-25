@@ -1,9 +1,8 @@
-import { Input } from '@novasamatech/tr-ui';
 import { useNavigate } from '@tanstack/react-router';
 import { Grid2X2 } from 'lucide-react';
 import { useMemo, useState } from 'react';
 
-import { ListItem, SettingsList } from '@/shared/components';
+import { Input, ListItem, SettingsList } from '@/shared/components';
 import { useTranslation } from '@/shared/translation';
 import {
   type Icon,

@@ -1,4 +1,3 @@
-import { Button, Input, Label } from '@novasamatech/tr-ui';
 import {
   type Arrangement,
   type BlendingMode,
@@ -11,8 +10,9 @@ import {
   type TypographyStyle,
   type VerticalAlignment,
 } from '@parity/truapi';
-import { type CSSProperties, type ReactNode } from 'react';
+import { type CSSProperties, type ReactNode, useId } from 'react';
 
+import { Button, Input, Label } from '@/shared/components';
 import { type ActionHandler, type RendererTreeNode } from '../types';
 
 import { RendererImage } from './RendererImage';
@@ -183,6 +183,31 @@ export function modifiersToStyle(modifiers: Modifier[]): CSSProperties {
   return style;
 }
 
+type TextFieldNode = Extract<RendererTreeNode, { tag: 'TextField' }>['value'];
+
+type RendererTextFieldProps = {
+  modifiers: TextFieldNode['modifiers'];
+  props: TextFieldNode['props'];
+  onAction: ActionHandler;
+};
+
+const RendererTextField = ({ modifiers, props, onAction }: RendererTextFieldProps) => {
+  const inputId = useId();
+  const valueChangeAction = props.valueChangeAction;
+  return (
+    <div className="flex flex-col gap-1" style={modifiersToStyle(modifiers)}>
+      {props.label && <Label htmlFor={inputId}>{props.label}</Label>}
+      <Input
+        id={inputId}
+        value={props.text}
+        placeholder={props.placeholder}
+        disabled={props.enabled === false}
+        onChange={valueChangeAction ? e => onAction(valueChangeAction, textEncoder.encode(e.target.value)) : undefined}
+      />
+    </div>
+  );
+};
+
 /**
  * One node of a product-authored render tree, as host UI.
  *
@@ -260,7 +285,7 @@ export function renderNode(node: RendererTreeNode, productId: string, onAction: 
 
     case 'Button': {
       const { modifiers, props } = node.value;
-      const variant = props.variant === 'Primary' ? 'default' : props.variant === 'Secondary' ? 'secondary' : 'ghost';
+      const variant = props.variant === 'Primary' ? 'primary' : props.variant === 'Secondary' ? 'secondary' : 'ghost';
       const clickAction = props.clickAction;
       return (
         <Button
@@ -277,18 +302,7 @@ export function renderNode(node: RendererTreeNode, productId: string, onAction: 
 
     case 'TextField': {
       const { modifiers, props } = node.value;
-      const valueChangeAction = props.valueChangeAction;
-      return (
-        <div key={key} className="flex flex-col gap-1" style={modifiersToStyle(modifiers)}>
-          {props.label && <Label>{props.label}</Label>}
-          <Input
-            value={props.text}
-            placeholder={props.placeholder}
-            disabled={props.enabled === false}
-            onChange={valueChangeAction ? e => onAction(valueChangeAction, textEncoder.encode(e.target.value)) : undefined}
-          />
-        </div>
-      );
+      return <RendererTextField key={key} modifiers={modifiers} props={props} onAction={onAction} />;
     }
 
     case 'Image': {

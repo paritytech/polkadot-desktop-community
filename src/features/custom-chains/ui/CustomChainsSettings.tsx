@@ -1,10 +1,10 @@
-import { Button, Input, Label, toastError, toastSuccess } from '@novasamatech/tr-ui';
+import { toastError, toastSuccess } from '@novasamatech/tr-ui';
 import { Trash2 } from 'lucide-react';
-import { memo, useState } from 'react';
+import { memo, useId, useState } from 'react';
 import { firstValueFrom } from 'rxjs';
 import * as v from 'valibot';
 
-import { SettingsList, SettingsSection } from '@/shared/components';
+import { Button, IconButton, Input, Label, SettingsList, SettingsSection } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { genesisHash, useCustomChains, useDiscoverAndAddChain, useRemoveCustomChain } from '@/domains/network';
@@ -25,6 +25,8 @@ export const CustomChainsSettings = memo(() => {
   const remove = useRemoveCustomChain();
   const [endpoint, setEndpoint] = useState('');
   const [name, setName] = useState('');
+  const endpointId = useId();
+  const nameId = useId();
 
   const canSubmit = !addChain.pending && endpoint.trim().length > 0;
 
@@ -80,8 +82,9 @@ export const CustomChainsSettings = memo(() => {
         <SettingsSection title={t('feature.customChains.addSection')}>
           <div className="flex flex-col gap-3">
             <div className="flex flex-col gap-2">
-              <Label>{t('feature.customChains.endpointLabel')}</Label>
+              <Label htmlFor={endpointId}>{t('feature.customChains.endpointLabel')}</Label>
               <Input
+                id={endpointId}
                 data-testid={TEST_IDS.customChainsEndpointInput}
                 disabled={addChain.pending}
                 value={endpoint}
@@ -90,8 +93,9 @@ export const CustomChainsSettings = memo(() => {
               />
             </div>
             <div className="flex flex-col gap-2">
-              <Label>{t('feature.customChains.nameLabel')}</Label>
+              <Label htmlFor={nameId}>{t('feature.customChains.nameLabel')}</Label>
               <Input
+                id={nameId}
                 data-testid={TEST_IDS.customChainsNameInput}
                 disabled={addChain.pending}
                 value={name}
@@ -99,7 +103,7 @@ export const CustomChainsSettings = memo(() => {
                 onChange={e => setName(e.target.value)}
               />
             </div>
-            <Button data-testid={TEST_IDS.customChainsAddButton} disabled={!canSubmit} onClick={handleAdd}>
+            <Button variant="primary" data-testid={TEST_IDS.customChainsAddButton} disabled={!canSubmit} onClick={handleAdd}>
               {addChain.pending ? t('feature.customChains.addingButton') : t('feature.customChains.addButton')}
             </Button>
           </div>
@@ -120,15 +124,13 @@ export const CustomChainsSettings = memo(() => {
                     {/* eslint-disable-next-line formatjs/no-literal-string-in-jsx */}
                     <div className="truncate font-mono text-xs text-fg-tertiary">{hash.slice(0, 18)}…</div>
                   </div>
-                  <Button
+                  <IconButton
                     data-testid={TEST_IDS.customChainsRemoveButton}
-                    aria-label={t('feature.customChains.removeChainAriaLabel', { name: entry.name })}
-                    size="icon"
-                    variant="ghost"
+                    label={t('feature.customChains.removeChainAriaLabel', { name: entry.name })}
                     onClick={() => remove.run({ chainId: v.parse(genesisHash, hash) })}
                   >
                     <Trash2 size={16} />
-                  </Button>
+                  </IconButton>
                 </div>
               ))}
             </div>
