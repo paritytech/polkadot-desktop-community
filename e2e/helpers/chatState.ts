@@ -52,7 +52,7 @@ export async function resetDesktopChatState(page: Page): Promise<void> {
     .locator('button')
     .click()
     .catch(async () => {
-      // Some HeaderButton wrappers render the button at the same level; try direct click.
+      // The quick-chat button's wrapper may render the button at the same level; try direct click.
       await homeButton.click();
     });
   await page.waitForURL(/dashboard/, { timeout: DEFAULT_TIMEOUT });

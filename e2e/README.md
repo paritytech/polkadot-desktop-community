@@ -361,14 +361,12 @@ export const TEST_IDS = {
 } as const;
 ```
 
-Since `HeaderButton` and some UI kit components don't forward rest props, wrap with a `<div>`:
+Some `@novasamatech/tr-ui` components don't forward rest props, so wrap those with a `<div>`. The local `Button` and `IconButton` (`@/shared/components`) take `data-testid` directly:
 
 ```tsx
-<div data-testid={TEST_IDS.myButton}>
-  <HeaderButton variant="icon" onClick={handleClick}>
-    <Icon />
-  </HeaderButton>
-</div>
+<IconButton data-testid={TEST_IDS.myButton} label="My action" onClick={handleClick}>
+  <Icon />
+</IconButton>
 ```
 
 ### 5. Attach screenshots

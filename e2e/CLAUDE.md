@@ -137,7 +137,7 @@ export class MyPage {
 
   async clickMyButton() {
     await expect(this.myButton).toBeVisible({ timeout: DEFAULT_TIMEOUT });
-    // HeaderButton doesn't forward rest props, so testid is on a wrapper div
+    // A tr-ui component doesn't forward rest props, so testid is on a wrapper div
     await this.myButton.locator('button').click();
   }
 }
@@ -160,16 +160,14 @@ export const TEST_IDS = {
 } as const;
 ```
 
-`HeaderButton` and some `@novasamatech/tr-ui` components don't forward rest props. Wrap with a `<div>`:
+Some `@novasamatech/tr-ui` components don't forward rest props. Wrap those with a `<div>`. The local `Button` and `IconButton` (`@/shared/components`) take `data-testid` directly:
 
 ```tsx
 import { TEST_IDS } from '@/shared/test-ids';
 
-<div data-testid={TEST_IDS.myButton}>
-  <HeaderButton variant="icon" onClick={handleClick}>
-    <Icon />
-  </HeaderButton>
-</div>;
+<IconButton data-testid={TEST_IDS.myButton} label="My action" onClick={handleClick}>
+  <Icon />
+</IconButton>;
 ```
 
 ### 5. Screenshots
