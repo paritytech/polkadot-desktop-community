@@ -52,7 +52,7 @@ export async function resetDesktopChatState(page: Page): Promise<void> {
     .locator('button')
     .click()
     .catch(async () => {
-      // The quick-chat button's wrapper may render the button at the same level; try direct click.
+      // The home button's test id is on the IconButton itself, with no nested button to click; click it directly.
       await homeButton.click();
     });
   await page.waitForURL(/dashboard/, { timeout: DEFAULT_TIMEOUT });
