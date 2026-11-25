@@ -1,5 +1,5 @@
 import PlaceholderIcon from '@/shared/assets/images/header/placeholder.svg?jsx';
-import { TabChip, tabIconClassName } from '@/shared/components';
+import { TabChip } from '@/shared/components';
 import { useDisplayedProduct, useDotNsLabels, useProductIcon } from '@/domains/product';
 
 type Props = { id: string; setDeeplink: (deeplink: string) => void; isActive: boolean };
@@ -20,8 +20,8 @@ export const ProductTabContent = ({ id, isActive }: Props) => {
   // (centered) and only fall back to the placeholder in the collapsed icon-only state.
   return (
     <TabChip
-      icon={iconUrl ? <img src={iconUrl} alt="" className={tabIconClassName} /> : undefined}
-      placeholder={iconUrl ? undefined : <PlaceholderIcon className={tabIconClassName} aria-hidden />}
+      icon={iconUrl ? <img src={iconUrl} alt="" /> : undefined}
+      placeholder={iconUrl ? undefined : <PlaceholderIcon aria-hidden />}
       isActive={isActive}
       label={label}
     />
