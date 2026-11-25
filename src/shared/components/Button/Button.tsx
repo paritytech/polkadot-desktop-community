@@ -11,6 +11,7 @@ type ButtonProps = Omit<ComponentProps<'button'>, 'className'> & {
 export const Button = ({ variant = 'secondary', size = 'md', block, type, disabled, style, ...rest }: ButtonProps) => {
   return (
     <button
+      {...rest}
       type={type ?? 'button'}
       disabled={disabled}
       className={cnTw(
@@ -31,7 +32,6 @@ export const Button = ({ variant = 'secondary', size = 'md', block, type, disabl
       )}
       style={{ appRegion: 'no-drag', ...style }}
       data-no-app-focus
-      {...rest}
     />
   );
 };

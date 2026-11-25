@@ -1,5 +1,6 @@
 // @vitest-environment happy-dom
 
+import { DropdownMenu } from '@novasamatech/tr-ui';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { createRef } from 'react';
 import { describe, expect, it, vi } from 'vitest';
@@ -32,5 +33,22 @@ describe('IconButton', () => {
 
     fireEvent.mouseDown(button);
     expect(onMouseDown).toHaveBeenCalledTimes(1);
+  });
+
+  it('keeps its own classes under a tr-ui menu trigger', () => {
+    render(
+      <DropdownMenu>
+        <DropdownMenu.Trigger asChild>
+          <IconButton size="xs" label="Menu">
+            <svg />
+          </IconButton>
+        </DropdownMenu.Trigger>
+      </DropdownMenu>,
+    );
+
+    const button = screen.getByRole('button', { name: 'Menu' });
+    expect(button).toHaveClass('size-6', 'rounded-full');
+    expect(button).toHaveAttribute('aria-haspopup', 'menu');
+    expect(button).toHaveAttribute('aria-expanded', 'false');
   });
 });

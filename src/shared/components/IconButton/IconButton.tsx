@@ -10,6 +10,7 @@ type IconButtonProps = Omit<ComponentProps<'button'>, 'className' | 'aria-label'
 export const IconButton = ({ label, size = 'md', type, style, ...rest }: IconButtonProps) => {
   return (
     <button
+      {...rest}
       type={type ?? 'button'}
       aria-label={label}
       className={cnTw(
@@ -20,7 +21,6 @@ export const IconButton = ({ label, size = 'md', type, style, ...rest }: IconBut
       )}
       style={{ appRegion: 'no-drag', ...style }}
       data-no-app-focus
-      {...rest}
     />
   );
 };

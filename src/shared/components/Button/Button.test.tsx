@@ -1,5 +1,6 @@
 // @vitest-environment happy-dom
 
+import { Slot } from '@radix-ui/react-slot';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createRef } from 'react';
@@ -50,5 +51,15 @@ describe('Button', () => {
 
     await user.click(screen.getByRole('button', { name: 'Save' }));
     expect(onClick).not.toHaveBeenCalled();
+  });
+
+  it('keeps its own classes when a slot passes a class', () => {
+    render(
+      <Slot className="outline-none">
+        <Button>Save</Button>
+      </Slot>,
+    );
+
+    expect(screen.getByRole('button', { name: 'Save' })).toHaveClass('inline-flex', 'rounded-full', 'h-9');
   });
 });
