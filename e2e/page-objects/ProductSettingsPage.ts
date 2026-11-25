@@ -61,7 +61,7 @@ export class ProductSettingsPage {
   /**
    * The clear-cache action succeeded: the confirm dialog closes and a success
    * toast ("<product> cache cleared") surfaces. The toast carries no testid
-   * (tr-ui's imperative `toastSuccess`), so it is matched by its text suffix.
+   * (the imperative `toast.success` of `@/shared/components`), so it is matched by its text suffix.
    */
   async expectCacheCleared() {
     await expect(this.page.getByRole('dialog')).toBeHidden({ timeout: DEFAULT_TIMEOUT });

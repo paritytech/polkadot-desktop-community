@@ -363,7 +363,7 @@ export class TestProductPage {
    */
   async expectAliasPermissionDialog() {
     await expect(this.page.getByTestId(TEST_IDS.aliasPermissionDialog)).toBeAttached({ timeout: LONG_TIMEOUT });
-    // The alias dialog puts the testid directly on the <button> — tr-ui Button
+    // The alias dialog puts the testid directly on the <button> — the local Button
     // forwards data-testid.
     await expect(this.page.getByTestId(TEST_IDS.aliasPermissionAllow)).toBeVisible({ timeout: LONG_TIMEOUT });
   }
@@ -436,7 +436,7 @@ export class TestProductPage {
 
   /**
    * Assert the host rendered a rate-limit toast naming the product and a limiter
-   * type. The toast is a tr-ui/sonner toast (no forwardable testid), so it is
+   * type. The toast is a sonner toast drawn by the local Toaster (no forwardable testid), so it is
    * matched by sonner's stable `[data-sonner-toast]` attribute plus its visible
    * text: the title is the product name and the description is
    * "<limiterType> limit is reached".
