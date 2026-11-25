@@ -9,11 +9,11 @@ export const WidgetPlaceholder = ({ message, actionLabel, onAction, testId }: Wi
   return (
     <div data-testid={testId} className="flex h-full w-full items-center justify-center px-4">
       <div className="flex flex-col items-center gap-1 text-center">
-        <p className="text-body-small whitespace-nowrap text-fg-secondary">{message}</p>
+        <p className="text-xs leading-4 whitespace-nowrap text-fg-secondary">{message}</p>
         {actionLabel && onAction ? (
           <button
             type="button"
-            className="cursor-pointer text-body-small-emphasized text-fg-primary transition-opacity hover:opacity-80"
+            className="cursor-pointer text-xs leading-4 font-medium text-fg-primary transition-opacity hover:opacity-80"
             onClick={onAction}
           >
             {actionLabel}

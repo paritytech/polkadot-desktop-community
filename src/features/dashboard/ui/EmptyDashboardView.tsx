@@ -21,8 +21,8 @@ export const EmptyDashboardView = ({ onAddWidget }: EmptyDashboardViewProps) => 
         <LogoIcon className="mb-2 h-auto w-70 text-fg-primary" aria-hidden />
 
         <div className="mb-6 flex w-full flex-col items-center gap-1">
-          <p className="text-body-large-emphasized text-fg-primary">{t('feature.dashboard.empty.title')}</p>
-          <p className="text-body-medium text-fg-secondary">{t('feature.dashboard.empty.description')}</p>
+          <p className="text-base leading-6 font-medium text-fg-primary">{t('feature.dashboard.empty.title')}</p>
+          <p className="text-sm leading-5 text-fg-secondary">{t('feature.dashboard.empty.description')}</p>
         </div>
 
         <Button

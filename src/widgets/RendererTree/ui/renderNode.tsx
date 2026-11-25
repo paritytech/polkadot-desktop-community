@@ -34,29 +34,29 @@ const COLOR_TOKEN_CSS: Record<ColorToken, string> = {
 
 const TYPOGRAPHY_CSS: Record<TypographyStyle, CSSProperties> = {
   HeadlineLarge: {
-    fontSize: 'var(--font-size-32)',
-    lineHeight: 'var(--line-height-40)',
-    fontWeight: 'var(--font-weight-bold)',
+    fontSize: '2rem',
+    lineHeight: '2.5rem',
+    fontWeight: '700',
   },
   TitleMediumRegular: {
-    fontSize: 'var(--font-size-24)',
-    lineHeight: 'var(--line-height-32)',
-    fontWeight: 'var(--font-weight-bold)',
+    fontSize: '1.5rem',
+    lineHeight: '2rem',
+    fontWeight: '700',
   },
   BodyLargeRegular: {
-    fontSize: 'var(--font-size-14)',
-    lineHeight: 'var(--line-height-20)',
-    fontWeight: 'var(--font-weight-regular)',
+    fontSize: '0.875rem',
+    lineHeight: '1.25rem',
+    fontWeight: '400',
   },
   BodyMediumRegular: {
-    fontSize: 'var(--font-size-12)',
-    lineHeight: 'var(--line-height-16)',
-    fontWeight: 'var(--font-weight-regular)',
+    fontSize: '0.75rem',
+    lineHeight: '1rem',
+    fontWeight: '400',
   },
   BodySmallRegular: {
-    fontSize: 'var(--font-size-10)',
-    lineHeight: 'var(--line-height-14)',
-    fontWeight: 'var(--font-weight-regular)',
+    fontSize: '0.625rem',
+    lineHeight: '0.875rem',
+    fontWeight: '400',
   },
 };
 

@@ -8,7 +8,7 @@ const OutgoingBubble = ({ time, children }: PropsWithChildren<{ time: string }>)
   <div className="flex justify-end">
     <div className="flex max-w-[80%] items-end gap-1.5 rounded-2xl bg-bg-action-primary px-3 py-2">
       <span className="text-sm leading-5 text-fg-primary-inverted">{children}</span>
-      <span className="flex shrink-0 items-center gap-0.5 pb-0.5 text-label-small text-fg-primary-inverted/60">
+      <span className="flex shrink-0 items-center gap-0.5 pb-0.5 text-[0.625rem] leading-3.5 font-medium text-fg-primary-inverted/60">
         {time}
         <Check className="size-3" />
       </span>
@@ -20,7 +20,7 @@ const IncomingBubble = ({ time, children }: PropsWithChildren<{ time: string }>)
   <div className="flex justify-start">
     <div className="flex max-w-[80%] items-end gap-1.5 rounded-2xl bg-bg-surface-container px-3 py-2">
       <span className="text-sm leading-5 text-fg-primary">{children}</span>
-      <span className="shrink-0 pb-0.5 text-label-small text-fg-tertiary">{time}</span>
+      <span className="shrink-0 pb-0.5 text-[0.625rem] leading-3.5 font-medium text-fg-tertiary">{time}</span>
     </div>
   </div>
 );
