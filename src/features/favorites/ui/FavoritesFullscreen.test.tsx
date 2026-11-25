@@ -88,7 +88,6 @@ describe('FavoritesFullscreen', () => {
   it('filters the grid by the search query', () => {
     renderPage();
     const input = screen.getByTestId('favorites-search-input');
-    expect(input).not.toBeNull();
     fireEvent.change(input, { target: { value: 'stak' } });
     expect(screen.queryByText('coinflip')).not.toBeInTheDocument();
     expect(screen.getByText('staking')).toBeInTheDocument();

@@ -23,9 +23,7 @@ export const ChatHeaderButton = () => {
   return (
     <div className="inline-flex items-center" data-testid={TEST_IDS.quickChatButton}>
       <QuickChat open={isOpen} onOpenChange={setIsOpen}>
-        {/* The icon is the whole button, so without a label the button is
-            anonymous to a screen reader. The dot needs `role` for its own label
-            to apply at all — `aria-label` on a bare span is ignored. */}
+        {/* The dot needs `role` for its own label to apply at all — `aria-label` on a bare span is ignored. */}
         <IconButton label={t('feature.chat.quickChat')}>
           <ChatBubbleIcon className="size-4" aria-hidden />
           {totalUnread > 0 && (

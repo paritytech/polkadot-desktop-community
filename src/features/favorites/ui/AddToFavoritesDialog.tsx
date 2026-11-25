@@ -117,7 +117,7 @@ export const AddToFavoritesDialog = ({ isOpen, onClose }: Props) => {
           ) : error || tldError ? (
             <FavoritesStatePlaceholder
               testId={TEST_IDS.addToFavoritesError}
-              icon={<CircleAlert className="size-5" aria-hidden />}
+              icon={<CircleAlert aria-hidden />}
               title={<FormattedMessage id="feature.favorites.addDialog.error.title" />}
               action={
                 <Button
@@ -137,14 +137,14 @@ export const AddToFavoritesDialog = ({ isOpen, onClose }: Props) => {
             hasQuery ? (
               <FavoritesStatePlaceholder
                 testId={TEST_IDS.addToFavoritesNoResults}
-                icon={<SearchX className="size-5" aria-hidden />}
+                icon={<SearchX aria-hidden />}
                 title={<FormattedMessage id="feature.favorites.addDialog.noResults.title" />}
                 description={<FormattedMessage id="feature.favorites.addDialog.noResults.description" />}
               />
             ) : (
               <FavoritesStatePlaceholder
                 testId={TEST_IDS.addToFavoritesNothingToAdd}
-                icon={<LayoutGrid className="size-5" aria-hidden />}
+                icon={<LayoutGrid aria-hidden />}
                 title={<FormattedMessage id="feature.favorites.addDialog.nothingToAdd.title" />}
                 description={<FormattedMessage id="feature.favorites.addDialog.nothingToAdd.description" />}
               />

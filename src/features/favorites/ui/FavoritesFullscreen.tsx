@@ -127,7 +127,7 @@ export const FavoritesFullscreen = () => {
       {order.length === 0 ? (
         <FavoritesStatePlaceholder
           testId={TEST_IDS.favoritesEmptyState}
-          icon={<Star className="size-5" aria-hidden />}
+          icon={<Star aria-hidden />}
           title={<FormattedMessage id="feature.favorites.emptyTitle" />}
           description={<FormattedMessage id="feature.favorites.emptyDescription" />}
           action={
@@ -139,7 +139,7 @@ export const FavoritesFullscreen = () => {
       ) : visibleIds.length === 0 ? (
         <FavoritesStatePlaceholder
           testId={TEST_IDS.favoritesSearchNoResults}
-          icon={<SearchX className="size-5" aria-hidden />}
+          icon={<SearchX aria-hidden />}
           title={<FormattedMessage id="feature.favorites.searchNoResults.title" />}
           description={<FormattedMessage id="feature.favorites.searchNoResults.description" />}
         />

@@ -183,11 +183,11 @@ export function modifiersToStyle(modifiers: Modifier[]): CSSProperties {
   return style;
 }
 
-type TextFieldNode = Extract<RendererTreeNode, { tag: 'TextField' }>['value'];
+type TextFieldValue = Extract<RendererTreeNode, { tag: 'TextField' }>['value'];
 
 type RendererTextFieldProps = {
-  modifiers: TextFieldNode['modifiers'];
-  props: TextFieldNode['props'];
+  modifiers: TextFieldValue['modifiers'];
+  props: TextFieldValue['props'];
   onAction: ActionHandler;
 };
 

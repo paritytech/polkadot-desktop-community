@@ -32,14 +32,14 @@ export const ChainConnectionRow = ({ chain, environment, onModeRequested }: Prop
             <Badge key={role}>{t(`feature.networkConnection.role.${role}`)}</Badge>
           ))}
           {/* A network with no bundled chain spec cannot serve a light client — say
-              so rather than leaving a tab that silently resolves to the other one. */}
+              so rather than leaving an option that silently resolves to the other one. */}
           {!mode.lightClientAvailable && (
             <span className="truncate text-xs leading-4 text-fg-tertiary">{t('feature.networkConnection.noLightClient')}</span>
           )}
         </div>
       </div>
       {/* `effective`, not `requested`: a network that cannot serve a light client
-          must show the tab it is actually on, not the one it asked for. */}
+          must show the option it is actually on, not the one it asked for. */}
       <div className="shrink-0">
         <SegmentedControl.Root label={chain.name} value={mode.effective} onChange={handleChange}>
           <SegmentedControl.Item value="light-client" disabled={!mode.lightClientAvailable}>
