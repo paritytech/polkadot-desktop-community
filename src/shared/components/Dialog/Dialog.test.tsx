@@ -6,6 +6,7 @@ import { type ReactNode } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 
 import { TranslationProvider } from '@/shared/translation';
+import { Popover } from '../Popover/Popover';
 
 import { Dialog } from './Dialog';
 
@@ -63,6 +64,31 @@ describe('Dialog', () => {
     expect(dialog.style.getPropertyValue('app-region')).toBe('no-drag');
     expect(dialog.classList.contains('motion-reduce:[animation-duration:0.01ms]')).toBe(true);
     expect(dialog.classList.contains('motion-reduce:data-[state=closed]:[animation-duration:0.01ms]')).toBe(true);
+  });
+
+  it('closes only itself on Escape when opened inside a popover', async () => {
+    const user = userEvent.setup();
+    const onPopoverOpenChange = vi.fn();
+    const onDialogOpenChange = vi.fn();
+    render(
+      <TranslationProvider>
+        <Popover.Root open onOpenChange={onPopoverOpenChange}>
+          <Popover.Content>
+            <Dialog.Root open onOpenChange={onDialogOpenChange}>
+              <Dialog.Content aria-describedby={undefined}>
+                <Dialog.Title>Rename</Dialog.Title>
+              </Dialog.Content>
+            </Dialog.Root>
+          </Popover.Content>
+        </Popover.Root>
+      </TranslationProvider>,
+    );
+    await screen.findByRole('dialog', { name: 'Rename' });
+
+    await user.keyboard('{Escape}');
+
+    expect(onDialogOpenChange).toHaveBeenCalledWith(false);
+    expect(onPopoverOpenChange).not.toHaveBeenCalled();
   });
 
   it("keeps a caller's asChild title", async () => {

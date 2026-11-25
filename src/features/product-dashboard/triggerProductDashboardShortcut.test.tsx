@@ -1,7 +1,6 @@
 // @vitest-environment happy-dom
 
 import { render, screen } from '@testing-library/react';
-import { createElement } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { Toaster } from '@/shared/components';
@@ -26,7 +25,11 @@ describe('triggerProductDashboardShortcut', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     isIconInFavoritesMock.mockResolvedValue(false);
-    render(createElement(TranslationProvider, null, createElement(Toaster)));
+    render(
+      <TranslationProvider>
+        <Toaster />
+      </TranslationProvider>,
+    );
   });
 
   it('opens the add-to-dashboard dialog for widget products', async () => {
