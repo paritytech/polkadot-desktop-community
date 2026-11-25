@@ -1,7 +1,8 @@
-import { Dialog, Input } from '@novasamatech/tr-ui';
+import { Dialog } from '@novasamatech/tr-ui';
 import { Search } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 
+import { Input } from '@/shared/components';
 import { useTransformer } from '@/shared/di';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
@@ -166,18 +167,15 @@ export const AddWidgetModalDb = ({
       <Dialog.Content showCloseButton variant="default" size="xl" aria-describedby={undefined}>
         <div className="flex h-170 bg-bg-surface-container">
           <div className="flex w-[320px] shrink-0 flex-col gap-4 border-e border-stroke-primary bg-bg-surface-container pe-6">
-            <div className="relative min-h-9">
-              <Search className="pointer-events-none absolute start-3 top-1/2 size-5 -translate-y-1/2 text-fg-secondary" />
-              <div className="[&_input]:min-h-9 [&_input]:ps-9" data-testid={TEST_IDS.addWidgetSearchInput}>
-                <Input
-                  type="search"
-                  value={searchQuery}
-                  placeholder={t('feature.dashboard.addWidget.searchPlaceholder', { tld })}
-                  aria-label={t('feature.dashboard.addWidget.searchAriaLabel')}
-                  onChange={event => setSearchQuery(event.target.value)}
-                />
-              </div>
-            </div>
+            <Input
+              leading={<Search />}
+              type="search"
+              data-testid={TEST_IDS.addWidgetSearchInput}
+              value={searchQuery}
+              placeholder={t('feature.dashboard.addWidget.searchPlaceholder', { tld })}
+              aria-label={t('feature.dashboard.addWidget.searchAriaLabel')}
+              onChange={event => setSearchQuery(event.target.value)}
+            />
 
             <div className="flex min-h-0 flex-1 flex-col overflow-y-auto">
               {catalogError ? (
