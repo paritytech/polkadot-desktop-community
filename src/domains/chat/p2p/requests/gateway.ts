@@ -314,7 +314,7 @@ export type IncomingRequestHandlers = {
  * cancel to `{ tag: 'cancel' }`.
  *
  * The inner signature is checked for every content against `ownAccountId`, the
- * `requestAcceptorId` it covers; a request that fails it decodes to `null`.
+ * `requestAcceptorId` it covers; a statement that fails it decodes to `null`.
  *
  * `ownChatPrivateKey` is the recipient's user chat X25519 private key
  * (V1-derived from the wallet ssSecret). On desktop after V2 SSO this is
