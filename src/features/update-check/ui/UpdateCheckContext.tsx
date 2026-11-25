@@ -1,6 +1,6 @@
-import { toast, toastError, toastSuccess } from '@novasamatech/tr-ui';
 import { type PropsWithChildren, createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
+import { toast } from '@/shared/components';
 import { useTranslation } from '@/shared/translation';
 import {
   clearPendingVersion,
@@ -77,11 +77,12 @@ export const UpdateCheckProvider = ({ children }: PropsWithChildren) => {
   // feedback (the background path stays silent for check failures the user didn't trigger).
   const relaunchRequestedRef = useRef(false);
 
-  // The persistent "update ready — relaunch" reminder. Uses the raw toast (not toastWithAction)
-  // so we can capture dismissal: closing it suppresses that version until a newer one arrives.
+  // The persistent "update ready — relaunch" reminder. It passes `onDismiss` so closing it
+  // suppresses that version until a newer one arrives.
   const showReadyToast = useCallback(
     (version: string) => {
-      toast(t('feature.updateCheck.updateAvailable'), {
+      toast.message({
+        title: t('feature.updateCheck.updateAvailable'),
         id: READY_TOAST_ID,
         description: t('feature.updateCheck.updateAvailableHint', { version }),
         duration: Infinity,
@@ -176,7 +177,7 @@ export const UpdateCheckProvider = ({ children }: PropsWithChildren) => {
         // Tying the confirmation to a matching pending download avoids falsely announcing an
         // "update" on a manual downgrade or unrelated reinstall.
         clearPendingVersion();
-        toastSuccess({
+        toast.success({
           title: t('feature.updateCheck.updated'),
           description: t('feature.updateCheck.updatedHint', { version }),
         });
@@ -218,7 +219,7 @@ export const UpdateCheckProvider = ({ children }: PropsWithChildren) => {
         showReadyToast(downloadedVersion);
       } else if (event.type === 'error' && relaunchRequestedRef.current) {
         relaunchRequestedRef.current = false;
-        toastError({
+        toast.error({
           title: t('feature.updateCheck.error'),
           description: t('feature.updateCheck.errorHint'),
         });

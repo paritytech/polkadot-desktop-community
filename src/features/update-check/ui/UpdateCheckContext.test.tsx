@@ -1,10 +1,10 @@
 // @vitest-environment happy-dom
 
-import { toast, toastError, toastSuccess } from '@novasamatech/tr-ui';
-import { act, render, screen } from '@testing-library/react';
+import { act, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { Toaster, toast } from '@/shared/components';
 import { TranslationProvider } from '@/shared/translation';
 import {
   clearDismissedVersion,
@@ -17,13 +17,7 @@ import {
 
 import { UpdateCheckProvider, useUpdateCheck } from './UpdateCheckContext';
 
-// Toasts are driven imperatively through the design-system helpers; mock only those, keep the
-// real Dialog/Button so the modal still renders. `vi.mock` is hoisted above the imports, so the
-// toast helpers imported above resolve to these mocks.
-vi.mock('@novasamatech/tr-ui', async importOriginal => {
-  const actual = await importOriginal<Record<string, unknown>>();
-  return { ...actual, toast: vi.fn(), toastSuccess: vi.fn(), toastError: vi.fn() };
-});
+const READY_TITLE = 'New Polkadot Desktop update!';
 
 type UpdateEventCallback = (event: { type: string; data?: unknown }) => void;
 type CheckForUpdatesRequestCallback = () => void;
@@ -73,6 +67,7 @@ async function renderProvider() {
       <UpdateCheckProvider>
         <CheckButton />
       </UpdateCheckProvider>
+      <Toaster />
     </TranslationProvider>,
   );
   await act(async () => {
@@ -88,14 +83,17 @@ function emitUpdateEvent(type: string, data?: unknown) {
   });
 }
 
-// Last options object passed to the mocked raw `toast` (the ready reminder).
-function lastToastOptions() {
-  const calls = vi.mocked(toast).mock.calls;
-  return calls[calls.length - 1]?.[1] as {
-    description?: string;
-    onDismiss?: () => void;
-    action?: { label: string; onClick: () => void };
-  };
+async function findToast(title: string) {
+  const heading = await screen.findByText(title);
+
+  return heading.closest<HTMLElement>('[data-sonner-toast]')!;
+}
+
+// sonner renders each toast a macrotask after it is raised, in call order: once a marker raised
+// now is on screen, any toast raised before it is too, so a "not shown" assertion is not vacuous.
+async function settleToasts() {
+  act(() => toast.info({ title: 'marker' }));
+  await screen.findByText('marker');
 }
 
 describe('UpdateCheckContext', () => {
@@ -106,9 +104,6 @@ describe('UpdateCheckContext', () => {
     mockGetHostMetadata.mockResolvedValue({ hostVersion: '2.1.0' });
     mockOnUpdateEvent.mockClear();
     mockOnCheckForUpdatesRequest.mockClear();
-    vi.mocked(toast).mockClear();
-    vi.mocked(toastSuccess).mockClear();
-    vi.mocked(toastError).mockClear();
     // The persisted version state is a module-level singleton, so reset it in memory between tests
     // (localStorage.clear() alone would not — the binding only syncs from storage once at import).
     clearPendingVersion();
@@ -189,8 +184,8 @@ describe('UpdateCheckContext', () => {
 
       emitUpdateEvent('update-downloaded', { version: '2.1.0' });
 
-      expect(toast).toHaveBeenCalledWith('New Polkadot Desktop update!', expect.objectContaining({}));
-      expect(lastToastOptions().description).toBe('Version 2.1.0 is available');
+      await screen.findByText(READY_TITLE);
+      expect(screen.getByText('Version 2.1.0 is available')).toBeInTheDocument();
       expect(readPendingVersion()).toBe('2.1.0');
     });
 
@@ -200,7 +195,8 @@ describe('UpdateCheckContext', () => {
 
       emitUpdateEvent('update-downloaded', { version: '2.1.0' });
 
-      expect(toast).not.toHaveBeenCalled();
+      await settleToasts();
+      expect(screen.queryByText(READY_TITLE)).toBeNull();
       // Still persisted as pending even though the reminder is suppressed.
       expect(readPendingVersion()).toBe('2.1.0');
     });
@@ -211,7 +207,8 @@ describe('UpdateCheckContext', () => {
 
       emitUpdateEvent('update-downloaded', { version: '2.1.0' });
 
-      expect(toast).toHaveBeenCalledOnce();
+      await screen.findByText(READY_TITLE);
+      expect(screen.getAllByText(READY_TITLE)).toHaveLength(1);
     });
 
     it('does not open the modal on auto-check download', async () => {
@@ -219,7 +216,8 @@ describe('UpdateCheckContext', () => {
 
       emitUpdateEvent('update-downloaded', { version: '2.1.0' });
 
-      expect(screen.queryByRole('button', { name: 'Relaunch' })).toBeNull();
+      await screen.findByText(READY_TITLE);
+      expect(screen.queryByRole('dialog')).toBeNull();
       expect(screen.queryByRole('button', { name: 'Later' })).toBeNull();
     });
 
@@ -228,7 +226,8 @@ describe('UpdateCheckContext', () => {
 
       emitUpdateEvent('error', { message: 'boom' });
 
-      expect(toast).not.toHaveBeenCalled();
+      await settleToasts();
+      expect(screen.queryByText(READY_TITLE)).toBeNull();
       expect(screen.queryByText('Update failed')).toBeNull();
     });
   });
@@ -238,22 +237,22 @@ describe('UpdateCheckContext', () => {
       await renderProvider();
 
       emitUpdateEvent('update-downloaded', { version: '2.1.0' });
-      act(() => {
-        lastToastOptions().onDismiss?.();
-      });
+      const toastElement = await findToast(READY_TITLE);
+      await userEvent.click(within(toastElement).getByRole('button', { name: 'Close' }));
 
-      expect(readDismissedVersion()).toBe('2.1.0');
+      await waitFor(() => expect(readDismissedVersion()).toBe('2.1.0'));
     });
 
     it('relaunches from the toast action', async () => {
       await renderProvider();
 
       emitUpdateEvent('update-downloaded', { version: '2.1.0' });
-      act(() => {
-        lastToastOptions().action?.onClick();
-      });
+      const toastElement = await findToast(READY_TITLE);
+      await userEvent.click(within(toastElement).getByRole('button', { name: 'Relaunch' }));
 
       expect(mockQuitAndInstall).toHaveBeenCalledOnce();
+      await waitFor(() => expect(screen.queryByText(READY_TITLE)).toBeNull());
+      expect(readDismissedVersion()).toBeNull();
     });
   });
 
@@ -274,13 +273,13 @@ describe('UpdateCheckContext', () => {
       await userEvent.click(screen.getByText('Check'));
       emitUpdateEvent('update-downloaded', { version: '2.1.0' });
       expect(screen.getByText('Update is ready')).toBeTruthy();
-      vi.mocked(toast).mockClear();
 
       await userEvent.click(screen.getByRole('button', { name: 'Later' }));
 
       expect(screen.queryByText('Update is ready')).toBeNull();
-      expect(toast).toHaveBeenCalledOnce();
-      expect(lastToastOptions().description).toBe('Version 2.1.0 is available');
+      await screen.findByText(READY_TITLE);
+      expect(screen.getAllByText(READY_TITLE)).toHaveLength(1);
+      expect(screen.getByText('Version 2.1.0 is available')).toBeInTheDocument();
     });
 
     it('Later re-arms the reminder even for a previously-dismissed version', async () => {
@@ -289,12 +288,12 @@ describe('UpdateCheckContext', () => {
 
       await userEvent.click(screen.getByText('Check'));
       emitUpdateEvent('update-downloaded', { version: '2.1.0' });
-      vi.mocked(toast).mockClear();
 
       await userEvent.click(screen.getByRole('button', { name: 'Later' }));
 
       // Explicit "Later" is an active deferral — it re-shows the toast despite the earlier dismissal.
-      expect(toast).toHaveBeenCalledOnce();
+      await screen.findByText(READY_TITLE);
+      expect(screen.getAllByText(READY_TITLE)).toHaveLength(1);
     });
 
     it('a failed modal relaunch does not leak into a later background error toast', async () => {
@@ -312,7 +311,8 @@ describe('UpdateCheckContext', () => {
 
       // A later unrelated background check error must NOT pop an install-failure toast.
       emitUpdateEvent('error', { message: 'network blip' });
-      expect(toastError).not.toHaveBeenCalled();
+      await settleToasts();
+      expect(screen.queryByText('Update failed')).toBeNull();
     });
   });
 
@@ -368,11 +368,10 @@ describe('UpdateCheckContext', () => {
 
       await renderProvider();
 
-      expect(toastSuccess).toHaveBeenCalledWith(
-        expect.objectContaining({ title: 'Polkadot Desktop updated!', description: 'Version 2.1.0 installed' }),
-      );
+      await screen.findByText('Polkadot Desktop updated!');
+      expect(screen.getByText('Version 2.1.0 installed')).toBeInTheDocument();
       expect(readPendingVersion()).toBeNull();
-      expect(toast).not.toHaveBeenCalled();
+      expect(screen.queryByText(READY_TITLE)).toBeNull();
     });
 
     it('does not falsely confirm a downgrade or reinstall with no matching pending', async () => {
@@ -381,7 +380,8 @@ describe('UpdateCheckContext', () => {
 
       await renderProvider();
 
-      expect(toastSuccess).not.toHaveBeenCalled();
+      await settleToasts();
+      expect(screen.queryByText('Polkadot Desktop updated!')).toBeNull();
     });
 
     it('does not confirm on first launch', async () => {
@@ -389,7 +389,8 @@ describe('UpdateCheckContext', () => {
 
       await renderProvider();
 
-      expect(toastSuccess).not.toHaveBeenCalled();
+      await settleToasts();
+      expect(screen.queryByText('Polkadot Desktop updated!')).toBeNull();
     });
   });
 
@@ -402,7 +403,8 @@ describe('UpdateCheckContext', () => {
 
       await renderProvider();
 
-      expect(toast).not.toHaveBeenCalled();
+      await settleToasts();
+      expect(screen.queryByText(READY_TITLE)).toBeNull();
       // Pending is retained so the re-emitted download is recognised (and can still be confirmed).
       expect(readPendingVersion()).toBe('2.1.0');
     });
@@ -413,7 +415,8 @@ describe('UpdateCheckContext', () => {
 
       await renderProvider();
 
-      expect(toast).not.toHaveBeenCalled();
+      await settleToasts();
+      expect(screen.queryByText(READY_TITLE)).toBeNull();
       expect(readPendingVersion()).toBeNull();
     });
   });
@@ -423,13 +426,13 @@ describe('UpdateCheckContext', () => {
       await renderProvider();
 
       emitUpdateEvent('update-downloaded', { version: '2.1.0' });
-      act(() => {
-        lastToastOptions().action?.onClick();
-      });
+      const toastElement = await findToast(READY_TITLE);
+      await userEvent.click(within(toastElement).getByRole('button', { name: 'Relaunch' }));
       // quitAndInstall failed -> main emits an error while no manual check is active.
       emitUpdateEvent('error', { message: 'Code signature failed' });
 
-      expect(toastError).toHaveBeenCalledOnce();
+      await screen.findByText('Update failed');
+      expect(screen.getAllByText('Update failed')).toHaveLength(1);
     });
 
     it('stays silent on a background error when no relaunch was requested', async () => {
@@ -437,7 +440,8 @@ describe('UpdateCheckContext', () => {
 
       emitUpdateEvent('error', { message: 'network' });
 
-      expect(toastError).not.toHaveBeenCalled();
+      await settleToasts();
+      expect(screen.queryByText('Update failed')).toBeNull();
     });
   });
 });
