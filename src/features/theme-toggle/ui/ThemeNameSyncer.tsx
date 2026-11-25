@@ -8,6 +8,7 @@ export const ThemeNameSyncer = () => {
   const name = useThemeName();
 
   useEffect(() => {
+    document.documentElement.dataset['theme'] = name;
     const theme = themes[name];
     if (theme) setTheme(theme);
   }, [name, setTheme]);
