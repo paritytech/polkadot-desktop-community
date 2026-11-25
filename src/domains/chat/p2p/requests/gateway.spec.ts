@@ -12,6 +12,7 @@ import {
 import { substrateSlotSecretFromSeedBytes } from '@novasamatech/substrate-slot-sr25519-wasm';
 import { errAsync, okAsync } from 'neverthrow';
 import { toHex } from 'polkadot-api/utils';
+import { type CodecType } from 'scale-ts';
 import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 
 import { p2pService } from '../service';
@@ -55,20 +56,13 @@ const captureSubmittedData = (): {
   return { adapter, capture };
 };
 
-function encryptCancelTo(params: {
+function encryptRequestMessageTo(params: {
   recipientChatPubKey: Uint8Array;
   signerSeed: Uint8Array;
   requestAcceptorId: Uint8Array;
-  identityProof: Uint8Array;
+  content: CodecType<typeof RemoteModel>['message']['content'];
 }): Uint8Array {
-  const message = {
-    messageId: 'req-1',
-    timestamp: 5n,
-    content: {
-      tag: 'cancel' as const,
-      value: { identityProof: { identityAccountId: aliceUserAccountId, proof: params.identityProof } },
-    },
-  };
+  const message = { messageId: 'req-1', timestamp: 5n, content: params.content };
   const signature = signSlotAccountSecret(
     params.signerSeed,
     ProofPayload.enc({ message, requestAcceptorId: params.requestAcceptorId }),
@@ -195,11 +189,11 @@ describe('chatRequestGateway.decryptAndValidateRequestV2 (RFC 0007 cancel)', () 
     const bobUserChat = makeUserChatKey();
     const identityProof = new Uint8Array(32).fill(0xc3);
 
-    const data = encryptCancelTo({
+    const data = encryptRequestMessageTo({
       recipientChatPubKey: bobUserChat.pub,
       signerSeed: aliceDevice.seed,
       requestAcceptorId: bobUserAccountId,
-      identityProof,
+      content: { tag: 'cancel', value: { identityProof: { identityAccountId: aliceUserAccountId, proof: identityProof } } },
     });
 
     expect(chatRequestGateway.decryptAndValidateRequestV2(data, bobUserChat.priv, bobUserAccountId)).toEqual({
@@ -217,11 +211,75 @@ describe('chatRequestGateway.decryptAndValidateRequestV2 (RFC 0007 cancel)', () 
     const aliceDevice = makeDevice(0x06);
     const bobUserChat = makeUserChatKey();
 
-    const data = encryptCancelTo({
+    const data = encryptRequestMessageTo({
       recipientChatPubKey: bobUserChat.pub,
       signerSeed: aliceDevice.seed,
       requestAcceptorId: aliceUserAccountId,
-      identityProof: new Uint8Array(32).fill(0xc3),
+      content: {
+        tag: 'cancel',
+        value: { identityProof: { identityAccountId: aliceUserAccountId, proof: new Uint8Array(32).fill(0xc3) } },
+      },
+    });
+
+    expect(chatRequestGateway.decryptAndValidateRequestV2(data, bobUserChat.priv, bobUserAccountId)).toBeNull();
+  });
+});
+
+describe('chatRequestGateway.decryptAndValidateRequestV2 (inner signature)', () => {
+  const v1Content = {
+    tag: 'v1' as const,
+    value: { pushToken: undefined, welcomeMessage: { text: 'hi', attachments: undefined } },
+  };
+
+  it('decodes a v1 request signed for this receiver, keyed by its signer', () => {
+    const device = makeDevice(0x07);
+    const bobUserChat = makeUserChatKey();
+
+    const data = encryptRequestMessageTo({
+      recipientChatPubKey: bobUserChat.pub,
+      signerSeed: device.seed,
+      requestAcceptorId: bobUserAccountId,
+      content: v1Content,
+    });
+
+    const decoded = chatRequestGateway.decryptAndValidateRequestV2(data, bobUserChat.priv, bobUserAccountId);
+    expect(decoded?.tag).toBe('request');
+    if (decoded?.tag !== 'request') return;
+    expect(decoded.value.welcomeMessage).toBe('hi');
+    expect(Array.from(decoded.value.senderAccountId)).toEqual(Array.from(device.publicKey));
+  });
+
+  it('drops a v1 request signed for another receiver', () => {
+    const device = makeDevice(0x07);
+    const bobUserChat = makeUserChatKey();
+
+    const data = encryptRequestMessageTo({
+      recipientChatPubKey: bobUserChat.pub,
+      signerSeed: device.seed,
+      requestAcceptorId: aliceUserAccountId,
+      content: v1Content,
+    });
+
+    expect(chatRequestGateway.decryptAndValidateRequestV2(data, bobUserChat.priv, bobUserAccountId)).toBeNull();
+  });
+
+  it('drops a v2 request signed for another receiver', () => {
+    const device = makeDevice(0x07);
+    const bobUserChat = makeUserChatKey();
+
+    const data = encryptRequestMessageTo({
+      recipientChatPubKey: bobUserChat.pub,
+      signerSeed: device.seed,
+      requestAcceptorId: aliceUserAccountId,
+      content: {
+        tag: 'v2',
+        value: {
+          identityProof: { identityAccountId: aliceUserAccountId, proof: new Uint8Array(32).fill(0xc3) },
+          deviceEncPubKey: device.encPub,
+          pushToken: undefined,
+          welcomeMessage: undefined,
+        },
+      },
     });
 
     expect(chatRequestGateway.decryptAndValidateRequestV2(data, bobUserChat.priv, bobUserAccountId)).toBeNull();
