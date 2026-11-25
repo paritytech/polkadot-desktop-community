@@ -2,6 +2,7 @@ import { useLocation } from '@tanstack/react-router';
 import { LayoutDashboard } from 'lucide-react';
 
 import ChatBubbleOvalLeftIcon from '@/shared/assets/images/header/chat-bubble-oval-left.svg?jsx';
+import { IconButton } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { productAddToDashboardSideEffect } from '@/features/browser';
@@ -18,19 +19,19 @@ export const ChatAddToDashboardButton = () => {
   if (!isChatPathname(pathname)) return null;
 
   return (
-    <button
-      type="button"
-      aria-label={t('feature.dashboard.addToDashboard.label')}
-      data-testid={TEST_IDS.chatAddToDashboardButton}
-      data-no-app-focus
-      className="-ms-2 -me-1 flex size-6 shrink-0 cursor-pointer items-center justify-center rounded-full transition-colors duration-200 hover:bg-chrome-fill focus-visible:outline-2 focus-visible:outline-chrome-focus"
-      onMouseDown={event => event.preventDefault()}
-      onClick={() => {
-        void productAddToDashboardSideEffect.apply({ productId: CHAT });
-      }}
-    >
-      <LayoutDashboard className="size-4" aria-hidden />
-    </button>
+    <span className="-ms-2 -me-1 flex">
+      <IconButton
+        size="xs"
+        label={t('feature.dashboard.addToDashboard.label')}
+        data-testid={TEST_IDS.chatAddToDashboardButton}
+        onMouseDown={event => event.preventDefault()}
+        onClick={() => {
+          void productAddToDashboardSideEffect.apply({ productId: CHAT });
+        }}
+      >
+        <LayoutDashboard aria-hidden />
+      </IconButton>
+    </span>
   );
 };
 
