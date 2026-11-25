@@ -42,6 +42,12 @@ describe('RequestBanner', () => {
     expect(onDecline).toHaveBeenCalledOnce();
   });
 
+  it('puts the accept test id on the Accept button itself', () => {
+    renderBanner({ acceptTestId: 'accept' });
+
+    expect(screen.getByTestId('accept')).toBe(screen.getByRole('button', { name: 'Accept' }));
+  });
+
   it('disables actions when disabled', () => {
     renderBanner({ disabled: true });
 

@@ -28,7 +28,7 @@ export const ColorModeControl = () => {
       <SegmentedControl.Root label={t('feature.themeToggle.colorMode')} value={preference} onChange={handleChange}>
         {SEGMENTS.map(({ value, labelKey, icon: Icon }) => (
           <SegmentedControl.Item key={value} value={value}>
-            <Icon className="size-3.5" />
+            <Icon className="size-3.5 shrink-0" />
             {t(labelKey)}
           </SegmentedControl.Item>
         ))}

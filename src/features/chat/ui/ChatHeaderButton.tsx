@@ -21,20 +21,18 @@ export const ChatHeaderButton = () => {
   const totalUnread = useTotalUnreadCount(sessions);
 
   return (
-    <div className="inline-flex items-center" data-testid={TEST_IDS.quickChatButton}>
-      <QuickChat open={isOpen} onOpenChange={setIsOpen}>
-        {/* The dot needs `role` for its own label to apply at all — `aria-label` on a bare span is ignored. */}
-        <IconButton label={t('feature.chat.quickChat')}>
-          <ChatBubbleIcon className="size-4" aria-hidden />
-          {totalUnread > 0 && (
-            <span
-              role="status"
-              aria-label={t('feature.chat.unreadMessagesAria')}
-              className="absolute end-1.5 top-1.5 block size-1.5 rounded-full bg-chrome-ok"
-            />
-          )}
-        </IconButton>
-      </QuickChat>
-    </div>
+    <QuickChat open={isOpen} onOpenChange={setIsOpen}>
+      {/* The dot needs `role` for its own label to apply at all — `aria-label` on a bare span is ignored. */}
+      <IconButton label={t('feature.chat.quickChat')} data-testid={TEST_IDS.quickChatButton}>
+        <ChatBubbleIcon className="size-4" aria-hidden />
+        {totalUnread > 0 && (
+          <span
+            role="status"
+            aria-label={t('feature.chat.unreadMessagesAria')}
+            className="absolute end-1.5 top-1.5 block size-1.5 rounded-full bg-chrome-ok"
+          />
+        )}
+      </IconButton>
+    </QuickChat>
   );
 };

@@ -50,12 +50,16 @@ export const DashboardToolbar = ({ pageCount, activePageIndex, onSelectPage, onA
         ) : null}
       </div>
 
-      <div className="flex shrink-0 items-center" data-testid={TEST_IDS.dashboardAddWidgetButton}>
-        <Button type="button" size="sm" aria-label={addWidgetLabel} onClick={onAddWidget}>
-          <AddToDashboardIcon className="size-2.75 shrink-0 -scale-y-100" aria-hidden />
-          <span>{addWidgetLabel}</span>
-        </Button>
-      </div>
+      <Button
+        type="button"
+        size="sm"
+        aria-label={addWidgetLabel}
+        data-testid={TEST_IDS.dashboardAddWidgetButton}
+        onClick={onAddWidget}
+      >
+        <AddToDashboardIcon className="size-2.75 shrink-0 -scale-y-100" aria-hidden />
+        <span>{addWidgetLabel}</span>
+      </Button>
     </div>
   );
 };

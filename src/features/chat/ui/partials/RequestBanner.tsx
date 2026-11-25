@@ -28,11 +28,9 @@ export const RequestBanner = ({ name, placement, disabled, acceptTestId, onAccep
         <Button size="sm" disabled={disabled} onClick={onDecline}>
           {t('feature.chat.request.decline')}
         </Button>
-        <div data-testid={acceptTestId}>
-          <Button variant="primary" size="sm" disabled={disabled} onClick={onAccept}>
-            {t('feature.chat.request.accept')}
-          </Button>
-        </div>
+        <Button variant="primary" size="sm" disabled={disabled} data-testid={acceptTestId} onClick={onAccept}>
+          {t('feature.chat.request.accept')}
+        </Button>
       </div>
     </>
   );

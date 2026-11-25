@@ -25,12 +25,17 @@ export const EmptyDashboardView = ({ onAddWidget }: EmptyDashboardViewProps) => 
           <p className="text-body-medium text-fg-secondary">{t('feature.dashboard.empty.description')}</p>
         </div>
 
-        <div data-testid={TEST_IDS.dashboardEmptyStateAddWidget}>
-          <Button type="button" variant="primary" size="sm" aria-label={addWidgetLabel} onClick={onAddWidget}>
-            <AddToDashboardIcon className="size-2.75 shrink-0 -scale-y-100" aria-hidden />
-            <span>{addWidgetLabel}</span>
-          </Button>
-        </div>
+        <Button
+          type="button"
+          variant="primary"
+          size="sm"
+          aria-label={addWidgetLabel}
+          data-testid={TEST_IDS.dashboardEmptyStateAddWidget}
+          onClick={onAddWidget}
+        >
+          <AddToDashboardIcon className="size-2.75 shrink-0 -scale-y-100" aria-hidden />
+          <span>{addWidgetLabel}</span>
+        </Button>
       </section>
     </div>
   );
