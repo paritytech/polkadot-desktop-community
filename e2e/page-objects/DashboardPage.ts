@@ -1,6 +1,7 @@
 import { type Page, type TestInfo, expect } from '@playwright/test';
 
 import { TEST_IDS } from '@/shared/test-ids';
+import { colorModeButton } from '../helpers/colorMode';
 import { DEFAULT_TIMEOUT, LONG_TIMEOUT } from '../helpers/timeouts';
 
 export class DashboardPage {
@@ -77,7 +78,7 @@ export class DashboardPage {
     await expect(appearanceLink).toBeVisible({ timeout: DEFAULT_TIMEOUT });
     await appearanceLink.click();
 
-    const themeOption = this.page.getByRole('button', { name: theme, exact: true });
+    const themeOption = colorModeButton(this.page, theme);
     await expect(themeOption).toBeVisible({ timeout: DEFAULT_TIMEOUT });
     await themeOption.click();
 

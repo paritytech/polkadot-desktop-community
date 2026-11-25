@@ -1,6 +1,7 @@
 import { type Page, expect } from '@playwright/test';
 
 import { TEST_IDS } from '@/shared/test-ids';
+import { colorModeButton } from '../helpers/colorMode';
 import { DEFAULT_TIMEOUT } from '../helpers/timeouts';
 
 import { DashboardPage } from './DashboardPage';
@@ -37,7 +38,7 @@ export class AppearancePage {
   // --- Color mode (pressed buttons) ------------------------------------------
 
   colorMode(name: string) {
-    return this.page.getByRole('button', { name, exact: true });
+    return colorModeButton(this.page, name);
   }
 
   async expectColorModesVisible(names: string[]) {

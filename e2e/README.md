@@ -345,7 +345,7 @@ export class MyPage {
 
   async clickMyButton() {
     await expect(this.myButton).toBeVisible({ timeout: 5_000 });
-    await this.myButton.locator('button').click();
+    await this.myButton.click();
   }
 }
 ```

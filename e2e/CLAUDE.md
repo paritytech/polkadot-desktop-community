@@ -137,8 +137,9 @@ export class MyPage {
 
   async clickMyButton() {
     await expect(this.myButton).toBeVisible({ timeout: DEFAULT_TIMEOUT });
-    // A tr-ui component doesn't forward rest props, so testid is on a wrapper div
-    await this.myButton.locator('button').click();
+    // A local control (Button, IconButton) carries the testid on the button itself. Only a tr-ui component that
+    // doesn't forward rest props puts it on a wrapper div, and then the click goes to `.locator('button')`.
+    await this.myButton.click();
   }
 }
 ```
