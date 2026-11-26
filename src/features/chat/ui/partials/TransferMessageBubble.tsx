@@ -32,10 +32,10 @@ export const TransferMessageBubble = ({ message, content, isMe, isSeen = false, 
   return (
     <div
       className={cnTw(
-        'flex flex-col items-start gap-2 ps-3.5 pe-2 pt-3 pb-2',
+        'flex flex-col items-start gap-2 ps-3 pe-2 pt-3 pb-2',
         isMe
-          ? 'rounded-ss-[14px] rounded-se-[14px] rounded-ee-sm rounded-es-[14px] bg-bg-surface-container-inverted'
-          : 'rounded-ss-[14px] rounded-se-[14px] rounded-ee-[14px] rounded-es-sm bg-bg-surface-nested',
+          ? 'rounded-ss-2xl rounded-se-2xl rounded-ee-sm rounded-es-2xl bg-bg-surface-container-inverted'
+          : 'rounded-ss-2xl rounded-se-2xl rounded-ee-2xl rounded-es-sm bg-bg-surface-nested',
       )}
       onContextMenu={onContextMenu}
     >
@@ -53,7 +53,7 @@ export const TransferMessageBubble = ({ message, content, isMe, isSeen = false, 
         </div>
       </div>
       <div className="flex w-full items-center gap-1">
-        <DirectionIcon className={cnTw('size-3.5 shrink-0', isMe ? 'text-fg-secondary-inverted' : 'text-fg-secondary')} />
+        <DirectionIcon className={cnTw('size-3 shrink-0', isMe ? 'text-fg-secondary-inverted' : 'text-fg-secondary')} />
         <p className={cnTw('text-sm whitespace-nowrap', isMe ? 'text-fg-secondary-inverted' : 'text-fg-secondary')}>
           {directionLabel}
         </p>
@@ -63,8 +63,8 @@ export const TransferMessageBubble = ({ message, content, isMe, isSeen = false, 
           {chatService.formatMessageDate(message.timestamp)}
         </span>
         {isMe && (
-          <div className="flex size-3.5 items-center justify-center">
-            <StatusIcon status={message.status} isSeen={isSeen} className="size-3.5 text-fg-secondary-inverted" />
+          <div className="flex size-3 items-center justify-center">
+            <StatusIcon status={message.status} isSeen={isSeen} className="size-3 text-fg-secondary-inverted" />
           </div>
         )}
       </div>

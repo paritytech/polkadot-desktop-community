@@ -64,11 +64,11 @@ export const CoinageTransferMessageBubble = ({ message, content, isMe, isSeen = 
   return (
     <div
       className={cnTw(
-        'flex w-62.5 flex-col items-start gap-2 ps-3.5 pe-2 pt-3 pb-2',
-        'rounded-ss-[14px] rounded-se-[14px]',
+        'flex w-62.5 flex-col items-start gap-2 ps-3 pe-2 pt-3 pb-2',
+        'rounded-ss-2xl rounded-se-2xl',
         isMe
-          ? 'rounded-ee-sm rounded-es-[14px] bg-bg-surface-container-inverted'
-          : 'rounded-ee-[14px] rounded-es-sm bg-bg-surface-nested',
+          ? 'rounded-ee-sm rounded-es-2xl bg-bg-surface-container-inverted'
+          : 'rounded-ee-2xl rounded-es-sm bg-bg-surface-nested',
       )}
       onContextMenu={onContextMenu}
     >
@@ -96,7 +96,7 @@ export const CoinageTransferMessageBubble = ({ message, content, isMe, isSeen = 
       <div className="flex w-full items-center gap-1">
         <StatusRowIcon
           className={cnTw(
-            'size-3.5 shrink-0',
+            'size-3 shrink-0',
             statusRow?.isClaimed ? 'text-fg-success' : isMe ? 'text-fg-secondary-inverted' : 'text-fg-secondary',
           )}
         />
@@ -114,8 +114,8 @@ export const CoinageTransferMessageBubble = ({ message, content, isMe, isSeen = 
           {chatService.formatMessageDate(message.timestamp)}
         </span>
         {isMe && (
-          <div className="flex size-3.5 items-center justify-center">
-            <StatusIcon status={message.status} isSeen={isSeen} className="size-3.5 text-fg-secondary-inverted" />
+          <div className="flex size-3 items-center justify-center">
+            <StatusIcon status={message.status} isSeen={isSeen} className="size-3 text-fg-secondary-inverted" />
           </div>
         )}
       </div>
