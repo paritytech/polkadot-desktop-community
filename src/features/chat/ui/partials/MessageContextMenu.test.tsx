@@ -1,7 +1,8 @@
 // @vitest-environment happy-dom
 
-import { render, screen, within } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { type MouseEvent, useRef, useState } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 
 import { TEST_IDS } from '@/shared/test-ids';
@@ -19,6 +20,44 @@ const message = {
   timestamp: 1,
   status: { direction: 'outgoing', state: 'sent' },
 } as unknown as ChatMessage;
+
+const incoming = {
+  ...message,
+  messageId: 'm2',
+  status: { direction: 'incoming', state: 'sent' },
+} as unknown as ChatMessage;
+
+// Stands in for MessageFlow and Room: the menu lives in state the bubbles set, and Reply focuses the composer.
+const Conversation = ({ onClose }: { onClose: VoidFunction }) => {
+  const composerRef = useRef<HTMLTextAreaElement>(null);
+  const [menu, setMenu] = useState<{ message: ChatMessage; position: { x: number; y: number } } | null>(null);
+
+  const openMenu = (event: MouseEvent, target: ChatMessage) => {
+    event.preventDefault();
+    setMenu({ message: target, position: { x: event.clientX, y: event.clientY } });
+  };
+
+  return (
+    <TranslationProvider>
+      <textarea ref={composerRef} aria-label="Composer" />
+      <p onContextMenu={event => openMenu(event, message)}>outgoing bubble</p>
+      <p onContextMenu={event => openMenu(event, incoming)}>incoming bubble</p>
+      {menu ? (
+        <MessageContextMenu
+          message={menu.message}
+          position={menu.position}
+          onClose={() => {
+            onClose();
+            setMenu(null);
+          }}
+          onReply={() => composerRef.current?.focus()}
+          onEdit={vi.fn()}
+          onCopyText={vi.fn()}
+        />
+      ) : null}
+    </TranslationProvider>
+  );
+};
 
 const renderMenu = (props: Partial<Parameters<typeof MessageContextMenu>[0]> = {}) => {
   const handlers = {
@@ -108,5 +147,40 @@ describe('MessageContextMenu', () => {
     await user.keyboard('{Escape}');
 
     expect(onClose).toHaveBeenCalledTimes(1);
+  });
+
+  it('anchors at the pointer from the document body', async () => {
+    renderMenu();
+    await screen.findByTestId(TEST_IDS.chatMessageContextMenu);
+
+    const anchor = document.querySelector('[aria-haspopup="menu"]');
+    expect(anchor?.parentElement).toBe(document.body);
+    expect(anchor).toHaveStyle({ left: '10px', top: '20px' });
+  });
+
+  it('leaves the composer focused after Reply', async () => {
+    const user = userEvent.setup();
+    const onClose = vi.fn();
+    render(<Conversation onClose={onClose} />);
+
+    await user.pointer({ keys: '[MouseRight]', target: screen.getByText('outgoing bubble') });
+    await user.click(await screen.findByTestId(TEST_IDS.chatMessageContextMenuReply));
+
+    await waitFor(() => expect(screen.queryByTestId(TEST_IDS.chatMessageContextMenu)).toBeNull());
+    expect(screen.getByRole('textbox', { name: 'Composer' })).toHaveFocus();
+    expect(onClose).toHaveBeenCalledTimes(1);
+  });
+
+  it("opens the next message's menu on a right-click while one is open", async () => {
+    const user = userEvent.setup();
+    render(<Conversation onClose={vi.fn()} />);
+
+    await user.pointer({ keys: '[MouseRight]', target: screen.getByText('outgoing bubble') });
+    expect(await screen.findByTestId(TEST_IDS.chatMessageContextMenuEdit)).toBeInTheDocument();
+
+    await user.pointer({ keys: '[MouseRight]', target: screen.getByText('incoming bubble') });
+
+    await waitFor(() => expect(screen.queryByTestId(TEST_IDS.chatMessageContextMenuEdit)).toBeNull());
+    expect(screen.getByTestId(TEST_IDS.chatMessageContextMenu)).toBeInTheDocument();
   });
 });

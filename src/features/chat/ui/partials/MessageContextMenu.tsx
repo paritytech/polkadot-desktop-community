@@ -1,5 +1,6 @@
 import { CheckCircle2, ChevronRight, Copy, Forward, Reply, SquarePen, Trash2 } from 'lucide-react';
 import { useCallback, useState } from 'react';
+import { createPortal } from 'react-dom';
 
 import { DropdownMenu } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
@@ -50,18 +51,26 @@ export const MessageContextMenu = ({
   return (
     <DropdownMenu.Root
       open
+      modal={false}
       onOpenChange={open => {
         if (!open) onClose();
       }}
     >
-      <DropdownMenu.Trigger asChild>
-        <span aria-hidden className="pointer-events-none fixed size-0" style={{ left: position.x, top: position.y }} />
-      </DropdownMenu.Trigger>
+      {/* Portaled so the fixed anchor resolves against the window, not a transformed host such as QuickChat's popover. */}
+      {createPortal(
+        <DropdownMenu.Trigger asChild>
+          <span aria-hidden className="pointer-events-none fixed size-0" style={{ left: position.x, top: position.y }} />
+        </DropdownMenu.Trigger>,
+        document.body,
+      )}
       <DropdownMenu.Content
         align="start"
         sideOffset={4}
         data-testid={TEST_IDS.chatMessageContextMenu}
         onCloseAutoFocus={event => event.preventDefault()}
+        // Reply and Edit focus the composer from the item's select, which closes the menu itself; dismissing on that
+        // focus as well would report `onClose` twice.
+        onFocusOutside={event => event.preventDefault()}
       >
         {showFullPicker ? (
           <EmojiPicker onSelect={handleSelectEmoji} onClose={onClose} />
