@@ -11,6 +11,7 @@ import { DateSeparator } from './MessageBubble';
 import { RequestConfirmDialog } from './RequestConfirmDialog';
 import { RequestRoomHeader } from './RequestRoomHeader';
 import { RequestRoomNotice, boldName } from './RequestRoomNotice';
+import { RoomPane } from './RoomPane';
 
 type Props = {
   request: P2PChatRequest;
@@ -33,43 +34,45 @@ export const OutgoingPendingRoom = ({ request, onCancel }: Props) => {
   };
 
   return (
-    <div className="flex min-w-111 flex-1 flex-col overflow-hidden rounded-xl border border-stroke-primary bg-bg-surface-container">
-      <RequestRoomHeader
-        name={name}
-        actionIcon={<Trash2 className="size-4" />}
-        actionLabel={t('feature.chat.request.cancelRequest')}
-        onAction={() => setConfirmingCancel(true)}
-      />
+    <div className="flex min-w-111 flex-1">
+      <RoomPane>
+        <RequestRoomHeader
+          name={name}
+          actionIcon={<Trash2 />}
+          actionLabel={t('feature.chat.request.cancelRequest')}
+          onAction={() => setConfirmingCancel(true)}
+        />
 
-      <div className="flex flex-1 flex-col gap-1 overflow-y-auto px-4 py-4">
-        <DateSeparator text={dayLabel} />
-        <div className="flex w-full items-center justify-center py-2">
-          <span className="text-center text-sm font-medium text-fg-secondary">
-            <FormattedMessage id="feature.chat.request.youSent" values={{ b: boldName }} />
-          </span>
-        </div>
-        {request.welcomeMessage && (
-          <div className="flex w-full flex-col items-end">
-            <div className="max-w-130 rounded-2xl bg-bg-surface-container-inverted px-3 pt-2 pb-3">
-              <p className="text-base text-fg-primary-inverted">{request.welcomeMessage}</p>
-            </div>
+        <div className="flex flex-1 flex-col gap-1 overflow-y-auto px-4 py-4">
+          <DateSeparator text={dayLabel} />
+          <div className="flex w-full items-center justify-center py-2">
+            <span className="text-center text-xs font-medium text-fg-secondary">
+              <FormattedMessage id="feature.chat.request.youSent" values={{ b: boldName }} />
+            </span>
           </div>
-        )}
-      </div>
+          {request.welcomeMessage && (
+            <div className="flex w-full flex-col items-end">
+              <div className="max-w-130 rounded-2xl bg-bg-surface-container-inverted px-3 pt-2 pb-3">
+                <p className="text-base text-fg-primary-inverted">{request.welcomeMessage}</p>
+              </div>
+            </div>
+          )}
+        </div>
 
-      <RequestRoomNotice textId="feature.chat.request.waitForAccept" name={name} />
+        <RequestRoomNotice textId="feature.chat.request.waitForAccept" name={name} />
 
-      <RequestConfirmDialog
-        isOpen={confirmingCancel}
-        title={t('feature.chat.request.cancelTitle')}
-        description={t('feature.chat.request.cancelBody', { name })}
-        cancelLabel={t('feature.chat.request.keepRequest')}
-        confirmLabel={t('feature.chat.request.cancelRequest')}
-        testId={TEST_IDS.chatCancelRequestDialog}
-        confirmTestId={TEST_IDS.chatCancelRequestDialogConfirm}
-        onClose={() => setConfirmingCancel(false)}
-        onConfirm={handleConfirm}
-      />
+        <RequestConfirmDialog
+          isOpen={confirmingCancel}
+          title={t('feature.chat.request.cancelTitle')}
+          description={t('feature.chat.request.cancelBody', { name })}
+          cancelLabel={t('feature.chat.request.keepRequest')}
+          confirmLabel={t('feature.chat.request.cancelRequest')}
+          testId={TEST_IDS.chatCancelRequestDialog}
+          confirmTestId={TEST_IDS.chatCancelRequestDialogConfirm}
+          onClose={() => setConfirmingCancel(false)}
+          onConfirm={handleConfirm}
+        />
+      </RoomPane>
     </div>
   );
 };
