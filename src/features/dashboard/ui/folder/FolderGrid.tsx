@@ -81,6 +81,7 @@ const FolderGridItem = ({
           <DropdownMenu.Trigger asChild>
             <IconButton
               size="sm"
+              variant="raised"
               label={menuLabel}
               onClick={event => event.stopPropagation()}
               onMouseDown={event => event.stopPropagation()}

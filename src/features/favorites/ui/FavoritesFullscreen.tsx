@@ -72,6 +72,7 @@ export const FavoritesFullscreen = () => {
   const renderRemoveAction = (itemId: string) => (
     <IconButton
       size="sm"
+      variant="raised"
       label={t('feature.favorites.removeAria')}
       data-testid={TEST_IDS.favoritesCardRemove}
       onPointerDown={event => event.stopPropagation()}

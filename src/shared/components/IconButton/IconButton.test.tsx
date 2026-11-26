@@ -63,6 +63,48 @@ describe('IconButton', () => {
     expect(onMouseDown).toHaveBeenCalledTimes(1);
   });
 
+  it('is transparent by default', () => {
+    render(
+      <IconButton label="Close">
+        <svg />
+      </IconButton>,
+    );
+
+    expect(screen.getByRole('button', { name: 'Close' })).toHaveClass('bg-transparent');
+  });
+
+  it('draws a raised disc', () => {
+    render(
+      <IconButton label="Remove" variant="raised">
+        <svg />
+      </IconButton>,
+    );
+
+    expect(screen.getByRole('button', { name: 'Remove' })).toHaveClass('bg-chrome-surface', 'shadow-chrome-raised');
+  });
+
+  it('draws the primary look', () => {
+    render(
+      <IconButton label="Send" variant="primary">
+        <svg />
+      </IconButton>,
+    );
+
+    expect(screen.getByRole('button', { name: 'Send' })).toHaveClass('text-chrome-on-primary');
+  });
+
+  it('draws the disabled look instead of the primary one when disabled', () => {
+    render(
+      <IconButton label="Send" variant="primary" disabled>
+        <svg />
+      </IconButton>,
+    );
+
+    const button = screen.getByRole('button', { name: 'Send' });
+    expect(button).toHaveClass('text-chrome-faint');
+    expect(button).not.toHaveClass('text-chrome-on-primary');
+  });
+
   it('keeps its own classes under a menu trigger', async () => {
     const user = userEvent.setup();
     const onClick = vi.fn();
