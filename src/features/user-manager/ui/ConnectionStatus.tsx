@@ -22,7 +22,7 @@ export const ConnectionStatus = ({ state, letter, className }: Props) => {
       data-testid={TEST_IDS.userConnectionStatus}
       data-state={state}
       className={cnTw(
-        'relative h-8 w-15 shrink-0 overflow-hidden rounded-full bg-chrome-fill transition-colors select-none hover:bg-chrome-fill-strong',
+        'relative h-control w-15 shrink-0 overflow-hidden rounded-full bg-chrome-fill transition-colors select-none hover:bg-chrome-fill-strong',
         className,
       )}
       style={{ appRegion: 'no-drag' }}

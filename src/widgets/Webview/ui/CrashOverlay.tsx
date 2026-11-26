@@ -40,9 +40,11 @@ export const CrashOverlay = ({ crash, onReload }: Props) => {
           <span>{crash.url}</span>
           <span>{timestamp}</span>
           {isElectron() && (
-            <button className="mt-1 self-start text-start text-fg-secondary underline" onClick={() => window.App?.exportLogs()}>
-              {t('common.action.downloadLogs')}
-            </button>
+            <span className="mt-1 self-start">
+              <Button variant="ghost" size="sm" onClick={() => window.App?.exportLogs()}>
+                {t('common.action.downloadLogs')}
+              </Button>
+            </span>
           )}
         </div>
       </details>

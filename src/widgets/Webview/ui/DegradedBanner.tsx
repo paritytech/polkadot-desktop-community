@@ -1,7 +1,7 @@
 import { AlertTriangle, RefreshCw, X } from 'lucide-react';
 import { type FC, useState } from 'react';
 
-import { Button } from '@/shared/components';
+import { Button, IconButton } from '@/shared/components';
 import { useTranslation } from '@/shared/translation';
 import { type WebviewHealthReason } from '@/aggregates/webview-registry';
 
@@ -31,15 +31,14 @@ export const DegradedBanner: FC<Props> = ({ reason, onReload }) => {
           <RefreshCw className="size-3" />
           {t('widget.webview.degraded.reload')}
         </Button>
-        <button
+        <IconButton
           data-testid="degraded-banner-dismiss"
-          type="button"
-          className="p-1 text-fg-tertiary hover:text-fg-secondary"
-          aria-label={t('widget.webview.degraded.dismiss')}
+          size="sm"
+          label={t('widget.webview.degraded.dismiss')}
           onClick={() => setDismissed(true)}
         >
-          <X className="h-4 w-4" />
-        </button>
+          <X />
+        </IconButton>
       </div>
       <details className="sr-only" data-testid="degraded-banner-reason">
         <summary>{reason.kind}</summary>
