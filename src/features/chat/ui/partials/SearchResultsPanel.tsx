@@ -149,7 +149,7 @@ const SessionResultRow = ({ session, name, query, onSelect }: SessionResultRowPr
       description={
         preview ? (
           <span>
-            <PreviewIcon kind={previewIcon} className="me-1 inline" />
+            <PreviewIcon kind={previewIcon} />
             {preview}
           </span>
         ) : null
