@@ -339,7 +339,7 @@ export const ChatFullscreen = ({ selected, onSelect, onDeselect }: Props) => {
                     />
                   </div>
                 ) : (
-                  chatListEntries.map((entry, index) => {
+                  chatListEntries.map(entry => {
                     if (entry.kind === 'incoming') {
                       return (
                         <NewRequestsItem
@@ -365,7 +365,6 @@ export const ChatFullscreen = ({ selected, onSelect, onDeselect }: Props) => {
                       <ChatItem
                         key={entry.session.sessionId}
                         session={entry.session}
-                        isLast={index === chatListEntries.length - 1}
                         isSelected={selectedSession?.sessionId === entry.session.sessionId}
                         onClick={() => onSelect(entry.session.sessionId)}
                       />

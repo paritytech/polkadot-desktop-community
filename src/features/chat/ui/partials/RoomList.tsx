@@ -38,11 +38,10 @@ export const RoomList = ({ sessions, selected, onSelect, hideEmpty, visibleCount
 
   return (
     <>
-      {visibleSessions.map((session, index) => (
+      {visibleSessions.map(session => (
         <ChatItem
           key={session.sessionId}
           session={session}
-          isLast={index === visibleSessions.length - 1}
           isSelected={selected?.sessionId === session.sessionId}
           density={density}
           itemHeight={itemHeight}

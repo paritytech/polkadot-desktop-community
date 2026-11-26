@@ -230,7 +230,7 @@ const ChatList = ({
             />
           </div>
         ) : (
-          chatListEntries.map((entry, index) => {
+          chatListEntries.map(entry => {
             if (entry.kind === 'incoming') {
               return (
                 <NewRequestsItem
@@ -252,14 +252,7 @@ const ChatList = ({
               );
             }
 
-            return (
-              <ChatItem
-                key={entry.session.sessionId}
-                session={entry.session}
-                isLast={index === chatListEntries.length - 1}
-                onClick={() => onSelect(entry.session)}
-              />
-            );
+            return <ChatItem key={entry.session.sessionId} session={entry.session} onClick={() => onSelect(entry.session)} />;
           })
         )}
       </div>
