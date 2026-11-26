@@ -3,6 +3,7 @@ import { BoxSelect, Check, X } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 
 import PolkadotWordmark from '@/shared/assets/images/logo.svg?jsx';
+import { Button, IconButton } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { cnTw } from '@/shared/utils';
@@ -100,14 +101,9 @@ export const NewTab = () => {
             <div className="flex w-full flex-col items-start gap-4">
               <div className="flex w-full items-center gap-2">
                 <h2 className="flex-1 text-2xl font-semibold text-fg-primary">{t('feature.browser.recentlyOpened')}</h2>
-                <button
-                  type="button"
-                  data-testid={TEST_IDS.newTabClearRecents}
-                  className="flex items-center gap-1 rounded-xs px-2 py-0.5 text-xs font-medium text-fg-link transition-colors hover:text-fg-link-hover"
-                  onClick={handleClear}
-                >
+                <Button variant="ghost" size="sm" data-testid={TEST_IDS.newTabClearRecents} onClick={handleClear}>
                   {t('feature.browser.clearRecent')}
-                </button>
+                </Button>
               </div>
               <div className="grid w-full grid-cols-3 gap-4">
                 {recentProducts.map(product => (
@@ -237,22 +233,12 @@ const ClearedToast = ({ secondsLeft, onUndo, onDismiss }: ClearedToastProps) => 
     >
       <Check className="mt-0.5 size-4 shrink-0 text-fg-success" />
       <div className="flex-1 text-sm text-fg-primary">{t('feature.browser.recentClearedTitle')}</div>
-      <button
-        type="button"
-        data-testid={TEST_IDS.newTabRecentUndo}
-        className="rounded-md border border-stroke-primary px-2 py-0.5 text-xs font-medium text-fg-secondary transition-colors hover:bg-fg-primary/5"
-        onClick={onUndo}
-      >
+      <Button variant="ghost" size="sm" data-testid={TEST_IDS.newTabRecentUndo} onClick={onUndo}>
         {t('feature.browser.undoLabel', { seconds: secondsLeft })}
-      </button>
-      <button
-        type="button"
-        aria-label={t('common.aria.close')}
-        className="rounded-md p-0.5 text-fg-secondary transition-colors hover:bg-fg-primary/5"
-        onClick={onDismiss}
-      >
-        <X className="size-4" />
-      </button>
+      </Button>
+      <IconButton size="sm" label={t('common.aria.close')} onClick={onDismiss}>
+        <X />
+      </IconButton>
     </div>
   );
 };
