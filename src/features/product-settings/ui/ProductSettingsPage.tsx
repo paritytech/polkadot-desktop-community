@@ -199,7 +199,7 @@ const ConfirmDialog = ({
       <Dialog.Header>
         <div className="w-full text-start">
           <Dialog.Title>
-            <span className="mb-3 block text-2xl font-semibold text-fg-primary">{title}</span>
+            <span className="mb-3 block text-lg font-semibold text-fg-primary">{title}</span>
           </Dialog.Title>
           <Dialog.Description>
             <span className="block text-base font-normal text-fg-primary">{description}</span>

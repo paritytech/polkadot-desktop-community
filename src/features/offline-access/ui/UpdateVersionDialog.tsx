@@ -43,7 +43,7 @@ export const UpdateVersionDialog = ({ productId, executableKind, onClose }: Prop
       <Dialog.Content aria-describedby={undefined}>
         <ProductDialogHeader product={product} />
         <div className="flex flex-col gap-2">
-          <span className="text-2xl font-semibold text-fg-primary">{t('feature.offlineAccess.menu.update')}</span>
+          <span className="text-lg font-semibold text-fg-primary">{t('feature.offlineAccess.menu.update')}</span>
           <span className="text-base text-fg-secondary">{t('feature.offlineAccess.updateDescription')}</span>
         </div>
         <Dialog.Footer>

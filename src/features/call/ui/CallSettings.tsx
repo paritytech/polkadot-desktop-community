@@ -68,7 +68,7 @@ export const CallSettings = ({ devices, selection, labels, onSelect, onClose }: 
     // A click anywhere outside a row (backdrop, card chrome) dismisses an open popover.
     <div className="absolute inset-0 z-40 flex items-center justify-center bg-black/60 p-6" onClick={() => setOpenKind(null)}>
       <div className="relative flex w-full max-w-sm flex-col gap-4 rounded-xl border border-stroke-primary bg-bg-surface-container p-6 shadow-lg">
-        <h2 className="pe-10 text-2xl font-semibold text-fg-primary">{labels.title}</h2>
+        <h2 className="pe-10 text-lg font-semibold text-fg-primary">{labels.title}</h2>
         <button
           type="button"
           aria-label={labels.close}

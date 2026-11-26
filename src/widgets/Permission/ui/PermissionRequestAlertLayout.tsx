@@ -57,7 +57,7 @@ export const PermissionRequestAlertLayout = ({
 
         <div className="flex flex-col gap-2 py-3">
           <Dialog.Title>
-            <span className="text-2xl font-semibold text-fg-primary">{title}</span>
+            <span className="text-lg font-semibold text-fg-primary">{title}</span>
           </Dialog.Title>
           <Dialog.Description>
             <span className="text-base font-normal text-fg-primary">{description}</span>

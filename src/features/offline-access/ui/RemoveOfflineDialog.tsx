@@ -34,7 +34,7 @@ export const RemoveOfflineDialog = ({ productId, onClose }: Props) => {
       <Dialog.Content aria-describedby={undefined}>
         <ProductDialogHeader product={record} />
         <div className="flex flex-col gap-2">
-          <span className="text-2xl font-semibold text-fg-primary">{t('feature.offlineAccess.removeDialog.title')}</span>
+          <span className="text-lg font-semibold text-fg-primary">{t('feature.offlineAccess.removeDialog.title')}</span>
           <span className="text-base text-fg-secondary">{t('feature.offlineAccess.removeDialog.description', { name })}</span>
         </div>
         <Dialog.Footer>
