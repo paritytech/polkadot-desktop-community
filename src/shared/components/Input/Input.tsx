@@ -11,7 +11,7 @@ export const Input = ({ leading, style, ...rest }: InputProps) => {
     <input
       {...rest}
       className={cnTw(
-        'h-9 w-full min-w-0 rounded-full bg-chrome-well px-4 text-sm text-chrome-text shadow-chrome-inset placeholder:text-chrome-muted focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-chrome-focus disabled:cursor-default disabled:text-chrome-faint',
+        'h-control w-full min-w-0 rounded-full bg-chrome-well px-3 text-sm text-chrome-text shadow-chrome-inset placeholder:text-chrome-muted focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-chrome-focus disabled:cursor-default disabled:text-chrome-faint',
         Boolean(leading) && 'ps-9',
       )}
       style={{ appRegion: 'no-drag', ...style }}

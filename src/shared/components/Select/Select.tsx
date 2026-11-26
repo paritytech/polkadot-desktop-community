@@ -15,7 +15,7 @@ const SelectTrigger = ({ style, children, ...props }: SelectTriggerProps) => {
   return (
     <SelectPrimitive.Trigger
       {...props}
-      className="inline-flex h-9 w-full min-w-0 cursor-pointer items-center justify-between gap-2 rounded-full bg-chrome-well px-4 text-sm text-chrome-text shadow-chrome-inset focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-chrome-focus disabled:cursor-default disabled:text-chrome-faint data-[placeholder]:text-chrome-muted"
+      className="inline-flex h-control w-full min-w-0 cursor-pointer items-center justify-between gap-2 rounded-full bg-chrome-well px-3 text-sm text-chrome-text shadow-chrome-inset focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-chrome-focus disabled:cursor-default disabled:text-chrome-faint data-[placeholder]:text-chrome-muted"
       style={{ ...style, appRegion: 'no-drag' }}
       data-no-app-focus
     >

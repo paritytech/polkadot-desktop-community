@@ -82,7 +82,7 @@ export const AddressBar = ({ size = 'sm' }: AddressBarProps) => {
           menu — and a button inside a button is invalid HTML that browsers un-nest,
           which would route those clicks to this handler instead. */}
       <div
-        className="relative flex h-9 w-full items-center gap-2 overflow-hidden rounded-full bg-chrome-well px-3 shadow-chrome-pill transition-colors hover:bg-chrome-well-strong"
+        className="relative flex h-control w-full items-center gap-2 overflow-hidden rounded-full bg-chrome-well px-3 shadow-chrome-pill transition-colors hover:bg-chrome-well-strong"
         style={{ appRegion: 'no-drag' }}
       >
         {productId && (
