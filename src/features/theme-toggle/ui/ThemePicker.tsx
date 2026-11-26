@@ -3,7 +3,7 @@ import { Check } from 'lucide-react';
 import { useTranslation } from '@/shared/translation';
 import { cnTw } from '@/shared/utils';
 import { THEME_NAMES, useSetThemeName, useThemeName } from '@/domains/application';
-import { THEME_SWATCH_COLORS } from '../constants';
+import { THEME_SWATCHES } from '../constants';
 
 export const ThemePicker = () => {
   const { t } = useTranslation();
@@ -33,12 +33,14 @@ export const ThemePicker = () => {
                   : 'ring-1 ring-transparent hover:ring-stroke-secondary',
               )}
             >
-              <span
-                aria-hidden
-                className="flex size-12 items-center justify-center rounded-full shadow-chrome-line"
-                style={{ backgroundColor: THEME_SWATCH_COLORS[name] }}
-              >
-                {selected && <Check className="size-5 text-fg-static-white" strokeWidth={2.5} />}
+              <span aria-hidden className="relative flex size-12 overflow-hidden rounded-full shadow-chrome-line">
+                <span className="h-full flex-1" style={{ backgroundColor: THEME_SWATCHES[name].light }} />
+                <span className="h-full flex-1" style={{ backgroundColor: THEME_SWATCHES[name].dark }} />
+                {selected && (
+                  <span className="absolute top-1/2 left-1/2 flex size-6 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-chrome-top text-chrome-text shadow-chrome-line">
+                    <Check className="size-4" strokeWidth={2.5} />
+                  </span>
+                )}
               </span>
             </span>
             <span className={cnTw('text-sm font-medium', selected ? 'text-fg-primary' : 'text-fg-secondary')}>
