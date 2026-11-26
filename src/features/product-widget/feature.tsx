@@ -1,7 +1,7 @@
 import { useNavigate } from '@tanstack/react-router';
 import { Maximize2, RotateCw } from 'lucide-react';
 
-import { DropdownMenu } from '@/shared/components';
+import { DropdownMenu, IconButton } from '@/shared/components';
 import { isElectron } from '@/shared/env';
 import { createFeature } from '@/shared/feature';
 import { TEST_IDS } from '@/shared/test-ids';
@@ -18,7 +18,6 @@ import {
   type CardRenderProps,
   DashboardCardChrome,
   dashboardCardSDK,
-  widgetTopbarActionButtonClass,
   widgetTopbarActionVisibilityClass,
 } from '@/features/dashboard';
 import { ProductIcon } from '@/widgets/ProductIcon';
@@ -172,16 +171,15 @@ const FullscreenAction = ({ productId }: { productId: string }) => {
 
   return (
     <span className={widgetTopbarActionVisibilityClass}>
-      <button
-        type="button"
+      <IconButton
+        size="sm"
         data-testid={TEST_IDS.dashboardWidgetFullscreenButton}
-        aria-label={t('common.aria.openFullscreen')}
-        className={widgetTopbarActionButtonClass}
+        label={t('common.aria.openFullscreen')}
         onClick={() => navigate({ to: '/product/$id/{-$route}', params: { id: product.baseName } })}
         onMouseDown={event => event.stopPropagation()}
       >
-        <Maximize2 className="size-4" aria-hidden />
-      </button>
+        <Maximize2 aria-hidden />
+      </IconButton>
     </span>
   );
 };

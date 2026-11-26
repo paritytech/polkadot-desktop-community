@@ -2,7 +2,7 @@ import { Maximize2, MessageCircle } from 'lucide-react';
 import { FormattedMessage } from 'react-intl';
 
 import LastChatsIcon from '@/shared/assets/images/header/last-chats.svg?jsx';
-import { Sidebar } from '@/shared/components';
+import { IconButton, Sidebar } from '@/shared/components';
 import { createFeature } from '@/shared/feature';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
@@ -18,7 +18,6 @@ import {
   type AddableDashboardCard,
   buildNativeDashboardCard,
   dashboardCardSDK,
-  widgetTopbarActionButtonClass,
   widgetTopbarActionVisibilityClass,
 } from '@/features/dashboard';
 import { productActionsMenuItemsSlot } from '@/features/product-actions-menu';
@@ -105,16 +104,15 @@ const ChatFullscreenAction = () => {
 
   return (
     <span className={widgetTopbarActionVisibilityClass}>
-      <button
-        type="button"
+      <IconButton
+        size="sm"
         data-testid={TEST_IDS.chatWidgetFullscreenButton}
-        aria-label={t('common.aria.openFullscreen')}
-        className={widgetTopbarActionButtonClass}
+        label={t('common.aria.openFullscreen')}
         onClick={openChatTab}
         onMouseDown={event => event.stopPropagation()}
       >
-        <Maximize2 className="size-4" aria-hidden />
-      </button>
+        <Maximize2 aria-hidden />
+      </IconButton>
     </span>
   );
 };

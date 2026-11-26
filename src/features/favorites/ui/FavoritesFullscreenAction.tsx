@@ -1,8 +1,9 @@
 import { Maximize2 } from 'lucide-react';
 
+import { IconButton } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
-import { widgetTopbarActionButtonClass, widgetTopbarActionVisibilityClass } from '@/features/dashboard';
+import { widgetTopbarActionVisibilityClass } from '@/features/dashboard';
 import { useOpenFavorites } from '../hooks/useOpenFavorites';
 
 // Toolbar action injected into the Favorites folder card's topbar — opens the
@@ -13,16 +14,15 @@ export const FavoritesFullscreenAction = () => {
 
   return (
     <span className={widgetTopbarActionVisibilityClass}>
-      <button
-        type="button"
+      <IconButton
+        size="sm"
         data-testid={TEST_IDS.favoritesWidgetFullscreenButton}
-        aria-label={t('feature.favorites.openFullscreenAria')}
-        className={widgetTopbarActionButtonClass}
+        label={t('feature.favorites.openFullscreenAria')}
         onClick={openFavorites}
         onMouseDown={event => event.stopPropagation()}
       >
-        <Maximize2 className="size-4" aria-hidden />
-      </button>
+        <Maximize2 aria-hidden />
+      </IconButton>
     </span>
   );
 };
