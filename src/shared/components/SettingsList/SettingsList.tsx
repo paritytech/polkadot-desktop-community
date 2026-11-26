@@ -1,8 +1,7 @@
 import { type PropsWithChildren, type ReactNode } from 'react';
 
+import { PaneHeader } from '../PaneHeader/PaneHeader';
 import { ScrollArea } from '../ScrollArea/ScrollArea';
-
-import { SettingsHeader } from './SettingsHeader';
 
 type Props = PropsWithChildren<{
   title: ReactNode;
@@ -15,9 +14,9 @@ export const SettingsList = ({ title, subtitle, onBack, children }: Props) => {
     <div className="flex min-h-0 flex-col overflow-hidden">
       <div className="flex w-full flex-col items-center bg-bg-surface-container">
         <div className="w-150 max-w-full">
-          <SettingsHeader subtitle={subtitle} onBack={onBack}>
+          <PaneHeader subtitle={subtitle} onBack={onBack}>
             {title}
-          </SettingsHeader>
+          </PaneHeader>
         </div>
       </div>
       <div className="min-h-0 shrink">

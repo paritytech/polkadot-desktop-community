@@ -23,7 +23,7 @@ export { RouteErrorFallback } from './RouteErrorFallback/RouteErrorFallback';
 export { Sidebar } from './Sidebar/Sidebar';
 export { SectionLabel } from './SectionLabel/SectionLabel';
 export { SegmentedControl } from './SegmentedControl/SegmentedControl';
-export { SettingsHeader } from './SettingsList/SettingsHeader';
+export { PaneHeader } from './PaneHeader/PaneHeader';
 export { SettingsList } from './SettingsList/SettingsList';
 export { SettingsSection } from './SettingsList/SettingsSection';
 export { HistoryNavigationButtons } from './HistoryNavigationButtons/HistoryNavigationButtons';

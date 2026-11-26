@@ -2,7 +2,7 @@ import { Outlet } from '@tanstack/react-router';
 import { memo } from 'react';
 
 import SettingsIcon from '@/shared/assets/images/header/cog-8-tooth.svg?jsx';
-import { AppIcon, SettingsHeader, Sidebar, widgetSpanWidthCss } from '@/shared/components';
+import { AppIcon, PaneHeader, Sidebar, widgetSpanWidthCss } from '@/shared/components';
 import { Slot } from '@/shared/di';
 import { isProductionBuild } from '@/shared/env';
 import { useTranslation } from '@/shared/translation';
@@ -19,7 +19,7 @@ export const SettingsPage = memo(() => {
   return (
     <div className="flex size-full h-full gap-2 p-2">
       <aside style={sideMenuStyle} className="flex shrink-0 flex-col overflow-hidden rounded-xl bg-bg-surface-container">
-        <SettingsHeader
+        <PaneHeader
           variant="list"
           icon={
             <AppIcon size="24" alt="">
@@ -28,7 +28,7 @@ export const SettingsPage = memo(() => {
           }
         >
           {t('feature.settings.title')}
-        </SettingsHeader>
+        </PaneHeader>
         <div className="min-h-0 flex-1 gap-4 p-2">
           <Sidebar.Group title={t('feature.settings.group.preferences')}>
             <Slot id={settingsPreferencesNavSlot} />

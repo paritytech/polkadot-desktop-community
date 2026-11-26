@@ -11,12 +11,13 @@ type Props = PropsWithChildren<{
   onBack?: VoidFunction;
   /**
    * `page` (default) aligns the header with a content body's `px-4` (`ps-4`).
-   * `list` matches a side-menu list header — chat's leading inset (`ps-2`).
+   * `list` matches the list pane header's leading inset (`ps-2`).
    */
   variant?: 'page' | 'list';
+  actions?: ReactNode;
 }>;
 
-export const SettingsHeader = ({ icon, subtitle, onBack, variant = 'page', children }: Props) => {
+export const PaneHeader = ({ icon, subtitle, onBack, variant = 'page', actions, children }: Props) => {
   const { t } = useTranslation();
 
   return (
@@ -36,6 +37,7 @@ export const SettingsHeader = ({ icon, subtitle, onBack, variant = 'page', child
         <span className="text-sm font-semibold">{children}</span>
         {subtitle ? <span className="text-xs text-fg-secondary">{subtitle}</span> : null}
       </div>
+      {actions ? <div className="flex shrink-0 items-center gap-1">{actions}</div> : null}
     </header>
   );
 };
