@@ -15,18 +15,13 @@ export const QuickReactionRow = ({ onSelectEmoji, onOpenFullPicker }: QuickReact
   const { t } = useTranslation();
 
   return (
-    <div
-      data-testid={TEST_IDS.chatQuickReactionsRow}
-      className="flex items-center gap-0.5 rounded-full border border-stroke-primary bg-bg-surface-container px-1.5 py-1 shadow-[0px_4px_12px_var(--shadow-soft)]"
-    >
+    <div data-testid={TEST_IDS.chatQuickReactionsRow} className="flex items-center gap-1 px-1 pb-1">
       {QUICK_REACTIONS.map(emoji => (
-        <button
-          key={emoji}
-          className="flex size-control items-center justify-center rounded-full transition-all hover:scale-125"
-          onClick={() => onSelectEmoji(emoji)}
-        >
-          <span className="text-xl leading-none">{emoji}</span>
-        </button>
+        <IconButton key={emoji} label={emoji} onClick={() => onSelectEmoji(emoji)}>
+          <span aria-hidden className="text-xl leading-none">
+            {emoji}
+          </span>
+        </IconButton>
       ))}
       <IconButton
         data-testid={TEST_IDS.chatEmojiPickerOpenButton}
