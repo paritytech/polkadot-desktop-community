@@ -2,7 +2,7 @@
 
 import { fireEvent, render, screen } from '@testing-library/react';
 import { createRef } from 'react';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import { TextArea } from './TextArea';
 
@@ -26,6 +26,13 @@ describe('TextArea', () => {
     expect(ref.current).toBe(screen.getByRole('textbox'));
   });
 
+  it('calls a callback ref with the textarea', () => {
+    const ref = vi.fn();
+    render(<TextArea ref={ref} placeholder="Write a message" />);
+
+    expect(ref).toHaveBeenLastCalledWith(screen.getByRole('textbox'));
+  });
+
   it('renders the header above the textarea and the trailing content after it', () => {
     render(
       <TextArea
@@ -42,12 +49,44 @@ describe('TextArea', () => {
     expect(textarea.compareDocumentPosition(send) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   });
 
-  it('hides the vertical overflow by default and lets the caller style override it', () => {
-    const { rerender } = render(<TextArea placeholder="Write a message" />);
-    expect(screen.getByRole('textbox')).toHaveClass('overflow-y-hidden');
+  describe('growth', () => {
+    // happy-dom has no layout: the content height is stubbed on the element, and the line height is set inline so the
+    // computed style the component reads holds a length.
+    const stubContentHeight = (field: HTMLElement, height: () => number) =>
+      Object.defineProperty(field, 'scrollHeight', { configurable: true, get: height });
 
-    rerender(<TextArea placeholder="Write a message" style={{ overflowY: 'auto' }} />);
-    expect(screen.getByRole('textbox').style.overflowY).toBe('auto');
+    it('grows with a controlled value up to the default five rows, then scrolls', () => {
+      let contentHeight = 40;
+      const { rerender } = render(<TextArea value="two" style={{ lineHeight: '20px' }} onChange={() => {}} />);
+      const field = screen.getByRole('textbox');
+      stubContentHeight(field, () => contentHeight);
+
+      rerender(<TextArea value="two lines" style={{ lineHeight: '20px' }} onChange={() => {}} />);
+      expect(field.style.height).toBe('40px');
+      expect(field.style.overflowY).toBe('hidden');
+
+      contentHeight = 120;
+      rerender(<TextArea value="six lines" style={{ lineHeight: '20px' }} onChange={() => {}} />);
+      expect(field.style.height).toBe('100px');
+      expect(field.style.overflowY).toBe('auto');
+    });
+
+    it('caps an uncontrolled field at maxRows on input', () => {
+      const onInput = vi.fn();
+      render(<TextArea maxRows={2} style={{ lineHeight: '20px' }} onInput={onInput} />);
+      const field = screen.getByRole('textbox');
+
+      stubContentHeight(field, () => 20);
+      fireEvent.input(field, { target: { value: 'one' } });
+      expect(field.style.height).toBe('20px');
+      expect(field.style.overflowY).toBe('hidden');
+
+      stubContentHeight(field, () => 60);
+      fireEvent.input(field, { target: { value: 'one\ntwo\nthree' } });
+      expect(field.style.height).toBe('40px');
+      expect(field.style.overflowY).toBe('auto');
+      expect(onInput).toHaveBeenCalledTimes(2);
+    });
   });
 
   it('focuses the textarea on a press on the row padding', () => {

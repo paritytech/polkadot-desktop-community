@@ -26,8 +26,7 @@ export const LongText: Story = {
     ),
   ],
   args: {
-    rows: 4,
-    defaultValue: 'A long message that runs over several lines. '.repeat(3),
+    defaultValue: 'A long message that runs over several lines and keeps going past the five-line cap. '.repeat(6),
   },
 };
 

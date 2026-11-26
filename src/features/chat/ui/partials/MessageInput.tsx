@@ -1,15 +1,5 @@
 import { ArrowUp, Loader2 } from 'lucide-react';
-import {
-  type ChangeEvent,
-  type KeyboardEvent,
-  type Ref,
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-  useTransition,
-} from 'react';
+import { type ChangeEvent, type KeyboardEvent, type Ref, useEffect, useState, useTransition } from 'react';
 
 import { IconButton, TextArea } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
@@ -17,9 +7,6 @@ import { useTranslation } from '@/shared/translation';
 
 import { type SelectedAttachment, AttachmentPreview } from './AttachmentPreview';
 import { QuotedMessage } from './QuotedMessage';
-
-const LINE_HEIGHT = 20; // px, matches text-base line-height
-const MAX_LINES = 5;
 
 // Reply/edit context card above the textarea (Figma "_Edit or Reply Message").
 type ComposerPreview = {
@@ -47,43 +34,15 @@ type Props = {
   submitAction(message: string, attachments?: SelectedAttachment[]): Promise<void>;
 };
 
-const MAX_HEIGHT = LINE_HEIGHT * MAX_LINES;
-
 export const MessageInput = ({ ref, initialText, preview, disabled = false, showSendProgress = false, submitAction }: Props) => {
   const { t } = useTranslation();
   const [pending, startTransition] = useTransition();
   const [text, setText] = useState('');
   const [attachments, setAttachments] = useState<SelectedAttachment[]>([]);
-  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
-
-  const setRef = useCallback(
-    (el: HTMLTextAreaElement | null) => {
-      textareaRef.current = el;
-      if (typeof ref === 'function') ref(el);
-      else if (ref) ref.current = el;
-    },
-    [ref],
-  );
-
-  // Resize the textarea to fit content; only allow scrolling once we've hit
-  // the max height. Default `overflow: hidden` prevents a phantom scrollbar
-  // when the content fits but the browser reserves track space for `auto`.
-  const autoSizeTo = (el: HTMLTextAreaElement) => {
-    el.style.height = 'auto';
-    const next = Math.min(el.scrollHeight, MAX_HEIGHT);
-    el.style.height = `${next}px`;
-    el.style.overflowY = el.scrollHeight > MAX_HEIGHT ? 'auto' : 'hidden';
-  };
 
   useEffect(() => {
     setText(initialText ?? '');
   }, [initialText]);
-
-  // Re-size on `text` (not just typing) to track programmatic changes (send clears, edit seeds);
-  // layout effect reads `scrollHeight` post-commit but pre-paint, so the height never flickers.
-  useLayoutEffect(() => {
-    if (textareaRef.current) autoSizeTo(textareaRef.current);
-  }, [text]);
 
   const canSend = !disabled && (text.trim().length > 0 || attachments.length > 0) && !pending;
   // `canSend` goes false the moment the send starts, which is what used to take the button
@@ -129,11 +88,10 @@ export const MessageInput = ({ ref, initialText, preview, disabled = false, show
     <div className="flex flex-col gap-2">
       {attachments.length > 0 && <AttachmentPreview attachments={attachments} onRemove={removeAttachment} />}
       <TextArea
-        ref={setRef}
+        ref={ref}
         data-testid={TEST_IDS.chatMessageInput}
         value={text}
         disabled={disabled}
-        style={{ maxHeight: MAX_HEIGHT }}
         placeholder={t('common.action.writeMessage')}
         header={
           preview && (
