@@ -18,7 +18,7 @@ export const PermissionDetailPage = ({ permissionId, onBack }: Props) => {
   const meta = getPermissionMeta(permissionId);
   const navigate = useNavigate();
 
-  const { data: aggregated } = useWatchAggregatedPermissions();
+  const { data: aggregated, fulfilled } = useWatchAggregatedPermissions();
   // A single-entry lookup over the same rollup; there is no per-permission read,
   // because the rollup's cost is one batched core call per product either way.
   const current = useMemo(
@@ -42,7 +42,8 @@ export const PermissionDetailPage = ({ permissionId, onBack }: Props) => {
         </div>
 
         <SettingsSection layout="list" title={t('feature.permissionSettings.detail.appsLabel')}>
-          {current?.apps.length === 0 && (
+          {/* The rollup has no entry for a permission no product holds, so a missing entry is "no apps" too. */}
+          {fulfilled && !current?.apps.length && (
             <div className="px-3 py-4 text-center text-xs text-chrome-muted">{t('feature.permissionSettings.detail.noApps')}</div>
           )}
           {current?.apps.map(app => (
