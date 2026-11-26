@@ -243,6 +243,8 @@
       "results": "結果（{count}）",
       "recent": "最近",
       "clear": "クリア",
+      "removeRecentSearch": "最近の検索から削除",
+      "moreReactions": "その他のリアクション",
       "contacts": "連絡先",
       "noMessages": "メッセージはまだありません",
       "thisIsChat": "これはチャットです",

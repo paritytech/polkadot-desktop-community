@@ -243,6 +243,8 @@
       "results": "Ergebnisse ({count})",
       "recent": "Zuletzt",
       "clear": "Leeren",
+      "removeRecentSearch": "Aus letzten Suchen entfernen",
+      "moreReactions": "Weitere Reaktionen",
       "contacts": "Kontakte",
       "noMessages": "Noch keine Nachrichten",
       "thisIsChat": "Das ist ein Chat",

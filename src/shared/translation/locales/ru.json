@@ -243,6 +243,8 @@
       "results": "Результаты ({count})",
       "recent": "Недавние",
       "clear": "Очистить",
+      "removeRecentSearch": "Удалить из недавних запросов",
+      "moreReactions": "Другие реакции",
       "contacts": "Контакты",
       "noMessages": "Сообщений пока нет",
       "thisIsChat": "Это чат",

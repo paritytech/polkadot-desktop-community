@@ -243,6 +243,8 @@
       "results": "결과 ({count})",
       "recent": "최근",
       "clear": "지우기",
+      "removeRecentSearch": "최근 검색에서 삭제",
+      "moreReactions": "반응 더보기",
       "contacts": "연락처",
       "noMessages": "아직 메시지가 없습니다",
       "thisIsChat": "채팅입니다",

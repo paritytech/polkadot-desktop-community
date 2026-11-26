@@ -244,6 +244,8 @@
       "results": "Results ({count})",
       "recent": "Recent",
       "clear": "Clear",
+      "removeRecentSearch": "Remove from recent searches",
+      "moreReactions": "More reactions",
       "contacts": "Contacts",
       "noMessages": "No Messages Yet",
       "thisIsChat": "This is a chat",

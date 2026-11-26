@@ -243,6 +243,8 @@
       "results": "Sonuçlar ({count})",
       "recent": "Son kullanılanlar",
       "clear": "Temizle",
+      "removeRecentSearch": "Son aramalardan kaldır",
+      "moreReactions": "Diğer tepkiler",
       "contacts": "Kişiler",
       "noMessages": "Henüz mesaj yok",
       "thisIsChat": "Bu bir sohbet",

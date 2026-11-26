@@ -243,6 +243,8 @@
       "results": "Résultats ({count})",
       "recent": "Récent",
       "clear": "Effacer",
+      "removeRecentSearch": "Retirer des recherches récentes",
+      "moreReactions": "Plus de réactions",
       "contacts": "Contacts",
       "noMessages": "Aucun message pour l'instant",
       "thisIsChat": "Ceci est un chat",
