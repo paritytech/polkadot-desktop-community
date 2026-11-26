@@ -14,5 +14,5 @@ export const PreviewIcon = ({ kind }: Props) => {
   const Icon =
     kind === 'image' ? ImageIcon : kind === 'video' || kind === 'videoCall' ? Video : kind === 'voiceCall' ? Phone : File;
 
-  return <Icon className="me-1 inline size-3 shrink-0 align-text-bottom" />;
+  return <Icon className="me-1 inline size-3 align-text-bottom" />;
 };
