@@ -57,4 +57,17 @@ describe('MessageBubble', () => {
     await screen.findByText('hello');
     expect(container.querySelector('.lucide-check-check')).not.toBeNull();
   });
+
+  it('draws the quoted card of my reply in the inverted tone', async () => {
+    const quoted: ChatMessage = { ...message, messageId: 'm-0', content: { type: 'text', text: 'the original' } };
+
+    render(
+      <TranslationProvider>
+        <MessageBubble productId="p" roomId="r" message={message} isMe quotedMessage={quoted} quotedSenderName="Alice" />
+      </TranslationProvider>,
+    );
+
+    const quotedText = await screen.findByText('the original');
+    expect(quotedText.closest('.bg-bg-surface-nested-inverted')).not.toBeNull();
+  });
 });

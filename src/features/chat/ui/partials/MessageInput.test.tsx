@@ -40,6 +40,14 @@ describe('MessageInput', () => {
     expect(screen.getByTestId(TEST_IDS.chatSendButton)).toBeInTheDocument();
   });
 
+  it('marks the reply card with the reply composer test id', () => {
+    renderInput({
+      preview: { testId: TEST_IDS.chatReplyComposer, title: 'Reply to Alice', text: 'the original', onClose: vi.fn() },
+    });
+
+    expect(screen.getByText('the original').closest(`[data-testid="${TEST_IDS.chatReplyComposer}"]`)).not.toBeNull();
+  });
+
   describe('send in flight', () => {
     // A send that never settles — the invitation case from issue #873. Handed in as a
     // prop rather than mocked: the seam is already there.

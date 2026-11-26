@@ -13,6 +13,7 @@ import { getMessagePreview, getPlainText } from '../helpers/message';
 import { AttachmentRenderer } from './AttachmentRenderer';
 import { MessageText } from './MessageText';
 import { ProductRenderedBody } from './ProductRenderedBody';
+import { QuotedMessage } from './QuotedMessage';
 import { ReactionPills } from './ReactionPills';
 
 type MessageBubbleProps = {
@@ -129,28 +130,18 @@ export const MessageBubble = ({
         onContextMenu={onContextMenu}
       >
         {quotedMessage ? (
-          <div
-            className={cnTw(
-              'flex w-full items-stretch gap-2 overflow-hidden rounded-xl border-s-4 px-3 py-2',
-              isMe ? 'border-fg-secondary-inverted bg-bg-surface-nested-inverted' : 'border-fg-tertiary bg-bg-surface-container',
-            )}
-          >
-            {quotedBlurhash !== null ? (
-              <div className="aspect-square shrink-0 self-stretch overflow-hidden rounded-md border border-stroke-primary">
-                <BlurhashCanvas hash={quotedBlurhash} className="size-full object-cover" />
-              </div>
-            ) : null}
-            <div className="flex min-w-0 flex-1 flex-col justify-center">
-              {quotedSenderName ? (
-                <p className={cnTw('truncate text-xs font-semibold', isMe ? 'text-fg-primary-inverted' : 'text-fg-primary')}>
-                  {quotedSenderName}
-                </p>
-              ) : null}
-              <p className={cnTw('line-clamp-2 text-xs font-medium', isMe ? 'text-fg-primary-inverted' : 'text-fg-primary')}>
-                {getMessagePreview(quotedMessage)}
-              </p>
-            </div>
-          </div>
+          <QuotedMessage
+            tone={isMe ? 'inverted' : 'default'}
+            title={quotedSenderName}
+            text={getMessagePreview(quotedMessage)}
+            media={
+              quotedBlurhash !== null ? (
+                <div className="aspect-square shrink-0 self-stretch overflow-hidden rounded-md border border-stroke-primary">
+                  <BlurhashCanvas hash={quotedBlurhash} className="size-full object-cover" />
+                </div>
+              ) : null
+            }
+          />
         ) : null}
         {message.content.type === 'richText' && message.content.attachments && message.content.attachments.length > 0 && (
           <AttachmentRenderer attachments={message.content.attachments} isMe={isMe} />

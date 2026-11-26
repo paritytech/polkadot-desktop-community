@@ -238,6 +238,9 @@
       "searchMessages": "Messages",
       "sayHelloOptional": "Say hello... (optional)",
       "sending": "Sending...",
+      "composer": {
+        "send": "Send"
+      },
       "sendRequest": "Send Request",
       "search": "Search",
       "inChatSearch": {
