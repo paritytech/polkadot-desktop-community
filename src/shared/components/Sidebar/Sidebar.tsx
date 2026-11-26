@@ -14,7 +14,7 @@ const SidebarItem = ({ icon, to, children }: SidebarLinkProps) => {
       {({ isActive }) => (
         <div
           className={cnTw(
-            'flex h-8 items-center gap-2 rounded-md px-3 py-1 transition-colors',
+            'flex h-control items-center gap-2 rounded-md px-3 transition-colors',
             isActive ? 'bg-bg-surface-nested text-fg-primary' : 'text-fg-primary hover:bg-bg-surface-nested',
           )}
         >

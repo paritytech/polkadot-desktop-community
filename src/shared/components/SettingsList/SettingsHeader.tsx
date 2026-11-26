@@ -10,8 +10,8 @@ type Props = PropsWithChildren<{
   subtitle?: ReactNode;
   onBack?: VoidFunction;
   /**
-   * `page` (default) aligns the header with a content body's `px-4` (`ps-4`, 40px tall).
-   * `list` matches a side-menu list header — chat's leading inset and row height (`ps-2`, 44px).
+   * `page` (default) aligns the header with a content body's `px-4` (`ps-4`).
+   * `list` matches a side-menu list header — chat's leading inset (`ps-2`).
    */
   variant?: 'page' | 'list';
 }>;
@@ -22,8 +22,8 @@ export const SettingsHeader = ({ icon, subtitle, onBack, variant = 'page', child
   return (
     <header
       className={cnTw(
-        'flex w-full shrink-0 items-center gap-2 self-stretch bg-bg-surface-container py-2 pe-2 text-fg-primary',
-        variant === 'list' ? 'min-h-11 ps-2' : 'min-h-10 ps-4',
+        'flex min-h-12 w-full shrink-0 items-center gap-2 self-stretch bg-bg-surface-container py-2 pe-2 text-fg-primary',
+        variant === 'list' ? 'ps-2' : 'ps-4',
       )}
     >
       {onBack ? (
