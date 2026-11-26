@@ -3,6 +3,7 @@ import { type MouseEvent, useCallback, useEffect, useMemo, useRef, useState } fr
 import { useObservable } from 'react-rx';
 import { type Observable, of } from 'rxjs';
 
+import { EmptyState } from '@/shared/components';
 import { useWindowFocus } from '@/shared/hooks';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
@@ -27,7 +28,6 @@ import { CoinageTransferMessageBubble } from './CoinageTransferMessageBubble';
 import { EditHistory } from './EditHistory';
 import { ChatEventItem, DateSeparator, MessageBubble } from './MessageBubble';
 import { MessageContextMenu } from './MessageContextMenu';
-import { NoData } from './NoData';
 import { ScrollControls } from './ScrollControls';
 import { TransferMessageBubble } from './TransferMessageBubble';
 
@@ -232,8 +232,8 @@ export const MessageFlow = ({ session, onReply, onEdit }: ChatConversationViewPr
             </>
           ) : (
             <div data-testid={TEST_IDS.chatNoMessagesPlaceholder} className="flex size-full flex-col items-center justify-center">
-              <NoData
-                icon={MessagesSquare}
+              <EmptyState
+                icon={<MessagesSquare />}
                 title={t('feature.chat.noMessages')}
                 description={t('feature.chat.sendMessageToBegin')}
               />

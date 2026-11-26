@@ -45,7 +45,7 @@ const bannerCopy: Record<RenderedStatus, BannerCopy> = {
   },
 };
 
-const iconClassName = cnTw('size-5 shrink-0 text-fg-primary');
+const iconClassName = cnTw('size-4 shrink-0 text-fg-primary');
 
 const SyncStatusIcon = ({ status }: { status: RenderedStatus }) => {
   if (status === 'syncing') {
@@ -83,7 +83,7 @@ export const SyncStatusBanner = () => {
         <SyncStatusIcon status={status} />
         <div className="min-w-0 flex-1 text-start">
           <p className="text-sm font-medium text-fg-primary">{t(copy.titleKey)}</p>
-          <p className="text-sm text-fg-secondary">{t(copy.subtitleKey)}</p>
+          <p className="text-xs text-fg-secondary">{t(copy.subtitleKey)}</p>
         </div>
       </div>
     </div>
