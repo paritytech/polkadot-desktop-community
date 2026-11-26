@@ -3,7 +3,7 @@
 import { DirectionProvider } from '@radix-ui/react-direction';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { type ReactNode } from 'react';
+import { type ComponentProps, type ReactNode } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 
 import { DropdownMenu } from './DropdownMenu';
@@ -38,6 +38,28 @@ const renderMenu = (wrap: (menu: ReactNode) => ReactNode = menu => menu) => {
 const open = async (user: ReturnType<typeof userEvent.setup>) => {
   await user.click(screen.getByRole('button', { name: 'Menu' }));
   await screen.findByRole('menu');
+};
+
+// Radix sets the width left for the menu, the window minus the collision padding on both sides, on the popper wrapper.
+const availableWidth = async (contentProps: Pick<ComponentProps<typeof DropdownMenu.Content>, 'collisionPadding'>) => {
+  const user = userEvent.setup();
+  const { unmount } = render(
+    <DropdownMenu.Root>
+      <DropdownMenu.Trigger asChild>
+        <button>Menu</button>
+      </DropdownMenu.Trigger>
+      <DropdownMenu.Content {...contentProps}>
+        <DropdownMenu.Item>Rename</DropdownMenu.Item>
+      </DropdownMenu.Content>
+    </DropdownMenu.Root>,
+  );
+  await open(user);
+  const width = parseFloat(
+    screen.getByRole('menu').parentElement?.style.getPropertyValue('--radix-popper-available-width') ?? '',
+  );
+  unmount();
+
+  return width;
 };
 
 describe('DropdownMenu', () => {
@@ -87,6 +109,13 @@ describe('DropdownMenu', () => {
     await open(user);
 
     expect(screen.getByRole('menuitem', { name: 'Delete' })).toHaveClass('text-chrome-danger-ink');
+  });
+
+  it('keeps 8 px from the window edge by default', async () => {
+    const withoutPadding = await availableWidth({ collisionPadding: 0 });
+    const withDefault = await availableWidth({});
+
+    expect(withoutPadding - withDefault).toBe(16);
   });
 
   it('mirrors under a right-to-left provider', async () => {

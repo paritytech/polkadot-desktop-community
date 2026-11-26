@@ -36,9 +36,9 @@ export const ThemePicker = () => {
               <span aria-hidden className="relative flex size-12 overflow-hidden rounded-full">
                 <span className="h-full flex-1" style={{ backgroundColor: THEME_SWATCHES[name].light }} />
                 <span className="h-full flex-1" style={{ backgroundColor: THEME_SWATCHES[name].dark }} />
-                <span className="absolute inset-0 rounded-full shadow-chrome-line" />
+                <span className="absolute inset-0 rounded-full shadow-chrome-ring" />
                 {selected && (
-                  <span className="absolute top-1/2 left-1/2 flex size-6 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-chrome-top text-chrome-text shadow-chrome-line">
+                  <span className="absolute top-1/2 left-1/2 flex size-6 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-chrome-top text-chrome-text shadow-chrome-ring">
                     <Check className="size-4" strokeWidth={2.5} />
                   </span>
                 )}
