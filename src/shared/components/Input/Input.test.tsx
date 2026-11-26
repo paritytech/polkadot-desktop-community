@@ -1,6 +1,6 @@
 // @vitest-environment happy-dom
 
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { type ComponentProps, createRef } from 'react';
 import { describe, expect, it } from 'vitest';
 
@@ -42,6 +42,32 @@ describe('Input', () => {
     expect(input).toBe(screen.getByTestId('field'));
     expect(ref.current).toBe(input);
     expect(input.compareDocumentPosition(clear) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(input.parentElement).toHaveClass('pe-1');
+  });
+
+  it('uses the full end inset when there is no trailing content', () => {
+    render(<Input aria-label="Search" data-testid="field" />);
+
+    expect(screen.getByTestId('field').parentElement).not.toHaveClass('pe-1');
+  });
+
+  it('focuses the input on a press on the leading icon or the padding', () => {
+    render(<Input aria-label="Search" data-testid="field" leading={<svg data-testid="icon" />} />);
+    const input = screen.getByTestId('field');
+
+    expect(fireEvent.mouseDown(screen.getByTestId('icon'))).toBe(false);
+    expect(input).toHaveFocus();
+
+    input.blur();
+    expect(fireEvent.mouseDown(input.parentElement!)).toBe(false);
+    expect(input).toHaveFocus();
+  });
+
+  it('leaves a press on the trailing content to that content', () => {
+    render(<Input aria-label="Search" data-testid="field" trailing={<button type="button">Clear</button>} />);
+
+    expect(fireEvent.mouseDown(screen.getByRole('button', { name: 'Clear' }))).toBe(true);
+    expect(screen.getByTestId('field')).not.toHaveFocus();
   });
 
   // A Radix `asChild` slot merges its own `className` into the child's props, which the type alone cannot stop.
