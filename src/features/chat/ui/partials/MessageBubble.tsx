@@ -75,7 +75,7 @@ export const MessageBubble = ({
     isLastInGroup
       ? isMe
         ? 'rounded-ss-2xl rounded-se-2xl rounded-ee-sm rounded-es-2xl'
-        : 'rounded-ss-2xl rounded-se-2xl rounded-ee-2xl rounded-es-[4px]'
+        : 'rounded-ss-2xl rounded-se-2xl rounded-ee-2xl rounded-es-sm'
       : 'rounded-2xl',
   );
 
@@ -148,13 +148,14 @@ export const MessageBubble = ({
         )}
         <div className={cnTw('flex w-full items-end justify-between gap-2', quotedMessage && 'ps-2 pe-1')}>
           <div className="flex min-w-0 flex-1 items-center">
-            <p className="max-w-130 text-base whitespace-pre-line" style={{ wordBreak: 'break-word' }}>
+            <p className="max-w-130 text-base wrap-break-word whitespace-pre-line">
               <MessageText text={editedText ?? getPlainText(message.content)} />
             </p>
           </div>
           <div className="flex shrink-0 items-end gap-1">
             {isEdited && (
               <button
+                type="button"
                 className={cnTw(
                   'text-end text-xs font-medium hover:underline',
                   isMe ? 'text-fg-secondary-inverted' : 'text-fg-tertiary',
@@ -195,7 +196,7 @@ type ChatEventItemProps = {
 export const ChatEventItem = ({ text }: ChatEventItemProps) => (
   <div className="relative flex w-full items-center justify-center py-2">
     <div className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-stroke-secondary" />
-    <span className="relative rounded-full bg-bg-surface-main px-3 py-1 text-center text-sm font-medium text-fg-secondary">
+    <span className="relative rounded-full bg-bg-surface-main px-3 py-1 text-center text-xs font-medium text-fg-secondary">
       {text}
     </span>
   </div>
@@ -207,6 +208,6 @@ type DateSeparatorProps = {
 
 export const DateSeparator = ({ text }: DateSeparatorProps) => (
   <div data-testid={TEST_IDS.chatDateSeparator} className="flex w-full items-center justify-center py-2">
-    <span className="text-center text-sm font-medium text-fg-secondary">{text}</span>
+    <span className="text-center text-xs font-medium text-fg-secondary">{text}</span>
   </div>
 );
