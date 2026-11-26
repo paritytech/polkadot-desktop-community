@@ -39,7 +39,7 @@ const MenuItem = ({ testId, icon: Icon, label, variant = 'default', disabled, ha
       data-testid={testId}
       disabled={disabled}
       className={cnTw(
-        'flex h-8 w-full items-center gap-2 rounded px-2 transition-colors',
+        'flex h-control w-full items-center gap-2 rounded px-2 transition-colors',
         disabled ? 'cursor-not-allowed opacity-40' : 'hover:bg-bg-selection-container-hover',
         isDanger ? 'text-fg-error' : 'text-fg-primary',
       )}

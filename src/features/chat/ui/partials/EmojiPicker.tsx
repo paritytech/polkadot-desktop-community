@@ -1,7 +1,9 @@
 import { X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
+import { IconButton } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
+import { useTranslation } from '@/shared/translation';
 import { cnTw } from '@/shared/utils';
 
 import { EMOJI_CATEGORIES } from './emoji-data';
@@ -12,6 +14,7 @@ type EmojiPickerProps = {
 };
 
 export const EmojiPicker = ({ onSelect, onClose }: EmojiPickerProps) => {
+  const { t } = useTranslation();
   const pickerRef = useRef<HTMLDivElement>(null);
   const [activeCategory, setActiveCategory] = useState(0);
   const categoryRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -56,7 +59,7 @@ export const EmojiPicker = ({ onSelect, onClose }: EmojiPickerProps) => {
             <button
               key={category.name}
               className={cnTw(
-                'shrink-0 rounded px-2 py-1 text-xs transition-colors',
+                'h-control-sm shrink-0 rounded px-2 text-xs transition-colors',
                 activeCategory === index
                   ? 'bg-bg-selection-container-active text-fg-primary'
                   : 'text-fg-tertiary hover:bg-bg-selection-container-hover',
@@ -67,12 +70,11 @@ export const EmojiPicker = ({ onSelect, onClose }: EmojiPickerProps) => {
             </button>
           ))}
         </div>
-        <button
-          className="ms-1 flex size-6 shrink-0 items-center justify-center rounded transition-colors hover:bg-bg-selection-container-hover"
-          onClick={onClose}
-        >
-          <X className="size-3.5 text-fg-tertiary" />
-        </button>
+        <span className="ms-1 flex">
+          <IconButton size="sm" label={t('common.aria.close')} onClick={onClose}>
+            <X />
+          </IconButton>
+        </span>
       </div>
 
       {/* Emoji grid */}
@@ -89,10 +91,10 @@ export const EmojiPicker = ({ onSelect, onClose }: EmojiPickerProps) => {
               {category.emojis.map(emoji => (
                 <button
                   key={emoji}
-                  className="flex size-9 items-center justify-center rounded transition-colors hover:bg-bg-selection-container-hover"
+                  className="flex size-control items-center justify-center rounded transition-colors hover:bg-bg-selection-container-hover"
                   onClick={() => onSelect(emoji)}
                 >
-                  <span className="text-xl">{emoji}</span>
+                  <span className="text-xl leading-none">{emoji}</span>
                 </button>
               ))}
             </div>

@@ -2,6 +2,7 @@ import { Camera, Search } from 'lucide-react';
 import { type KeyboardEvent, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
+import { IconButton } from '@/shared/components';
 import { useAnimatedHeight } from '@/shared/hooks';
 import { useRxState } from '@/shared/rxstate';
 import { TEST_IDS } from '@/shared/test-ids';
@@ -346,7 +347,7 @@ const InputSpotlightSurface = () => {
               floors a box's height at its own padding, so padding here would leave a
               24px strip above the viewfinder that no amount of `0fr` collapses. */}
           <div className="min-h-0 overflow-hidden">
-            <div className="flex items-center gap-2 px-4 py-3">
+            <div className="flex min-h-12 items-center gap-2 px-4 py-3">
               {/* PARKED — product querying: the icon pulsed while a round was pending
                   (`round.kind === 'query' && round.pending && 'animate-pulse'`). */}
               <Search aria-hidden className="size-5 shrink-0 text-fg-secondary" />
@@ -399,15 +400,13 @@ const InputSpotlightSurface = () => {
                 <Paperclip className="size-4 text-fg-secondary" aria-hidden />
               </button>
               */}
-              <button
-                type="button"
-                aria-label={t('feature.inputModality.scan')}
+              <IconButton
+                label={t('feature.inputModality.scan')}
                 data-testid={TEST_IDS.inputModalityScanButton}
-                className="flex size-8 shrink-0 items-center justify-center rounded-full transition-[background-color,transform] hover:bg-bg-selection-container-hover active:scale-90"
                 onClick={() => setScanning(true)}
               >
-                <Camera className="size-4 text-fg-secondary" aria-hidden />
-              </button>
+                <Camera aria-hidden />
+              </IconButton>
             </div>
           </div>
         </div>
