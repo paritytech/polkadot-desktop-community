@@ -21,13 +21,13 @@ export const ChatSearchResults = ({ query, results, activeMessageId, peerName, c
   const { t } = useTranslation();
 
   if (results.length === 0) {
-    return <EmptyState icon={<SearchX aria-hidden />} title={t('feature.chat.inChatSearch.noMatches')} />;
+    return <EmptyState icon={<SearchX />} title={t('feature.chat.inChatSearch.noMatches')} />;
   }
 
   return (
     <div className="flex-1 overflow-y-auto">
       {results.map(message => {
-        const name = (message.status.direction === 'outgoing' ? currentUserName : peerName) || 'Unknown';
+        const name = (message.status.direction === 'outgoing' ? currentUserName : peerName) || t('common.status.unknownUser');
         const text = chatMessageService.getSearchableText(message.content);
         return (
           <ListItem

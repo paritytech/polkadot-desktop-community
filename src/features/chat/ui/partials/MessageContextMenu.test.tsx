@@ -173,7 +173,8 @@ describe('MessageContextMenu', () => {
 
   it("opens the next message's menu on a right-click while one is open", async () => {
     const user = userEvent.setup();
-    render(<Conversation onClose={vi.fn()} />);
+    const onClose = vi.fn();
+    render(<Conversation onClose={onClose} />);
 
     await user.pointer({ keys: '[MouseRight]', target: screen.getByText('outgoing bubble') });
     expect(await screen.findByTestId(TEST_IDS.chatMessageContextMenuEdit)).toBeInTheDocument();
@@ -182,5 +183,6 @@ describe('MessageContextMenu', () => {
 
     await waitFor(() => expect(screen.queryByTestId(TEST_IDS.chatMessageContextMenuEdit)).toBeNull());
     expect(screen.getByTestId(TEST_IDS.chatMessageContextMenu)).toBeInTheDocument();
+    expect(onClose).toHaveBeenCalledTimes(1);
   });
 });

@@ -243,7 +243,6 @@
       "results": "النتائج ({count})",
       "recent": "الأخيرة",
       "clear": "مسح",
-      "removeRecentSearch": "إزالة من عمليات البحث الأخيرة",
       "moreReactions": "المزيد من التفاعلات",
       "contacts": "جهات الاتصال",
       "noMessages": "لا توجد رسائل بعد",
@@ -315,8 +314,6 @@
         "tabApps": "التطبيقات",
         "groupChatsAndContacts": "الدردشات وجهات الاتصال",
         "groupMessages": "الرسائل",
-        "recent": "الأخيرة",
-        "clear": "مسح",
         "appsComingSoon": "البحث في التطبيقات قريبًا",
         "noResultsTitle": "لا توجد نتائج",
         "noResultsHint": "حاول تعديل بحثك"

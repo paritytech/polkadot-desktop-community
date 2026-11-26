@@ -7,7 +7,6 @@ import { isElectron } from '@/shared/env';
 import { FEATURE_FLAGS } from '@/shared/featureFlags';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
-import { cnTw } from '@/shared/utils';
 import { type DeviceSyncStatus, useDeviceSyncStatus } from '@/domains/device-sync';
 
 /** The domain statuses that surface a banner; `'inactive'` renders nothing. */
@@ -45,22 +44,20 @@ const bannerCopy: Record<RenderedStatus, BannerCopy> = {
   },
 };
 
-const iconClassName = cnTw('size-4 shrink-0 text-fg-primary');
-
 const SyncStatusIcon = ({ status }: { status: RenderedStatus }) => {
   if (status === 'syncing') {
-    return <RefreshCw aria-hidden className={cnTw(iconClassName, 'animate-spin')} />;
+    return <RefreshCw aria-hidden className="size-4 shrink-0 animate-spin text-fg-primary" />;
   }
 
   if (status === 'error') {
-    return <AlertCircleIcon aria-hidden className={iconClassName} />;
+    return <AlertCircleIcon aria-hidden className="size-4 shrink-0 text-fg-primary" />;
   }
 
   if (status === 'synced') {
-    return <DevicePhoneMobileIcon aria-hidden className={iconClassName} />;
+    return <DevicePhoneMobileIcon aria-hidden className="size-4 shrink-0 text-fg-primary" />;
   }
 
-  return <DevicePhoneUnsyncIcon aria-hidden className={iconClassName} />;
+  return <DevicePhoneUnsyncIcon aria-hidden className="size-4 shrink-0 text-fg-primary" />;
 };
 
 export const SyncStatusBanner = () => {

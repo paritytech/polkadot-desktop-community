@@ -251,8 +251,8 @@
       "results": "Results ({count})",
       "recent": "Recent",
       "clear": "Clear",
-      "removeRecentSearch": "Remove from recent searches",
       "moreReactions": "More reactions",
+      "messageActions": "Message actions",
       "contacts": "Contacts",
       "noMessages": "No Messages Yet",
       "thisIsChat": "This is a chat",
@@ -323,8 +323,6 @@
         "tabApps": "Apps",
         "groupChatsAndContacts": "Chats and contacts",
         "groupMessages": "Messages",
-        "recent": "Recent",
-        "clear": "Clear",
         "appsComingSoon": "App search is coming soon",
         "noResultsTitle": "No results",
         "noResultsHint": "Try to adjust your search"

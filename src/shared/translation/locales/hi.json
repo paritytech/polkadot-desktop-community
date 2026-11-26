@@ -243,7 +243,6 @@
       "results": "परिणाम ({count})",
       "recent": "हाल के",
       "clear": "साफ़ करें",
-      "removeRecentSearch": "हाल की खोजों से हटाएँ",
       "moreReactions": "और प्रतिक्रियाएँ",
       "contacts": "संपर्क",
       "noMessages": "अभी कोई संदेश नहीं",
@@ -315,8 +314,6 @@
         "tabApps": "ऐप्स",
         "groupChatsAndContacts": "चैट और संपर्क",
         "groupMessages": "संदेश",
-        "recent": "हाल के",
-        "clear": "साफ़ करें",
         "appsComingSoon": "ऐप खोज जल्द ही आ रही है",
         "noResultsTitle": "कोई परिणाम नहीं",
         "noResultsHint": "अपनी खोज बदलकर देखें"

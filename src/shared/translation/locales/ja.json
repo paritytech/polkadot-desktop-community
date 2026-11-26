@@ -243,7 +243,6 @@
       "results": "結果（{count}）",
       "recent": "最近",
       "clear": "クリア",
-      "removeRecentSearch": "最近の検索から削除",
       "moreReactions": "その他のリアクション",
       "contacts": "連絡先",
       "noMessages": "メッセージはまだありません",
@@ -315,8 +314,6 @@
         "tabApps": "アプリ",
         "groupChatsAndContacts": "チャットと連絡先",
         "groupMessages": "メッセージ",
-        "recent": "最近",
-        "clear": "クリア",
         "appsComingSoon": "アプリ検索は近日公開予定です",
         "noResultsTitle": "結果がありません",
         "noResultsHint": "検索条件を変更してみてください"

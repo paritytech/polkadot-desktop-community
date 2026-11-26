@@ -66,6 +66,7 @@ export const MessageContextMenu = ({
       <DropdownMenu.Content
         align="start"
         sideOffset={4}
+        aria-label={t('feature.chat.messageActions')}
         data-testid={TEST_IDS.chatMessageContextMenu}
         onCloseAutoFocus={event => event.preventDefault()}
         // Reply and Edit focus the composer from the item's select, which closes the menu itself; dismissing on that
@@ -104,7 +105,7 @@ export const MessageContextMenu = ({
                 {t('feature.chat.viewEditHistory')}
               </DropdownMenu.Item>
             ) : null}
-            {/* Forward, Select and Delete are not wired up yet — shown disabled to match the design. */}
+            {/* TODO(chat): enable Forward, Select and Delete when message forwarding, selection and deletion exist; shown disabled to match the design until then. */}
             <DropdownMenu.Item data-testid={TEST_IDS.chatMessageContextMenuForward} disabled>
               <Forward />
               {t('common.action.forward')}

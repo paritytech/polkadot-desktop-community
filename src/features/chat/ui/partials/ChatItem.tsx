@@ -58,7 +58,7 @@ export const ChatItem = ({ session, isSelected, density = 'regular', itemHeight,
           <>
             {isGroup && !isCompact ? <span>{lastMessage.peer.name}</span> : null}
             <span>
-              <PreviewIcon kind={previewIcon} className="me-1 inline" />
+              <PreviewIcon kind={previewIcon} className="me-1 inline size-3 align-text-bottom" />
               {previewText}
             </span>
           </>

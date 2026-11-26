@@ -243,7 +243,6 @@
       "results": "결과 ({count})",
       "recent": "최근",
       "clear": "지우기",
-      "removeRecentSearch": "최근 검색에서 삭제",
       "moreReactions": "반응 더보기",
       "contacts": "연락처",
       "noMessages": "아직 메시지가 없습니다",
@@ -315,8 +314,6 @@
         "tabApps": "앱",
         "groupChatsAndContacts": "채팅 및 연락처",
         "groupMessages": "메시지",
-        "recent": "최근",
-        "clear": "지우기",
         "appsComingSoon": "앱 검색은 곧 제공됩니다",
         "noResultsTitle": "결과 없음",
         "noResultsHint": "검색어를 변경해 보세요"

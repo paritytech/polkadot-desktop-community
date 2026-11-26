@@ -243,7 +243,6 @@
       "results": "Sonuçlar ({count})",
       "recent": "Son kullanılanlar",
       "clear": "Temizle",
-      "removeRecentSearch": "Son aramalardan kaldır",
       "moreReactions": "Diğer tepkiler",
       "contacts": "Kişiler",
       "noMessages": "Henüz mesaj yok",
@@ -315,8 +314,6 @@
         "tabApps": "Uygulamalar",
         "groupChatsAndContacts": "Sohbetler ve kişiler",
         "groupMessages": "Mesajlar",
-        "recent": "Son kullanılanlar",
-        "clear": "Temizle",
         "appsComingSoon": "Uygulama araması yakında geliyor",
         "noResultsTitle": "Sonuç yok",
         "noResultsHint": "Aramanı değiştirmeyi dene"

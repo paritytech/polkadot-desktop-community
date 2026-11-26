@@ -243,7 +243,6 @@
       "results": "Результаты ({count})",
       "recent": "Недавние",
       "clear": "Очистить",
-      "removeRecentSearch": "Удалить из недавних запросов",
       "moreReactions": "Другие реакции",
       "contacts": "Контакты",
       "noMessages": "Сообщений пока нет",
@@ -315,8 +314,6 @@
         "tabApps": "Приложения",
         "groupChatsAndContacts": "Чаты и контакты",
         "groupMessages": "Сообщения",
-        "recent": "Недавние",
-        "clear": "Очистить",
         "appsComingSoon": "Поиск по приложениям скоро появится",
         "noResultsTitle": "Ничего не найдено",
         "noResultsHint": "Попробуйте изменить запрос"

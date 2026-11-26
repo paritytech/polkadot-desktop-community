@@ -1,5 +1,4 @@
 import { X } from 'lucide-react';
-import { type MouseEvent } from 'react';
 
 import { IconButton, ListItem } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
@@ -23,18 +22,13 @@ export const RequestItem = ({ request, selected, hideByDefault, onSelect, onDecl
   const isHidden = p2pService.isRequestMessageHidden(request, hideByDefault);
   const preview = isHidden || !request.welcomeMessage ? t('feature.chat.request.messageHidden') : request.welcomeMessage;
 
-  const handleDecline = (e: MouseEvent) => {
-    e.stopPropagation();
-    onDecline();
-  };
-
   return (
     <ListItem
       icon={<Avatar name={name} size="40" />}
       label={name}
       description={<span>{preview}</span>}
       action={
-        <IconButton size="sm" label={t('feature.chat.request.decline')} onClick={handleDecline}>
+        <IconButton size="sm" label={t('feature.chat.request.decline')} onClick={onDecline}>
           <X aria-hidden />
         </IconButton>
       }

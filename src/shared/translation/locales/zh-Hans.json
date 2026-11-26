@@ -243,7 +243,6 @@
       "results": "结果（{count}）",
       "recent": "最近",
       "clear": "清除",
-      "removeRecentSearch": "从最近搜索中移除",
       "moreReactions": "更多表情回应",
       "contacts": "联系人",
       "noMessages": "还没有消息",
@@ -315,8 +314,6 @@
         "tabApps": "应用",
         "groupChatsAndContacts": "聊天与联系人",
         "groupMessages": "消息",
-        "recent": "最近",
-        "clear": "清除",
         "appsComingSoon": "应用搜索即将推出",
         "noResultsTitle": "无结果",
         "noResultsHint": "请尝试调整搜索条件"

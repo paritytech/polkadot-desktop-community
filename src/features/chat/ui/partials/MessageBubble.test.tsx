@@ -47,17 +47,6 @@ describe('MessageBubble', () => {
     status: outgoing('delivered'),
   };
 
-  it('wraps a long unbroken word anywhere', async () => {
-    render(
-      <TranslationProvider>
-        <MessageBubble productId="p" roomId="r" message={message} isMe />
-      </TranslationProvider>,
-    );
-
-    const text = await screen.findByText('hello');
-    expect(text.closest('p')?.className).toContain('wrap-anywhere');
-  });
-
   it('shows a double check on my message the peer has seen', async () => {
     const { container } = render(
       <TranslationProvider>

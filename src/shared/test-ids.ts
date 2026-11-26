@@ -212,9 +212,6 @@ export const TEST_IDS = {
   contactSearchInput: 'contact-search-input',
   contactResultItem: 'contact-result-item',
   chatSearchEntryButton: 'chat-search-entry-button',
-  contactSearchMessageItem: 'contact-search-message-item',
-  contactSearchRecentItem: 'contact-search-recent-item',
-  contactSearchClearRecent: 'contact-search-clear-recent',
   contactSearchNoResults: 'contact-search-no-results',
 
   // Product Actions Menu

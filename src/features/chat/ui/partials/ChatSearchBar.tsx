@@ -31,19 +31,19 @@ export const ChatSearchBar = ({ query, inputRef, resultCount, resultIndex, onQue
         placeholder={t('feature.chat.inChatSearch.placeholder')}
         aria-label={t('feature.chat.inChatSearch.placeholder')}
         trailing={
-          <>
-            {canNavigate && (
-              <span className="text-2xs text-chrome-muted tabular-nums">
-                {/* eslint-disable-next-line formatjs/no-literal-string-in-jsx -- numeric counter */}
-                {resultIndex + 1} / {resultCount}
-              </span>
-            )}
-            {hasQuery && (
+          hasQuery ? (
+            <>
+              {canNavigate && (
+                <span className="text-2xs text-chrome-muted tabular-nums">
+                  {/* eslint-disable-next-line formatjs/no-literal-string-in-jsx -- numeric counter */}
+                  {resultIndex + 1} / {resultCount}
+                </span>
+              )}
               <IconButton size="sm" label={t('common.aria.clear')} onClick={() => onQueryChange('')}>
                 <X strokeWidth={1.75} />
               </IconButton>
-            )}
-          </>
+            </>
+          ) : null
         }
         onChange={e => onQueryChange(e.target.value)}
       />

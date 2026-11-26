@@ -243,7 +243,6 @@
       "results": "Ergebnisse ({count})",
       "recent": "Zuletzt",
       "clear": "Leeren",
-      "removeRecentSearch": "Aus den letzten Suchen entfernen",
       "moreReactions": "Weitere Reaktionen",
       "contacts": "Kontakte",
       "noMessages": "Noch keine Nachrichten",
@@ -315,8 +314,6 @@
         "tabApps": "Apps",
         "groupChatsAndContacts": "Chats und Kontakte",
         "groupMessages": "Nachrichten",
-        "recent": "Zuletzt",
-        "clear": "Leeren",
         "appsComingSoon": "Die App-Suche kommt bald",
         "noResultsTitle": "Keine Ergebnisse",
         "noResultsHint": "Passe deine Suche an"

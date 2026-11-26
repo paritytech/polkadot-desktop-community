@@ -3,7 +3,7 @@
 import 'fake-indexeddb/auto';
 
 import { RouterProvider, createMemoryHistory, createRootRoute, createRouter } from '@tanstack/react-router';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { of } from 'rxjs';
 import { afterEach, describe, expect, it } from 'vitest';
 
@@ -39,6 +39,8 @@ async function renderQuickChat(served: ProductChatRoom) {
 }
 
 afterEach(() => {
+  // Unmount before the runtime state resets: the reset emits to still-mounted readers outside act.
+  cleanup();
   truapiRuntimeUseCase.dispose();
 });
 

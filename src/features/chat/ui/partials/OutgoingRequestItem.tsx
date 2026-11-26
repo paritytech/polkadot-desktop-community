@@ -21,7 +21,7 @@ export const OutgoingRequestItem = ({ request, selected, onClick }: OutgoingRequ
     <ListItem
       icon={<Avatar name={name} size="40" />}
       label={name}
-      description={<span>{request.welcomeMessage ?? ''}</span>}
+      description={request.welcomeMessage ? <span>{request.welcomeMessage}</span> : null}
       meta={
         <span className="flex items-center gap-1">
           <Timer aria-hidden className="size-3" />
