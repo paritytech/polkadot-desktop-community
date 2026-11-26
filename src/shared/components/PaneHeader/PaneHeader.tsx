@@ -23,7 +23,7 @@ export const PaneHeader = ({ icon, subtitle, onBack, variant = 'page', actions, 
   return (
     <header
       className={cnTw(
-        'flex min-h-12 w-full shrink-0 items-center gap-2 self-stretch bg-bg-surface-container py-2 pe-2 text-fg-primary',
+        'flex min-h-12 w-full shrink-0 items-center gap-2 self-stretch py-2 pe-2 text-fg-primary',
         variant === 'list' ? 'ps-2' : 'ps-4',
       )}
     >
@@ -34,8 +34,8 @@ export const PaneHeader = ({ icon, subtitle, onBack, variant = 'page', actions, 
       ) : null}
       {icon}
       <div className="flex min-w-0 flex-1 flex-col">
-        <span className="text-sm font-semibold">{children}</span>
-        {subtitle ? <span className="text-xs text-fg-secondary">{subtitle}</span> : null}
+        <span className="truncate text-sm font-semibold">{children}</span>
+        {subtitle ? <span className="truncate text-xs text-fg-secondary">{subtitle}</span> : null}
       </div>
       {actions ? <div className="flex shrink-0 items-center gap-1">{actions}</div> : null}
     </header>
