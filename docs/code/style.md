@@ -93,7 +93,9 @@ Not every line needs the full context of the system around it. When in doubt, le
 - Avoid using px units in Tailwind classes, use default grid values instead.
 - All tailwind classes outside JSX must be wrapped in `cnTw` call for correct ordering and parsing.
 - Do not extract Tailwind classes into a variable or a shared constant.
-- The size steps are dot.li's desktop scale, set in `src/index.css`: `text-xs` 12 px, `text-sm` 13, `text-base` 14, `text-lg` 16, `text-xl` 18, `text-2xl` 24. Pick the step by role (caption, small, body, title, heading), not by a pixel size; no arbitrary font sizes for a role the scale covers.
+- The vertical unit is 4 px: heights, line heights and the vertical padding of controls and rows are multiples of it.
+- A control takes its height from the control scale: `h-control` / `size-control` (32 px) for a standalone control, `h-control-sm` / `size-control-sm` (24 px) for a control inside another control or the small size of a shared control. No other height on a control. The exceptions are the call screen's round call controls (56 and 64 px), built large for a call UI, and marks that are not stepped controls (a 16 px radio mark, a 20 px chip or switch track).
+- The type steps are set in `src/index.css` and each carries its line height. List as `text-<step>` size/line in px: 2xs 11/16, xs 12/16, sm 13/20, base 14/20, lg 16/24, xl 18/24, 2xl 24/32, 3xl 32/40, 4xl 48/56. Pick the step by role, not by a pixel size. No `leading-*` except `leading-none` on a single glyph in a fixed box, no arbitrary `text-[…]` or `leading-[…]`.
 - Reuse UI by composing components, never by sharing pieces of another component's implementation. A repeated look is a component that wants extracting: give it a name, props, and a single owner, then use it in both places. Copying its class string, importing its class constant, or passing a `className` that reproduces it spreads one visual decision across files that nothing keeps in sync.
 
 ## i18n

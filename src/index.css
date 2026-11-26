@@ -7,11 +7,17 @@
 @theme {
   --font-sans: 'Geist Variable', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
 
-  /* dot.li's desktop scale: caption, small, body, title, title-lg, h1. */
+  /* The control heights of docs/code/style.md § Tailwind. */
+  --spacing-control: 2rem;
+  --spacing-control-sm: 1.5rem;
+
+  /* The type scale: each step carries its line height, on the 4 px grid. */
+  --text-2xs: 0.6875rem;
+  --text-2xs--line-height: 1rem;
   --text-xs: 0.75rem;
   --text-xs--line-height: 1rem;
   --text-sm: 0.8125rem;
-  --text-sm--line-height: 1.125rem;
+  --text-sm--line-height: 1.25rem;
   --text-base: 0.875rem;
   --text-base--line-height: 1.25rem;
   --text-lg: 1rem;
@@ -20,6 +26,10 @@
   --text-xl--line-height: 1.5rem;
   --text-2xl: 1.5rem;
   --text-2xl--line-height: 2rem;
+  --text-3xl: 2rem;
+  --text-3xl--line-height: 2.5rem;
+  --text-4xl: 3rem;
+  --text-4xl--line-height: 3.5rem;
 }
 
 @layer base {
