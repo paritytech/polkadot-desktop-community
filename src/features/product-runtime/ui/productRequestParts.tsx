@@ -2,7 +2,7 @@ import JsonView from '@uiw/react-json-view';
 import { AlertTriangle, ChevronLeft, Info } from 'lucide-react';
 import { type CSSProperties, type PropsWithChildren, type ReactNode, memo, useMemo } from 'react';
 
-import { Button, CopyButton, Dialog } from '@/shared/components';
+import { Button, CopyButton, Dialog, IconButton } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { cnTw } from '@/shared/utils';
@@ -156,14 +156,11 @@ export const RequestBackButton = memo(({ onClick }: { onClick: VoidFunction }) =
   const { t } = useTranslation();
 
   return (
-    <button
-      type="button"
-      className="absolute start-2.75 top-2.75 flex size-10 items-center justify-center rounded-xl p-2 text-fg-primary transition-colors hover:bg-bg-action-secondary-hover focus-visible:ring-4 focus-visible:ring-stroke-tertiary/35 focus-visible:ring-offset-0 focus-visible:outline-none disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0"
-      aria-label={t('common.action.back')}
-      onClick={onClick}
-    >
-      <ChevronLeft className="size-5" />
-    </button>
+    <span className="absolute start-2.75 top-2.75 flex">
+      <IconButton label={t('common.action.back')} onClick={onClick}>
+        <ChevronLeft />
+      </IconButton>
+    </span>
   );
 });
 

@@ -97,10 +97,12 @@ export const AppPermissionEntityPage = ({ productId, permissionId, backLabel, on
       <ScrollArea>
         <div className="flex min-h-0 flex-col items-center">
           <div className="flex min-h-0 w-150 max-w-full flex-col gap-6 px-2 py-3">
-            <button className="flex items-center gap-2 self-start text-sm font-semibold text-fg-primary" onClick={onBack}>
-              <ChevronLeft size={20} />
-              {backLabel}
-            </button>
+            <span className="flex self-start">
+              <Button variant="ghost" onClick={onBack}>
+                <ChevronLeft />
+                {backLabel}
+              </Button>
+            </span>
 
             <div className="flex flex-col gap-4">
               <div className="relative size-16">

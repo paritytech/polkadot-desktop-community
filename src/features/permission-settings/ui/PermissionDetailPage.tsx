@@ -2,7 +2,7 @@ import { useNavigate } from '@tanstack/react-router';
 import { ChevronLeft, ChevronRight, Grid2X2, Shield } from 'lucide-react';
 import { cloneElement, useMemo } from 'react';
 
-import { ScrollArea } from '@/shared/components';
+import { Button, ScrollArea } from '@/shared/components';
 import { useTranslation } from '@/shared/translation';
 import { type AppPermissionEntry, useDisplayedProduct, useWatchAggregatedPermissions } from '@/domains/product';
 import { getPermissionMeta } from '@/widgets/Permission';
@@ -36,10 +36,12 @@ export const PermissionDetailPage = ({ permissionId, backLabel, onBack }: Props)
       <ScrollArea>
         <div className="flex min-h-0 flex-col items-center">
           <div className="flex min-h-0 w-150 max-w-full flex-col gap-6 px-2 py-3">
-            <button className="flex items-center gap-2 self-start text-sm font-semibold text-fg-primary" onClick={onBack}>
-              <ChevronLeft size={20} />
-              {backLabel}
-            </button>
+            <span className="flex self-start">
+              <Button variant="ghost" onClick={onBack}>
+                <ChevronLeft />
+                {backLabel}
+              </Button>
+            </span>
 
             <div className="flex flex-col gap-4">
               <div className="flex size-16 shrink-0 items-center justify-center rounded-xl bg-bg-illustration-light text-fg-primary">
