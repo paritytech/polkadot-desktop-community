@@ -3,7 +3,7 @@ import { memo, useId, useState } from 'react';
 import { firstValueFrom } from 'rxjs';
 import * as v from 'valibot';
 
-import { Button, IconButton, Input, Label, SettingsList, SettingsSection, toast } from '@/shared/components';
+import { Button, IconButton, Input, Label, ListItem, SettingsList, SettingsSection, toast } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { genesisHash, useCustomChains, useDiscoverAndAddChain, useRemoveCustomChain } from '@/domains/network';
@@ -109,34 +109,34 @@ export const CustomChainsSettings = memo(() => {
         </SettingsSection>
 
         {entryList.length > 0 && (
-          <SettingsSection title={t('feature.customChains.registeredSection')}>
-            <div className="flex flex-col gap-2">
-              {entryList.map(([hash, entry]) => (
-                <div
-                  key={hash}
-                  data-testid={TEST_IDS.customChainsEntry}
-                  className="flex items-center justify-between gap-2 rounded-md border border-stroke-primary p-3"
-                >
-                  <div className="min-w-0 flex-1">
-                    <div className="truncate text-sm font-medium text-fg-primary">{entry.name}</div>
-                    <div className="truncate text-xs text-fg-tertiary">{entry.endpoints[0]}</div>
+          <SettingsSection title={t('feature.customChains.registeredSection')} layout="list">
+            {entryList.map(([hash, entry]) => (
+              <ListItem
+                key={hash}
+                testId={TEST_IDS.customChainsEntry}
+                label={entry.name}
+                description={
+                  <>
+                    <span>{entry.endpoints[0]}</span>
                     {/* eslint-disable-next-line formatjs/no-literal-string-in-jsx */}
-                    <div className="truncate font-mono text-xs text-fg-tertiary">{hash.slice(0, 18)}…</div>
-                  </div>
+                    <span className="font-mono">{hash.slice(0, 18)}…</span>
+                  </>
+                }
+                action={
                   <IconButton
                     data-testid={TEST_IDS.customChainsRemoveButton}
                     label={t('feature.customChains.removeChainAriaLabel', { name: entry.name })}
                     onClick={() => remove.run({ chainId: v.parse(genesisHash, hash) })}
                   >
-                    <Trash2 size={16} />
+                    <Trash2 />
                   </IconButton>
-                </div>
-              ))}
-            </div>
+                }
+              />
+            ))}
           </SettingsSection>
         )}
 
-        {entryList.length === 0 && <p className="text-center text-sm text-fg-tertiary">{t('feature.customChains.emptyState')}</p>}
+        {entryList.length === 0 && <p className="text-center text-xs text-fg-tertiary">{t('feature.customChains.emptyState')}</p>}
       </div>
     </SettingsList>
   );
