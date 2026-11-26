@@ -31,12 +31,14 @@ export const PermissionDetailPage = ({ permissionId, onBack }: Props) => {
   }
 
   return (
-    <SettingsList title={t(meta.labelKey)} subtitle={t(meta.descriptionKey)} onBack={onBack}>
+    <SettingsList title={t(meta.labelKey)} onBack={onBack}>
       <div className="flex flex-col gap-6">
         <div className="flex flex-col gap-4">
           <div className="flex size-16 shrink-0 items-center justify-center rounded-xl bg-bg-illustration-light text-fg-primary">
             {cloneElement(meta.icon, { size: 40 })}
           </div>
+
+          <p className="text-sm text-chrome-muted">{t(meta.descriptionKey)}</p>
 
           <RulesCard ruleKeys={meta.ruleKeys} />
         </div>

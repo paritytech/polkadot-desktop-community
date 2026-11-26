@@ -725,7 +725,6 @@
       "navItem": "権限",
       "heading": "権限",
       "subheading": "機能やデータへのアプリのアクセスを確認・管理します",
-      "categoryHeading": "{name}",
       "appCount": "{count, plural, =0 {アプリなし} other {# 個のアプリ}}",
       "category": {
         "device": "デバイスとシステムへのアクセス",

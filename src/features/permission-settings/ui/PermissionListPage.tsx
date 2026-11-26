@@ -26,11 +26,7 @@ export const PermissionListPage = () => {
           }));
 
           return (
-            <SettingsSection
-              layout="list"
-              key={category.key}
-              title={t('feature.permissionSettings.categoryHeading', { name: t(category.labelKey) })}
-            >
+            <SettingsSection layout="list" key={category.key} title={t(category.labelKey)}>
               {aggregatedByCategory.map(({ meta, agg }) => (
                 <ListItem
                   key={meta.id}

@@ -65,7 +65,7 @@ export const ProductSettingsPage = ({ productId, onBack }: Props) => {
 
   return (
     <>
-      <SettingsList title={productName} subtitle={product?.description} onBack={onBack}>
+      <SettingsList title={productName} onBack={onBack}>
         <div className="flex flex-col gap-6">
           <div className="flex flex-col gap-4">
             <div className="size-16 shrink-0 overflow-hidden rounded-xl">
@@ -79,6 +79,8 @@ export const ProductSettingsPage = ({ productId, onBack }: Props) => {
                 }
               />
             </div>
+
+            {product?.description ? <p className="text-sm text-chrome-muted">{product.description}</p> : null}
 
             <div className="flex items-center gap-2">
               <Button size="sm" onClick={() => setClearCacheDialogOpen(true)}>

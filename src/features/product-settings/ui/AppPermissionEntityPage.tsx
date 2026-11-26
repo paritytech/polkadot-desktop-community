@@ -97,7 +97,7 @@ export const AppPermissionEntityPage = ({ productId, permissionId, onBack }: Pro
 
   return (
     <>
-      <SettingsList title={title} subtitle={description} onBack={onBack}>
+      <SettingsList title={title} onBack={onBack}>
         <div className="flex flex-col gap-6">
           <div className="flex flex-col gap-4">
             <div className="relative size-16">

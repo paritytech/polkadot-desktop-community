@@ -725,7 +725,6 @@
       "navItem": "Autorisations",
       "heading": "Autorisations",
       "subheading": "Examinez et gérez l'accès des apps aux fonctions et aux données",
-      "categoryHeading": "{name}",
       "appCount": "{count, plural, =0 {Aucune app} one {# app} other {# apps}}",
       "category": {
         "device": "Accès à l'appareil et au système",

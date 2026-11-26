@@ -725,7 +725,6 @@
       "navItem": "Permissões",
       "heading": "Permissões",
       "subheading": "Revise e gerencie o acesso dos apps a recursos e dados",
-      "categoryHeading": "{name}",
       "appCount": "{count, plural, =0 {Nenhum app} one {# app} other {# apps}}",
       "category": {
         "device": "Acesso ao dispositivo e ao sistema",
