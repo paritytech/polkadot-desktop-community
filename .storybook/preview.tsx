@@ -2,17 +2,24 @@ import { type Preview } from '@storybook/react-vite';
 import { type PropsWithChildren, useEffect } from 'react';
 
 import { type Locale, TranslationProvider } from '@/shared/translation';
+import { type ThemeName } from '@/domains/application';
 
 // eslint-disable-next-line local-rules/no-relative-import-from-root -- storybook preview lives outside src/
 import '../src/index.css';
 
 type Mode = 'light' | 'dark';
 
-// Listed here rather than imported from the application domain so the preview loads no domain code.
-type Palette = 'berlin' | 'tokyo' | 'lisbon' | 'malta';
-
 const MODES: Mode[] = ['light', 'dark'];
-const PALETTES: Palette[] = ['berlin', 'tokyo', 'lisbon', 'malta'];
+// A literal rather than a runtime import so the preview loads no domain code; the type import is erased, and `satisfies`
+// fails the type check when the domain gains a palette this list lacks.
+const PALETTE_TITLES = {
+  berlin: 'Berlin',
+  tokyo: 'Tokyo',
+  lisbon: 'Lisbon',
+  malta: 'Malta',
+} satisfies Record<ThemeName, string>;
+const isPalette = (value: string): value is ThemeName => Object.hasOwn(PALETTE_TITLES, value);
+const PALETTES = Object.keys(PALETTE_TITLES).filter(isPalette);
 const LOCALES: Locale[] = ['en', 'ar'];
 
 // Storybook types `globals` as `any`, and a URL can set any value, so each global is checked against its toolbar values.
@@ -20,7 +27,7 @@ const pick = <T extends string>(values: T[], value: unknown, fallback: T): T => 
 
 type StoryThemeProps = PropsWithChildren<{
   mode: Mode;
-  palette: Palette;
+  palette: ThemeName;
   locale: Locale;
 }>;
 
@@ -62,12 +69,7 @@ const preview: Preview = {
       toolbar: {
         title: 'Palette',
         icon: 'paintbrush',
-        items: [
-          { value: 'berlin', title: 'Berlin' },
-          { value: 'tokyo', title: 'Tokyo' },
-          { value: 'lisbon', title: 'Lisbon' },
-          { value: 'malta', title: 'Malta' },
-        ],
+        items: PALETTES.map(value => ({ value, title: PALETTE_TITLES[value] })),
         dynamicTitle: true,
       },
     },
