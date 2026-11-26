@@ -11,13 +11,14 @@ import {
   useTransition,
 } from 'react';
 
+import { IconButton } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { cnTw } from '@/shared/utils';
 
 import { type SelectedAttachment, AttachmentPreview } from './AttachmentPreview';
 
-const LINE_HEIGHT = 24; // px, matches text-base line-height
+const LINE_HEIGHT = 20; // px, matches text-base line-height
 const MAX_LINES = 5;
 // Uncomment when hop submit for media sending is ready
 // import { Plus } from 'lucide-react';
@@ -206,12 +207,9 @@ export const MessageInput = ({ ref, initialText, preview, disabled = false, show
                   <p className="line-clamp-3 text-xs font-medium text-fg-primary">{preview.text}</p>
                 </div>
                 <div className="flex items-center pe-0.5 pt-0.5">
-                  <button
-                    className="flex size-6 items-center justify-center rounded-full text-fg-secondary transition-colors hover:bg-bg-selection-container-hover"
-                    onClick={preview.onClose}
-                  >
-                    <X className="size-4" />
-                  </button>
+                  <IconButton size="sm" label={t('common.aria.close')} onClick={preview.onClose}>
+                    <X />
+                  </IconButton>
                 </div>
               </div>
             </div>
@@ -240,7 +238,7 @@ export const MessageInput = ({ ref, initialText, preview, disabled = false, show
                 aria-label="Send"
                 disabled={!canSend}
                 aria-busy={pending}
-                className="flex size-8 shrink-0 items-center justify-center rounded-full bg-bg-action-primary transition-colors hover:bg-bg-action-primary-hover disabled:cursor-not-allowed disabled:opacity-60"
+                className="flex size-control shrink-0 items-center justify-center rounded-full bg-bg-action-primary transition-colors hover:bg-bg-action-primary-hover disabled:cursor-not-allowed disabled:opacity-60"
                 onClick={() => send()}
               >
                 {pending ? (

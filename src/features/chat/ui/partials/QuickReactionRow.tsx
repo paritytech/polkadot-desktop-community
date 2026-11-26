@@ -1,6 +1,8 @@
 import { Plus } from 'lucide-react';
 
+import { IconButton } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
+import { useTranslation } from '@/shared/translation';
 
 import { QUICK_REACTIONS } from './emoji-data';
 
@@ -10,6 +12,8 @@ type QuickReactionRowProps = {
 };
 
 export const QuickReactionRow = ({ onSelectEmoji, onOpenFullPicker }: QuickReactionRowProps) => {
+  const { t } = useTranslation();
+
   return (
     <div
       data-testid={TEST_IDS.chatQuickReactionsRow}
@@ -18,19 +22,19 @@ export const QuickReactionRow = ({ onSelectEmoji, onOpenFullPicker }: QuickReact
       {QUICK_REACTIONS.map(emoji => (
         <button
           key={emoji}
-          className="flex size-8 items-center justify-center rounded-full transition-all hover:scale-125"
+          className="flex size-control items-center justify-center rounded-full transition-all hover:scale-125"
           onClick={() => onSelectEmoji(emoji)}
         >
           <span className="text-xl leading-none">{emoji}</span>
         </button>
       ))}
-      <button
+      <IconButton
         data-testid={TEST_IDS.chatEmojiPickerOpenButton}
-        className="flex size-8 items-center justify-center rounded-full transition-colors hover:bg-bg-selection-container-hover"
+        label={t('feature.chat.moreReactions')}
         onClick={onOpenFullPicker}
       >
-        <Plus className="size-4 text-fg-secondary" />
-      </button>
+        <Plus />
+      </IconButton>
     </div>
   );
 };

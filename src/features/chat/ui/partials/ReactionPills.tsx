@@ -22,7 +22,7 @@ export const ReactionPills = ({ reactions, isMe, onToggleReaction }: ReactionPil
               <button
                 data-testid={TEST_IDS.chatReactionPill}
                 className={cnTw(
-                  'flex items-center gap-1 rounded-full border px-2 py-1 transition-colors',
+                  'flex h-control-sm items-center gap-1 rounded-full border px-2 transition-colors',
                   isMe
                     ? cnTw(
                         'border-stroke-primary-inverted hover:bg-bg-selection-container-hover-inverted',
@@ -35,10 +35,10 @@ export const ReactionPills = ({ reactions, isMe, onToggleReaction }: ReactionPil
                 )}
                 onClick={() => onToggleReaction(reaction.emoji)}
               >
-                <span className="text-xl leading-none">{reaction.emoji}</span>
+                <span className="text-base leading-none">{reaction.emoji}</span>
                 {reaction.count > 1 && (
                   <span
-                    className={cnTw('min-w-3 text-center text-sm', isMe ? 'text-fg-secondary-inverted' : 'text-fg-secondary')}
+                    className={cnTw('min-w-3 text-center text-xs', isMe ? 'text-fg-secondary-inverted' : 'text-fg-secondary')}
                   >
                     {reaction.count}
                   </span>
