@@ -89,10 +89,19 @@ describe('ListItem', () => {
     expect(root).toHaveAttribute('title', 'Opens the wallet');
   });
 
-  it('truncates a string description in one element', () => {
+  it('truncates a string description in its wrapper', () => {
     render(<ListItem label="Wallet" description="wallet.dot" />);
 
-    expect(screen.getByText('wallet.dot')).toHaveClass('truncate');
+    const wrapper = screen.getByText('wallet.dot');
+    expect(wrapper).toHaveClass('truncate');
+    expect(wrapper.children).toHaveLength(0);
+  });
+
+  it('truncates a description node that renders bare text', () => {
+    const AppCount = () => <>3 apps</>;
+    render(<ListItem label="Wallet" description={<AppCount />} />);
+
+    expect(screen.getByText('3 apps')).toHaveClass('truncate');
   });
 
   it('renders each element of a description node as its own line in one wrapper', () => {

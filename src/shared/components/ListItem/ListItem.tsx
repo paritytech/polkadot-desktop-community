@@ -26,10 +26,10 @@ type TextColumnProps = {
 const TextColumn = ({ label, description, disabled }: TextColumnProps) => (
   <span className="flex min-w-0 flex-1 flex-col">
     <span className={cnTw('truncate text-sm font-semibold text-chrome-text', disabled && 'text-chrome-faint')}>{label}</span>
-    {typeof description === 'string' ? (
-      <span className={cnTw('truncate text-xs text-chrome-muted', disabled && 'text-chrome-faint')}>{description}</span>
-    ) : description ? (
-      <span className={cnTw('flex min-w-0 flex-col text-xs text-chrome-muted [&>*]:truncate', disabled && 'text-chrome-faint')}>
+    {description ? (
+      <span
+        className={cnTw('min-w-0 truncate text-xs text-chrome-muted [&>*]:block [&>*]:truncate', disabled && 'text-chrome-faint')}
+      >
         {description}
       </span>
     ) : null}
