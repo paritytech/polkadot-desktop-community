@@ -39,6 +39,7 @@ export { WebSplashScreen } from './WebSplashScreen/WebSplashScreen';
 export { Web3SummitEndedScreen } from './Web3SummitEndedScreen/Web3SummitEndedScreen';
 export { QrCode } from './QrCode/QrCode';
 export { Input } from './Input/Input';
+export { TextArea } from './TextArea/TextArea';
 export { Label } from './Label/Label';
 export { Switch } from './Switch/Switch';
 export { RadioGroup } from './RadioGroup/RadioGroup';
