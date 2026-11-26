@@ -85,13 +85,7 @@ export const SearchResultsPanel = ({
       );
     }
 
-    return (
-      <EmptyState
-        icon={<SearchX aria-hidden />}
-        title={t('feature.chat.noResults', { query })}
-        description={searchError ?? undefined}
-      />
-    );
+    return <EmptyState icon={<SearchX aria-hidden />} title={searchError ?? t('feature.chat.noResults', { query })} />;
   }
 
   return (
