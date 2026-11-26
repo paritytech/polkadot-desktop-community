@@ -30,7 +30,7 @@ export const RequestRoomHeader = ({ name, actionIcon, actionLabel, onAction }: R
   return (
     <div className="h-14 shrink-0 border-b border-stroke-primary">
       <div className="flex h-full items-center gap-2 py-2 ps-4 pe-0">
-        <Avatar name={name} size="chat-header" />
+        <Avatar name={name} size="24" />
         <div className="flex min-w-0 flex-1 items-center gap-2 pe-4">
           <div className="flex min-w-0 flex-1 flex-col items-start justify-center">
             <span className="w-full min-w-0 truncate text-base font-semibold text-fg-primary">{name}</span>

@@ -150,7 +150,7 @@ const SessionResultRow = ({ session, name, query, onSelect }: SessionResultRowPr
       className="flex w-full shrink-0 items-center gap-3 p-3 text-start transition-colors hover:bg-bg-selection-container-hover"
       onClick={onSelect}
     >
-      <Avatar name={name} size="chat-list-compact" />
+      <Avatar name={name} size="40" />
       <div className="flex min-w-0 flex-1 flex-col">
         <span className="min-w-0 truncate text-base font-semibold text-fg-primary">{highlightMatch(name, query)}</span>
         {preview && (
@@ -178,7 +178,7 @@ const ContactResultRow = ({ username, query, disabled, onSelect }: ContactResult
     disabled={disabled}
     onClick={onSelect}
   >
-    <Avatar name={username} size="chat-list-compact" />
+    <Avatar name={username} size="40" />
     <div className="flex min-w-0 flex-1 items-center justify-between gap-2">
       <span className="min-w-0 flex-1 truncate text-base font-semibold text-fg-primary">{highlightMatch(username, query)}</span>
       <ChevronRight className="size-4 shrink-0 text-fg-tertiary" />
@@ -201,7 +201,7 @@ const MessageResultRow = ({ hit, query, onSelect }: MessageResultRowProps) => {
       className="flex w-full shrink-0 items-start gap-3 p-3 text-start transition-colors hover:bg-bg-selection-container-hover"
       onClick={onSelect}
     >
-      <Avatar name={name} size="chat-list-compact" />
+      <Avatar name={name} size="40" />
       <div className="flex min-w-0 flex-1 flex-col">
         <div className="flex w-full items-center gap-2">
           <span className="min-w-0 flex-1 truncate text-base font-semibold text-fg-primary">{name}</span>

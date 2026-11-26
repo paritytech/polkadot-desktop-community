@@ -38,7 +38,7 @@ export const ChatSearchResults = ({ query, results, activeMessageId, peerName, c
             )}
             onClick={() => onSelect(message)}
           >
-            <Avatar name={name} size="chat-header" />
+            <Avatar name={name} size="24" />
             <div className="flex min-w-0 flex-1 flex-col">
               <div className="flex w-full items-center gap-2">
                 <span className="min-w-0 flex-1 truncate text-sm font-semibold text-fg-primary">{name}</span>

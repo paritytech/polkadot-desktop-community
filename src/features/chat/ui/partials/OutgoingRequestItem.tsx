@@ -24,7 +24,7 @@ export const OutgoingRequestItem = ({ request, selected, onClick }: OutgoingRequ
       )}
       onClick={onClick}
     >
-      <Avatar name={name} size="chat-list" />
+      <Avatar name={name} size="40" />
       <div className="flex min-w-0 flex-1 flex-col justify-center gap-0.5">
         <div className="flex w-full items-end gap-2">
           <span className="max-w-full min-w-0 truncate text-base font-semibold text-fg-primary">{name}</span>

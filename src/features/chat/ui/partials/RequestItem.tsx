@@ -38,7 +38,7 @@ export const RequestItem = ({ request, selected, hideByDefault, onSelect, onDecl
       )}
       onClick={onSelect}
     >
-      <Avatar name={name} size="chat-list" />
+      <Avatar name={name} size="40" />
       <div className="flex min-w-0 flex-1 flex-col justify-center gap-0.5">
         <span className="min-w-0 truncate text-base font-semibold text-fg-primary">{name}</span>
         <span className="min-w-0 truncate text-sm text-fg-secondary">{preview}</span>

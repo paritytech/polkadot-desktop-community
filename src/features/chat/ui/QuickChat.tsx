@@ -184,7 +184,7 @@ const QuickChatPageHeader = ({ session, onBack, onExpand }: QuickChatPageHeaderP
           <IconButton label={t('common.action.back')} onClick={onBack}>
             <ArrowLeft aria-hidden />
           </IconButton>
-          <Avatar name={sessionName} size="tiny" />
+          <Avatar name={sessionName} size="24" />
           <span className="min-w-0 flex-1 truncate text-sm font-semibold text-fg-primary">{sessionName}</span>
         </>
       ) : (

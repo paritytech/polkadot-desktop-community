@@ -74,7 +74,7 @@ export const ChatItem = ({ session, isSelected, isLast, density = 'regular', ite
       )}
       onClick={onClick}
     >
-      <Avatar name={name} size={isCompact ? 'chat-list-compact' : 'chat-list'} />
+      <Avatar name={name} size="40" />
       <div className="flex min-w-0 flex-1 flex-col">
         <div className="flex w-full items-end gap-2">
           <span className="min-w-0 flex-1 truncate text-base font-semibold text-fg-primary">{name}</span>
