@@ -738,7 +738,7 @@
       },
       "detail": {
         "rulesTitle": "ルールと保護",
-        "appsLabel": "アプリ:",
+        "appsLabel": "アプリ",
         "noApps": "この権限をリクエストしたアプリはありません",
         "allowedFor": "{modalities} に許可済み",
         "appSubtitle": "{baseName} • {allowed}"

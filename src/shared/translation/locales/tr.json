@@ -738,7 +738,7 @@
       },
       "detail": {
         "rulesTitle": "Kurallar ve güvenceler",
-        "appsLabel": "Uygulamalar:",
+        "appsLabel": "Uygulamalar",
         "noApps": "Bu izni isteyen uygulama yok",
         "allowedFor": "{modalities} için izin verildi",
         "appSubtitle": "{baseName} • {allowed}"

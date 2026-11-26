@@ -738,7 +738,7 @@
       },
       "detail": {
         "rulesTitle": "Règles et garde-fous",
-        "appsLabel": "Apps :",
+        "appsLabel": "Apps",
         "noApps": "Aucune app n'a demandé cette autorisation",
         "allowedFor": "Autorisé pour {modalities}",
         "appSubtitle": "{baseName} • {allowed}"

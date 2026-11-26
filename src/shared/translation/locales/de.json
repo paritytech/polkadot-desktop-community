@@ -738,7 +738,7 @@
       },
       "detail": {
         "rulesTitle": "Regeln & Schutzmaßnahmen",
-        "appsLabel": "Apps:",
+        "appsLabel": "Apps",
         "noApps": "Keine App hat diese Berechtigung angefordert",
         "allowedFor": "Zugelassen für {modalities}",
         "appSubtitle": "{baseName} • {allowed}"

@@ -754,7 +754,7 @@
       },
       "detail": {
         "rulesTitle": "Rules & Safeguards",
-        "appsLabel": "Apps:",
+        "appsLabel": "Apps",
         "noApps": "No apps have requested this permission",
         "allowedFor": "Allowed for {modalities}",
         "appSubtitle": "{baseName} • {allowed}"

@@ -738,7 +738,7 @@
       },
       "detail": {
         "rulesTitle": "Правила и ограничения",
-        "appsLabel": "Приложения:",
+        "appsLabel": "Приложения",
         "noApps": "Ни одно приложение не запрашивало это разрешение",
         "allowedFor": "Разрешено для {modalities}",
         "appSubtitle": "{baseName} • {allowed}"

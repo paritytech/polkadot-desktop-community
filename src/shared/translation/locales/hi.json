@@ -738,7 +738,7 @@
       },
       "detail": {
         "rulesTitle": "नियम और सुरक्षा उपाय",
-        "appsLabel": "ऐप्स:",
+        "appsLabel": "ऐप्स",
         "noApps": "किसी ऐप ने यह अनुमति नहीं माँगी है",
         "allowedFor": "{modalities} के लिए अनुमति है",
         "appSubtitle": "{baseName} • {allowed}"

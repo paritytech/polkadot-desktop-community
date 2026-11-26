@@ -738,7 +738,7 @@
       },
       "detail": {
         "rulesTitle": "규칙 및 보호 장치",
-        "appsLabel": "앱:",
+        "appsLabel": "앱",
         "noApps": "이 권한을 요청한 앱이 없습니다",
         "allowedFor": "{modalities}에 허용됨",
         "appSubtitle": "{baseName} • {allowed}"

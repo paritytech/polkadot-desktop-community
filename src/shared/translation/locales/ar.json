@@ -738,7 +738,7 @@
       },
       "detail": {
         "rulesTitle": "القواعد والضمانات",
-        "appsLabel": "التطبيقات:",
+        "appsLabel": "التطبيقات",
         "noApps": "لم يطلب أي تطبيق هذا الإذن",
         "allowedFor": "مسموح لـ {modalities}",
         "appSubtitle": "{baseName} • {allowed}"

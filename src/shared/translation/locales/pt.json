@@ -738,7 +738,7 @@
       },
       "detail": {
         "rulesTitle": "Regras e salvaguardas",
-        "appsLabel": "Apps:",
+        "appsLabel": "Apps",
         "noApps": "Nenhum app solicitou esta permissão",
         "allowedFor": "Permitido para {modalities}",
         "appSubtitle": "{baseName} • {allowed}"

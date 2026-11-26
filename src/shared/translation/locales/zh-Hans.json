@@ -738,7 +738,7 @@
       },
       "detail": {
         "rulesTitle": "规则与防护",
-        "appsLabel": "应用：",
+        "appsLabel": "应用",
         "noApps": "尚无应用请求此权限",
         "allowedFor": "已允许用于 {modalities}",
         "appSubtitle": "{baseName} • {allowed}"

@@ -738,7 +738,7 @@
       },
       "detail": {
         "rulesTitle": "Regole e tutele",
-        "appsLabel": "App:",
+        "appsLabel": "App",
         "noApps": "Nessuna app ha richiesto questa autorizzazione",
         "allowedFor": "Consentito per {modalities}",
         "appSubtitle": "{baseName} • {allowed}"
