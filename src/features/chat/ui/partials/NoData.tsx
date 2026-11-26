@@ -13,8 +13,8 @@ export const NoData = ({ icon: Icon, title, description }: NoDataProps) => {
         <div className="flex size-10 items-center justify-center rounded-full bg-bg-surface-nested">
           <Icon className="size-5 text-fg-secondary" />
         </div>
-        <span className="text-base leading-6 font-semibold text-fg-primary">{title}</span>
-        {description && <span className="text-sm leading-4.5 text-fg-secondary">{description}</span>}
+        <span className="text-base font-semibold text-fg-primary">{title}</span>
+        {description && <span className="text-sm text-fg-secondary">{description}</span>}
       </div>
     </div>
   );

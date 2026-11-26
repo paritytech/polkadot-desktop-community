@@ -114,7 +114,7 @@ const FolderViewMoreTile = ({ label, onClick }: { label: string; onClick: VoidFu
     onClick={onClick}
   >
     <ArrowUpRight className="size-7 shrink-0 text-fg-primary" aria-hidden />
-    <span className="max-w-full shrink-0 truncate text-xs leading-4 font-semibold text-fg-primary">{label}</span>
+    <span className="max-w-full shrink-0 truncate text-xs font-semibold text-fg-primary">{label}</span>
   </button>
 );
 

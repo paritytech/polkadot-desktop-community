@@ -50,7 +50,7 @@ export const MediaPlaceholder = ({ isMe, blurhash }: Props) => {
       >
         <MediaIcon className={cnTw('size-6', isDarkCard ? 'text-fg-tertiary' : 'text-fg-tertiary-inverted')} />
       </span>
-      <span className={cnTw('relative text-sm leading-5', isDarkCard ? 'text-fg-secondary-inverted' : 'text-fg-secondary')}>
+      <span className={cnTw('relative text-sm', isDarkCard ? 'text-fg-secondary-inverted' : 'text-fg-secondary')}>
         {t('feature.chat.mediaMobileOnly')}
       </span>
     </div>

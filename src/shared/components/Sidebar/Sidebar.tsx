@@ -33,7 +33,7 @@ type SidebarGroupProps = PropsWithChildren<{
 const SidebarGroup = ({ title, children }: SidebarGroupProps) => {
   return (
     <section>
-      <header className="line-clamp-1 flex items-center justify-start gap-2 self-stretch px-3 py-2 text-xs leading-4 font-medium text-fg-secondary">
+      <header className="line-clamp-1 flex items-center justify-start gap-2 self-stretch px-3 py-2 text-xs font-medium text-fg-secondary">
         {title}
       </header>
       <div className="flex flex-col">{children}</div>

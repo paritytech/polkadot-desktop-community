@@ -21,8 +21,8 @@ export const CrashOverlay = ({ crash, onReload }: Props) => {
         <div className="pb-4">
           <XOctagon className="h-8 w-8 text-fg-primary" strokeWidth={1} />
         </div>
-        <h1 className="w-full text-center text-base leading-6 font-medium text-fg-primary">{t('widget.webview.crash.title')}</h1>
-        <p className="w-full text-center text-sm leading-5 font-normal text-fg-secondary">{t('widget.webview.crash.subtitle')}</p>
+        <h1 className="w-full text-center text-base font-medium text-fg-primary">{t('widget.webview.crash.title')}</h1>
+        <p className="w-full text-center text-sm font-normal text-fg-secondary">{t('widget.webview.crash.subtitle')}</p>
       </div>
 
       <div className="flex flex-col items-center gap-4 self-stretch" style={{ appRegion: 'no-drag' }}>

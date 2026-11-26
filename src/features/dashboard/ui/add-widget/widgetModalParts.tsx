@@ -19,7 +19,7 @@ export const AddWidgetFavoritesButton = ({ isInFavorites, onAdd }: { isInFavorit
 
   return (
     <Button type="button" size="sm" disabled={isInFavorites} aria-label={label} onClick={onAdd}>
-      <span className="inline-flex items-center gap-1 text-xs leading-4 font-normal">
+      <span className="inline-flex items-center gap-1 text-xs font-normal">
         <Star
           className={cnTw('size-4 shrink-0', isInFavorites ? 'fill-current text-fg-secondary' : 'text-fg-primary')}
           aria-hidden
@@ -90,8 +90,8 @@ export const AddWidgetModalCard = ({
 
       <div className="flex min-w-0 flex-1 flex-col gap-9.5 p-4">
         <div className="flex flex-col gap-1 pt-1">
-          <div className="text-base leading-6 font-semibold text-fg-primary">{title}</div>
-          <div className="text-sm leading-4.5 font-normal text-fg-secondary">{description}</div>
+          <div className="text-base font-semibold text-fg-primary">{title}</div>
+          <div className="text-sm font-normal text-fg-secondary">{description}</div>
         </div>
 
         {hasSupportedSizes ? (
@@ -124,7 +124,7 @@ export const AddWidgetModalCard = ({
           </div>
         ) : (
           <div className="flex w-full items-center pb-0.5">
-            <p className="text-sm leading-5 font-normal text-fg-secondary">{t('feature.dashboard.addWidget.noSupportedSizes')}</p>
+            <p className="text-sm font-normal text-fg-secondary">{t('feature.dashboard.addWidget.noSupportedSizes')}</p>
           </div>
         )}
       </div>

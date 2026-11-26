@@ -28,7 +28,7 @@ export const AttachmentPreview = ({ attachments, onRemove }: Props) => (
         ) : (
           <div className="flex size-16 flex-col items-center justify-center gap-1 rounded-xl bg-bg-surface-nested">
             <FileText className="size-5 text-fg-tertiary" />
-            <span className="max-w-14 truncate text-[0.625rem] leading-3.5 font-medium text-fg-tertiary">
+            <span className="max-w-14 truncate text-2xs font-medium text-fg-tertiary">
               {formatFileSize(attachment.file.size)}
             </span>
           </div>

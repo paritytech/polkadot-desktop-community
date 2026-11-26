@@ -139,9 +139,7 @@ export const OnboardingScreen = () => {
           className="flex h-full w-full flex-col items-center justify-center gap-8 text-fg-primary"
         >
           <Spinner size={120} />
-          <p className="text-center text-base leading-6 font-medium text-fg-secondary">
-            {t('feature.onboarding.completingPairing')}
-          </p>
+          <p className="text-center text-base font-medium text-fg-secondary">{t('feature.onboarding.completingPairing')}</p>
         </div>
       );
     }
@@ -153,7 +151,7 @@ export const OnboardingScreen = () => {
           className="flex h-full w-full flex-col items-center justify-center gap-4 p-8"
         >
           <p className="text-center text-base font-medium text-fg-primary">{errorContent.title}</p>
-          <p className="text-center text-sm leading-5 text-fg-secondary">{errorContent.description}</p>
+          <p className="text-center text-sm text-fg-secondary">{errorContent.description}</p>
           <Button variant="primary" type="button" size="sm" onClick={handleRetry}>
             {t('common.action.retry')}
           </Button>
@@ -176,14 +174,14 @@ export const OnboardingScreen = () => {
           <div className="flex items-center gap-5">
             <PolkadotLogo className="origin-right" />
             <div className="h-8.5 w-px bg-fg-primary" />
-            <div className="text-sm leading-5 font-semibold tracking-[0.5px] text-fg-primary uppercase">
+            <div className="text-sm font-semibold tracking-[0.5px] text-fg-primary uppercase">
               {t('feature.onboarding.logoText')}
             </div>
           </div>
-          <h1 className="text-[32px] leading-10 font-semibold tracking-[-0.32px] text-fg-primary xl:text-[48px] xl:leading-16 xl:tracking-[-0.48px]">
+          <h1 className="text-3xl font-semibold tracking-[-0.32px] text-fg-primary xl:text-4xl xl:tracking-[-0.48px]">
             {t('feature.onboarding.mainText')}
           </h1>
-          <p className="w-full max-w-172 text-center text-base leading-6 font-medium text-fg-secondary xl:text-start">
+          <p className="w-full max-w-172 text-center text-base font-medium text-fg-secondary xl:text-start">
             {t('feature.onboarding.description')}
           </p>
         </div>

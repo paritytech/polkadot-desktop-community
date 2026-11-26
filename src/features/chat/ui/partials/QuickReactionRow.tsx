@@ -21,7 +21,7 @@ export const QuickReactionRow = ({ onSelectEmoji, onOpenFullPicker }: QuickReact
           className="flex size-8 items-center justify-center rounded-full transition-all hover:scale-125"
           onClick={() => onSelectEmoji(emoji)}
         >
-          <span className="text-[20px] leading-none">{emoji}</span>
+          <span className="text-xl leading-none">{emoji}</span>
         </button>
       ))}
       <button

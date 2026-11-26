@@ -58,7 +58,7 @@ const FabButton = ({ testId, count, onClick, children }: FabButtonProps) => (
   >
     {children}
     {count > 0 && (
-      <span className="absolute end-1 -top-1 min-w-4 rounded-full bg-bg-action-primary px-1 text-center text-[0.625rem] leading-3.5 font-medium text-fg-primary-inverted">
+      <span className="absolute end-1 -top-1 min-w-4 rounded-full bg-bg-action-primary px-1 text-center text-2xs font-medium text-fg-primary-inverted">
         {count}
       </span>
     )}

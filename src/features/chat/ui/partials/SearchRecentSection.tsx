@@ -20,7 +20,7 @@ const AvatarChip = ({ session, onSelect }: { session: ChatSession; onSelect(): v
   return (
     <button className="flex w-14 shrink-0 flex-col items-center gap-1" onClick={onSelect}>
       <Avatar name={name} size="chat-header" />
-      <span className="w-full truncate text-center text-xs leading-4 text-fg-secondary">{name}</span>
+      <span className="w-full truncate text-center text-xs text-fg-secondary">{name}</span>
     </button>
   );
 };
@@ -35,7 +35,7 @@ const RecentRow = ({ session, onSelect, onRemove }: { session: ChatSession; onSe
       onClick={onSelect}
     >
       <Avatar name={name} size="chat-list" />
-      <span className="min-w-0 flex-1 truncate text-base leading-6 font-semibold text-fg-primary">{name}</span>
+      <span className="min-w-0 flex-1 truncate text-base font-semibold text-fg-primary">{name}</span>
       <button
         className="hidden size-6 shrink-0 items-center justify-center rounded-full text-fg-tertiary transition-colors group-hover:flex hover:bg-bg-selection-container-active hover:text-fg-secondary"
         onClick={e => {
@@ -61,10 +61,10 @@ export const SearchRecentSection = ({ sessions, onSelect, onRemove, onClear }: P
         ))}
       </div>
       <div className="flex items-center justify-between px-4 py-2">
-        <span className="text-sm leading-5 font-medium text-fg-secondary">{t('feature.chat.contactSearch.recent')}</span>
+        <span className="text-sm font-medium text-fg-secondary">{t('feature.chat.contactSearch.recent')}</span>
         <button
           data-testid={TEST_IDS.contactSearchClearRecent}
-          className="rounded-xs px-2 py-0.5 text-sm leading-5 font-medium text-fg-link transition-colors hover:text-fg-link-hover"
+          className="rounded-xs px-2 py-0.5 text-sm font-medium text-fg-link transition-colors hover:text-fg-link-hover"
           onClick={onClear}
         >
           {t('feature.chat.contactSearch.clear')}

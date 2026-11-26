@@ -21,7 +21,7 @@ export const RequestBanner = ({ name, placement, disabled, acceptTestId, onAccep
 
   const content = (
     <>
-      <p className="min-w-0 flex-1 text-sm leading-4.5 text-fg-secondary">
+      <p className="min-w-0 flex-1 text-sm text-fg-secondary">
         <FormattedMessage id="feature.chat.request.banner" values={{ name, b: boldName, br: () => <br /> }} />
       </p>
       <div className="flex shrink-0 items-center gap-2">

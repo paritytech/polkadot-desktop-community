@@ -41,12 +41,10 @@ export const ChatSearchResults = ({ query, results, activeMessageId, peerName, c
             <Avatar name={name} size="chat-header" />
             <div className="flex min-w-0 flex-1 flex-col">
               <div className="flex w-full items-center gap-2">
-                <span className="min-w-0 flex-1 truncate text-sm leading-5 font-semibold text-fg-primary">{name}</span>
-                <span className="shrink-0 text-xs leading-4 text-fg-tertiary">
-                  {chatService.formatLastMessageDate(message.timestamp)}
-                </span>
+                <span className="min-w-0 flex-1 truncate text-sm font-semibold text-fg-primary">{name}</span>
+                <span className="shrink-0 text-xs text-fg-tertiary">{chatService.formatLastMessageDate(message.timestamp)}</span>
               </div>
-              <span className="line-clamp-2 text-sm leading-4.5 text-fg-secondary">{highlightMatch(text, query)}</span>
+              <span className="line-clamp-2 text-sm text-fg-secondary">{highlightMatch(text, query)}</span>
             </div>
           </button>
         );

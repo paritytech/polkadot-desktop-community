@@ -64,7 +64,7 @@ const SidebarItem = ({
     >
       <div className="flex min-w-0 flex-1 items-center gap-2 overflow-hidden">
         <SidebarItemIcon entry={entry} />
-        <span className="truncate text-sm leading-5 font-normal text-fg-primary">{label}</span>
+        <span className="truncate text-sm font-normal text-fg-primary">{label}</span>
       </div>
     </button>
   );

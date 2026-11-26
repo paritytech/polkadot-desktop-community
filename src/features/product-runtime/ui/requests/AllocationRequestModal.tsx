@@ -32,17 +32,17 @@ export const AllocationRequestModal = ({ review, onDecide }: Props) => {
 
         <div className="pt-2">
           <ProductRequestDialog.Title>{t('widget.productContainerBinding.allocationRequest.title')}</ProductRequestDialog.Title>
-          <p className="mt-2 text-base leading-6 text-fg-primary">
+          <p className="mt-2 text-base text-fg-primary">
             {t('widget.productContainerBinding.allocationRequest.description', { productName })}
           </p>
         </div>
 
         <div className="flex min-h-0 min-w-0 flex-1 flex-col">
           <RequestSummaryCard>
-            <p className="text-base leading-6 text-fg-secondary">
+            <p className="text-base text-fg-secondary">
               {t('widget.productContainerBinding.allocationRequest.requestedResources')}
             </p>
-            <ul className="flex flex-col gap-2 ps-6 text-base leading-6 text-fg-primary [&>li]:list-disc">
+            <ul className="flex flex-col gap-2 ps-6 text-base text-fg-primary [&>li]:list-disc">
               {grants.map(grant => (
                 <li key={grant.key}>{t(grant.key, grant.values)}</li>
               ))}

@@ -69,10 +69,7 @@ export const ProductSettingsPage = ({ productId, backLabel, onBack }: Props) => 
       <ScrollArea>
         <div className="flex min-h-0 flex-col items-center">
           <div className="flex min-h-0 w-150 max-w-full flex-col gap-6 px-2 py-3">
-            <button
-              className="flex items-center gap-2 self-start text-sm leading-5 font-semibold text-fg-primary"
-              onClick={onBack}
-            >
+            <button className="flex items-center gap-2 self-start text-sm font-semibold text-fg-primary" onClick={onBack}>
               <ChevronLeft size={20} />
               {backLabel}
             </button>
@@ -92,16 +89,14 @@ export const ProductSettingsPage = ({ productId, backLabel, onBack }: Props) => 
 
               <div className="flex flex-col gap-2">
                 <div className="flex items-center gap-3">
-                  <p className="text-2xl leading-8 font-semibold text-fg-primary">{productName}</p>
+                  <p className="text-2xl font-semibold text-fg-primary">{productName}</p>
                   {cacheSize > 0 ? (
-                    <span className="rounded-md border border-stroke-secondary px-2 py-0.5 text-xs leading-4 text-fg-tertiary-inverted">
+                    <span className="rounded-md border border-stroke-secondary px-2 py-0.5 text-xs text-fg-tertiary-inverted">
                       {formatBytes(cacheSize)}
                     </span>
                   ) : null}
                 </div>
-                {product?.description ? (
-                  <p className="text-sm leading-5 font-medium text-fg-primary">{product.description}</p>
-                ) : null}
+                {product?.description ? <p className="text-sm font-medium text-fg-primary">{product.description}</p> : null}
               </div>
 
               <div className="flex gap-2">
@@ -119,7 +114,7 @@ export const ProductSettingsPage = ({ productId, backLabel, onBack }: Props) => 
             <Slot id={productSettingsSectionsSlot} props={{ productId }} />
 
             <div className="flex flex-col">
-              <div className="py-2 text-base leading-6 font-semibold text-fg-primary">
+              <div className="py-2 text-base font-semibold text-fg-primary">
                 {t('feature.productSettings.requestedPermissions')}
               </div>
               <div className="flex flex-col">
@@ -204,10 +199,10 @@ const ConfirmDialog = ({
       <Dialog.Header>
         <div className="w-full text-start">
           <Dialog.Title>
-            <span className="mb-3 block text-2xl leading-8 font-semibold text-fg-primary">{title}</span>
+            <span className="mb-3 block text-2xl font-semibold text-fg-primary">{title}</span>
           </Dialog.Title>
           <Dialog.Description>
-            <span className="block text-base leading-6 font-normal text-fg-primary">{description}</span>
+            <span className="block text-base font-normal text-fg-primary">{description}</span>
           </Dialog.Description>
         </div>
       </Dialog.Header>

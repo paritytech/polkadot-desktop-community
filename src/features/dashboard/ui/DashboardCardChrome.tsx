@@ -70,9 +70,7 @@ export const DashboardCardChrome = ({
       <div className="shrink-0">
         <div className="widget-topbar-drag-handle flex w-full cursor-grab items-center gap-2 p-2 active:cursor-grabbing">
           {metadata?.icon ?? null}
-          <span className="min-w-0 flex-1 truncate text-sm leading-5 font-semibold text-fg-primary">
-            {metadata?.label ?? null}
-          </span>
+          <span className="min-w-0 flex-1 truncate text-sm font-semibold text-fg-primary">{metadata?.label ?? null}</span>
           {switchableSizes && switchableSizes.length > 0 ? (
             <WidgetMenu
               sizes={switchableSizes}

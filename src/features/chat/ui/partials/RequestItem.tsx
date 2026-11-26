@@ -39,8 +39,8 @@ export const RequestItem = ({ request, selected, hideByDefault, onSelect, onDecl
     >
       <Avatar name={name} size="chat-list" />
       <div className="flex min-w-0 flex-1 flex-col justify-center gap-0.5">
-        <span className="min-w-0 truncate text-base leading-6 font-semibold text-fg-primary">{name}</span>
-        <span className="min-w-0 truncate text-sm leading-4.5 text-fg-secondary">{preview}</span>
+        <span className="min-w-0 truncate text-base font-semibold text-fg-primary">{name}</span>
+        <span className="min-w-0 truncate text-sm text-fg-secondary">{preview}</span>
       </div>
       <button
         className="flex size-7 shrink-0 items-center justify-center rounded-full bg-bg-surface-nested transition-colors hover:bg-bg-selection-container-hover"

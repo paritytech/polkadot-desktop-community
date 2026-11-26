@@ -103,14 +103,14 @@ const Root = ({ onDismiss, height = 'tall', children }: RootProps) => {
 /** The dialog's accessible name. Every step must render exactly one. */
 const Title = ({ children }: PropsWithChildren) => (
   <Dialog.Title asChild>
-    <h2 className="text-2xl leading-8 font-semibold text-fg-primary">{children}</h2>
+    <h2 className="text-2xl font-semibold text-fg-primary">{children}</h2>
   </Dialog.Title>
 );
 
 /** The sentence under the title that says what the request does. */
 const Subtitle = ({ children }: PropsWithChildren) => (
   <Dialog.Description asChild>
-    <p className="text-base leading-6 font-normal text-fg-primary">{children}</p>
+    <p className="text-base font-normal text-fg-primary">{children}</p>
   </Dialog.Description>
 );
 
@@ -119,11 +119,9 @@ const BodyCopy = ({ lines }: { lines: string[] }) => {
   const { t } = useTranslation();
 
   return (
-    <div className="flex flex-col gap-0 text-base leading-6 font-normal text-fg-primary">
+    <div className="flex flex-col gap-0 text-base font-normal text-fg-primary">
       {lines.map(line => (
-        <p key={line} className="leading-6">
-          {t(line)}
-        </p>
+        <p key={line}>{t(line)}</p>
       ))}
     </div>
   );

@@ -33,8 +33,8 @@ export const SettingsHeader = ({ icon, subtitle, onBack, variant = 'page', child
       ) : null}
       {icon}
       <div className="flex min-w-0 flex-1 flex-col">
-        <span className="text-sm leading-5 font-semibold">{children}</span>
-        {subtitle ? <span className="text-xs leading-4 text-fg-secondary">{subtitle}</span> : null}
+        <span className="text-sm font-semibold">{children}</span>
+        {subtitle ? <span className="text-xs text-fg-secondary">{subtitle}</span> : null}
       </div>
     </header>
   );

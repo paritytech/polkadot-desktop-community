@@ -35,7 +35,7 @@ export const FavoriteCard = ({ title, iconUrl, onOpen, action }: Props) => {
       ) : null}
 
       <div className="flex w-full items-center justify-center overflow-hidden p-2">
-        <span className="max-w-full truncate text-xs leading-4 font-semibold text-fg-primary">{title}</span>
+        <span className="max-w-full truncate text-xs font-semibold text-fg-primary">{title}</span>
       </div>
     </div>
   );

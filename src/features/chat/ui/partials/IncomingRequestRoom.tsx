@@ -56,17 +56,17 @@ export const IncomingRequestRoom = (props: IncomingRequestRoomProps) => {
         {hasMessage && (
           <>
             <div className="flex w-full items-center justify-center py-2">
-              <span className="text-sm leading-4.5 text-fg-tertiary">{chatService.formatRequestTime(request.timestamp)}</span>
+              <span className="text-sm text-fg-tertiary">{chatService.formatRequestTime(request.timestamp)}</span>
             </div>
             <div className="flex w-full flex-col items-start">
               <div className="flex max-w-130 items-end gap-2 rounded-2xl bg-bg-surface-nested px-3 py-2">
-                <p className="text-base leading-5 text-fg-primary">
+                <p className="text-base text-fg-primary">
                   {isHidden ? t('feature.chat.request.messageHiddenFull') : request.welcomeMessage}
                 </p>
               </div>
               {isHidden && (
                 <button
-                  className="mt-1 rounded text-sm leading-5 font-medium text-fg-link transition-colors hover:text-fg-link-hover"
+                  className="mt-1 rounded text-sm font-medium text-fg-link transition-colors hover:text-fg-link-hover"
                   onClick={handleReveal}
                 >
                   {t('feature.chat.request.viewMessage')}

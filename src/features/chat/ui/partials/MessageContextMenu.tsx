@@ -46,7 +46,7 @@ const MenuItem = ({ testId, icon: Icon, label, variant = 'default', disabled, ha
       onClick={onClick}
     >
       <Icon className="size-4 shrink-0" />
-      <span className="min-w-0 flex-1 truncate text-start text-sm leading-5 font-normal">{label}</span>
+      <span className="min-w-0 flex-1 truncate text-start text-sm font-normal">{label}</span>
       {hasSubmenu ? <ChevronRight className="size-4 shrink-0 text-fg-secondary" /> : null}
     </button>
   );

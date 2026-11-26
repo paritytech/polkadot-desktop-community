@@ -307,7 +307,7 @@ const TabRamUsageRow = ({ tabId }: { tabId: string }) => {
   const { t } = useTranslation();
   const memory = useTabMemory(tabId);
   return (
-    <span className="text-sm leading-4.5 text-fg-secondary" data-testid={TEST_IDS.tabHoverRam}>
+    <span className="text-sm text-fg-secondary" data-testid={TEST_IDS.tabHoverRam}>
       {memory === null
         ? t('feature.browser.ramUsageUnavailable')
         : t('feature.browser.ramUsage', { value: formatMemory(memory) })}

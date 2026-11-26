@@ -44,14 +44,14 @@ export const OutgoingPendingRoom = ({ request, onCancel }: Props) => {
       <div className="flex flex-1 flex-col gap-1 overflow-y-auto px-4 py-4">
         <DateSeparator text={dayLabel} />
         <div className="flex w-full items-center justify-center py-2">
-          <span className="text-center text-sm leading-5 font-medium text-fg-secondary">
+          <span className="text-center text-sm font-medium text-fg-secondary">
             <FormattedMessage id="feature.chat.request.youSent" values={{ b: boldName }} />
           </span>
         </div>
         {request.welcomeMessage && (
           <div className="flex w-full flex-col items-end">
             <div className="max-w-130 rounded-2xl bg-bg-surface-container-inverted px-3 pt-2 pb-3">
-              <p className="text-base leading-5 text-fg-primary-inverted">{request.welcomeMessage}</p>
+              <p className="text-base text-fg-primary-inverted">{request.welcomeMessage}</p>
             </div>
           </div>
         )}

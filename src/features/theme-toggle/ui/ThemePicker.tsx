@@ -41,7 +41,7 @@ export const ThemePicker = () => {
                 {selected && <Check className="size-5 text-fg-static-white" strokeWidth={2.5} />}
               </span>
             </span>
-            <span className={cnTw('text-sm leading-5 font-medium', selected ? 'text-fg-primary' : 'text-fg-secondary')}>
+            <span className={cnTw('text-sm font-medium', selected ? 'text-fg-primary' : 'text-fg-secondary')}>
               {t(`feature.themeToggle.${name}`)}
             </span>
           </button>

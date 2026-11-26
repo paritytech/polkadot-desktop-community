@@ -47,14 +47,14 @@ const UpdateRow = ({ productId, kind, fromVersion, toVersion }: UpdateRowProps) 
       <div className="flex min-w-0 flex-1 flex-col">
         <div className="flex items-center gap-2">
           <span className="size-1.5 shrink-0 rounded-full bg-bg-accent" aria-hidden />
-          <span className="text-sm leading-5 text-fg-primary">
+          <span className="text-sm text-fg-primary">
             {t('feature.offlineAccess.section.updateTitle', {
               modality: t(`feature.offlineAccess.section.modality.${kind}`),
             })}
           </span>
         </div>
         {showVersion(fromVersion) && showVersion(toVersion) ? (
-          <span className="text-xs leading-4 font-medium text-fg-tertiary">
+          <span className="text-xs font-medium text-fg-tertiary">
             {t('feature.offlineAccess.section.updateReady', {
               fromVersion: manifestService.formatVersion(fromVersion),
               toVersion: manifestService.formatVersion(toVersion),
@@ -84,8 +84,8 @@ export const OfflineAccessSection = ({ productId }: Props) => {
           <Import size={20} />
         </div>
         <div className="flex min-w-0 flex-1 flex-col">
-          <span className="text-sm leading-5 text-fg-primary">{t('feature.offlineAccess.section.title')}</span>
-          <span className="text-xs leading-4 font-medium text-fg-tertiary">{t('feature.offlineAccess.section.description')}</span>
+          <span className="text-sm text-fg-primary">{t('feature.offlineAccess.section.title')}</span>
+          <span className="text-xs font-medium text-fg-tertiary">{t('feature.offlineAccess.section.description')}</span>
         </div>
         <Button
           variant={pinned ? 'secondary' : 'primary'}

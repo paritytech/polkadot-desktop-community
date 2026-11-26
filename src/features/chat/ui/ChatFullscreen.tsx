@@ -433,7 +433,7 @@ const ListHeader = () => {
     <div className="shrink-0 bg-bg-surface-container p-2">
       <div className="flex w-full items-center gap-2">
         <LastChatsIcon className="size-6 shrink-0 dark:invert" aria-hidden />
-        <span className="text-sm leading-5 font-semibold text-fg-primary">{t('feature.chat.fullscreenTitle')}</span>
+        <span className="text-sm font-semibold text-fg-primary">{t('feature.chat.fullscreenTitle')}</span>
       </div>
     </div>
   );
@@ -454,7 +454,7 @@ const RecentsView = ({ sessions, selectedSession, onSelect }: RecentsViewProps) 
     <div className="flex flex-1 flex-col overflow-y-auto">
       <RecentContactsRow sessions={recentSessions.slice(0, RECENT_CHIP_COUNT)} onSelect={onSelect} />
       <div className="shrink-0 px-4 pt-1 pb-1">
-        <span className="text-sm leading-5 font-medium text-fg-secondary">{t('feature.chat.recent')}</span>
+        <span className="text-sm font-medium text-fg-secondary">{t('feature.chat.recent')}</span>
       </div>
       <RoomList sessions={sessions} selected={selectedSession} onSelect={onSelect} />
     </div>
@@ -483,13 +483,13 @@ const RequestsListView = ({ requests, selected, hideByDefault, onBack, onSelect,
           >
             <ChevronLeft className="size-4 text-fg-secondary" />
           </button>
-          <span className="min-w-0 flex-1 truncate text-sm leading-5 font-semibold text-fg-primary">
+          <span className="min-w-0 flex-1 truncate text-sm font-semibold text-fg-primary">
             {t('feature.chat.request.entryTitle')}
           </span>
         </div>
       </div>
       <div className="px-2 pt-2 pb-1">
-        <div className="rounded-lg bg-bg-surface-nested px-4 py-3 text-center text-sm leading-4.5 text-fg-secondary">
+        <div className="rounded-lg bg-bg-surface-nested px-4 py-3 text-center text-sm text-fg-secondary">
           {t('feature.chat.request.listHint')}
         </div>
       </div>

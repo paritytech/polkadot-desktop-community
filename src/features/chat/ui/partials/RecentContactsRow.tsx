@@ -32,7 +32,7 @@ const RecentChip = ({ session, onSelect }: { session: ChatSession; onSelect: Voi
       onClick={onSelect}
     >
       <Avatar name={name} size="chat-list-compact" />
-      <span className="w-full truncate text-center text-xs leading-4 text-fg-secondary">{name}</span>
+      <span className="w-full truncate text-center text-xs text-fg-secondary">{name}</span>
     </button>
   );
 };

@@ -264,7 +264,7 @@ export const Room = ({ session, initialSearch, onDeleted }: ChatConversationView
           <Avatar name={sessionName} size="chat-header" />
           <div className="flex min-w-0 flex-1 items-center gap-2 pe-4">
             <div className="flex min-w-0 flex-1 flex-col items-start justify-center">
-              <span className="w-full min-w-0 truncate text-base leading-6 font-semibold text-fg-primary">{sessionName}</span>
+              <span className="w-full min-w-0 truncate text-base font-semibold text-fg-primary">{sessionName}</span>
             </div>
             <div className="flex shrink-0 items-center gap-2">
               <Slot id={chatRoomHeaderActionsSlot} props={{ session }} />
@@ -331,7 +331,7 @@ export const Room = ({ session, initialSearch, onDeleted }: ChatConversationView
             <RoomFooterCard roomId={session.roomId} footer={footer} />
           ) : isBlocked ? (
             <div className="flex items-center justify-between gap-3 p-3">
-              <p className="text-sm leading-4.5 text-fg-secondary">{t('feature.chat.blockedNotice', { name: sessionName })}</p>
+              <p className="text-sm text-fg-secondary">{t('feature.chat.blockedNotice', { name: sessionName })}</p>
               <Button variant="ghost" size="sm" onClick={handleToggleBlocked}>
                 {t('feature.chat.unblock')}
               </Button>

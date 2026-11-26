@@ -30,10 +30,10 @@ export const Avatar = ({ label, alt, tone = 'amethyst', size = '40' }: Props) =>
     aria-label={alt ?? label}
     className={cnTw(
       'relative flex shrink-0 items-center justify-center overflow-hidden rounded-full font-semibold shadow-chrome-line select-none',
-      size === '20' && 'size-5 text-xs leading-4',
-      size === '40' && 'size-10 text-2xl leading-8',
-      size === '48' && 'size-12 text-[1.75rem] leading-9',
-      size === '56' && 'size-14 text-2xl leading-8',
+      size === '20' && 'size-5 text-xs leading-none',
+      size === '40' && 'size-10 text-2xl leading-none',
+      size === '48' && 'size-12 text-2xl leading-none',
+      size === '56' && 'size-14 text-2xl leading-none',
       tone === 'amethyst' && 'bg-avatar-bg-amethyst text-avatar-fg-amethyst',
       tone === 'opal' && 'bg-avatar-bg-opal text-avatar-fg-opal',
       tone === 'turquoise' && 'bg-avatar-bg-turquoise text-avatar-fg-turquoise',

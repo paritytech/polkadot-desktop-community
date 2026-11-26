@@ -36,10 +36,7 @@ export const PermissionDetailPage = ({ permissionId, backLabel, onBack }: Props)
       <ScrollArea>
         <div className="flex min-h-0 flex-col items-center">
           <div className="flex min-h-0 w-150 max-w-full flex-col gap-6 px-2 py-3">
-            <button
-              className="flex items-center gap-2 self-start text-sm leading-5 font-semibold text-fg-primary"
-              onClick={onBack}
-            >
+            <button className="flex items-center gap-2 self-start text-sm font-semibold text-fg-primary" onClick={onBack}>
               <ChevronLeft size={20} />
               {backLabel}
             </button>
@@ -49,17 +46,15 @@ export const PermissionDetailPage = ({ permissionId, backLabel, onBack }: Props)
                 {cloneElement(meta.icon, { size: 40 })}
               </div>
               <div className="flex flex-col gap-2">
-                <div className="text-2xl leading-8 font-semibold text-fg-primary">{t(meta.labelKey)}</div>
-                <div className="text-sm leading-5 text-fg-primary">{t(meta.descriptionKey)}</div>
+                <div className="text-2xl font-semibold text-fg-primary">{t(meta.labelKey)}</div>
+                <div className="text-sm text-fg-primary">{t(meta.descriptionKey)}</div>
               </div>
 
               <RulesCard ruleKeys={meta.ruleKeys} />
             </div>
 
             <div className="flex flex-col gap-2">
-              <div className="text-sm leading-5 font-semibold text-fg-primary">
-                {t('feature.permissionSettings.detail.appsLabel')}
-              </div>
+              <div className="text-sm font-semibold text-fg-primary">{t('feature.permissionSettings.detail.appsLabel')}</div>
               {current?.apps.length === 0 && (
                 <div className="py-4 text-center text-sm text-fg-tertiary">{t('feature.permissionSettings.detail.noApps')}</div>
               )}
@@ -89,13 +84,11 @@ const RulesCard = ({ ruleKeys }: { ruleKeys: string[] }) => {
     <div className="rounded-lg border border-stroke-primary bg-bg-surface-container p-3">
       <div className="mb-2 flex items-center gap-1">
         <Shield size={16} className="text-fg-secondary" />
-        <span className="text-sm leading-5 font-medium text-fg-secondary">
-          {t('feature.permissionSettings.detail.rulesTitle')}
-        </span>
+        <span className="text-sm font-medium text-fg-secondary">{t('feature.permissionSettings.detail.rulesTitle')}</span>
       </div>
       <ol className="flex list-decimal flex-col ps-5">
         {ruleKeys.map(key => (
-          <li key={key} className="text-sm leading-5 text-fg-primary">
+          <li key={key} className="text-sm text-fg-primary">
             {t(key)}
           </li>
         ))}
@@ -123,8 +116,8 @@ const AppIdentity = ({ productId }: { productId: string }) => {
         />
       </div>
       <div className="flex min-w-0 flex-1 flex-col">
-        <span className="truncate text-sm leading-5 font-medium text-fg-primary">{productName}</span>
-        <span className="truncate text-xs leading-4 text-fg-tertiary">
+        <span className="truncate text-sm font-medium text-fg-primary">{productName}</span>
+        <span className="truncate text-xs text-fg-tertiary">
           {/* A decision no longer carries a surface, so the base name is the whole subtitle. */}
           {baseName}
         </span>

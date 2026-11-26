@@ -23,7 +23,7 @@ export const EditHistory = ({ isOpen, originalText, entries, onClose }: EditHist
     <Dialog.Root modal open={isOpen} onOpenChange={open => !open && onClose()}>
       <Dialog.Content aria-describedby={undefined}>
         <Dialog.Title>
-          <span className="text-2xl leading-8 font-semibold text-fg-primary">{t('feature.chat.editHistory')}</span>
+          <span className="text-2xl font-semibold text-fg-primary">{t('feature.chat.editHistory')}</span>
         </Dialog.Title>
 
         <div className="flex max-h-[60dvh] flex-col gap-2 overflow-y-auto pe-2">
@@ -43,11 +43,11 @@ export const EditHistory = ({ isOpen, originalText, entries, onClose }: EditHist
 };
 
 const VersionLabel = ({ children }: { children: string }) => (
-  <span className="px-3 py-1 text-center text-sm leading-5 font-medium text-fg-secondary">{children}</span>
+  <span className="px-3 py-1 text-center text-sm font-medium text-fg-secondary">{children}</span>
 );
 
 const VersionBubble = ({ text }: { text: string }) => (
-  <div className="w-fit max-w-full self-center rounded-2xl bg-bg-surface-container-inverted px-3 py-2.5 text-base leading-5 whitespace-pre-line text-fg-primary-inverted">
+  <div className="w-fit max-w-full self-center rounded-2xl bg-bg-surface-container-inverted px-3 py-2.5 text-base whitespace-pre-line text-fg-primary-inverted">
     {text}
   </div>
 );

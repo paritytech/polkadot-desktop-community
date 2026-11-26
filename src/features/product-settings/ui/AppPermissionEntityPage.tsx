@@ -97,10 +97,7 @@ export const AppPermissionEntityPage = ({ productId, permissionId, backLabel, on
       <ScrollArea>
         <div className="flex min-h-0 flex-col items-center">
           <div className="flex min-h-0 w-150 max-w-full flex-col gap-6 px-2 py-3">
-            <button
-              className="flex items-center gap-2 self-start text-sm leading-5 font-semibold text-fg-primary"
-              onClick={onBack}
-            >
+            <button className="flex items-center gap-2 self-start text-sm font-semibold text-fg-primary" onClick={onBack}>
               <ChevronLeft size={20} />
               {backLabel}
             </button>
@@ -124,10 +121,10 @@ export const AppPermissionEntityPage = ({ productId, permissionId, backLabel, on
               </div>
 
               <div className="flex flex-col gap-2">
-                <p className="text-2xl leading-8 font-semibold text-fg-primary">
+                <p className="text-2xl font-semibold text-fg-primary">
                   {t('feature.productSettings.appPermission.title', { productName, permission: permissionLabel })}
                 </p>
-                <p className="text-sm leading-5 text-fg-primary">
+                <p className="text-sm text-fg-primary">
                   {isAliasPermission
                     ? t('feature.productSettings.aliasPermission.description')
                     : t('feature.productSettings.appPermission.description', {
@@ -224,7 +221,7 @@ const PermissionEntryLayout = ({ label, description, icon }: PermissionEntryLayo
     </div>
     <div className="flex min-w-0 flex-1 flex-col">
       <span className="truncate text-sm font-medium text-fg-primary">{label}</span>
-      <span className="truncate text-xs leading-4 text-fg-tertiary">{description}</span>
+      <span className="truncate text-xs text-fg-tertiary">{description}</span>
     </div>
   </div>
 );

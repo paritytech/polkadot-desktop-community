@@ -26,7 +26,7 @@ export const ChainConnectionRow = ({ chain, environment, onModeRequested }: Prop
   return (
     <div data-testid={TEST_IDS.networkConnectionChainRow} className="flex items-center gap-4 rounded-xl py-2 pr-3 pl-10">
       <div className="flex min-w-0 flex-1 flex-col gap-1">
-        <span className="truncate text-sm leading-5 text-fg-primary">{chain.name}</span>
+        <span className="truncate text-sm text-fg-primary">{chain.name}</span>
         <div className="flex items-center gap-1">
           {roles.map(role => (
             <Badge key={role}>{t(`feature.networkConnection.role.${role}`)}</Badge>
@@ -34,7 +34,7 @@ export const ChainConnectionRow = ({ chain, environment, onModeRequested }: Prop
           {/* A network with no bundled chain spec cannot serve a light client — say
               so rather than leaving an option that silently resolves to the other one. */}
           {!mode.lightClientAvailable && (
-            <span className="truncate text-xs leading-4 text-fg-tertiary">{t('feature.networkConnection.noLightClient')}</span>
+            <span className="truncate text-xs text-fg-tertiary">{t('feature.networkConnection.noLightClient')}</span>
           )}
         </div>
       </div>

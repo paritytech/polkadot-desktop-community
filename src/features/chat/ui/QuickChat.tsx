@@ -189,14 +189,14 @@ const QuickChatPageHeader = ({ session, onBack, onExpand }: QuickChatPageHeaderP
             <ArrowLeft className="size-4 text-fg-secondary" />
           </button>
           <Avatar name={sessionName} size="tiny" />
-          <span className="min-w-0 flex-1 truncate text-sm leading-5 font-semibold text-fg-primary">{sessionName}</span>
+          <span className="min-w-0 flex-1 truncate text-sm font-semibold text-fg-primary">{sessionName}</span>
         </>
       ) : (
         <div className="flex min-w-0 flex-1 items-center gap-2">
           <div className="flex size-6 shrink-0 items-center justify-center rounded-md bg-bg-illustration-dark">
             <ChatBubbleOvalLeftIcon className="size-4 text-fg-primary-inverted" aria-hidden />
           </div>
-          <span className="truncate text-sm leading-5 font-semibold text-fg-primary">{t('feature.chat.quickChat')}</span>
+          <span className="truncate text-sm font-semibold text-fg-primary">{t('feature.chat.quickChat')}</span>
         </div>
       )}
       <button

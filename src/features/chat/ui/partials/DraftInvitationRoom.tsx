@@ -29,10 +29,8 @@ export const DraftInvitationRoom = ({ name, onSend, onCancel, sendError }: Draft
       />
 
       <div className="flex min-h-0 flex-1 flex-col items-center justify-center px-4 py-4 text-center">
-        <p className="text-base leading-6 font-semibold text-fg-primary">
-          {t('feature.chat.request.inviteTitle', { name: displayName })}
-        </p>
-        <p className="mt-1 text-sm leading-4.5 text-fg-secondary">{t('feature.chat.request.inviteHint')}</p>
+        <p className="text-base font-semibold text-fg-primary">{t('feature.chat.request.inviteTitle', { name: displayName })}</p>
+        <p className="mt-1 text-sm text-fg-secondary">{t('feature.chat.request.inviteHint')}</p>
       </div>
 
       <div className="shrink-0 border-t border-stroke-primary">

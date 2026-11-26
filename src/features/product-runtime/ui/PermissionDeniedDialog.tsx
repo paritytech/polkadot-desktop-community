@@ -29,10 +29,10 @@ export const PermissionDeniedDialog = memo(({ permission, onOpenSettings, onClos
 
         <div className="flex w-full flex-col gap-2 py-1 text-start">
           <Dialog.Title>
-            <span className="text-2xl leading-8 font-semibold text-fg-primary">{t(`${keyBase}.title`)}</span>
+            <span className="text-2xl font-semibold text-fg-primary">{t(`${keyBase}.title`)}</span>
           </Dialog.Title>
           <Dialog.Description>
-            <span className="text-base leading-6 font-normal text-fg-primary">{t(`${keyBase}.description`)}</span>
+            <span className="text-base font-normal text-fg-primary">{t(`${keyBase}.description`)}</span>
           </Dialog.Description>
         </div>
 

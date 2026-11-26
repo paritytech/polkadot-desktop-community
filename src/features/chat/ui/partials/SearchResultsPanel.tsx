@@ -131,7 +131,7 @@ export const SearchResultsPanel = ({
 
 const SectionHeader = ({ label }: { label: string }) => (
   <div className="shrink-0 px-4 pt-3 pb-1">
-    <span className="text-sm leading-5 font-medium text-fg-secondary">{label}</span>
+    <span className="text-sm font-medium text-fg-secondary">{label}</span>
   </div>
 );
 
@@ -152,11 +152,11 @@ const SessionResultRow = ({ session, name, query, onSelect }: SessionResultRowPr
     >
       <Avatar name={name} size="chat-list-compact" />
       <div className="flex min-w-0 flex-1 flex-col">
-        <span className="min-w-0 truncate text-base leading-6 font-semibold text-fg-primary">{highlightMatch(name, query)}</span>
+        <span className="min-w-0 truncate text-base font-semibold text-fg-primary">{highlightMatch(name, query)}</span>
         {preview && (
           <div className="flex min-w-0 items-center gap-1">
             <PreviewIcon kind={previewIcon} className="text-fg-secondary" />
-            <span className="line-clamp-1 min-w-0 flex-1 text-sm leading-4.5 text-fg-secondary">{preview}</span>
+            <span className="line-clamp-1 min-w-0 flex-1 text-sm text-fg-secondary">{preview}</span>
           </div>
         )}
       </div>
@@ -180,9 +180,7 @@ const ContactResultRow = ({ username, query, disabled, onSelect }: ContactResult
   >
     <Avatar name={username} size="chat-list-compact" />
     <div className="flex min-w-0 flex-1 items-center justify-between gap-2">
-      <span className="min-w-0 flex-1 truncate text-base leading-6 font-semibold text-fg-primary">
-        {highlightMatch(username, query)}
-      </span>
+      <span className="min-w-0 flex-1 truncate text-base font-semibold text-fg-primary">{highlightMatch(username, query)}</span>
       <ChevronRight className="size-4 shrink-0 text-fg-tertiary" />
     </div>
   </button>
@@ -206,12 +204,12 @@ const MessageResultRow = ({ hit, query, onSelect }: MessageResultRowProps) => {
       <Avatar name={name} size="chat-list-compact" />
       <div className="flex min-w-0 flex-1 flex-col">
         <div className="flex w-full items-center gap-2">
-          <span className="min-w-0 flex-1 truncate text-base leading-6 font-semibold text-fg-primary">{name}</span>
-          <span className="shrink-0 text-sm leading-5 font-medium text-fg-tertiary">
+          <span className="min-w-0 flex-1 truncate text-base font-semibold text-fg-primary">{name}</span>
+          <span className="shrink-0 text-sm font-medium text-fg-tertiary">
             {chatService.formatLastMessageDate(message.timestamp)}
           </span>
         </div>
-        <span className="line-clamp-2 text-sm leading-4.5 text-fg-secondary">{highlightMatch(text, query)}</span>
+        <span className="line-clamp-2 text-sm text-fg-secondary">{highlightMatch(text, query)}</span>
       </div>
     </button>
   );

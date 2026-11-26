@@ -57,21 +57,21 @@ export const PermissionRequestAlertLayout = ({
 
         <div className="flex flex-col gap-2 py-3">
           <Dialog.Title>
-            <span className="text-2xl leading-8 font-semibold text-fg-primary">{title}</span>
+            <span className="text-2xl font-semibold text-fg-primary">{title}</span>
           </Dialog.Title>
           <Dialog.Description>
-            <span className="text-base leading-6 font-normal text-fg-primary">{description}</span>
+            <span className="text-base font-normal text-fg-primary">{description}</span>
           </Dialog.Description>
         </div>
 
         {showDomainsBlock ? (
           <div className="mb-8 flex w-full flex-col gap-2">
-            <p className="text-xs leading-4 font-normal text-fg-secondary">
+            <p className="text-xs font-normal text-fg-secondary">
               {t('feature.productPermissions.permissionRequest.domainsLabel')}
             </p>
             <div className="flex min-h-9 w-full flex-col rounded-lg border border-stroke-primary bg-bg-surface-nested p-3">
               {urlLines.map((line, index) => (
-                <p key={index} className="mb-0 text-sm leading-5 font-normal break-all text-fg-primary">
+                <p key={index} className="mb-0 text-sm font-normal break-all text-fg-primary">
                   {line}
                 </p>
               ))}

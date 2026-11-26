@@ -41,7 +41,7 @@ export const PermissionEntriesDialog = ({ open, title, icon, entries, onOpenChan
               </div>
             ) : null}
             <div className="flex min-w-0 flex-1 flex-col">
-              <span className="truncate text-sm leading-5 font-medium text-fg-primary">{entry.label}</span>
+              <span className="truncate text-sm font-medium text-fg-primary">{entry.label}</span>
             </div>
             <PermissionStatusDropdown value={entry.status} onChange={status => onStatusChange(entry.key, status)} />
           </div>

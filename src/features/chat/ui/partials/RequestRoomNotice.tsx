@@ -11,7 +11,7 @@ type RequestRoomNoticeProps = {
 export const RequestRoomNotice = ({ textId, name }: RequestRoomNoticeProps) => {
   return (
     <div className="shrink-0 border-t border-stroke-primary px-4 py-3">
-      <p className="text-sm leading-4.5 text-fg-secondary">
+      <p className="text-sm text-fg-secondary">
         <FormattedMessage id={textId} values={{ name, b: boldName }} />
       </p>
     </div>

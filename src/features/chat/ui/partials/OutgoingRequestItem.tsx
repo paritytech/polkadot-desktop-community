@@ -27,11 +27,11 @@ export const OutgoingRequestItem = ({ request, selected, onClick }: OutgoingRequ
       <Avatar name={name} size="chat-list" />
       <div className="flex min-w-0 flex-1 flex-col justify-center gap-0.5">
         <div className="flex w-full items-end gap-2">
-          <span className="max-w-full min-w-0 truncate text-base leading-6 font-semibold text-fg-primary">{name}</span>
+          <span className="max-w-full min-w-0 truncate text-base font-semibold text-fg-primary">{name}</span>
           <Timer className="size-4 shrink-0 text-fg-tertiary" />
-          <span className="ms-auto shrink-0 text-sm leading-5 font-medium text-fg-tertiary">{time}</span>
+          <span className="ms-auto shrink-0 text-sm font-medium text-fg-tertiary">{time}</span>
         </div>
-        <span className="min-w-0 truncate text-sm leading-4.5 text-fg-secondary">{request.welcomeMessage ?? ''}</span>
+        <span className="min-w-0 truncate text-sm text-fg-secondary">{request.welcomeMessage ?? ''}</span>
       </div>
     </div>
   );

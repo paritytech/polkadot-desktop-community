@@ -27,8 +27,8 @@ export const RequestConfirmDialog = ({
     <Dialog.Root modal open={isOpen} onOpenChange={open => !open && onClose()}>
       <Dialog.Content>
         <div data-testid={testId} className="flex flex-col gap-4 p-8">
-          <h3 className="text-xl leading-7 font-semibold text-fg-primary">{title}</h3>
-          <p className="text-sm leading-4.5 text-fg-secondary">{description}</p>
+          <h3 className="text-xl font-semibold text-fg-primary">{title}</h3>
+          <p className="text-sm text-fg-secondary">{description}</p>
           <div className="flex items-center justify-end gap-2">
             <Button onClick={onClose}>{cancelLabel}</Button>
             <Button variant="primary" data-testid={confirmTestId} onClick={onConfirm}>

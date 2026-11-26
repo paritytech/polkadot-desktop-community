@@ -82,8 +82,8 @@ export const SyncStatusBanner = () => {
       >
         <SyncStatusIcon status={status} />
         <div className="min-w-0 flex-1 text-start">
-          <p className="text-sm leading-5 font-medium text-fg-primary">{t(copy.titleKey)}</p>
-          <p className="text-sm leading-5 text-fg-secondary">{t(copy.subtitleKey)}</p>
+          <p className="text-sm font-medium text-fg-primary">{t(copy.titleKey)}</p>
+          <p className="text-sm text-fg-secondary">{t(copy.subtitleKey)}</p>
         </div>
       </div>
     </div>

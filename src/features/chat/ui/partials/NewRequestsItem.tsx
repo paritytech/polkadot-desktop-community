@@ -22,13 +22,11 @@ export const NewRequestsItem = ({ count, subtitle, onClick }: NewRequestsItemPro
         <MessagesSquare className="size-7 text-fg-secondary" />
       </div>
       <div className="flex min-w-0 flex-1 flex-col justify-center gap-0.5">
-        <span className="min-w-0 truncate text-base leading-6 font-semibold text-fg-primary">
-          {t('feature.chat.request.entryTitle')}
-        </span>
-        {subtitle.length > 0 && <span className="min-w-0 truncate text-sm leading-4.5 text-fg-secondary">{subtitle}</span>}
+        <span className="min-w-0 truncate text-base font-semibold text-fg-primary">{t('feature.chat.request.entryTitle')}</span>
+        {subtitle.length > 0 && <span className="min-w-0 truncate text-sm text-fg-secondary">{subtitle}</span>}
       </div>
       <span className="flex h-5 min-w-5 shrink-0 items-center justify-center rounded-full bg-bg-illustration-dark px-1">
-        <span className="text-center text-xs leading-4 font-semibold tracking-[1px] text-fg-primary-inverted">{count}</span>
+        <span className="text-center text-xs font-semibold tracking-[1px] text-fg-primary-inverted">{count}</span>
       </span>
     </div>
   );

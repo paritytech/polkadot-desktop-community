@@ -17,7 +17,7 @@ export const ProductTabHover = ({ id }: Props) => {
         <TabHoverTitle title={title} />
         <PinIndicator productId={product?.baseName ?? id} />
       </div>
-      <span className="truncate text-sm leading-4.5 text-fg-primary">{id}</span>
+      <span className="truncate text-sm text-fg-primary">{id}</span>
     </div>
   );
 };

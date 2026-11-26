@@ -15,10 +15,8 @@ export const ProductHeader = ({ name, description, iconSrc, icon }: Props) => (
       {icon}
     </AppIcon>
     <div className="flex min-w-0 flex-col justify-center">
-      <span className="truncate text-base leading-6 font-semibold text-fg-primary">{name}</span>
-      {description && description !== name ? (
-        <span className="truncate text-sm leading-5 text-fg-secondary">{description}</span>
-      ) : null}
+      <span className="truncate text-base font-semibold text-fg-primary">{name}</span>
+      {description && description !== name ? <span className="truncate text-sm text-fg-secondary">{description}</span> : null}
     </div>
   </div>
 );

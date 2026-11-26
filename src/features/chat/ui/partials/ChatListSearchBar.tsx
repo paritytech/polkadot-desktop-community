@@ -28,7 +28,7 @@ export const ChatListSearchBar = ({ query, active, inputRef, onQueryChange, onFo
           data-no-app-focus
           value={query}
           placeholder={t('feature.chat.searchByUsernameOrMessages')}
-          className="min-w-0 flex-1 bg-transparent text-sm leading-4.5 text-fg-primary outline-none placeholder:text-fg-secondary"
+          className="min-w-0 flex-1 bg-transparent text-sm text-fg-primary outline-none placeholder:text-fg-secondary"
           onFocus={onFocus}
           onKeyDown={e => {
             if (e.key === 'Escape') onEscape();

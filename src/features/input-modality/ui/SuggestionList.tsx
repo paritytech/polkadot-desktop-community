@@ -122,7 +122,7 @@ export const ProductItem = ({
 
 export const SectionHeader = ({ label, action }: { label: string; action?: ReactNode }) => (
   <div className="flex h-6 items-center gap-2 ps-2">
-    <span className="flex-1 text-xs leading-4 font-medium text-fg-secondary">{label}</span>
+    <span className="flex-1 text-xs font-medium text-fg-secondary">{label}</span>
     {action}
   </div>
 );
@@ -182,7 +182,7 @@ export const SuggestionList = ({
             action={
               <button
                 type="button"
-                className="rounded-xs px-2 py-0.5 text-xs leading-4 font-medium text-fg-link transition-colors hover:text-fg-link-hover"
+                className="rounded-xs px-2 py-0.5 text-xs font-medium text-fg-link transition-colors hover:text-fg-link-hover"
                 onMouseDown={preventBlur}
                 onClick={onClearRecent}
               >

@@ -95,7 +95,7 @@ export const FavoritesFullscreen = () => {
         <AppIcon size="24" alt="">
           <Star className="size-4" aria-hidden />
         </AppIcon>
-        <span className="flex-1 text-sm leading-5 font-semibold text-fg-primary">
+        <span className="flex-1 text-sm font-semibold text-fg-primary">
           <FormattedMessage id="feature.favorites.title" />
         </span>
         <button

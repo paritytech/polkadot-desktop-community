@@ -52,7 +52,7 @@ export const PermissionListPage = () => {
 
 const PermissionGroup = ({ title, children }: PropsWithChildren<{ title: string }>) => (
   <div className="flex flex-col gap-1">
-    <div className="text-sm leading-5 font-semibold text-fg-primary">{title}</div>
+    <div className="text-sm font-semibold text-fg-primary">{title}</div>
     <div className="flex flex-col">{children}</div>
   </div>
 );

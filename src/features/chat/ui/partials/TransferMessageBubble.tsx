@@ -40,33 +40,26 @@ export const TransferMessageBubble = ({ message, content, isMe, isSeen = false, 
       onContextMenu={onContextMenu}
     >
       <div className="flex w-full flex-col items-start gap-2 pe-1">
-        <p className={cnTw('w-full text-sm leading-5', isMe ? 'text-fg-secondary-inverted' : 'text-fg-secondary')}>
-          {headerLabel}
-        </p>
+        <p className={cnTw('w-full text-sm', isMe ? 'text-fg-secondary-inverted' : 'text-fg-secondary')}>{headerLabel}</p>
         <div
           className={cnTw(
             'flex w-full flex-col items-center justify-center rounded-xl p-4',
             isMe ? 'bg-bg-surface-nested-inverted' : 'bg-bg-surface-container',
           )}
         >
-          <p
-            className={cnTw(
-              'text-[32px] leading-9.5 font-semibold whitespace-nowrap',
-              isMe ? 'text-fg-primary-inverted' : 'text-fg-primary',
-            )}
-          >
+          <p className={cnTw('text-3xl font-semibold whitespace-nowrap', isMe ? 'text-fg-primary-inverted' : 'text-fg-primary')}>
             {formattedAmount}
           </p>
         </div>
       </div>
       <div className="flex w-full items-center gap-1">
         <DirectionIcon className={cnTw('size-3.5 shrink-0', isMe ? 'text-fg-secondary-inverted' : 'text-fg-secondary')} />
-        <p className={cnTw('text-sm leading-5 whitespace-nowrap', isMe ? 'text-fg-secondary-inverted' : 'text-fg-secondary')}>
+        <p className={cnTw('text-sm whitespace-nowrap', isMe ? 'text-fg-secondary-inverted' : 'text-fg-secondary')}>
           {directionLabel}
         </p>
       </div>
       <div className="flex w-full items-center justify-end gap-0.5">
-        <span className={cnTw('text-xs leading-4.5 whitespace-nowrap', isMe ? 'text-fg-secondary-inverted' : 'text-fg-tertiary')}>
+        <span className={cnTw('text-xs whitespace-nowrap', isMe ? 'text-fg-secondary-inverted' : 'text-fg-tertiary')}>
           {chatService.formatMessageDate(message.timestamp)}
         </span>
         {isMe && (

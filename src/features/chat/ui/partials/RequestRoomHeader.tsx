@@ -33,7 +33,7 @@ export const RequestRoomHeader = ({ name, actionIcon, actionLabel, onAction }: R
         <Avatar name={name} size="chat-header" />
         <div className="flex min-w-0 flex-1 items-center gap-2 pe-4">
           <div className="flex min-w-0 flex-1 flex-col items-start justify-center">
-            <span className="w-full min-w-0 truncate text-base leading-6 font-semibold text-fg-primary">{name}</span>
+            <span className="w-full min-w-0 truncate text-base font-semibold text-fg-primary">{name}</span>
           </div>
           <div className="flex shrink-0 items-center gap-2">
             <IconButton size="sm" label={t('feature.chat.search')}>

@@ -77,9 +77,9 @@ export const ChatItem = ({ session, isSelected, isLast, density = 'regular', ite
       <Avatar name={name} size={isCompact ? 'chat-list-compact' : 'chat-list'} />
       <div className="flex min-w-0 flex-1 flex-col">
         <div className="flex w-full items-end gap-2">
-          <span className="min-w-0 flex-1 truncate text-base leading-6 font-semibold text-fg-primary">{name}</span>
+          <span className="min-w-0 flex-1 truncate text-base font-semibold text-fg-primary">{name}</span>
           {hasLastMessage && (
-            <span className="shrink-0 text-sm leading-5 font-medium text-fg-tertiary">
+            <span className="shrink-0 text-sm font-medium text-fg-tertiary">
               {chatService.formatChatListTime(lastMessage.timestamp)}
             </span>
           )}
@@ -87,12 +87,12 @@ export const ChatItem = ({ session, isSelected, isLast, density = 'regular', ite
         <div className="flex w-full items-start gap-2">
           <div className={cnTw('flex min-w-0 flex-1 flex-col items-start', !isCompact && 'max-h-9')}>
             {hasLastMessage && isGroup && !isCompact && (
-              <span className="w-full truncate text-sm leading-4.5 text-fg-primary">{lastMessage.peer.name}</span>
+              <span className="w-full truncate text-sm text-fg-primary">{lastMessage.peer.name}</span>
             )}
             {hasLastMessage && (
               <div className="flex w-full items-center gap-1">
                 <PreviewIcon kind={previewIcon} className="text-fg-secondary" />
-                <span className="line-clamp-1 min-w-0 flex-1 text-sm leading-4.5 text-fg-secondary">{previewText}</span>
+                <span className="line-clamp-1 min-w-0 flex-1 text-sm text-fg-secondary">{previewText}</span>
               </div>
             )}
           </div>
@@ -105,7 +105,7 @@ export const ChatItem = ({ session, isSelected, isLast, density = 'regular', ite
               )}
               {unreadCount > 0 && (
                 <div className="flex h-5 min-w-5 items-center justify-center rounded-full bg-bg-illustration-dark px-1">
-                  <span className="text-center text-xs leading-4 font-semibold tracking-[1px] text-fg-primary-inverted uppercase">
+                  <span className="text-center text-xs font-semibold tracking-[1px] text-fg-primary-inverted uppercase">
                     {unreadCount}
                   </span>
                 </div>

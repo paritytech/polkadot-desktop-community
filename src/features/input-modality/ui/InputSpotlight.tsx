@@ -364,14 +364,14 @@ const InputSpotlightSurface = () => {
                   // `outline-none` cannot remove. The card is the focus surface here —
                   // a ring around a borderless field inside it just looks broken.
                   data-no-app-focus
-                  className="relative z-10 w-full bg-transparent text-base leading-6 text-fg-primary outline-none placeholder:text-fg-secondary"
+                  className="relative z-10 w-full bg-transparent text-base text-fg-primary outline-none placeholder:text-fg-secondary"
                   onChange={event => setEntry({ text: event.target.value, source: 'user' })}
                   onKeyDown={onSubmit}
                 />
                 {ghostSuffix && (
                   <span
                     aria-hidden
-                    className="pointer-events-none absolute inset-0 truncate text-base leading-6 whitespace-pre text-transparent select-none"
+                    className="pointer-events-none absolute inset-0 truncate text-base whitespace-pre text-transparent select-none"
                   >
                     {entry.text}
                     <span data-testid={TEST_IDS.inputModalityGhostSuffix} className="text-fg-secondary">
@@ -570,7 +570,7 @@ const SpotlightResults = ({ suggestions, onOpenProduct, resolvedProduct, onOpenT
         <>
           {round.candidates.length > 0 && hasSuggestions && (
             <div className="flex h-6 items-center ps-2 pt-1">
-              <span className="text-xs leading-4 font-medium text-fg-secondary">{t('feature.inputModality.fromThisScreen')}</span>
+              <span className="text-xs font-medium text-fg-secondary">{t('feature.inputModality.fromThisScreen')}</span>
             </div>
           )}
           {inputModalityService.groupByProduct(round.candidates).map((group, index) => (

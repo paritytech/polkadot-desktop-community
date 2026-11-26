@@ -82,7 +82,7 @@ export const WidgetMenu = ({
         <div className="w-52.5">
           {showSizeSection ? (
             <>
-              <div className="px-2 pt-2 pb-1 text-xs leading-4 tracking-[0.96px] text-fg-secondary uppercase">
+              <div className="px-2 pt-2 pb-1 text-xs tracking-[0.96px] text-fg-secondary uppercase">
                 {t('feature.dashboard.widgetMenu.sizeLabel')}
               </div>
 

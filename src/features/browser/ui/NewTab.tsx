@@ -99,11 +99,11 @@ export const NewTab = () => {
           {recentProducts.length > 0 && (
             <div className="flex w-full flex-col items-start gap-4">
               <div className="flex w-full items-center gap-2">
-                <h2 className="flex-1 text-2xl leading-8 font-semibold text-fg-primary">{t('feature.browser.recentlyOpened')}</h2>
+                <h2 className="flex-1 text-2xl font-semibold text-fg-primary">{t('feature.browser.recentlyOpened')}</h2>
                 <button
                   type="button"
                   data-testid={TEST_IDS.newTabClearRecents}
-                  className="flex items-center gap-1 rounded-xs px-2 py-0.5 text-xs leading-4 font-medium text-fg-link transition-colors hover:text-fg-link-hover"
+                  className="flex items-center gap-1 rounded-xs px-2 py-0.5 text-xs font-medium text-fg-link transition-colors hover:text-fg-link-hover"
                   onClick={handleClear}
                 >
                   {t('feature.browser.clearRecent')}
@@ -191,8 +191,8 @@ const RecentCard = ({ product, onOpen }: RecentCardProps) => {
         />
       </div>
       <div className="flex min-w-0 flex-col items-start">
-        <span className="w-full truncate text-sm leading-5 font-semibold text-fg-primary">{displayName}</span>
-        <span className="w-full truncate text-sm leading-4.5 text-fg-primary">{product.baseName}</span>
+        <span className="w-full truncate text-sm font-semibold text-fg-primary">{displayName}</span>
+        <span className="w-full truncate text-sm text-fg-primary">{product.baseName}</span>
       </div>
     </button>
   );
@@ -236,11 +236,11 @@ const ClearedToast = ({ secondsLeft, onUndo, onDismiss }: ClearedToastProps) => 
       )}
     >
       <Check className="mt-0.5 size-4 shrink-0 text-fg-success" />
-      <div className="flex-1 text-sm leading-5 text-fg-primary">{t('feature.browser.recentClearedTitle')}</div>
+      <div className="flex-1 text-sm text-fg-primary">{t('feature.browser.recentClearedTitle')}</div>
       <button
         type="button"
         data-testid={TEST_IDS.newTabRecentUndo}
-        className="rounded-md border border-stroke-primary px-2 py-0.5 text-xs leading-4 font-medium text-fg-secondary transition-colors hover:bg-fg-primary/5"
+        className="rounded-md border border-stroke-primary px-2 py-0.5 text-xs font-medium text-fg-secondary transition-colors hover:bg-fg-primary/5"
         onClick={onUndo}
       >
         {t('feature.browser.undoLabel', { seconds: secondsLeft })}

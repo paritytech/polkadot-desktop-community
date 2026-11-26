@@ -37,7 +37,7 @@ export const FolderItemCell = ({ iconUrl, iconNode, name, iconSize }: Props) => 
         </AppIcon>
       </span>
       <span className="flex w-full shrink-0 items-center justify-center overflow-hidden p-2">
-        <span className="max-w-full truncate text-xs leading-4 font-semibold text-fg-primary">{name}</span>
+        <span className="max-w-full truncate text-xs font-semibold text-fg-primary">{name}</span>
       </span>
     </span>
   );

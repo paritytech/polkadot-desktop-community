@@ -142,21 +142,11 @@ export const MessageBubble = ({
             ) : null}
             <div className="flex min-w-0 flex-1 flex-col justify-center">
               {quotedSenderName ? (
-                <p
-                  className={cnTw(
-                    'truncate text-xs leading-4 font-semibold',
-                    isMe ? 'text-fg-primary-inverted' : 'text-fg-primary',
-                  )}
-                >
+                <p className={cnTw('truncate text-xs font-semibold', isMe ? 'text-fg-primary-inverted' : 'text-fg-primary')}>
                   {quotedSenderName}
                 </p>
               ) : null}
-              <p
-                className={cnTw(
-                  'line-clamp-2 text-xs leading-4 font-medium',
-                  isMe ? 'text-fg-primary-inverted' : 'text-fg-primary',
-                )}
-              >
+              <p className={cnTw('line-clamp-2 text-xs font-medium', isMe ? 'text-fg-primary-inverted' : 'text-fg-primary')}>
                 {getMessagePreview(quotedMessage)}
               </p>
             </div>
@@ -167,7 +157,7 @@ export const MessageBubble = ({
         )}
         <div className={cnTw('flex w-full items-end justify-between gap-2', quotedMessage && 'ps-2 pe-1')}>
           <div className="flex min-w-0 flex-1 items-center">
-            <p className="max-w-130 text-base leading-5 whitespace-pre-line" style={{ wordBreak: 'break-word' }}>
+            <p className="max-w-130 text-base whitespace-pre-line" style={{ wordBreak: 'break-word' }}>
               <MessageText text={editedText ?? getPlainText(message.content)} />
             </p>
           </div>
@@ -175,7 +165,7 @@ export const MessageBubble = ({
             {isEdited && (
               <button
                 className={cnTw(
-                  'text-end text-xs leading-4 font-medium hover:underline',
+                  'text-end text-xs font-medium hover:underline',
                   isMe ? 'text-fg-secondary-inverted' : 'text-fg-tertiary',
                 )}
                 onClick={onViewEditHistory}
@@ -183,9 +173,7 @@ export const MessageBubble = ({
                 {t('feature.chat.edited')}
               </button>
             )}
-            <span
-              className={cnTw('text-end text-xs leading-4 font-medium', isMe ? 'text-fg-secondary-inverted' : 'text-fg-tertiary')}
-            >
+            <span className={cnTw('text-end text-xs font-medium', isMe ? 'text-fg-secondary-inverted' : 'text-fg-tertiary')}>
               {chatService.formatMessageDate(message.timestamp)}
             </span>
             {isMe && (
@@ -216,7 +204,7 @@ type ChatEventItemProps = {
 export const ChatEventItem = ({ text }: ChatEventItemProps) => (
   <div className="relative flex w-full items-center justify-center py-2">
     <div className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-stroke-secondary" />
-    <span className="relative rounded-full bg-bg-surface-main px-3 py-1 text-center text-sm leading-5 font-medium text-fg-secondary">
+    <span className="relative rounded-full bg-bg-surface-main px-3 py-1 text-center text-sm font-medium text-fg-secondary">
       {text}
     </span>
   </div>
@@ -228,6 +216,6 @@ type DateSeparatorProps = {
 
 export const DateSeparator = ({ text }: DateSeparatorProps) => (
   <div data-testid={TEST_IDS.chatDateSeparator} className="flex w-full items-center justify-center py-2">
-    <span className="text-center text-sm leading-5 font-medium text-fg-secondary">{text}</span>
+    <span className="text-center text-sm font-medium text-fg-secondary">{text}</span>
   </div>
 );

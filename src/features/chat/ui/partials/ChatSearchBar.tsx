@@ -32,7 +32,7 @@ export const ChatSearchBar = ({ query, inputRef, resultCount, resultIndex, onQue
           value={query}
           /* eslint-disable-next-line formatjs/no-literal-string-in-jsx -- v1 search; not localized yet */
           placeholder="Search in chat..."
-          className="min-w-0 flex-1 bg-transparent text-sm leading-5 text-fg-primary outline-none placeholder:text-fg-tertiary"
+          className="min-w-0 flex-1 bg-transparent text-sm text-fg-primary outline-none placeholder:text-fg-tertiary"
           onChange={e => onQueryChange(e.target.value)}
         />
         {hasQuery && (
@@ -44,7 +44,7 @@ export const ChatSearchBar = ({ query, inputRef, resultCount, resultIndex, onQue
           </button>
         )}
         {canNavigate && (
-          <span className="shrink-0 text-xs leading-4 font-medium text-fg-tertiary">
+          <span className="shrink-0 text-xs font-medium text-fg-tertiary">
             {/* eslint-disable-next-line formatjs/no-literal-string-in-jsx -- numeric counter */}
             {resultIndex + 1} / {resultCount}
           </span>

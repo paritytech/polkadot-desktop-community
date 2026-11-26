@@ -79,7 +79,7 @@ export const AddToFavoritesDialog = ({ isOpen, onClose }: Props) => {
       }}
     >
       <Dialog.Content height="tall" width="md" aria-describedby={undefined} data-testid={TEST_IDS.addToFavoritesDialog}>
-        <h2 className="text-lg leading-7 font-semibold text-fg-primary">
+        <h2 className="text-lg font-semibold text-fg-primary">
           <FormattedMessage id="feature.favorites.addDialog.title" />
         </h2>
 

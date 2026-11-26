@@ -54,8 +54,8 @@ const TYPOGRAPHY_CSS: Record<TypographyStyle, CSSProperties> = {
     fontWeight: '400',
   },
   BodySmallRegular: {
-    fontSize: '0.625rem',
-    lineHeight: '0.875rem',
+    fontSize: '0.6875rem',
+    lineHeight: '1rem',
     fontWeight: '400',
   },
 };

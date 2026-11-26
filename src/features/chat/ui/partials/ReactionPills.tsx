@@ -35,13 +35,10 @@ export const ReactionPills = ({ reactions, isMe, onToggleReaction }: ReactionPil
                 )}
                 onClick={() => onToggleReaction(reaction.emoji)}
               >
-                <span className="text-[20px] leading-none">{reaction.emoji}</span>
+                <span className="text-xl leading-none">{reaction.emoji}</span>
                 {reaction.count > 1 && (
                   <span
-                    className={cnTw(
-                      'min-w-3 text-center text-sm leading-5',
-                      isMe ? 'text-fg-secondary-inverted' : 'text-fg-secondary',
-                    )}
+                    className={cnTw('min-w-3 text-center text-sm', isMe ? 'text-fg-secondary-inverted' : 'text-fg-secondary')}
                   >
                     {reaction.count}
                   </span>

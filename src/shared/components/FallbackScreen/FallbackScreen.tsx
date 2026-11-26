@@ -20,12 +20,10 @@ export const FallbackScreen = () => {
         <div className="flex flex-col items-center justify-center pb-4">
           <XOctagon className="h-8 w-8 text-fg-primary" strokeWidth={1} />
         </div>
-        <h1 className="w-full text-center text-base leading-6 font-medium text-fg-primary">
-          {t('common.error.somethingWentWrong')}
-        </h1>
-        <p className="w-full text-center text-sm leading-5 font-normal text-fg-secondary">{t('common.error.tryAgain')}</p>
+        <h1 className="w-full text-center text-base font-medium text-fg-primary">{t('common.error.somethingWentWrong')}</h1>
+        <p className="w-full text-center text-sm font-normal text-fg-secondary">{t('common.error.tryAgain')}</p>
         {isElectron() && (
-          <p className="w-full text-center text-xs leading-4 font-normal text-fg-tertiary">{t('common.error.logsHelpText')}</p>
+          <p className="w-full text-center text-xs font-normal text-fg-tertiary">{t('common.error.logsHelpText')}</p>
         )}
       </div>
       <div className="flex flex-col items-center gap-4 self-stretch" style={{ appRegion: 'no-drag' }}>
