@@ -103,7 +103,12 @@ export const ProductItem = ({
         <HighlightMatch text={product.baseName} query={query} />
       </span>
       {onRemove && (
-        <span className={cnTw('flex shrink-0', isActive ? 'opacity-100' : 'opacity-0 group-hover:opacity-100')}>
+        <span
+          className={cnTw(
+            'flex shrink-0 transition-opacity motion-reduce:transition-none',
+            isActive ? 'opacity-100' : 'opacity-0 group-hover:opacity-100',
+          )}
+        >
           <IconButton size="sm" label={t('common.aria.close')} tabIndex={-1} onMouseDown={preventBlur} onClick={handleRemove}>
             <X />
           </IconButton>
