@@ -1,12 +1,11 @@
 import { useNavigate } from '@tanstack/react-router';
-import { ArrowLeft, MessagesSquare } from 'lucide-react';
+import { MessageCircle, MessagesSquare } from 'lucide-react';
 import { type PropsWithChildren, memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useObservable } from 'react-rx';
 import { of } from 'rxjs';
 
-import ChatBubbleOvalLeftIcon from '@/shared/assets/images/header/chat-bubble-oval-left.svg?jsx';
 import MaximizeIcon from '@/shared/assets/images/header/maximize.svg?jsx';
-import { DismissOverlay, IconButton, Popover } from '@/shared/components';
+import { AppIcon, DismissOverlay, EmptyState, IconButton, PaneHeader, Popover } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { type ChatSession, type RoomFooter, useProductSessions } from '@/domains/chat';
@@ -23,7 +22,6 @@ import { ChatItem } from './partials/ChatItem';
 import { MessageFlow } from './partials/MessageFlow';
 import { MessageInput } from './partials/MessageInput';
 import { NewRequestsItem } from './partials/NewRequestsItem';
-import { NoData } from './partials/NoData';
 import { OutgoingRequestItem } from './partials/OutgoingRequestItem';
 import { RoomFooterCard } from './partials/RoomFooterCard';
 
@@ -126,7 +124,7 @@ export const QuickChat = memo(({ open, onOpenChange, children }: QuickChatProps)
       <DismissOverlay open={open} testId={TEST_IDS.dismissOverlay} onDismiss={() => onOpenChange(false)} />
       <Popover.Trigger asChild>{children}</Popover.Trigger>
       <Popover.Content sideOffset={8} align="end" alignOffset={8}>
-        <div data-testid={TEST_IDS.quickChatPopover} className="flex h-137.5 w-89 flex-col overflow-hidden">
+        <div data-testid={TEST_IDS.quickChatPopover} className="flex h-136 w-89 flex-col overflow-hidden">
           {showList ? (
             <ChatList
               chatListEntries={chatListEntries}
@@ -147,7 +145,7 @@ export const QuickChat = memo(({ open, onOpenChange, children }: QuickChatProps)
               </div>
 
               {selectedSession && footer.type !== 'none' ? (
-                <div className="shrink-0 border-t border-stroke-primary p-1">
+                <div className="shrink-0 border-t border-stroke-primary p-2">
                   {footer.type === 'card' ? (
                     <RoomFooterCard roomId={selectedSession.roomId} footer={footer} />
                   ) : (
@@ -178,27 +176,26 @@ const QuickChatPageHeader = ({ session, onBack, onExpand }: QuickChatPageHeaderP
   const sessionName = session ? chatService.formatPeerName(rawSessionName, session.roomId) : '';
 
   return (
-    <div className="flex h-12 shrink-0 items-center gap-2 p-2">
-      {onBack ? (
-        <>
-          <IconButton label={t('common.action.back')} onClick={onBack}>
-            <ArrowLeft aria-hidden />
-          </IconButton>
+    <PaneHeader
+      variant="list"
+      icon={
+        session ? (
           <Avatar name={sessionName} size="24" />
-          <span className="min-w-0 flex-1 truncate text-sm font-semibold text-fg-primary">{sessionName}</span>
-        </>
-      ) : (
-        <div className="flex min-w-0 flex-1 items-center gap-2">
-          <div className="flex size-6 shrink-0 items-center justify-center rounded-md bg-bg-illustration-dark">
-            <ChatBubbleOvalLeftIcon className="size-4 text-fg-primary-inverted" aria-hidden />
-          </div>
-          <span className="truncate text-sm font-semibold text-fg-primary">{t('feature.chat.quickChat')}</span>
-        </div>
-      )}
-      <IconButton data-testid={TEST_IDS.quickChatExpandButton} label={t('feature.chat.viewMore')} onClick={() => onExpand()}>
-        <MaximizeIcon aria-hidden />
-      </IconButton>
-    </div>
+        ) : (
+          <AppIcon size="24" alt="">
+            <MessageCircle className="size-4" />
+          </AppIcon>
+        )
+      }
+      actions={
+        <IconButton data-testid={TEST_IDS.quickChatExpandButton} label={t('feature.chat.viewMore')} onClick={() => onExpand()}>
+          <MaximizeIcon aria-hidden />
+        </IconButton>
+      }
+      onBack={onBack}
+    >
+      {session ? sessionName : t('feature.chat.quickChat')}
+    </PaneHeader>
   );
 };
 
@@ -219,16 +216,14 @@ const ChatList = ({
     <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
       <QuickChatPageHeader onExpand={onExpand} />
 
-      <div className="min-h-0 flex-1 overflow-y-auto">
+      <div className="flex min-h-0 flex-1 flex-col overflow-y-auto">
         <SyncStatusBanner />
         {chatListEntries.length === 0 ? (
-          <div className="flex h-full items-center justify-center">
-            <NoData
-              icon={MessagesSquare}
-              title={t('feature.chat.noChatsYet')}
-              description={t('feature.chat.yourChatsWillAppear')}
-            />
-          </div>
+          <EmptyState
+            icon={<MessagesSquare />}
+            title={t('feature.chat.noChatsYet')}
+            description={t('feature.chat.yourChatsWillAppear')}
+          />
         ) : (
           chatListEntries.map(entry => {
             if (entry.kind === 'incoming') {

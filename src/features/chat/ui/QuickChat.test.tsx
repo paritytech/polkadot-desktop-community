@@ -65,4 +65,19 @@ describe('QuickChat', () => {
 
     expect(await screen.findByTestId(TEST_IDS.chatMessageInput)).toBeInTheDocument();
   });
+
+  it('heads a room with a back button and the expand control, and returns to the list on back', async () => {
+    await renderQuickChat(room);
+    await screen.findByTestId(TEST_IDS.chatMessageInput);
+
+    expect(screen.queryByText('Quick Chat')).toBeNull();
+    expect(screen.getByTestId(TEST_IDS.quickChatExpandButton)).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Back' }));
+
+    expect(await screen.findByText('Quick Chat')).toBeInTheDocument();
+    expect(screen.getByTestId(TEST_IDS.chatRoomItem)).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Back' })).toBeNull();
+    expect(screen.getByTestId(TEST_IDS.quickChatExpandButton)).toBeInTheDocument();
+  });
 });
