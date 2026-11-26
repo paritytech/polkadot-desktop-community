@@ -20,10 +20,17 @@ type Props = {
   label: string;
   alt?: string;
   tone?: AvatarTone;
-  size?: '20' | '40' | '48' | '56';
+  size?: '20' | '24' | '40' | '48' | '56';
 };
 
-/** A letter avatar: the first letter of `label` on its tone. */
+const graphemes = new Intl.Segmenter();
+
+function firstGrapheme(label: string) {
+  const first = graphemes.segment(label.trim())[Symbol.iterator]().next().value?.segment;
+  return first?.toLocaleUpperCase() ?? '?';
+}
+
+/** A letter avatar: the first grapheme of `label` on its tone. */
 export const Avatar = ({ label, alt, tone = 'amethyst', size = '40' }: Props) => (
   <span
     role="img"
@@ -31,6 +38,7 @@ export const Avatar = ({ label, alt, tone = 'amethyst', size = '40' }: Props) =>
     className={cnTw(
       'relative flex shrink-0 items-center justify-center overflow-hidden rounded-full font-semibold shadow-chrome-line select-none',
       size === '20' && 'size-5 text-xs leading-none',
+      size === '24' && 'size-6 text-xs leading-none',
       size === '40' && 'size-10 text-2xl leading-none',
       size === '48' && 'size-12 text-2xl leading-none',
       size === '56' && 'size-14 text-2xl leading-none',
@@ -47,6 +55,6 @@ export const Avatar = ({ label, alt, tone = 'amethyst', size = '40' }: Props) =>
     )}
   >
     {/* eslint-disable-next-line formatjs/no-literal-string-in-jsx -- a placeholder glyph, not copy */}
-    {label.trim().charAt(0).toLocaleUpperCase() || '?'}
+    {firstGrapheme(label)}
   </span>
 );

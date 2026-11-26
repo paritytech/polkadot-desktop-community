@@ -35,4 +35,22 @@ describe('Avatar', () => {
 
     expect(screen.getByRole('img')).toHaveTextContent('G');
   });
+
+  it('draws a whole emoji sequence', () => {
+    render(<Avatar label="👨‍👩‍👧 Family" />);
+
+    expect(screen.getByRole('img')).toHaveTextContent('👨‍👩‍👧');
+  });
+
+  it('upper-cases an accented letter', () => {
+    render(<Avatar label="émile" />);
+
+    expect(screen.getByRole('img')).toHaveTextContent('É');
+  });
+
+  it('sizes 24 as size-6', () => {
+    render(<Avatar label="goldie" size="24" />);
+
+    expect(screen.getByRole('img')).toHaveClass('size-6');
+  });
 });
