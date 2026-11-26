@@ -50,7 +50,7 @@ const FabButton = ({ testId, count, onClick, children }: FabButtonProps) => (
   <button
     data-testid={testId}
     className={cnTw(
-      'pointer-events-auto relative flex size-11 items-center justify-center rounded-full',
+      'pointer-events-auto relative flex size-control items-center justify-center rounded-full',
       'border border-stroke-primary bg-bg-surface-container shadow-[0px_4px_12px_var(--shadow-soft)]',
       'transition-colors hover:bg-bg-selection-container-hover',
     )}

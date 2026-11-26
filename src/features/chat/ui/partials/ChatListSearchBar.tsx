@@ -1,6 +1,7 @@
 import { Search, X } from 'lucide-react';
 import { type Ref } from 'react';
 
+import { IconButton } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 
@@ -19,7 +20,7 @@ export const ChatListSearchBar = ({ query, active, inputRef, onQueryChange, onFo
 
   return (
     <div className="shrink-0 px-2 pb-2">
-      <div className="flex min-h-9 items-center gap-2 rounded-md border border-stroke-primary bg-bg-surface-nested px-3 py-2">
+      <div className="flex h-control items-center gap-2 rounded-md border border-stroke-primary bg-bg-surface-nested px-3">
         <Search strokeWidth={1.75} className="size-5 shrink-0 text-fg-tertiary" />
         <input
           ref={inputRef}
@@ -36,13 +37,9 @@ export const ChatListSearchBar = ({ query, active, inputRef, onQueryChange, onFo
           onChange={e => onQueryChange(e.target.value)}
         />
         {active && (
-          <button
-            className="flex size-5 shrink-0 items-center justify-center rounded-full text-fg-tertiary transition-colors hover:text-fg-secondary"
-            aria-label={t('common.aria.clear')}
-            onClick={onClear}
-          >
+          <IconButton size="sm" label={t('common.aria.clear')} onClick={onClear}>
             <X strokeWidth={1.75} className="size-4" />
-          </button>
+          </IconButton>
         )}
       </div>
     </div>

@@ -23,7 +23,7 @@ export const ChatSearchBar = ({ query, inputRef, resultCount, resultIndex, onQue
 
   return (
     <div className="flex h-12 shrink-0 items-center gap-2 border-b border-stroke-primary bg-bg-surface-container px-2">
-      <div className="flex min-h-8 min-w-0 flex-1 items-center gap-2 rounded-full bg-bg-action-secondary px-3">
+      <div className="flex h-control min-w-0 flex-1 items-center gap-2 rounded-full bg-bg-action-secondary px-3">
         <Search strokeWidth={1.75} className="size-4 shrink-0 text-fg-tertiary" />
         <input
           ref={inputRef}
@@ -36,12 +36,9 @@ export const ChatSearchBar = ({ query, inputRef, resultCount, resultIndex, onQue
           onChange={e => onQueryChange(e.target.value)}
         />
         {hasQuery && (
-          <button
-            className="flex size-5 shrink-0 items-center justify-center rounded-full text-fg-tertiary transition-colors hover:text-fg-secondary"
-            onClick={() => onQueryChange('')}
-          >
+          <IconButton size="sm" label={t('common.aria.clear')} onClick={() => onQueryChange('')}>
             <X strokeWidth={1.75} className="size-4" />
-          </button>
+          </IconButton>
         )}
         {canNavigate && (
           <span className="shrink-0 text-xs font-medium text-fg-tertiary">
