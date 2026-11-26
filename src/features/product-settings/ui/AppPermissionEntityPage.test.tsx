@@ -61,7 +61,7 @@ const Providers = ({ children }: PropsWithChildren) => <TranslationProvider>{chi
 const renderPage = async (permissionId = 'Microphone') => {
   const result = render(
     <Providers>
-      <AppPermissionEntityPage productId="hack3m.dot" permissionId={permissionId} backLabel="Back" onBack={() => {}} />
+      <AppPermissionEntityPage productId="hack3m.dot" permissionId={permissionId} onBack={() => {}} />
     </Providers>,
   );
   await screen.findAllByTestId(TEST_IDS.permissionRow);

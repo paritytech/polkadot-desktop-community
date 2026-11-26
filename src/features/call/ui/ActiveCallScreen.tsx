@@ -1,6 +1,7 @@
 import { MicOff, Settings } from 'lucide-react';
 import { type ReactNode, type SyntheticEvent, useCallback, useEffect, useRef, useState } from 'react';
 
+import { Button, IconButton } from '@/shared/components';
 import { cnTw } from '@/shared/utils';
 import { type PendingUpgrade } from '@/domains/chat';
 
@@ -291,14 +292,11 @@ export const ActiveCallScreen = ({
 
       {/* Settings gear — top-right, above the video scrim; opens the call-settings
           device picker. Present on both audio and video layouts. */}
-      <button
-        type="button"
-        aria-label={settingsLabel}
-        className="absolute end-4 top-4 z-30 rounded-full p-2 text-white/90 hover:bg-white/10"
-        onClick={onOpenSettings}
-      >
-        <Settings className="size-5" />
-      </button>
+      <span className="absolute end-4 top-4 z-30 flex">
+        <IconButton label={settingsLabel} onClick={onOpenSettings}>
+          <Settings />
+        </IconButton>
+      </span>
 
       {showVideoStage ? (
         <>
@@ -373,23 +371,19 @@ export const ActiveCallScreen = ({
             <h2 className="mb-2 text-lg font-semibold text-fg-primary">{switchTitle}</h2>
             <p className="mb-6 text-sm text-fg-primary/70">{switchBody}</p>
             <div className="flex gap-3">
-              <button
-                type="button"
-                className="flex-1 rounded-lg bg-bg-action-secondary py-2 text-sm font-medium text-fg-primary hover:bg-bg-action-secondary-hover"
-                onClick={() => setShowSwitchDialog(false)}
-              >
+              <Button variant="secondary" block onClick={() => setShowSwitchDialog(false)}>
                 {switchCancelLabel}
-              </button>
-              <button
-                type="button"
-                className="flex-1 rounded-lg bg-bg-action-primary py-2 text-sm font-medium text-fg-primary-inverted hover:bg-bg-action-primary-hover"
+              </Button>
+              <Button
+                variant="primary"
+                block
                 onClick={() => {
                   setShowSwitchDialog(false);
                   onRequestVideoUpgrade();
                 }}
               >
                 {switchConfirmLabel}
-              </button>
+              </Button>
             </div>
           </div>
         </div>
@@ -403,20 +397,12 @@ export const ActiveCallScreen = ({
           <div className="w-full max-w-sm rounded-xl bg-bg-surface-container p-6 shadow-lg">
             <h2 className="mb-6 text-lg font-semibold text-fg-primary">{upgradeRequestTitle}</h2>
             <div className="flex gap-3">
-              <button
-                type="button"
-                className="flex-1 rounded-lg bg-bg-action-secondary py-2 text-sm font-medium text-fg-primary hover:bg-bg-action-secondary-hover"
-                onClick={onDeclineVideoUpgrade}
-              >
+              <Button variant="secondary" block onClick={onDeclineVideoUpgrade}>
                 {upgradeCancelLabel}
-              </button>
-              <button
-                type="button"
-                className="flex-1 rounded-lg bg-bg-action-primary py-2 text-sm font-medium text-fg-primary-inverted hover:bg-bg-action-primary-hover"
-                onClick={onAcceptVideoUpgrade}
-              >
+              </Button>
+              <Button variant="primary" block onClick={onAcceptVideoUpgrade}>
                 {upgradeConfirmLabel}
-              </button>
+              </Button>
             </div>
           </div>
         </div>

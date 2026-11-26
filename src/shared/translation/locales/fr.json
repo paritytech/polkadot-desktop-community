@@ -22,7 +22,9 @@
       "all": "Tout",
       "electronics": "Électronique",
       "fashion": "Mode",
-      "downloadLogs": "Télécharger les journaux"
+      "downloadLogs": "Télécharger les journaux",
+      "copied": "Copié",
+      "copyFailed": "Échec de la copie"
     },
     "label": {
       "signer": "Signataire",
@@ -114,6 +116,7 @@
       "newTab": "Nouvel onglet",
       "newTabPrompt": "Saisissez une adresse {tld}",
       "closeTab": "Fermer l'onglet",
+      "tabsAria": "Onglets ouverts",
       "signTransaction": "Signer la transaction",
       "signingRequestTitle": "Demande de signature {call}",
       "operationTitle": {
@@ -240,6 +243,7 @@
       "results": "Résultats ({count})",
       "recent": "Récent",
       "clear": "Effacer",
+      "moreReactions": "Plus de réactions",
       "contacts": "Contacts",
       "noMessages": "Aucun message pour l'instant",
       "thisIsChat": "Ceci est un chat",
@@ -310,8 +314,6 @@
         "tabApps": "Apps",
         "groupChatsAndContacts": "Chats et contacts",
         "groupMessages": "Messages",
-        "recent": "Récent",
-        "clear": "Effacer",
         "appsComingSoon": "La recherche d'apps arrive bientôt",
         "noResultsTitle": "Aucun résultat",
         "noResultsHint": "Essayez d'ajuster votre recherche"
@@ -373,7 +375,10 @@
           "tapToCallBack": "Appuyez pour rappeler",
           "tapToCallAgain": "Appuyez pour rappeler à nouveau"
         }
-      }
+      },
+      "searchPrevious": "Résultat précédent",
+      "searchNext": "Résultat suivant",
+      "roomActions": "Actions de la discussion"
     },
     "productActionsMenu": {
       "trigger": "Actions du produit",
@@ -407,7 +412,8 @@
           "title": "Votre compte est encore en cours de configuration",
           "subtitle": "Réessayez plus tard"
         }
-      }
+      },
+      "networkLabel": "Réseau"
     },
     "dashboard": {
       "title": "Tableau de bord",
@@ -498,7 +504,8 @@
         "cleanup": "Nettoyer le tableau de bord",
         "reload": "Recharger le widget",
         "removeWidget": "Retirer le widget"
-      }
+      },
+      "home": "Accueil"
     },
     "ticketApp": {
       "title": "Ticket App",
@@ -718,7 +725,6 @@
       "navItem": "Autorisations",
       "heading": "Autorisations",
       "subheading": "Examinez et gérez l'accès des apps aux fonctions et aux données",
-      "categoryHeading": "{name} :",
       "appCount": "{count, plural, =0 {Aucune app} one {# app} other {# apps}}",
       "category": {
         "device": "Accès à l'appareil et au système",
@@ -732,7 +738,7 @@
       },
       "detail": {
         "rulesTitle": "Règles et garde-fous",
-        "appsLabel": "Apps :",
+        "appsLabel": "Apps",
         "noApps": "Aucune app n'a demandé cette autorisation",
         "allowedFor": "Autorisé pour {modalities}",
         "appSubtitle": "{baseName} • {allowed}"

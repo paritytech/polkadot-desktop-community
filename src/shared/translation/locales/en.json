@@ -22,7 +22,9 @@
       "all": "All",
       "electronics": "Electronics",
       "fashion": "Fashion",
-      "downloadLogs": "Download Logs"
+      "downloadLogs": "Download Logs",
+      "copied": "Copied",
+      "copyFailed": "Copy failed"
     },
     "label": {
       "signer": "Signer",
@@ -114,6 +116,7 @@
       "newTab": "New tab",
       "newTabPrompt": "Enter {tld} address",
       "closeTab": "Close tab",
+      "tabsAria": "Open tabs",
       "signTransaction": "Sign transaction",
       "signingRequestTitle": "{call} signing request",
       "operationTitle": {
@@ -235,12 +238,21 @@
       "searchMessages": "Messages",
       "sayHelloOptional": "Say hello... (optional)",
       "sending": "Sending...",
+      "composer": {
+        "send": "Send"
+      },
       "sendRequest": "Send Request",
       "search": "Search",
+      "inChatSearch": {
+        "placeholder": "Search in chat...",
+        "noMatches": "No matching messages"
+      },
       "noResults": "No results found for \"{query}\"",
       "results": "Results ({count})",
       "recent": "Recent",
       "clear": "Clear",
+      "moreReactions": "More reactions",
+      "messageActions": "Message actions",
       "contacts": "Contacts",
       "noMessages": "No Messages Yet",
       "thisIsChat": "This is a chat",
@@ -311,8 +323,6 @@
         "tabApps": "Apps",
         "groupChatsAndContacts": "Chats and contacts",
         "groupMessages": "Messages",
-        "recent": "Recent",
-        "clear": "Clear",
         "appsComingSoon": "App search is coming soon",
         "noResultsTitle": "No results",
         "noResultsHint": "Try to adjust your search"
@@ -374,6 +384,16 @@
           "tapToCallBack": "Tap to call back",
           "tapToCallAgain": "Tap to call again"
         }
+      },
+      "searchPrevious": "Previous match",
+      "searchNext": "Next match",
+      "roomActions": "Chat actions",
+      "scroll": {
+        "toBottom": "Scroll to latest",
+        "toReaction": "Scroll to reaction"
+      },
+      "reactions": {
+        "you": "You"
       }
     },
     "productActionsMenu": {
@@ -408,7 +428,8 @@
           "title": "Your account is still being set up",
           "subtitle": "Please try again later"
         }
-      }
+      },
+      "networkLabel": "Network"
     },
     "dashboard": {
       "title": "Dashboard",
@@ -499,7 +520,8 @@
         "cleanup": "Cleanup Dashboard",
         "reload": "Reload widget",
         "removeWidget": "Remove Widget"
-      }
+      },
+      "home": "Home"
     },
     "ticketApp": {
       "title": "Ticket App",
@@ -719,7 +741,6 @@
       "navItem": "Permissions",
       "heading": "Permissions",
       "subheading": "Review and manage app access to features and data",
-      "categoryHeading": "{name}:",
       "appCount": "{count, plural, =0 {No apps} one {# app} other {# apps}}",
       "category": {
         "device": "Device & System Access",
@@ -733,7 +754,7 @@
       },
       "detail": {
         "rulesTitle": "Rules & Safeguards",
-        "appsLabel": "Apps:",
+        "appsLabel": "Apps",
         "noApps": "No apps have requested this permission",
         "allowedFor": "Allowed for {modalities}",
         "appSubtitle": "{baseName} • {allowed}"

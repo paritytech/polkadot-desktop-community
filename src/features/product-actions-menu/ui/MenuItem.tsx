@@ -1,28 +1,26 @@
-import { DropdownMenu } from '@novasamatech/tr-ui';
 import { type ReactNode, memo } from 'react';
 
+import { DropdownMenu } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
 
 type Props = {
   icon: ReactNode;
   label: ReactNode;
   onSelect: VoidFunction;
-  variant?: 'default' | 'destructive';
   testId?: string;
 };
 
-export const MenuItem = memo<Props>(({ icon, label, onSelect, variant = 'default', testId }) => {
+export const MenuItem = memo<Props>(({ icon, label, onSelect, testId }) => {
   return (
     <DropdownMenu.Item
       data-testid={testId ?? TEST_IDS.productActionsMenuItem}
-      variant={variant}
       onSelect={event => {
         event.preventDefault();
         onSelect();
       }}
     >
       {icon}
-      <span className="flex-1 text-sm leading-5 font-medium">{label}</span>
+      <span className="flex-1">{label}</span>
     </DropdownMenu.Item>
   );
 });

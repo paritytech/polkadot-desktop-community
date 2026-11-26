@@ -38,7 +38,7 @@ export const AttachmentPicker = ({ attachment, recipients, onPick }: Props) => {
             key={recipient.productId}
             type="button"
             data-testid={TEST_IDS.inputModalityPickerOption}
-            className="flex items-center gap-2 rounded-xl px-2 py-2 text-left transition-colors hover:bg-bg-selection-container-hover"
+            className="flex h-control items-center gap-2 rounded-xl px-2 text-left transition-colors hover:bg-bg-selection-container-hover"
             onClick={() => onPick(recipient.productId)}
           >
             <ProductIdentity prominent productId={recipient.productId} />

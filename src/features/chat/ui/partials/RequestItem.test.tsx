@@ -58,7 +58,7 @@ describe('RequestItem', () => {
     expect(onSelect).toHaveBeenCalledOnce();
 
     onSelect.mockClear();
-    await userEvent.click(screen.getByRole('button'));
+    await userEvent.click(screen.getByRole('button', { name: 'Decline' }));
     expect(onDecline).toHaveBeenCalledOnce();
     expect(onSelect).not.toHaveBeenCalled();
   });

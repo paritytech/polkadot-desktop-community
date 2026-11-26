@@ -1,0 +1,401 @@
+/*
+ * The app's colours, the chrome's and the content's, one value per palette and mode. The palette is the data-theme
+ * attribute on <html>; the mode is the dark class on it. The content tokens (--fg-*, --bg-*, --stroke-*) are mixes of
+ * the chrome palette, so a palette block tints both. The APCA targets are Lc 75 for body text and control labels, 60 for
+ * tertiary and status text, 45 for non-text marks and tertiary text on inverted surfaces, and 30 for disabled text.
+ * The floating layers draw on --chrome-surface (anchored layers) and --chrome-glass (dialogs, toasts), and keep a 0.01 ms
+ * exit animation under reduced motion because Radix unmounts a closing layer on animationend.
+ */
+:root {
+  --chrome-top: #ffffff;
+  --chrome-bottom: #fafafb;
+  --chrome-text: #0b0c0f;
+  --chrome-text-muted: #393b42;
+  --chrome-text-faint: #acaeb4;
+  --chrome-well: rgba(0, 0, 0, 0.05);
+  --chrome-well-strong: rgba(0, 0, 0, 0.06);
+  --chrome-fill: rgba(0, 0, 0, 0.05);
+  --chrome-fill-strong: #ffffff;
+  --chrome-line: rgba(0, 0, 0, 0.08);
+  --chrome-ring: rgba(0, 0, 0, 0.14);
+  --chrome-focus: #2f6fe4;
+  --chrome-ok: #15803d;
+  --chrome-glass: linear-gradient(180deg, var(--chrome-top) 0%, var(--chrome-bottom) 100%);
+  --chrome-shadow-raised: inset 0 0 0 1px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.14);
+  --chrome-shadow-inset: inset 0 1px 2px rgba(0, 0, 0, 0.06), inset 0 0 0 1px rgba(0, 0, 0, 0.03);
+  --chrome-shadow-pill: inset 0 0 0 1px var(--chrome-ring), var(--chrome-shadow-inset);
+  --chrome-shadow-edge: inset 0 -1px 0 var(--chrome-line);
+  --chrome-shadow-track: var(--chrome-shadow-inset), inset 0 0 0 1px var(--chrome-line);
+  --chrome-ring-strong: rgba(0, 0, 0, 0.48);
+  --chrome-danger-fill: #c81e1e;
+  --chrome-danger-fill-strong: #b91c1c;
+  --chrome-danger-ring: #b91c1c;
+  --chrome-danger-text: #ffffff;
+  --chrome-switch-track: rgba(0, 0, 0, 0.12);
+  --chrome-knob: #ffffff;
+  --chrome-primary-top: #2c2e34;
+  --chrome-primary-bottom: #0b0c0f;
+  --chrome-on-primary: #f4f4f5;
+  --chrome-primary: linear-gradient(180deg, var(--chrome-primary-top) 0%, var(--chrome-primary-bottom) 100%);
+  --chrome-primary-hover: linear-gradient(180deg, var(--chrome-primary-top) 0%, var(--chrome-primary-top) 100%);
+  --chrome-shadow-primary: inset 0 1px 0 rgba(255, 255, 255, 0.16), 0 1px 3px rgba(0, 0, 0, 0.2);
+  --chrome-shadow-knob: 0 1px 2px rgba(0, 0, 0, 0.25);
+  --chrome-shadow-ring: inset 0 0 0 1px var(--chrome-ring);
+  --chrome-shadow-line: inset 0 0 0 1px var(--chrome-line);
+  --chrome-shadow-selected: inset 0 0 0 2px var(--chrome-ring-strong);
+  --chrome-shadow-danger: inset 0 0 0 1px var(--chrome-danger-ring);
+  --chrome-surface: color-mix(in srgb, color-mix(in srgb, var(--chrome-top) 75%, var(--chrome-bottom)) 97%, transparent);
+  --chrome-scrim: rgba(0, 0, 0, 0.32);
+  --chrome-danger-ink: #a11b1b;
+  --chrome-err: #c81e1e;
+  --chrome-info: #2f6fe4;
+  --chrome-shadow-pop: inset 0 0 0 1px rgba(0, 0, 0, 0.06), 0 24px 48px rgba(0, 0, 0, 0.16), 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+:root.dark {
+  --chrome-top: #2c2e34;
+  --chrome-bottom: #121317;
+  --chrome-text: #f4f4f5;
+  --chrome-text-muted: #d4d5db;
+  --chrome-text-faint: #80838a;
+  --chrome-well: rgba(0, 0, 0, 0.3);
+  --chrome-well-strong: rgba(0, 0, 0, 0.48);
+  --chrome-fill: rgba(255, 255, 255, 0.07);
+  --chrome-fill-strong: rgba(255, 255, 255, 0.12);
+  --chrome-line: rgba(255, 255, 255, 0.08);
+  --chrome-ring: rgba(255, 255, 255, 0.16);
+  --chrome-focus: #78a9ff;
+  --chrome-ok: #6bc880;
+  --chrome-shadow-raised:
+    inset 0 1px 0 rgba(255, 255, 255, 0.12), inset 0 0 0 1px rgba(255, 255, 255, 0.16), 0 1px 3px rgba(0, 0, 0, 0.3);
+  --chrome-shadow-inset: inset 0 1px 2px rgba(0, 0, 0, 0.35), inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+  --chrome-shadow-edge: inset 0 1px 0 rgba(255, 255, 255, 0.12), inset 0 -1px 0 var(--chrome-line);
+  --chrome-ring-strong: rgba(255, 255, 255, 0.48);
+  --chrome-danger-fill: rgba(250, 139, 133, 0.16);
+  --chrome-danger-fill-strong: rgba(250, 139, 133, 0.22);
+  --chrome-danger-ring: rgba(250, 139, 133, 0.45);
+  --chrome-danger-text: #ffdad7;
+  --chrome-switch-track: rgba(255, 255, 255, 0.12);
+  --chrome-knob: var(--chrome-text);
+  --chrome-primary-top: #f4f4f5;
+  --chrome-primary-bottom: #d4d5db;
+  --chrome-on-primary: #0b0c0f;
+  --chrome-shadow-primary: inset 0 1px 0 rgba(255, 255, 255, 0.9), 0 1px 3px rgba(0, 0, 0, 0.35);
+  --chrome-shadow-knob: 0 1px 2px rgba(0, 0, 0, 0.35);
+  --chrome-scrim: rgba(0, 0, 0, 0.48);
+  --chrome-danger-ink: #ffcfca;
+  --chrome-err: #fa8b85;
+  --chrome-info: #7eafff;
+  --chrome-shadow-pop:
+    inset 0 1px 0 rgba(255, 255, 255, 0.1), inset 0 0 0 1px rgba(255, 255, 255, 0.09), 0 24px 48px rgba(0, 0, 0, 0.32),
+    0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+:root[data-theme='tokyo'] {
+  --chrome-top: #fff5f6;
+  --chrome-bottom: #fff0f1;
+  --chrome-text: #0b070e;
+  --chrome-text-muted: #373040;
+  --chrome-text-faint: #a59eac;
+  --chrome-primary-top: #2b2533;
+  --chrome-primary-bottom: #0b070e;
+  --chrome-on-primary: #f7f5f8;
+}
+
+:root.dark[data-theme='tokyo'] {
+  --chrome-top: #2b2533;
+  --chrome-bottom: #120d16;
+  --chrome-text: #f7f5f8;
+  --chrome-text-muted: #e2dee5;
+  --chrome-text-faint: #847c8e;
+  --chrome-primary-top: #f7f5f8;
+  --chrome-primary-bottom: #e2dee5;
+  --chrome-on-primary: #0b070e;
+}
+
+:root[data-theme='lisbon'] {
+  --chrome-top: #fffbf5;
+  --chrome-bottom: #fff7eb;
+  --chrome-text: #0e0907;
+  --chrome-text-muted: #3c362f;
+  --chrome-text-faint: #aba69f;
+  --chrome-primary-top: #302a24;
+  --chrome-primary-bottom: #0e0907;
+  --chrome-on-primary: #f7f7f6;
+}
+
+:root.dark[data-theme='lisbon'] {
+  --chrome-top: #302a24;
+  --chrome-bottom: #16110e;
+  --chrome-text: #f7f7f6;
+  --chrome-text-muted: #e5e1de;
+  --chrome-text-faint: #88827a;
+  --chrome-primary-top: #f7f7f6;
+  --chrome-primary-bottom: #e5e1de;
+  --chrome-on-primary: #0e0907;
+}
+
+:root[data-theme='malta'] {
+  --chrome-top: #f5fffa;
+  --chrome-bottom: #eafef4;
+  --chrome-text: #090d0b;
+  --chrome-text-muted: #363e3b;
+  --chrome-text-faint: #a3aba7;
+  --chrome-primary-top: #2a322f;
+  --chrome-primary-bottom: #090d0b;
+  --chrome-on-primary: #f6f8f7;
+}
+
+:root.dark[data-theme='malta'] {
+  --chrome-top: #2a322f;
+  --chrome-bottom: #111614;
+  --chrome-text: #f6f8f7;
+  --chrome-text-muted: #e0e5e2;
+  --chrome-text-faint: #828c86;
+  --chrome-primary-top: #f6f8f7;
+  --chrome-primary-bottom: #e0e5e2;
+  --chrome-on-primary: #090d0b;
+}
+
+:root {
+  --bg-surface-main: color-mix(in srgb, var(--chrome-text) 4%, var(--chrome-bottom));
+  --bg-surface-container: var(--chrome-top);
+  --bg-surface-nested: color-mix(in srgb, var(--chrome-text) 4%, var(--chrome-top));
+  --bg-selection-container-hover: color-mix(in srgb, var(--chrome-text) 4%, var(--chrome-top));
+  --bg-selection-container-active: color-mix(in srgb, var(--chrome-text) 8%, var(--chrome-top));
+  --bg-action-secondary: color-mix(in srgb, var(--chrome-text) 10%, var(--chrome-top));
+  --bg-action-secondary-hover: color-mix(in srgb, var(--chrome-text) 14%, var(--chrome-top));
+  --bg-action-tertiary: color-mix(in srgb, var(--chrome-text) 12%, var(--chrome-top));
+  --bg-action-active: color-mix(in srgb, var(--chrome-text) 8%, var(--chrome-top));
+  --bg-illustration-light: color-mix(in srgb, var(--chrome-text) 6%, var(--chrome-top));
+  --stroke-primary: color-mix(in srgb, var(--chrome-text) 10%, var(--chrome-top));
+  --stroke-secondary: color-mix(in srgb, var(--chrome-text) 16%, var(--chrome-top));
+  --stroke-tertiary: color-mix(in srgb, var(--chrome-text) 45%, var(--chrome-top));
+  --fg-primary: var(--chrome-text);
+  --fg-secondary: var(--chrome-text-muted);
+  --fg-tertiary: color-mix(in srgb, var(--chrome-text) 62%, var(--chrome-top));
+  --bg-surface-container-inverted: var(--chrome-text);
+  --bg-surface-nested-inverted: color-mix(in srgb, var(--chrome-top) 14%, var(--chrome-text));
+  --bg-selection-container-hover-inverted: color-mix(in srgb, var(--chrome-top) 10%, var(--chrome-text));
+  --bg-action-secondary-inverted: color-mix(in srgb, var(--chrome-top) 20%, var(--chrome-text));
+  --stroke-primary-inverted: color-mix(in srgb, var(--chrome-top) 24%, var(--chrome-text));
+  --bg-illustration-dark: var(--chrome-text);
+  --fg-primary-inverted: var(--chrome-on-primary);
+  --fg-secondary-inverted: color-mix(in srgb, var(--chrome-on-primary) 82%, var(--chrome-text));
+  --fg-tertiary-inverted: color-mix(in srgb, var(--chrome-on-primary) 68%, var(--chrome-text));
+  --bg-action-primary: var(--chrome-primary-bottom);
+  --bg-action-primary-hover: var(--chrome-primary-top);
+  --bg-action-primary-inverted: var(--chrome-top);
+  --fg-static-white: #ffffff;
+  --fg-error: var(--chrome-err);
+  --fg-success: var(--chrome-ok);
+  --fg-warning: #a15c07;
+  --fg-link: color-mix(in srgb, var(--chrome-info) 85%, var(--chrome-text));
+  --fg-link-hover: color-mix(in srgb, var(--chrome-info) 70%, var(--chrome-text));
+  --bg-accent: var(--chrome-info);
+  --bg-status-error: #c81e1e;
+  --bg-status-error-hover: #b91c1c;
+  --bg-status-warning: color-mix(in srgb, var(--fg-warning) 24%, transparent);
+  --stroke-success: var(--chrome-ok);
+  --focus-ring: var(--chrome-focus);
+  --shadow-soft: rgba(0, 0, 0, 0.12);
+  --avatar-bg-amethyst: #7c3aed;
+  --avatar-fg-amethyst: #ede9fe;
+  --avatar-bg-opal: #1e1b4b;
+  --avatar-fg-opal: #a5b4fc;
+  --avatar-bg-turquoise: #0891b2;
+  --avatar-fg-turquoise: #cffafe;
+  --avatar-bg-onyx: #1e293b;
+  --avatar-fg-onyx: #e5e7eb;
+  --avatar-bg-pearl: #262626;
+  --avatar-fg-pearl: #f5f5f5;
+  --avatar-bg-emerald: #064e3b;
+  --avatar-fg-emerald: #d1fae5;
+  --avatar-bg-topaz: #c24c1b;
+  --avatar-fg-topaz: #ffedd5;
+  --avatar-bg-ruby: #9f1239;
+  --avatar-fg-ruby: #ffe4e6;
+  --avatar-bg-sapphire: #1e3a8a;
+  --avatar-fg-sapphire: #dbeafe;
+  --avatar-bg-garnet: #7f1d1d;
+  --avatar-fg-garnet: #fee2e2;
+}
+
+:root.dark {
+  --bg-surface-main: color-mix(in srgb, var(--chrome-bottom) 60%, var(--chrome-top));
+  --bg-surface-container: color-mix(in srgb, var(--chrome-text) 7%, var(--bg-surface-main));
+  --bg-surface-nested: color-mix(in srgb, var(--chrome-text) 12%, var(--bg-surface-main));
+  --bg-selection-container-hover: color-mix(in srgb, var(--chrome-text) 10%, var(--bg-surface-main));
+  --bg-selection-container-active: color-mix(in srgb, var(--chrome-text) 15%, var(--bg-surface-main));
+  --bg-action-secondary: color-mix(in srgb, var(--chrome-text) 18%, var(--bg-surface-main));
+  --bg-action-secondary-hover: color-mix(in srgb, var(--chrome-text) 24%, var(--bg-surface-main));
+  --bg-action-tertiary: color-mix(in srgb, var(--chrome-text) 20%, var(--bg-surface-main));
+  --bg-action-active: color-mix(in srgb, var(--chrome-text) 15%, var(--bg-surface-main));
+  --bg-illustration-light: color-mix(in srgb, var(--chrome-text) 12%, var(--bg-surface-main));
+  --stroke-primary: color-mix(in srgb, var(--chrome-text) 12%, var(--bg-surface-main));
+  --stroke-secondary: color-mix(in srgb, var(--chrome-text) 20%, var(--bg-surface-main));
+  --stroke-tertiary: color-mix(in srgb, var(--chrome-text) 45%, var(--bg-surface-main));
+  --fg-secondary: color-mix(in srgb, var(--chrome-text) 40%, var(--chrome-text-muted));
+  --fg-tertiary: color-mix(in srgb, var(--chrome-text) 78%, var(--bg-surface-main));
+  --bg-surface-nested-inverted: color-mix(in srgb, var(--bg-surface-main) 12%, var(--chrome-text));
+  --bg-selection-container-hover-inverted: color-mix(in srgb, var(--bg-surface-main) 8%, var(--chrome-text));
+  --bg-action-secondary-inverted: color-mix(in srgb, var(--bg-surface-main) 16%, var(--chrome-text));
+  --stroke-primary-inverted: color-mix(in srgb, var(--bg-surface-main) 22%, var(--chrome-text));
+  --fg-error: color-mix(in srgb, var(--chrome-err) 70%, var(--chrome-text));
+  --fg-success: color-mix(in srgb, var(--chrome-ok) 70%, var(--chrome-text));
+  --fg-warning: color-mix(in srgb, #e69f42 70%, var(--chrome-text));
+  --fg-link: color-mix(in srgb, var(--chrome-info) 70%, var(--chrome-text));
+  --fg-link-hover: color-mix(in srgb, var(--chrome-info) 55%, var(--chrome-text));
+  --shadow-soft: rgba(0, 0, 0, 0.4);
+}
+
+@theme inline {
+  --color-chrome-top: var(--chrome-top);
+  --color-chrome-bottom: var(--chrome-bottom);
+  --color-chrome-well: var(--chrome-well);
+  --color-chrome-well-strong: var(--chrome-well-strong);
+  --color-chrome-fill: var(--chrome-fill);
+  --color-chrome-fill-strong: var(--chrome-fill-strong);
+  --color-chrome-line: var(--chrome-line);
+  --color-chrome-ring: var(--chrome-ring);
+  --color-chrome-text: var(--chrome-text);
+  --color-chrome-muted: var(--chrome-text-muted);
+  --color-chrome-faint: var(--chrome-text-faint);
+  --color-chrome-focus: var(--chrome-focus);
+  --color-chrome-ok: var(--chrome-ok);
+  --color-chrome-danger-fill: var(--chrome-danger-fill);
+  --color-chrome-danger-fill-strong: var(--chrome-danger-fill-strong);
+  --color-chrome-danger-text: var(--chrome-danger-text);
+  --color-chrome-switch-track: var(--chrome-switch-track);
+  --color-chrome-knob: var(--chrome-knob);
+  --color-chrome-on-primary: var(--chrome-on-primary);
+  --color-chrome-surface: var(--chrome-surface);
+  --color-chrome-scrim: var(--chrome-scrim);
+  --color-chrome-danger-ink: var(--chrome-danger-ink);
+  --color-chrome-err: var(--chrome-err);
+  --color-chrome-info: var(--chrome-info);
+  --color-fg-primary: var(--fg-primary);
+  --color-fg-secondary: var(--fg-secondary);
+  --color-fg-tertiary: var(--fg-tertiary);
+  --color-fg-primary-inverted: var(--fg-primary-inverted);
+  --color-fg-secondary-inverted: var(--fg-secondary-inverted);
+  --color-fg-tertiary-inverted: var(--fg-tertiary-inverted);
+  --color-fg-static-white: var(--fg-static-white);
+  --color-fg-error: var(--fg-error);
+  --color-fg-success: var(--fg-success);
+  --color-fg-warning: var(--fg-warning);
+  --color-fg-link: var(--fg-link);
+  --color-fg-link-hover: var(--fg-link-hover);
+  --color-bg-surface-main: var(--bg-surface-main);
+  --color-bg-surface-container: var(--bg-surface-container);
+  --color-bg-surface-nested: var(--bg-surface-nested);
+  --color-bg-surface-container-inverted: var(--bg-surface-container-inverted);
+  --color-bg-surface-nested-inverted: var(--bg-surface-nested-inverted);
+  --color-bg-selection-container-hover: var(--bg-selection-container-hover);
+  --color-bg-selection-container-active: var(--bg-selection-container-active);
+  --color-bg-selection-container-hover-inverted: var(--bg-selection-container-hover-inverted);
+  --color-bg-action-primary: var(--bg-action-primary);
+  --color-bg-action-primary-hover: var(--bg-action-primary-hover);
+  --color-bg-action-primary-inverted: var(--bg-action-primary-inverted);
+  --color-bg-action-secondary: var(--bg-action-secondary);
+  --color-bg-action-secondary-hover: var(--bg-action-secondary-hover);
+  --color-bg-action-secondary-inverted: var(--bg-action-secondary-inverted);
+  --color-bg-action-tertiary: var(--bg-action-tertiary);
+  --color-bg-action-active: var(--bg-action-active);
+  --color-bg-accent: var(--bg-accent);
+  --color-bg-status-error: var(--bg-status-error);
+  --color-bg-status-error-hover: var(--bg-status-error-hover);
+  --color-bg-status-warning: var(--bg-status-warning);
+  --color-bg-illustration-light: var(--bg-illustration-light);
+  --color-bg-illustration-dark: var(--bg-illustration-dark);
+  --color-stroke-primary: var(--stroke-primary);
+  --color-stroke-secondary: var(--stroke-secondary);
+  --color-stroke-tertiary: var(--stroke-tertiary);
+  --color-stroke-primary-inverted: var(--stroke-primary-inverted);
+  --color-focus-ring: var(--focus-ring);
+  --color-avatar-bg-amethyst: var(--avatar-bg-amethyst);
+  --color-avatar-fg-amethyst: var(--avatar-fg-amethyst);
+  --color-avatar-bg-opal: var(--avatar-bg-opal);
+  --color-avatar-fg-opal: var(--avatar-fg-opal);
+  --color-avatar-bg-turquoise: var(--avatar-bg-turquoise);
+  --color-avatar-fg-turquoise: var(--avatar-fg-turquoise);
+  --color-avatar-bg-onyx: var(--avatar-bg-onyx);
+  --color-avatar-fg-onyx: var(--avatar-fg-onyx);
+  --color-avatar-bg-pearl: var(--avatar-bg-pearl);
+  --color-avatar-fg-pearl: var(--avatar-fg-pearl);
+  --color-avatar-bg-emerald: var(--avatar-bg-emerald);
+  --color-avatar-fg-emerald: var(--avatar-fg-emerald);
+  --color-avatar-bg-topaz: var(--avatar-bg-topaz);
+  --color-avatar-fg-topaz: var(--avatar-fg-topaz);
+  --color-avatar-bg-ruby: var(--avatar-bg-ruby);
+  --color-avatar-fg-ruby: var(--avatar-fg-ruby);
+  --color-avatar-bg-sapphire: var(--avatar-bg-sapphire);
+  --color-avatar-fg-sapphire: var(--avatar-fg-sapphire);
+  --color-avatar-bg-garnet: var(--avatar-bg-garnet);
+  --color-avatar-fg-garnet: var(--avatar-fg-garnet);
+  --shadow-chrome-raised: var(--chrome-shadow-raised);
+  --shadow-chrome-inset: var(--chrome-shadow-inset);
+  --shadow-chrome-pill: var(--chrome-shadow-pill);
+  --shadow-chrome-edge: var(--chrome-shadow-edge);
+  --shadow-chrome-track: var(--chrome-shadow-track);
+  --shadow-chrome-primary: var(--chrome-shadow-primary);
+  --shadow-chrome-knob: var(--chrome-shadow-knob);
+  --shadow-chrome-ring: var(--chrome-shadow-ring);
+  --shadow-chrome-line: var(--chrome-shadow-line);
+  --shadow-chrome-selected: var(--chrome-shadow-selected);
+  --shadow-chrome-danger: var(--chrome-shadow-danger);
+  --shadow-chrome-pop: var(--chrome-shadow-pop);
+}
+
+@theme {
+  --animate-float-in: float-in 260ms cubic-bezier(0.2, 0.9, 0.25, 1.08) both;
+  --animate-float-out: float-out 150ms ease-out both;
+  --animate-dialog-in: dialog-in 260ms cubic-bezier(0.2, 0.9, 0.25, 1.08) both;
+  --animate-dialog-out: dialog-out 150ms ease-out both;
+  --animate-scrim-in: scrim-in 260ms ease-out both;
+  --animate-scrim-out: scrim-out 150ms ease-out both;
+  --animate-toast-in: toast-in 260ms cubic-bezier(0.2, 0.9, 0.25, 1.08) both;
+
+  @keyframes float-in {
+    from {
+      translate: 0 var(--float-slide, -0.5rem);
+      scale: 0.97;
+      opacity: 0;
+    }
+  }
+  @keyframes float-out {
+    to {
+      scale: 0.97;
+      opacity: 0;
+    }
+  }
+  @keyframes dialog-in {
+    from {
+      translate: 0 0.5rem;
+      scale: 0.96;
+      opacity: 0;
+    }
+  }
+  @keyframes dialog-out {
+    to {
+      scale: 0.98;
+      opacity: 0;
+    }
+  }
+  @keyframes scrim-in {
+    from {
+      opacity: 0;
+    }
+  }
+  @keyframes scrim-out {
+    to {
+      opacity: 0;
+    }
+  }
+  @keyframes toast-in {
+    from {
+      translate: 0 -0.75rem;
+      opacity: 0;
+    }
+  }
+}

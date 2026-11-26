@@ -14,7 +14,7 @@ const SidebarItem = ({ icon, to, children }: SidebarLinkProps) => {
       {({ isActive }) => (
         <div
           className={cnTw(
-            'flex h-8 items-center gap-2 rounded-md px-3 py-1 transition-colors',
+            'flex h-control items-center gap-2 rounded-md px-3 transition-colors',
             isActive ? 'bg-bg-surface-nested text-fg-primary' : 'text-fg-primary hover:bg-bg-surface-nested',
           )}
         >
@@ -33,7 +33,7 @@ type SidebarGroupProps = PropsWithChildren<{
 const SidebarGroup = ({ title, children }: SidebarGroupProps) => {
   return (
     <section>
-      <header className="line-clamp-1 flex items-center justify-start gap-2 self-stretch px-3 py-2 text-xs leading-4 font-medium text-fg-secondary">
+      <header className="line-clamp-1 flex items-center justify-start gap-2 self-stretch px-3 py-2 text-xs font-medium text-fg-secondary">
         {title}
       </header>
       <div className="flex flex-col">{children}</div>

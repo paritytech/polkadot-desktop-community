@@ -1,7 +1,7 @@
-import { DropdownMenu } from '@novasamatech/tr-ui';
 import { useNavigate } from '@tanstack/react-router';
 import { Maximize2, RotateCw } from 'lucide-react';
 
+import { DropdownMenu } from '@/shared/components';
 import { isElectron } from '@/shared/env';
 import { createFeature } from '@/shared/feature';
 import { TEST_IDS } from '@/shared/test-ids';
@@ -14,13 +14,7 @@ import {
 } from '@/domains/application';
 import { productService, useDisplayedProduct, useExecutableArchive, usePersistedProductById } from '@/domains/product';
 import { onProductRefreshRequestedSideEffect } from '@/aggregates/product-loading';
-import {
-  type CardRenderProps,
-  DashboardCardChrome,
-  dashboardCardSDK,
-  widgetTopbarActionButtonClass,
-  widgetTopbarActionVisibilityClass,
-} from '@/features/dashboard';
+import { type CardRenderProps, DashboardCardChrome, WidgetTopbarAction, dashboardCardSDK } from '@/features/dashboard';
 import { ProductIcon } from '@/widgets/ProductIcon';
 
 import { ProductShortcutCard } from './ui/ProductShortcutCard';
@@ -158,10 +152,8 @@ const WidgetMenuItems = ({ productId }: { productId: string }) => {
       data-testid={TEST_IDS.productWidgetReloadButton}
       onClick={() => void onProductRefreshRequestedSideEffect.apply({ identifier: productId })}
     >
-      <div className="flex h-8 w-full items-center gap-2 rounded-md">
-        <RotateCw className="size-4" />
-        <span className="flex-1 text-sm leading-5 font-medium text-fg-primary">{t('feature.dashboard.widgetMenu.reload')}</span>
-      </div>
+      <RotateCw className="size-4" />
+      <span className="flex-1">{t('feature.dashboard.widgetMenu.reload')}</span>
     </DropdownMenu.Item>
   );
 };
@@ -173,18 +165,13 @@ const FullscreenAction = ({ productId }: { productId: string }) => {
   if (!product || !productService.hasApp(product)) return null;
 
   return (
-    <span className={widgetTopbarActionVisibilityClass}>
-      <button
-        type="button"
-        data-testid={TEST_IDS.dashboardWidgetFullscreenButton}
-        aria-label={t('common.aria.openFullscreen')}
-        className={widgetTopbarActionButtonClass}
-        onClick={() => navigate({ to: '/product/$id/{-$route}', params: { id: product.baseName } })}
-        onMouseDown={event => event.stopPropagation()}
-      >
-        <Maximize2 className="size-4" aria-hidden />
-      </button>
-    </span>
+    <WidgetTopbarAction
+      data-testid={TEST_IDS.dashboardWidgetFullscreenButton}
+      label={t('common.aria.openFullscreen')}
+      onClick={() => navigate({ to: '/product/$id/{-$route}', params: { id: product.baseName } })}
+    >
+      <Maximize2 aria-hidden />
+    </WidgetTopbarAction>
   );
 };
 

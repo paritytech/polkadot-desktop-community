@@ -1,6 +1,6 @@
-import { Dialog } from '@novasamatech/tr-ui';
 import { Fragment } from 'react';
 
+import { Dialog } from '@/shared/components';
 import { useTranslation } from '@/shared/translation';
 import { type EditHistoryEntry } from '../helpers/message';
 
@@ -20,11 +20,9 @@ export const EditHistory = ({ isOpen, originalText, entries, onClose }: EditHist
   const earlierTexts = versions.slice(1);
 
   return (
-    <Dialog modal open={isOpen} onOpenChange={open => !open && onClose()}>
-      <Dialog.Content showCloseButton aria-describedby={undefined}>
-        <Dialog.Title>
-          <span className="text-2xl leading-8 font-semibold text-fg-primary">{t('feature.chat.editHistory')}</span>
-        </Dialog.Title>
+    <Dialog.Root modal open={isOpen} onOpenChange={open => !open && onClose()}>
+      <Dialog.Content aria-describedby={undefined}>
+        <Dialog.Title>{t('feature.chat.editHistory')}</Dialog.Title>
 
         <div className="flex max-h-[60dvh] flex-col gap-2 overflow-y-auto pe-2">
           <VersionLabel>{t('feature.chat.currentMessage')}</VersionLabel>
@@ -38,16 +36,16 @@ export const EditHistory = ({ isOpen, originalText, entries, onClose }: EditHist
           ))}
         </div>
       </Dialog.Content>
-    </Dialog>
+    </Dialog.Root>
   );
 };
 
 const VersionLabel = ({ children }: { children: string }) => (
-  <span className="px-3 py-1 text-center text-sm leading-5 font-medium text-fg-secondary">{children}</span>
+  <span className="px-3 py-1 text-center text-xs font-medium text-fg-secondary">{children}</span>
 );
 
 const VersionBubble = ({ text }: { text: string }) => (
-  <div className="w-fit max-w-full self-center rounded-2xl bg-bg-surface-container-inverted px-3 py-2.5 text-base leading-5 whitespace-pre-line text-fg-primary-inverted">
+  <div className="w-fit max-w-full self-center rounded-2xl bg-bg-surface-container-inverted px-3 pt-2 pb-3 text-base whitespace-pre-line text-fg-primary-inverted">
     {text}
   </div>
 );

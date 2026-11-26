@@ -1,13 +1,13 @@
-import { Button, Copy, Dialog, ProductHeader } from '@novasamatech/tr-ui';
 import JsonView from '@uiw/react-json-view';
-import { AlertTriangle, ChevronLeft, Copy as CopyIcon, Info } from 'lucide-react';
+import { AlertTriangle, ChevronLeft, Info } from 'lucide-react';
 import { type CSSProperties, type PropsWithChildren, type ReactNode, memo, useMemo } from 'react';
 
+import { Button, CopyButton, Dialog, IconButton } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { cnTw } from '@/shared/utils';
 import { useDisplayedProduct, useDotNsTld } from '@/domains/product';
-import { useProductHeaderProps } from '@/widgets/ProductHeader';
+import { ProductHeader, useProductHeaderProps } from '@/widgets/ProductHeader';
 
 /**
  * The pieces every product-request modal is assembled from.
@@ -101,9 +101,7 @@ export const TxArgumentsJson = memo(({ value }: { value: unknown }) => {
 TxArgumentsJson.displayName = 'TxArgumentsJson';
 
 /** The muted supporting line under a card or above a footer. */
-export const RequestHint = memo(({ children }: PropsWithChildren) => (
-  <p className="text-sm leading-5 text-fg-secondary">{children}</p>
-));
+export const RequestHint = memo(({ children }: PropsWithChildren) => <p className="text-sm text-fg-secondary">{children}</p>);
 
 RequestHint.displayName = 'RequestHint';
 
@@ -125,7 +123,7 @@ RequestCodeBlock.displayName = 'RequestCodeBlock';
 
 /** One line of monospace detail. `wrap` for values that must break rather than scroll. */
 export const RequestMonoLine = memo(({ wrap = false, children }: PropsWithChildren<{ wrap?: boolean }>) => (
-  <div className={cnTw('font-mono text-xs leading-4 text-fg-primary', wrap ? 'break-all' : 'overflow-x-auto whitespace-nowrap')}>
+  <div className={cnTw('font-mono text-xs text-fg-primary', wrap ? 'break-all' : 'overflow-x-auto whitespace-nowrap')}>
     {children}
   </div>
 ));
@@ -158,14 +156,11 @@ export const RequestBackButton = memo(({ onClick }: { onClick: VoidFunction }) =
   const { t } = useTranslation();
 
   return (
-    <button
-      type="button"
-      className="absolute start-2.75 top-2.75 flex size-10 items-center justify-center rounded-xl p-2 text-fg-primary transition-colors hover:bg-bg-action-secondary-hover focus-visible:ring-4 focus-visible:ring-stroke-tertiary/35 focus-visible:ring-offset-0 focus-visible:outline-none disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0"
-      aria-label={t('common.action.back')}
-      onClick={onClick}
-    >
-      <ChevronLeft className="size-5" />
-    </button>
+    <span className="absolute start-2.75 top-2.75 flex">
+      <IconButton label={t('common.action.back')} onClick={onClick}>
+        <ChevronLeft />
+      </IconButton>
+    </span>
   );
 });
 
@@ -239,18 +234,8 @@ export const RequestAccountDetailsSection = memo(({ label, address, failed = fal
   return (
     <section className="flex flex-col gap-2">
       <div className="flex items-center justify-between gap-3">
-        <span className="text-base leading-6 text-fg-secondary">{label}</span>
-        <Copy value={address ?? ''}>
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon"
-            disabled={address == null}
-            aria-label={t('feature.browser.copyAccountAddress')}
-          >
-            <CopyIcon className="size-4" />
-          </Button>
-        </Copy>
+        <span className="text-base text-fg-secondary">{label}</span>
+        <CopyButton value={address ?? ''} label={t('feature.browser.copyAccountAddress')} disabled={address == null} />
       </div>
       <RequestCodeBlock>
         <RequestMonoLine>
@@ -270,8 +255,8 @@ RequestAccountDetailsSection.displayName = 'RequestAccountDetailsSection';
 /** A labelled row in the summary card: label left, value right, value truncated. */
 export const RequestSummaryRow = memo(({ label, value, testId }: { label: string; value: ReactNode; testId?: string }) => (
   <div className="flex items-start justify-between gap-3" data-testid={testId}>
-    <span className="text-base leading-6 text-fg-secondary">{label}</span>
-    <span className="max-w-[65%] truncate text-end text-base leading-6 text-fg-primary">{value}</span>
+    <span className="text-base text-fg-secondary">{label}</span>
+    <span className="max-w-[65%] truncate text-end text-base text-fg-primary">{value}</span>
   </div>
 ));
 
@@ -306,7 +291,7 @@ export const RequestContextNote = memo(({ context }: { context: string }) => {
   const { t } = useTranslation();
 
   return (
-    <p className="flex gap-1 text-sm leading-5 font-normal text-fg-secondary">
+    <p className="flex gap-1 text-sm font-normal text-fg-secondary">
       <span>{t('widget.productContainerBinding.aliasPermission.requestedContext')}</span>
       <span className="min-w-0 truncate">{context}</span>
     </p>
@@ -319,7 +304,7 @@ RequestContextNote.displayName = 'RequestContextNote';
 export const RequestWarningBanner = memo(({ children }: PropsWithChildren) => (
   <div className="flex w-full items-start gap-2 rounded-lg border border-stroke-primary bg-bg-status-warning/10 p-3">
     <AlertTriangle className="mt-0.5 size-5 shrink-0 text-fg-warning" />
-    <p className="text-sm leading-5 font-medium text-fg-primary">{children}</p>
+    <p className="text-sm font-medium text-fg-primary">{children}</p>
   </div>
 ));
 
@@ -341,12 +326,8 @@ export const RequestDetailSection = memo(
   }>) => (
     <section className="flex flex-col gap-3" data-testid={testId}>
       <div className="flex items-center justify-between gap-3">
-        <span className="text-base leading-6 text-fg-secondary">{label}</span>
-        <Copy value={copyValue}>
-          <Button type="button" variant="ghost" size="icon" aria-label={copyLabel}>
-            <CopyIcon className="size-4" />
-          </Button>
-        </Copy>
+        <span className="text-base text-fg-secondary">{label}</span>
+        <CopyButton value={copyValue} label={copyLabel} />
       </div>
       <RequestCodeBlock>{children}</RequestCodeBlock>
     </section>
@@ -371,12 +352,19 @@ export const RequestFooter = memo(
       <Dialog.Footer>
         <div className="flex w-full min-w-0 flex-row gap-2">
           <div className="min-w-0 flex-1">
-            <Button type="button" variant="outline" fullWidth data-testid={TEST_IDS.productRequestDeny} onClick={onCancel}>
+            <Button type="button" block data-testid={TEST_IDS.productRequestDeny} onClick={onCancel}>
               {cancelLabel}
             </Button>
           </div>
           <div className="min-w-0 flex-1">
-            <Button type="button" fullWidth disabled={primaryDisabled} data-testid={primaryTestId} onClick={onPrimary}>
+            <Button
+              type="button"
+              variant="primary"
+              block
+              disabled={primaryDisabled}
+              data-testid={primaryTestId}
+              onClick={onPrimary}
+            >
               {primaryLabel}
             </Button>
           </div>

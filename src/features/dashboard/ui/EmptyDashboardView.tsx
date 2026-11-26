@@ -1,7 +1,6 @@
-import { Button } from '@novasamatech/tr-ui';
-
 import AddToDashboardIcon from '@/shared/assets/images/add-to-dashboard.svg?jsx';
 import LogoIcon from '@/shared/assets/images/logo.svg?jsx';
+import { Button } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 
@@ -22,16 +21,21 @@ export const EmptyDashboardView = ({ onAddWidget }: EmptyDashboardViewProps) => 
         <LogoIcon className="mb-2 h-auto w-70 text-fg-primary" aria-hidden />
 
         <div className="mb-6 flex w-full flex-col items-center gap-1">
-          <p className="text-body-large-emphasized text-fg-primary">{t('feature.dashboard.empty.title')}</p>
-          <p className="text-body-medium text-fg-secondary">{t('feature.dashboard.empty.description')}</p>
+          <p className="text-base font-medium text-fg-primary">{t('feature.dashboard.empty.title')}</p>
+          <p className="text-sm text-fg-secondary">{t('feature.dashboard.empty.description')}</p>
         </div>
 
-        <div data-testid={TEST_IDS.dashboardEmptyStateAddWidget}>
-          <Button type="button" variant="default" size="sm" aria-label={addWidgetLabel} onClick={onAddWidget}>
-            <AddToDashboardIcon className="h-2.75 w-[10.7px] shrink-0 -scale-y-100 text-fg-primary-inverted" aria-hidden />
-            <span>{addWidgetLabel}</span>
-          </Button>
-        </div>
+        <Button
+          type="button"
+          variant="primary"
+          size="sm"
+          aria-label={addWidgetLabel}
+          data-testid={TEST_IDS.dashboardEmptyStateAddWidget}
+          onClick={onAddWidget}
+        >
+          <AddToDashboardIcon className="size-2.75 shrink-0 -scale-y-100" aria-hidden />
+          <span>{addWidgetLabel}</span>
+        </Button>
       </section>
     </div>
   );

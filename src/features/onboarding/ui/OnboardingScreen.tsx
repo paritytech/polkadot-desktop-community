@@ -1,17 +1,15 @@
-import { Button, toastError, useTheme } from '@novasamatech/tr-ui';
 import { useNavigate } from '@tanstack/react-router';
 import { Loader, Smartphone } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import PolkadotLogo from '@/shared/assets/images/logo.svg?jsx';
 import { AUTOTEST_ENABLED } from '@/shared/autotest';
-import { LoadingScreen, QrCode, Spinner } from '@/shared/components';
+import { Button, LoadingScreen, QrCode, SegmentedControl, Spinner, toast } from '@/shared/components';
 import { isProductionBuild, reloadApp } from '@/shared/env';
 import { useRxState } from '@/shared/rxstate';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
-import { cnTw } from '@/shared/utils';
-import { type EnvironmentId, environmentService } from '@/domains/application';
+import { type EnvironmentId, environmentService, useThemeVariant } from '@/domains/application';
 import { networkSettings } from '@/aggregates/network-settings';
 import { truapiRuntimeUseCase, useTruapiAuthState } from '@/aggregates/truapi-runtime';
 import { useOnboardingConnection } from '../hooks/useOnboardingConnection';
@@ -24,7 +22,7 @@ export const OnboardingScreen = () => {
   const { t } = useTranslation();
   const [settings] = useRxState(networkSettings.settings$);
 
-  const { mode } = useTheme();
+  const mode = useThemeVariant();
 
   const navigate = useNavigate();
 
@@ -81,7 +79,7 @@ export const OnboardingScreen = () => {
     // are surfaced by the connection panel, so suppress the toast unless we are
     // deferring to the plain pairing flow.
     if (hasError && errorContent && errorContent.kind !== 'noFreeSlots' && connectionState === 'pairing') {
-      toastError({ title: errorContent.title });
+      toast.error({ title: errorContent.title });
     }
   }, [hasError, errorContent, connectionState]);
 
@@ -141,9 +139,7 @@ export const OnboardingScreen = () => {
           className="flex h-full w-full flex-col items-center justify-center gap-8 text-fg-primary"
         >
           <Spinner size={120} />
-          <p className="text-center text-base leading-6 font-medium text-fg-secondary">
-            {t('feature.onboarding.completingPairing')}
-          </p>
+          <p className="text-center text-base font-medium text-fg-secondary">{t('feature.onboarding.completingPairing')}</p>
         </div>
       );
     }
@@ -155,8 +151,8 @@ export const OnboardingScreen = () => {
           className="flex h-full w-full flex-col items-center justify-center gap-4 p-8"
         >
           <p className="text-center text-base font-medium text-fg-primary">{errorContent.title}</p>
-          <p className="text-center text-sm leading-5 text-fg-secondary">{errorContent.description}</p>
-          <Button type="button" size="sm" onClick={handleRetry}>
+          <p className="text-center text-sm text-fg-secondary">{errorContent.description}</p>
+          <Button variant="primary" type="button" size="sm" onClick={handleRetry}>
             {t('common.action.retry')}
           </Button>
         </div>
@@ -178,46 +174,37 @@ export const OnboardingScreen = () => {
           <div className="flex items-center gap-5">
             <PolkadotLogo className="origin-right" />
             <div className="h-8.5 w-px bg-fg-primary" />
-            <div className="text-sm leading-5 font-semibold tracking-[0.5px] text-fg-primary uppercase">
+            <div className="text-sm font-semibold tracking-[0.5px] text-fg-primary uppercase">
               {t('feature.onboarding.logoText')}
             </div>
           </div>
-          <h1 className="text-[32px] leading-10 font-semibold tracking-[-0.32px] text-fg-primary xl:text-[48px] xl:leading-16 xl:tracking-[-0.48px]">
+          <h1 className="text-3xl font-semibold tracking-[-0.32px] text-fg-primary xl:text-4xl xl:tracking-[-0.48px]">
             {t('feature.onboarding.mainText')}
           </h1>
-          <p className="w-full max-w-172 text-center text-base leading-6 font-medium text-fg-secondary xl:text-start">
+          <p className="w-full max-w-172 text-center text-base font-medium text-fg-secondary xl:text-start">
             {t('feature.onboarding.description')}
           </p>
         </div>
 
         <div className="flex w-full max-w-100.5 flex-col items-center gap-2">
           {!isProductionBuild() && environments.length > 1 && (
-            <div className="h-17 w-full rounded-3xl border border-stroke-primary bg-bg-surface-container p-3.75 shadow-[0px_1px_2px_0px_var(--shadow-soft)]">
-              <div className="flex h-9 items-center rounded-lg bg-bg-surface-nested p-1">
-                {environments.map(env => {
-                  const isActive = settings.environmentId === env.id;
-
-                  return (
-                    <button
-                      key={env.id}
-                      data-testid={`${TEST_IDS.networkButton}-${env.id}`}
-                      aria-pressed={isActive}
-                      className={cnTw(
-                        'h-7 flex-1 rounded-md px-2 text-sm font-medium transition',
-                        isActive
-                          ? 'bg-bg-action-primary-inverted text-fg-primary shadow-[0px_1px_3px_0px_var(--shadow-soft),0px_1px_2px_-1px_var(--shadow-soft)]'
-                          : 'bg-transparent text-fg-secondary',
-                        !isActive && !isNetworkSelectionDisabled && 'hover:text-fg-primary',
-                        isNetworkSelectionDisabled && 'cursor-not-allowed opacity-50',
-                      )}
-                      disabled={isNetworkSelectionDisabled}
-                      onClick={() => handleEnvironmentChange(env.id)}
-                    >
-                      {env.name}
-                    </button>
-                  );
-                })}
-              </div>
+            <div className="flex h-17 w-full flex-col justify-center rounded-3xl border border-stroke-primary bg-bg-surface-container p-3.75 shadow-[0px_1px_2px_0px_var(--shadow-soft)]">
+              <SegmentedControl.Root
+                label={t('feature.onboarding.networkLabel')}
+                value={settings.environmentId}
+                onChange={value => handleEnvironmentChange(value)}
+              >
+                {environments.map(env => (
+                  <SegmentedControl.Item
+                    key={env.id}
+                    value={env.id}
+                    testId={`${TEST_IDS.networkButton}-${env.id}`}
+                    disabled={isNetworkSelectionDisabled}
+                  >
+                    {env.name}
+                  </SegmentedControl.Item>
+                ))}
+              </SegmentedControl.Root>
             </div>
           )}
 
@@ -239,12 +226,8 @@ export const OnboardingScreen = () => {
         </div>
       </div>
       {!isProductionBuild() && (
-        <div
-          data-testid={TEST_IDS.onboardingSkip}
-          className="mt-4 flex items-center justify-center space-x-4"
-          style={{ appRegion: 'no-drag' }}
-        >
-          <Button variant="ghost" onClick={() => navigate({ to: '/dashboard' })}>
+        <div className="mt-4 flex items-center justify-center space-x-4" style={{ appRegion: 'no-drag' }}>
+          <Button variant="ghost" data-testid={TEST_IDS.onboardingSkip} onClick={() => navigate({ to: '/dashboard' })}>
             {t('common.action.skip')}
           </Button>
         </div>

@@ -1,5 +1,4 @@
-import { Button, Dialog } from '@novasamatech/tr-ui';
-
+import { Button, Dialog } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { type ExecutableKind, useDisplayedProduct, usePinExecutable, usePinProduct } from '@/domains/product';
@@ -35,30 +34,30 @@ export const UpdateVersionDialog = ({ productId, executableKind, onClose }: Prop
   };
 
   return (
-    <Dialog
+    <Dialog.Root
       open
       onOpenChange={open => {
         if (!open) onClose();
       }}
     >
-      <Dialog.Content aria-describedby={undefined} variant="default">
+      <Dialog.Content aria-describedby={undefined}>
         <ProductDialogHeader product={product} />
         <div className="flex flex-col gap-2">
-          <span className="text-2xl leading-8 font-semibold text-fg-primary">{t('feature.offlineAccess.menu.update')}</span>
-          <span className="text-base leading-6 text-fg-secondary">{t('feature.offlineAccess.updateDescription')}</span>
+          <span className="text-lg font-semibold text-fg-primary">{t('feature.offlineAccess.menu.update')}</span>
+          <span className="text-base text-fg-secondary">{t('feature.offlineAccess.updateDescription')}</span>
         </div>
         <Dialog.Footer>
           <div className="flex w-full gap-2">
             <div className="flex-1">
-              <Button variant="outline" fullWidth onClick={onClose}>
+              <Button block onClick={onClose}>
                 {t('common.cancel')}
               </Button>
             </div>
             <div className="flex-1">
               <Button
                 data-testid={TEST_IDS.offlineAccessUpdateConfirm}
-                variant="default"
-                fullWidth
+                variant="primary"
+                block
                 disabled={pending}
                 onClick={handleConfirm}
               >
@@ -68,6 +67,6 @@ export const UpdateVersionDialog = ({ productId, executableKind, onClose }: Prop
           </div>
         </Dialog.Footer>
       </Dialog.Content>
-    </Dialog>
+    </Dialog.Root>
   );
 };

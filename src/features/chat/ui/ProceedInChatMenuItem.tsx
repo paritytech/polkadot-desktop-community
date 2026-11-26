@@ -1,7 +1,7 @@
-import { toastError } from '@novasamatech/tr-ui';
 import { MessageCircle } from 'lucide-react';
 import { useCallback } from 'react';
 
+import { toast } from '@/shared/components';
 import { useTranslation } from '@/shared/translation';
 import { useProductRooms } from '@/domains/chat';
 import { useCommitProductByIdentifier, useDisplayedProduct } from '@/domains/product';
@@ -41,7 +41,7 @@ export const ProceedInChatMenuItem = ({ productId, closeMenu }: Props) => {
     // makes WorkersManager mount that worker.
     openChatTab();
 
-    const failed = () => toastError({ title: t('feature.chat.proceedInChat.toast.errorTitle') });
+    const failed = () => toast.error({ title: t('feature.chat.proceedInChat.toast.errorTitle') });
 
     commitProduct(productId).subscribe({
       next: committed => {

@@ -7,6 +7,7 @@ type CnArgs = Parameters<typeof cn>;
 
 const twMerge = extendTailwindMerge({
   cacheSize: 10_000,
+  extend: { theme: { spacing: ['control', 'control-sm'] } },
 });
 
 /**

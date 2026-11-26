@@ -133,7 +133,7 @@ Always check whether the change belongs in a domain before touching a feature.
 - **TanStack Router** (`@tanstack/react-router`) - File-based routing from `src/routes/`
 - **Valibot** - Schema validation
 - **Tailwind CSS 4** - Styling
-- **@novasamatech/tr-ui** - Main UI kit
+- **@/shared/components** - The app's own UI kit: Radix primitives in dot.li's look
 - **polkadot-api** - Polkadot chain interaction
 - **Dexie** - IndexedDB persistence
 - **Vitest** + **React Testing Library** - Unit tests

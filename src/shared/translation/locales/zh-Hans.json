@@ -22,7 +22,9 @@
       "all": "全部",
       "electronics": "电子产品",
       "fashion": "时尚",
-      "downloadLogs": "下载日志"
+      "downloadLogs": "下载日志",
+      "copied": "已复制",
+      "copyFailed": "复制失败"
     },
     "label": {
       "signer": "签名者",
@@ -114,6 +116,7 @@
       "newTab": "新标签页",
       "newTabPrompt": "输入 {tld} 地址",
       "closeTab": "关闭标签页",
+      "tabsAria": "已打开的标签页",
       "signTransaction": "签署交易",
       "signingRequestTitle": "{call} 签名请求",
       "operationTitle": {
@@ -240,6 +243,7 @@
       "results": "结果（{count}）",
       "recent": "最近",
       "clear": "清除",
+      "moreReactions": "更多表情回应",
       "contacts": "联系人",
       "noMessages": "还没有消息",
       "thisIsChat": "这是一个聊天",
@@ -310,8 +314,6 @@
         "tabApps": "应用",
         "groupChatsAndContacts": "聊天与联系人",
         "groupMessages": "消息",
-        "recent": "最近",
-        "clear": "清除",
         "appsComingSoon": "应用搜索即将推出",
         "noResultsTitle": "无结果",
         "noResultsHint": "请尝试调整搜索条件"
@@ -373,7 +375,10 @@
           "tapToCallBack": "点按以回拨",
           "tapToCallAgain": "点按以再次通话"
         }
-      }
+      },
+      "searchPrevious": "上一个匹配项",
+      "searchNext": "下一个匹配项",
+      "roomActions": "聊天操作"
     },
     "productActionsMenu": {
       "trigger": "产品操作",
@@ -407,7 +412,8 @@
           "title": "你的账户仍在设置中",
           "subtitle": "请稍后重试"
         }
-      }
+      },
+      "networkLabel": "网络"
     },
     "dashboard": {
       "title": "仪表板",
@@ -498,7 +504,8 @@
         "cleanup": "整理仪表板",
         "reload": "重新加载小组件",
         "removeWidget": "移除小组件"
-      }
+      },
+      "home": "主页"
     },
     "ticketApp": {
       "title": "Ticket App",
@@ -718,7 +725,6 @@
       "navItem": "权限",
       "heading": "权限",
       "subheading": "查看和管理应用对功能与数据的访问权限",
-      "categoryHeading": "{name}：",
       "appCount": "{count, plural, =0 {没有应用} other {# 个应用}}",
       "category": {
         "device": "设备与系统访问",
@@ -732,7 +738,7 @@
       },
       "detail": {
         "rulesTitle": "规则与防护",
-        "appsLabel": "应用：",
+        "appsLabel": "应用",
         "noApps": "尚无应用请求此权限",
         "allowedFor": "已允许用于 {modalities}",
         "appSubtitle": "{baseName} • {allowed}"

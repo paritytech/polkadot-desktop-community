@@ -2,6 +2,7 @@ import { useLocation } from '@tanstack/react-router';
 import { LayoutDashboard } from 'lucide-react';
 
 import ChatBubbleOvalLeftIcon from '@/shared/assets/images/header/chat-bubble-oval-left.svg?jsx';
+import { IconButton } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { productAddToDashboardSideEffect } from '@/features/browser';
@@ -18,22 +19,23 @@ export const ChatAddToDashboardButton = () => {
   if (!isChatPathname(pathname)) return null;
 
   return (
-    <button
-      type="button"
-      aria-label={t('feature.dashboard.addToDashboard.label')}
-      data-testid={TEST_IDS.chatAddToDashboardButton}
-      className="-ms-2 -me-1 flex size-6 shrink-0 items-center justify-center rounded-full transition-colors duration-200 hover:bg-bg-action-secondary-hover"
-      onMouseDown={event => event.preventDefault()}
-      onClick={() => {
-        void productAddToDashboardSideEffect.apply({ productId: CHAT });
-      }}
-    >
-      <LayoutDashboard className="size-4 text-fg-secondary" aria-hidden />
-    </button>
+    <span className="-ms-2 -me-1 flex">
+      <IconButton
+        size="sm"
+        label={t('feature.dashboard.addToDashboard.label')}
+        data-testid={TEST_IDS.chatAddToDashboardButton}
+        onMouseDown={event => event.preventDefault()}
+        onClick={() => {
+          void productAddToDashboardSideEffect.apply({ productId: CHAT });
+        }}
+      >
+        <LayoutDashboard aria-hidden />
+      </IconButton>
+    </span>
   );
 };
 
 // Leading address-bar identity icon for the chat SPA. Chat is native (no product
 // row → no favicon), so it supplies its own filled chat bubble, tinted with the
 // URL text color so it flips with the theme (dark in light, light in dark).
-export const ChatAddressBarIcon = () => <ChatBubbleOvalLeftIcon className="text-text-primary size-4" aria-hidden />;
+export const ChatAddressBarIcon = () => <ChatBubbleOvalLeftIcon className="size-4 text-chrome-text" aria-hidden />;

@@ -22,7 +22,9 @@
       "all": "すべて",
       "electronics": "家電",
       "fashion": "ファッション",
-      "downloadLogs": "ログをダウンロード"
+      "downloadLogs": "ログをダウンロード",
+      "copied": "コピーしました",
+      "copyFailed": "コピーできませんでした"
     },
     "label": {
       "signer": "署名者",
@@ -114,6 +116,7 @@
       "newTab": "新しいタブ",
       "newTabPrompt": "{tld} アドレスを入力",
       "closeTab": "タブを閉じる",
+      "tabsAria": "開いているタブ",
       "signTransaction": "トランザクションに署名",
       "signingRequestTitle": "{call} の署名リクエスト",
       "operationTitle": {
@@ -240,6 +243,7 @@
       "results": "結果（{count}）",
       "recent": "最近",
       "clear": "クリア",
+      "moreReactions": "その他のリアクション",
       "contacts": "連絡先",
       "noMessages": "メッセージはまだありません",
       "thisIsChat": "これはチャットです",
@@ -310,8 +314,6 @@
         "tabApps": "アプリ",
         "groupChatsAndContacts": "チャットと連絡先",
         "groupMessages": "メッセージ",
-        "recent": "最近",
-        "clear": "クリア",
         "appsComingSoon": "アプリ検索は近日公開予定です",
         "noResultsTitle": "結果がありません",
         "noResultsHint": "検索条件を変更してみてください"
@@ -373,7 +375,10 @@
           "tapToCallBack": "タップしてかけ直す",
           "tapToCallAgain": "タップしてもう一度発信"
         }
-      }
+      },
+      "searchPrevious": "前の一致",
+      "searchNext": "次の一致",
+      "roomActions": "チャットの操作"
     },
     "productActionsMenu": {
       "trigger": "プロダクトの操作",
@@ -407,7 +412,8 @@
           "title": "アカウントを設定中です",
           "subtitle": "しばらくしてからもう一度お試しください"
         }
-      }
+      },
+      "networkLabel": "ネットワーク"
     },
     "dashboard": {
       "title": "ダッシュボード",
@@ -498,7 +504,8 @@
         "cleanup": "ダッシュボードを整理",
         "reload": "ウィジェットを再読み込み",
         "removeWidget": "ウィジェットを削除"
-      }
+      },
+      "home": "ホーム"
     },
     "ticketApp": {
       "title": "Ticket App",
@@ -718,7 +725,6 @@
       "navItem": "権限",
       "heading": "権限",
       "subheading": "機能やデータへのアプリのアクセスを確認・管理します",
-      "categoryHeading": "{name}:",
       "appCount": "{count, plural, =0 {アプリなし} other {# 個のアプリ}}",
       "category": {
         "device": "デバイスとシステムへのアクセス",
@@ -732,7 +738,7 @@
       },
       "detail": {
         "rulesTitle": "ルールと保護",
-        "appsLabel": "アプリ:",
+        "appsLabel": "アプリ",
         "noApps": "この権限をリクエストしたアプリはありません",
         "allowedFor": "{modalities} に許可済み",
         "appSubtitle": "{baseName} • {allowed}"

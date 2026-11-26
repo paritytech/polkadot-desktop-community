@@ -2,6 +2,7 @@ import { ChevronRight, Mic, Video, Volume2, X } from 'lucide-react';
 import { type ReactNode, useState } from 'react';
 
 import { type CallDeviceKind, type CallDeviceSelection, type CallDevices, deviceIdForKind } from '@/shared/call-media-devices';
+import { IconButton } from '@/shared/components';
 import { cnTw } from '@/shared/utils';
 
 export type CallSettingsLabels = {
@@ -68,15 +69,12 @@ export const CallSettings = ({ devices, selection, labels, onSelect, onClose }: 
     // A click anywhere outside a row (backdrop, card chrome) dismisses an open popover.
     <div className="absolute inset-0 z-40 flex items-center justify-center bg-black/60 p-6" onClick={() => setOpenKind(null)}>
       <div className="relative flex w-full max-w-sm flex-col gap-4 rounded-xl border border-stroke-primary bg-bg-surface-container p-6 shadow-lg">
-        <h2 className="pe-10 text-2xl font-semibold text-fg-primary">{labels.title}</h2>
-        <button
-          type="button"
-          aria-label={labels.close}
-          className="absolute end-3 top-3 flex size-10 items-center justify-center rounded-xl text-fg-secondary hover:bg-bg-surface-nested hover:text-fg-primary"
-          onClick={onClose}
-        >
-          <X className="size-5" />
-        </button>
+        <h2 className="pe-10 text-lg font-semibold text-fg-primary">{labels.title}</h2>
+        <span className="absolute end-3 top-3 flex">
+          <IconButton label={labels.close} onClick={onClose}>
+            <X />
+          </IconButton>
+        </span>
         <div className="flex flex-col gap-2">
           {rows.map(row => {
             const selectedId = deviceIdForKind(selection, row.kind);
@@ -142,7 +140,7 @@ const DevicePopover = ({ options, selectedId, onPick }: DevicePopoverProps) => (
           role="menuitemradio"
           aria-checked={selected}
           aria-label={option.label}
-          className="flex h-8 items-center gap-2 rounded-md px-2 text-start text-sm text-fg-primary hover:bg-bg-surface-nested"
+          className="flex h-control items-center gap-2 rounded-md px-2 text-start text-sm text-fg-primary hover:bg-bg-surface-nested"
           onClick={() => onPick(option.id)}
         >
           <Radio selected={selected} />

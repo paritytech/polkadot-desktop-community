@@ -2,6 +2,7 @@ import { Camera, Search } from 'lucide-react';
 import { type KeyboardEvent, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
+import { IconButton } from '@/shared/components';
 import { useAnimatedHeight } from '@/shared/hooks';
 import { useRxState } from '@/shared/rxstate';
 import { TEST_IDS } from '@/shared/test-ids';
@@ -94,6 +95,7 @@ const InputSpotlightSurface = () => {
   const [entry, setEntry] = useState<{ text: string; source: InputSource }>({ text: initialText, source: 'user' });
   const [scanning, setScanning] = useState(false);
   const fieldRef = useRef<HTMLInputElement>(null);
+  const rootRef = useRef<HTMLDivElement>(null);
   const mountedRef = useRef(true);
   const mounted = () => mountedRef.current;
 
@@ -177,6 +179,30 @@ const InputSpotlightSurface = () => {
     document.addEventListener('keydown', onKey);
 
     return () => document.removeEventListener('keydown', onKey);
+  }, [setOpen]);
+
+  // A press on the backdrop can still reach the product webview under it: Chromium routes input to an out-of-process
+  // frame by hit-test data that trails a freshly painted overlay, so the backdrop's `pointerdown` never fires. The press
+  // still moves focus into the webview, so focus landing outside the surface is what closes it. The webview raises no
+  // `focusin` in this document, so the check runs after `focusout`, once `activeElement` has settled. `body` is left
+  // alone: a press on a bare part of the card focuses it. Not window `blur` either, which a system prompt such as the
+  // camera permission raises while the field keeps its focus.
+  useEffect(() => {
+    let pending: ReturnType<typeof setTimeout> | undefined;
+    const onFocusOut = () => {
+      clearTimeout(pending);
+      pending = setTimeout(() => {
+        const active = document.activeElement;
+        if (!active || active === document.body || rootRef.current?.contains(active)) return;
+        setOpen(false);
+      });
+    };
+    document.addEventListener('focusout', onFocusOut);
+
+    return () => {
+      clearTimeout(pending);
+      document.removeEventListener('focusout', onFocusOut);
+    };
   }, [setOpen]);
 
   // PARKED — product querying.
@@ -310,6 +336,7 @@ const InputSpotlightSurface = () => {
 
   return createPortal(
     <div
+      ref={rootRef}
       className="animate-spotlight-backdrop-in fixed inset-0 z-50 flex justify-center bg-black/40 pt-48"
       style={{ appRegion: 'no-drag' }}
       onPointerDown={() => setOpen(false)}
@@ -346,7 +373,7 @@ const InputSpotlightSurface = () => {
               floors a box's height at its own padding, so padding here would leave a
               24px strip above the viewfinder that no amount of `0fr` collapses. */}
           <div className="min-h-0 overflow-hidden">
-            <div className="flex items-center gap-2 px-4 py-3">
+            <div className="flex min-h-12 items-center gap-2 px-4 py-2">
               {/* PARKED — product querying: the icon pulsed while a round was pending
                   (`round.kind === 'query' && round.pending && 'animate-pulse'`). */}
               <Search aria-hidden className="size-5 shrink-0 text-fg-secondary" />
@@ -364,14 +391,14 @@ const InputSpotlightSurface = () => {
                   // `outline-none` cannot remove. The card is the focus surface here —
                   // a ring around a borderless field inside it just looks broken.
                   data-no-app-focus
-                  className="relative z-10 w-full bg-transparent text-base leading-6 text-fg-primary outline-none placeholder:text-fg-secondary"
+                  className="relative z-10 w-full bg-transparent text-base text-fg-primary outline-none placeholder:text-fg-secondary"
                   onChange={event => setEntry({ text: event.target.value, source: 'user' })}
                   onKeyDown={onSubmit}
                 />
                 {ghostSuffix && (
                   <span
                     aria-hidden
-                    className="pointer-events-none absolute inset-0 truncate text-base leading-6 whitespace-pre text-transparent select-none"
+                    className="pointer-events-none absolute inset-0 truncate text-base whitespace-pre text-transparent select-none"
                   >
                     {entry.text}
                     <span data-testid={TEST_IDS.inputModalityGhostSuffix} className="text-fg-secondary">
@@ -399,15 +426,13 @@ const InputSpotlightSurface = () => {
                 <Paperclip className="size-4 text-fg-secondary" aria-hidden />
               </button>
               */}
-              <button
-                type="button"
-                aria-label={t('feature.inputModality.scan')}
+              <IconButton
+                label={t('feature.inputModality.scan')}
                 data-testid={TEST_IDS.inputModalityScanButton}
-                className="flex size-8 shrink-0 items-center justify-center rounded-full transition-[background-color,transform] hover:bg-bg-selection-container-hover active:scale-90"
                 onClick={() => setScanning(true)}
               >
-                <Camera className="size-4 text-fg-secondary" aria-hidden />
-              </button>
+                <Camera aria-hidden />
+              </IconButton>
             </div>
           </div>
         </div>
@@ -570,7 +595,7 @@ const SpotlightResults = ({ suggestions, onOpenProduct, resolvedProduct, onOpenT
         <>
           {round.candidates.length > 0 && hasSuggestions && (
             <div className="flex h-6 items-center ps-2 pt-1">
-              <span className="text-xs leading-4 font-medium text-fg-secondary">{t('feature.inputModality.fromThisScreen')}</span>
+              <span className="text-xs font-medium text-fg-secondary">{t('feature.inputModality.fromThisScreen')}</span>
             </div>
           )}
           {inputModalityService.groupByProduct(round.candidates).map((group, index) => (

@@ -47,7 +47,7 @@ describe('PermissionDetailPage', () => {
 
     render(
       <Providers>
-        <PermissionDetailPage permissionId="ExternalRequest" backLabel="Back" onBack={() => {}} />
+        <PermissionDetailPage permissionId="ExternalRequest" onBack={() => {}} />
       </Providers>,
     );
 
@@ -69,11 +69,23 @@ describe('PermissionDetailPage', () => {
 
     render(
       <Providers>
-        <PermissionDetailPage permissionId="Microphone" backLabel="Back" onBack={() => {}} />
+        <PermissionDetailPage permissionId="Microphone" onBack={() => {}} />
       </Providers>,
     );
 
     expect(await screen.findByText('tickets.dot')).toBeTruthy();
     expect(screen.queryByText(/Allowed for/)).toBeNull();
+  });
+
+  it('shows the empty line for a permission no product holds', async () => {
+    mocks.aggregated = [];
+
+    render(
+      <Providers>
+        <PermissionDetailPage permissionId="Microphone" onBack={() => {}} />
+      </Providers>,
+    );
+
+    expect(await screen.findByText('No apps have requested this permission')).toBeTruthy();
   });
 });

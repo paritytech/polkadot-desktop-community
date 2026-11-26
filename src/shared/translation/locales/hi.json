@@ -22,7 +22,9 @@
       "all": "सभी",
       "electronics": "इलेक्ट्रॉनिक्स",
       "fashion": "फ़ैशन",
-      "downloadLogs": "लॉग डाउनलोड करें"
+      "downloadLogs": "लॉग डाउनलोड करें",
+      "copied": "कॉपी किया गया",
+      "copyFailed": "कॉपी नहीं हो सका"
     },
     "label": {
       "signer": "हस्ताक्षरकर्ता",
@@ -114,6 +116,7 @@
       "newTab": "नया टैब",
       "newTabPrompt": "{tld} पता दर्ज करें",
       "closeTab": "टैब बंद करें",
+      "tabsAria": "खुले टैब",
       "signTransaction": "लेनदेन पर हस्ताक्षर करें",
       "signingRequestTitle": "{call} हस्ताक्षर अनुरोध",
       "operationTitle": {
@@ -240,6 +243,7 @@
       "results": "परिणाम ({count})",
       "recent": "हाल के",
       "clear": "साफ़ करें",
+      "moreReactions": "और प्रतिक्रियाएँ",
       "contacts": "संपर्क",
       "noMessages": "अभी कोई संदेश नहीं",
       "thisIsChat": "यह एक चैट है",
@@ -310,8 +314,6 @@
         "tabApps": "ऐप्स",
         "groupChatsAndContacts": "चैट और संपर्क",
         "groupMessages": "संदेश",
-        "recent": "हाल के",
-        "clear": "साफ़ करें",
         "appsComingSoon": "ऐप खोज जल्द ही आ रही है",
         "noResultsTitle": "कोई परिणाम नहीं",
         "noResultsHint": "अपनी खोज बदलकर देखें"
@@ -373,7 +375,10 @@
           "tapToCallBack": "वापस कॉल करने के लिए टैप करें",
           "tapToCallAgain": "फिर कॉल करने के लिए टैप करें"
         }
-      }
+      },
+      "searchPrevious": "पिछला मिलान",
+      "searchNext": "अगला मिलान",
+      "roomActions": "चैट क्रियाएँ"
     },
     "productActionsMenu": {
       "trigger": "प्रोडक्ट क्रियाएँ",
@@ -407,7 +412,8 @@
           "title": "आपका खाता अभी सेट हो रहा है",
           "subtitle": "कृपया बाद में फिर कोशिश करें"
         }
-      }
+      },
+      "networkLabel": "नेटवर्क"
     },
     "dashboard": {
       "title": "डैशबोर्ड",
@@ -498,7 +504,8 @@
         "cleanup": "डैशबोर्ड साफ़ करें",
         "reload": "विजेट रीलोड करें",
         "removeWidget": "विजेट हटाएँ"
-      }
+      },
+      "home": "होम"
     },
     "ticketApp": {
       "title": "Ticket App",
@@ -718,7 +725,6 @@
       "navItem": "अनुमतियाँ",
       "heading": "अनुमतियाँ",
       "subheading": "सुविधाओं और डेटा तक ऐप्स की पहुँच की समीक्षा करें और उसे प्रबंधित करें",
-      "categoryHeading": "{name}:",
       "appCount": "{count, plural, =0 {कोई ऐप नहीं} one {# ऐप} other {# ऐप्स}}",
       "category": {
         "device": "डिवाइस और सिस्टम पहुँच",
@@ -732,7 +738,7 @@
       },
       "detail": {
         "rulesTitle": "नियम और सुरक्षा उपाय",
-        "appsLabel": "ऐप्स:",
+        "appsLabel": "ऐप्स",
         "noApps": "किसी ऐप ने यह अनुमति नहीं माँगी है",
         "allowedFor": "{modalities} के लिए अनुमति है",
         "appSubtitle": "{baseName} • {allowed}"

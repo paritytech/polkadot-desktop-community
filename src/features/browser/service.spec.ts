@@ -204,3 +204,41 @@ describe('browserService.canSwipeTo', () => {
     expect(browserService.canSwipeTo(null)).toBe(false);
   });
 });
+
+describe('browserService.splitDisplayAddress', () => {
+  it('splits a name from its tld and path', () => {
+    expect(browserService.splitDisplayAddress('polkadot.dot/staking')).toEqual({
+      prefix: '',
+      name: 'polkadot',
+      rest: '.dot/staking',
+    });
+  });
+
+  it('splits a name from its tld', () => {
+    expect(browserService.splitDisplayAddress('polkadot.dot')).toEqual({ prefix: '', name: 'polkadot', rest: '.dot' });
+  });
+
+  it('keeps a bare name whole', () => {
+    expect(browserService.splitDisplayAddress('chat')).toEqual({ prefix: '', name: 'chat', rest: '' });
+  });
+
+  it('handles an empty path', () => {
+    expect(browserService.splitDisplayAddress('')).toEqual({ prefix: '', name: '', rest: '' });
+  });
+
+  it('takes a dotless host whole and leaves the route after it', () => {
+    expect(browserService.splitDisplayAddress('app/route.x')).toEqual({ prefix: '', name: 'app', rest: '/route.x' });
+  });
+
+  it('names the product label of a subname, not the subname', () => {
+    expect(browserService.splitDisplayAddress('app.caller.dot/route')).toEqual({
+      prefix: 'app.',
+      name: 'caller',
+      rest: '.dot/route',
+    });
+  });
+
+  it('keeps a localhost host with its port whole', () => {
+    expect(browserService.splitDisplayAddress('localhost:50535')).toEqual({ prefix: '', name: 'localhost:50535', rest: '' });
+  });
+});

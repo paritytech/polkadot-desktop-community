@@ -1,8 +1,10 @@
 // @vitest-environment happy-dom
 
-import { render, waitFor } from '@testing-library/react';
+import { act, render, screen, waitFor, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
+import { Toaster, toast } from '@/shared/components';
 import { TranslationProvider } from '@/shared/translation';
 import { onProductModalityOpenedSideEffect, updatesUseCase } from '@/domains/product';
 // eslint-disable-next-line boundaries/dependencies -- the test observes the write where it lands; the barrel exposes no seam for it
@@ -10,10 +12,6 @@ import { declinedUpdatesRepository } from '@/domains/product/product/declined-up
 import { offlineAccessDialogTarget } from '../state/dialogState';
 
 import { ModalityUpdateToaster } from './ModalityUpdateToaster';
-
-const { toastMock } = vi.hoisted(() => ({ toastMock: vi.fn() }));
-
-vi.mock('@novasamatech/tr-ui', () => ({ toast: toastMock }));
 
 // `checkModalityUpdate` reaches `productDb` and the declined-updates repository directly,
 // so the use case is spied in place; the decline is observed where it lands, on the
@@ -25,25 +23,49 @@ const renderToaster = () =>
   render(
     <TranslationProvider>
       <ModalityUpdateToaster />
+      <Toaster />
     </TranslationProvider>,
   );
 
+async function findToast(title: string) {
+  const heading = await screen.findByText(title);
+
+  return heading.closest<HTMLElement>('[data-sonner-toast]')!;
+}
+
+// sonner renders each toast a macrotask after it is raised, in call order: once a marker raised
+// now is on screen, any toast raised before it is too, so a "not shown" assertion is not vacuous.
+async function settleToasts() {
+  act(() => toast.info({ title: 'marker' }));
+  await screen.findByText('marker');
+}
+
 afterEach(() => {
   vi.clearAllMocks();
+  vi.useRealTimers();
 });
 
 describe('ModalityUpdateToaster', () => {
   it('raises a persistent Update toast when the opened modality has an undeclined update', async () => {
-    checkModalityUpdateMock.mockResolvedValue({ contenthash: '0xnew', version: [1, 0, 1] });
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+    checkModalityUpdateMock
+      .mockResolvedValueOnce({ contenthash: '0xnew', version: [1, 0, 1] })
+      .mockResolvedValueOnce({ contenthash: '0xnewer', version: [1, 0, 2] });
     renderToaster();
 
     await onProductModalityOpenedSideEffect.apply({ productId: 'app.dot', kind: 'app' });
 
     expect(checkModalityUpdateMock).toHaveBeenCalledWith({ baseName: 'app.dot', kind: 'app' });
-    expect(toastMock).toHaveBeenCalledTimes(1);
-    const [, options] = toastMock.mock.calls[0]!;
-    expect(options.id).toBe('modality-update:app.dot#app');
-    expect(options.duration).toBe(Infinity);
+    await screen.findByText('App update available');
+    act(() => vi.advanceTimersByTime(10_000));
+    expect(screen.getByText('App update available')).toBeInTheDocument();
+
+    await onProductModalityOpenedSideEffect.apply({ productId: 'app.dot', kind: 'app' });
+
+    // The re-check reuses the toast's id, so the newer version replaces the reminder instead of stacking.
+    await screen.findByText('Version 1.0.2 is ready to install');
+    expect(screen.getAllByText('App update available')).toHaveLength(1);
+    expect(screen.queryByText('Version 1.0.1 is ready to install')).toBeNull();
   });
 
   it('Update action opens the per-modality confirm dialog', async () => {
@@ -51,10 +73,13 @@ describe('ModalityUpdateToaster', () => {
     renderToaster();
     await onProductModalityOpenedSideEffect.apply({ productId: 'app.dot', kind: 'widget' });
 
-    const [, options] = toastMock.mock.calls[0]!;
-    options.action.onClick();
+    const toastElement = await findToast('Widget update available');
+    await userEvent.click(within(toastElement).getByRole('button', { name: 'Update' }));
+
     // The dialog is feature state, so the assertion reads the real target.
     expect(offlineAccessDialogTarget.get()).toEqual({ kind: 'updateExecutable', productId: 'app.dot', executableKind: 'widget' });
+    await waitFor(() => expect(screen.queryByText('Widget update available')).toBeNull());
+    expect(recordDecline).not.toHaveBeenCalled();
   });
 
   it('dismiss records a decline for that exact version', async () => {
@@ -62,8 +87,9 @@ describe('ModalityUpdateToaster', () => {
     renderToaster();
     await onProductModalityOpenedSideEffect.apply({ productId: 'app.dot', kind: 'worker' });
 
-    const [, options] = toastMock.mock.calls[0]!;
-    options.onDismiss();
+    const toastElement = await findToast('Background services (e.g. Chat rooms) update available');
+    await userEvent.click(within(toastElement).getByRole('button', { name: 'Close' }));
+
     // The decline resolves the active TLD first, so the write lands a tick later.
     await waitFor(() =>
       expect(recordDecline).toHaveBeenCalledWith({
@@ -79,6 +105,8 @@ describe('ModalityUpdateToaster', () => {
     checkModalityUpdateMock.mockResolvedValue(null);
     renderToaster();
     await onProductModalityOpenedSideEffect.apply({ productId: 'app.dot', kind: 'app' });
-    expect(toastMock).not.toHaveBeenCalled();
+
+    await settleToasts();
+    expect(screen.queryByText('App update available')).toBeNull();
   });
 });

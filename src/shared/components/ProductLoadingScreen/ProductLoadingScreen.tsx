@@ -10,7 +10,7 @@ export const ProductLoadingPhrase = ({ identifier }: PhraseProps) => {
 
   const phrase = identifier ? t('widget.webview.loading.reaching', { identifier }) : t('widget.webview.loading.reachingGeneric');
 
-  return <p className="text-center text-base leading-6 font-medium">{phrase}</p>;
+  return <p className="text-center text-base font-medium">{phrase}</p>;
 };
 
 type Props = {

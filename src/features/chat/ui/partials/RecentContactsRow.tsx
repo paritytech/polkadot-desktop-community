@@ -28,11 +28,13 @@ const RecentChip = ({ session, onSelect }: { session: ChatSession; onSelect: Voi
 
   return (
     <button
-      className="flex w-16 shrink-0 flex-col items-center gap-1 rounded-lg p-1 transition-colors hover:bg-bg-selection-container-hover"
+      type="button"
+      className="flex w-16 shrink-0 flex-col items-center gap-1 rounded-lg p-1 transition-colors hover:bg-bg-selection-container-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-chrome-focus"
+      data-no-app-focus
       onClick={onSelect}
     >
-      <Avatar name={name} size="chat-list-compact" />
-      <span className="w-full truncate text-center text-xs leading-4 text-fg-secondary">{name}</span>
+      <Avatar name={name} size="48" />
+      <span className="w-full truncate text-center text-xs text-fg-secondary">{name}</span>
     </button>
   );
 };

@@ -1,7 +1,7 @@
-import { toastError } from '@novasamatech/tr-ui';
 import { useEffect, useRef, useState } from 'react';
 import { useSyncObservable } from 'react-rx';
 
+import { toast } from '@/shared/components';
 import { useLooseRef } from '@/shared/hooks';
 import { useTranslation } from '@/shared/translation';
 import {
@@ -25,8 +25,8 @@ const DECISION_EFFECTS: Record<Decision, { persist: PermissionStatus | null; toa
 
 // Advance fallback for environments that don't fire CSS `animationend`
 // (jsdom/happy-dom, OS reduce-motion, broken styles). Must exceed the
-// Radix/tr-ui dialog exit duration so the animation-driven path wins in real
-// browsers; the current tr-ui exit lands around 200ms, 500ms gives generous slack.
+// dialog's exit animation (`animate-dialog-out`, 150 ms in `chrome.css`) so the animation-driven
+// path wins in real browsers; 500 ms gives generous slack.
 const EXIT_FALLBACK_MS = 500;
 
 export const RemotePermissionPromptHost = () => {
@@ -87,7 +87,7 @@ export const RemotePermissionPromptHost = () => {
       }
     }
     if (effect.toast) {
-      toastError({ title: tRef()('feature.productPermissions.externalBlockedToast', { origin: shown.origin }) });
+      toast.error({ title: tRef()('feature.productPermissions.externalBlockedToast', { origin: shown.origin }) });
     }
 
     finalStatusRef.current = effect.status;

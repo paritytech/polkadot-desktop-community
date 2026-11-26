@@ -1,11 +1,10 @@
-import { Avatar, Popover } from '@novasamatech/tr-ui';
 import { type SessionUiInfo } from '@parity/truapi-host';
 import { useNavigate } from '@tanstack/react-router';
 import { LogIn, LogOut, Settings, WifiOff } from 'lucide-react';
 import { type PropsWithChildren, type ReactNode, memo, useEffect, useState } from 'react';
 
 import PolkadotLogo from '@/shared/assets/images/logo-icon.svg?jsx';
-import { DismissOverlay, Spinner } from '@/shared/components';
+import { Avatar, DismissOverlay, Popover, Spinner } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { browserTabs } from '@/aggregates/browser-tabs';
@@ -78,8 +77,8 @@ const StatusBanner = ({ state, networkName }: { state: UserPopoverConnectionStat
     >
       <BannerIcon state={state} />
       <div className="flex min-w-0 flex-1 flex-col gap-0.5">
-        <span className="truncate text-base leading-6 font-medium text-fg-primary">{title}</span>
-        <span className="truncate text-xs leading-4 text-fg-secondary">{subtitle}</span>
+        <span className="truncate text-base font-medium text-fg-primary">{title}</span>
+        <span className="truncate text-xs text-fg-secondary">{subtitle}</span>
       </div>
     </div>
   );
@@ -92,7 +91,7 @@ const UserHeader = ({ username }: { username: string }) => {
       <span className="select-none">
         <Avatar size="48" tone="amethyst" label={letter} alt={username} />
       </span>
-      <span data-testid={TEST_IDS.userDisplayName} className="truncate text-xl leading-7 font-semibold text-fg-primary">
+      <span data-testid={TEST_IDS.userDisplayName} className="truncate text-xl font-semibold text-fg-primary">
         {username}
       </span>
     </div>
@@ -106,7 +105,7 @@ const ActionRow = ({ icon, label, testId, onClick }: ActionRowProps) => (
     type="button"
     data-testid={testId}
     data-no-app-focus
-    className="flex min-h-10 w-full items-center gap-2 rounded-lg border-0 bg-transparent px-4 py-1 text-base leading-6 font-medium text-fg-primary transition-colors outline-none hover:bg-bg-surface-nested focus:outline-none focus-visible:outline-none"
+    className="flex min-h-control w-full items-center gap-2 rounded-lg border-0 bg-transparent px-4 text-sm font-medium text-fg-primary transition-colors outline-none hover:bg-bg-surface-nested focus:outline-none focus-visible:outline-none"
     onClick={onClick}
   >
     <span className="flex-1 text-start">{label}</span>
@@ -158,10 +157,10 @@ export const UserInfoPopover = memo(({ session, username, connectionState, netwo
   };
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
+    <Popover.Root open={open} onOpenChange={setOpen}>
       <DismissOverlay open={open} testId={TEST_IDS.dismissOverlay} onDismiss={() => setOpen(false)} />
       <Popover.Trigger asChild>{children}</Popover.Trigger>
-      <Popover.Content variant="flush" sideOffset={8} align="end" alignOffset={8}>
+      <Popover.Content sideOffset={8} align="end" alignOffset={8}>
         <div className="flex w-89 flex-col items-center gap-2 px-2 pt-2 pb-4">
           <StatusBanner state={connectionState} networkName={networkName} />
           <UserHeader username={username} />
@@ -182,6 +181,6 @@ export const UserInfoPopover = memo(({ session, username, connectionState, netwo
           </div>
         </div>
       </Popover.Content>
-    </Popover>
+    </Popover.Root>
   );
 });

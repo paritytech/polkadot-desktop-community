@@ -22,7 +22,9 @@
       "all": "الكل",
       "electronics": "إلكترونيات",
       "fashion": "أزياء",
-      "downloadLogs": "تنزيل السجلات"
+      "downloadLogs": "تنزيل السجلات",
+      "copied": "تم النسخ",
+      "copyFailed": "فشل النسخ"
     },
     "label": {
       "signer": "الموقّع",
@@ -114,6 +116,7 @@
       "newTab": "علامة تبويب جديدة",
       "newTabPrompt": "أدخل عنوان ‎{tld}",
       "closeTab": "إغلاق علامة التبويب",
+      "tabsAria": "علامات التبويب المفتوحة",
       "signTransaction": "توقيع المعاملة",
       "signingRequestTitle": "طلب توقيع {call}",
       "operationTitle": {
@@ -240,6 +243,7 @@
       "results": "النتائج ({count})",
       "recent": "الأخيرة",
       "clear": "مسح",
+      "moreReactions": "المزيد من التفاعلات",
       "contacts": "جهات الاتصال",
       "noMessages": "لا توجد رسائل بعد",
       "thisIsChat": "هذه دردشة",
@@ -310,8 +314,6 @@
         "tabApps": "التطبيقات",
         "groupChatsAndContacts": "الدردشات وجهات الاتصال",
         "groupMessages": "الرسائل",
-        "recent": "الأخيرة",
-        "clear": "مسح",
         "appsComingSoon": "البحث في التطبيقات قريبًا",
         "noResultsTitle": "لا توجد نتائج",
         "noResultsHint": "حاول تعديل بحثك"
@@ -373,7 +375,10 @@
           "tapToCallBack": "اضغط لمعاودة الاتصال",
           "tapToCallAgain": "اضغط للاتصال مرة أخرى"
         }
-      }
+      },
+      "searchPrevious": "التطابق السابق",
+      "searchNext": "التطابق التالي",
+      "roomActions": "إجراءات الدردشة"
     },
     "productActionsMenu": {
       "trigger": "إجراءات المنتج",
@@ -407,7 +412,8 @@
           "title": "لا يزال حسابك قيد الإعداد",
           "subtitle": "يرجى المحاولة مرة أخرى لاحقًا"
         }
-      }
+      },
+      "networkLabel": "الشبكة"
     },
     "dashboard": {
       "title": "لوحة التحكم",
@@ -498,7 +504,8 @@
         "cleanup": "تنظيم لوحة التحكم",
         "reload": "إعادة تحميل الأداة",
         "removeWidget": "إزالة الأداة"
-      }
+      },
+      "home": "الرئيسية"
     },
     "ticketApp": {
       "title": "Ticket App",
@@ -718,7 +725,6 @@
       "navItem": "الأذونات",
       "heading": "الأذونات",
       "subheading": "راجع وصول التطبيقات إلى الميزات والبيانات وأدره",
-      "categoryHeading": "{name}:",
       "appCount": "{count, plural, =0 {لا توجد تطبيقات} one {تطبيق واحد} two {تطبيقان} few {# تطبيقات} many {# تطبيقًا} other {# تطبيق}}",
       "category": {
         "device": "الوصول إلى الجهاز والنظام",
@@ -732,7 +738,7 @@
       },
       "detail": {
         "rulesTitle": "القواعد والضمانات",
-        "appsLabel": "التطبيقات:",
+        "appsLabel": "التطبيقات",
         "noApps": "لم يطلب أي تطبيق هذا الإذن",
         "allowedFor": "مسموح لـ {modalities}",
         "appSubtitle": "{baseName} • {allowed}"

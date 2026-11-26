@@ -39,23 +39,21 @@ export const SignVrfModal = ({ review, onDecide }: Props) => {
           <ProductRequestDialog.Title>
             {t('widget.productContainerBinding.signVrf.title', { requestingIdentifier: review.callingProductId })}
           </ProductRequestDialog.Title>
-          <p className="mt-2 text-base leading-6 text-fg-primary">{t('widget.productContainerBinding.signVrf.subtitle')}</p>
+          <p className="mt-2 text-base text-fg-primary">{t('widget.productContainerBinding.signVrf.subtitle')}</p>
         </div>
 
         <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-3 overflow-y-auto">
           <RequestSummaryCard>
             <div className="flex items-start justify-between gap-3">
-              <span className="text-base leading-6 text-fg-secondary">{t('widget.productContainerBinding.signVrf.account')}</span>
-              <span className="max-w-[65%] truncate font-mono text-base leading-6 text-fg-primary">
+              <span className="text-base text-fg-secondary">{t('widget.productContainerBinding.signVrf.account')}</span>
+              <span className="max-w-[65%] truncate font-mono text-base text-fg-primary">
                 {productRuntimeService.formatProductAccount(account)}
               </span>
             </div>
 
             <div className="border-t border-stroke-primary" role="separator" />
 
-            <span className="text-base leading-6 text-fg-secondary">
-              {t('widget.productContainerBinding.signVrf.transcript')}
-            </span>
+            <span className="text-base text-fg-secondary">{t('widget.productContainerBinding.signVrf.transcript')}</span>
             <RequestTranscriptBlock>
               <RequestTranscriptRow
                 label={t('widget.productContainerBinding.signVrf.transcriptLabel')}

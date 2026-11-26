@@ -1,5 +1,4 @@
-import { toastSuccess } from '@novasamatech/tr-ui';
-
+import { toast } from '@/shared/components';
 import { foldersUseCase } from '@/domains/application';
 import { productService, resolveProductUseCase } from '@/domains/product';
 import { productManagementUseCase } from '@/aggregates/product-management';
@@ -23,13 +22,13 @@ export async function triggerProductDashboardShortcut(productId: string, t: Tran
   if (isFavorite) {
     const removed = await foldersUseCase.removeItemFromFolder(productId);
     if (removed) {
-      toastSuccess({ title: t('feature.dashboard.menu.toast.removedFromFavorites', { productName }) });
+      toast.success({ title: t('feature.dashboard.menu.toast.removedFromFavorites', { productName }) });
     }
     return;
   }
 
   const result = await productManagementUseCase.addProductToDashboard(product, { w: 1, h: 1 });
   if (result.ok) {
-    toastSuccess({ title: t('feature.dashboard.menu.toast.addedToFavorites', { productName }) });
+    toast.success({ title: t('feature.dashboard.menu.toast.addedToFavorites', { productName }) });
   }
 }

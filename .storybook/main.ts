@@ -5,7 +5,9 @@ const config: StorybookConfig = {
   addons: ['@storybook/addon-links', '@storybook/addon-docs', '@storybook/addon-a11y'],
   framework: {
     name: '@storybook/react-vite',
-    options: {},
+    // The renderer's config has no default name, so Vite's lookup of `vite.config.*` finds nothing and
+    // stories would build without the React, Tailwind and `@/` path setup.
+    options: { builder: { viteConfigPath: 'vite.config.renderer.ts' } },
   },
 };
 

@@ -37,7 +37,7 @@ export const MediaPlaceholder = ({ isMe, blurhash }: Props) => {
         <div data-testid={TEST_IDS.chatMediaPlaceholderBlurhash} className="absolute inset-0" aria-hidden>
           <BlurhashCanvas hash={blurhash} className="size-full object-cover" />
           {/* Scrim keeps the icon + text legible over an arbitrarily bright preview. */}
-          <div className="absolute inset-0 bg-black/30" />
+          <div className="absolute inset-0 bg-chrome-scrim" />
         </div>
       ) : null}
       <span
@@ -50,7 +50,7 @@ export const MediaPlaceholder = ({ isMe, blurhash }: Props) => {
       >
         <MediaIcon className={cnTw('size-6', isDarkCard ? 'text-fg-tertiary' : 'text-fg-tertiary-inverted')} />
       </span>
-      <span className={cnTw('relative text-sm leading-5', isDarkCard ? 'text-fg-secondary-inverted' : 'text-fg-secondary')}>
+      <span className={cnTw('relative text-sm', isDarkCard ? 'text-fg-secondary-inverted' : 'text-fg-secondary')}>
         {t('feature.chat.mediaMobileOnly')}
       </span>
     </div>

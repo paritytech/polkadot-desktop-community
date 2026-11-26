@@ -1,9 +1,8 @@
-import { Button, Dialog, Input } from '@novasamatech/tr-ui';
 import { CircleAlert, LayoutGrid, RotateCw, Search, SearchX, Star, StarOff } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 
-import { Spinner } from '@/shared/components';
+import { Button, Dialog, EmptyState, Input, Spinner } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { cnTw } from '@/shared/utils';
@@ -12,7 +11,6 @@ import { browseService, dotNsService, useDotNsTld, usePublishedAppListings } fro
 import { favoritesService } from '../service';
 
 import { FavoriteProductCard } from './FavoriteProductCard';
-import { FavoritesStatePlaceholder } from './FavoritesStatePlaceholder';
 
 type Props = {
   isOpen: boolean;
@@ -72,35 +70,28 @@ export const AddToFavoritesDialog = ({ isOpen, onClose }: Props) => {
   };
 
   return (
-    <Dialog
+    <Dialog.Root
       modal
       open={isOpen}
       onOpenChange={open => {
         if (!open) onClose();
       }}
     >
-      <Dialog.Content
-        showCloseButton
-        variant="tall"
-        size="md"
-        aria-describedby={undefined}
-        data-testid={TEST_IDS.addToFavoritesDialog}
-      >
-        <h2 className="text-lg leading-7 font-semibold text-fg-primary">
+      <Dialog.Content height="tall" width="md" aria-describedby={undefined} data-testid={TEST_IDS.addToFavoritesDialog}>
+        <h2 className="text-lg font-semibold text-fg-primary">
           <FormattedMessage id="feature.favorites.addDialog.title" />
         </h2>
 
-        <div className="relative min-h-9 shrink-0">
-          <Search className="pointer-events-none absolute start-3 top-1/2 size-5 -translate-y-1/2 text-fg-secondary" />
-          <div className="[&_input]:min-h-9 [&_input]:ps-9" data-testid={TEST_IDS.addToFavoritesSearchInput}>
-            <Input
-              type="search"
-              value={query}
-              placeholder={t('feature.favorites.addDialog.searchPlaceholder')}
-              aria-label={t('feature.favorites.addDialog.searchAriaLabel')}
-              onChange={event => setQuery(event.target.value)}
-            />
-          </div>
+        <div className="shrink-0">
+          <Input
+            leading={<Search />}
+            type="search"
+            data-testid={TEST_IDS.addToFavoritesSearchInput}
+            value={query}
+            placeholder={t('feature.favorites.addDialog.searchPlaceholder')}
+            aria-label={t('feature.favorites.addDialog.searchAriaLabel')}
+            onChange={event => setQuery(event.target.value)}
+          />
         </div>
 
         {/* Fixed-height scroll area: the frame stays put while the results/empty
@@ -116,13 +107,12 @@ export const AddToFavoritesDialog = ({ isOpen, onClose }: Props) => {
               <Spinner size={48} />
             </div>
           ) : error || tldError ? (
-            <FavoritesStatePlaceholder
+            <EmptyState
               testId={TEST_IDS.addToFavoritesError}
-              icon={<CircleAlert className="size-5" aria-hidden />}
+              icon={<CircleAlert aria-hidden />}
               title={<FormattedMessage id="feature.favorites.addDialog.error.title" />}
               action={
                 <Button
-                  variant="secondary"
                   size="sm"
                   data-testid={TEST_IDS.addToFavoritesRetry}
                   onClick={() => {
@@ -137,16 +127,16 @@ export const AddToFavoritesDialog = ({ isOpen, onClose }: Props) => {
             />
           ) : visibleProducts.length === 0 ? (
             hasQuery ? (
-              <FavoritesStatePlaceholder
+              <EmptyState
                 testId={TEST_IDS.addToFavoritesNoResults}
-                icon={<SearchX className="size-5" aria-hidden />}
+                icon={<SearchX aria-hidden />}
                 title={<FormattedMessage id="feature.favorites.addDialog.noResults.title" />}
                 description={<FormattedMessage id="feature.favorites.addDialog.noResults.description" />}
               />
             ) : (
-              <FavoritesStatePlaceholder
+              <EmptyState
                 testId={TEST_IDS.addToFavoritesNothingToAdd}
-                icon={<LayoutGrid className="size-5" aria-hidden />}
+                icon={<LayoutGrid aria-hidden />}
                 title={<FormattedMessage id="feature.favorites.addDialog.nothingToAdd.title" />}
                 description={<FormattedMessage id="feature.favorites.addDialog.nothingToAdd.description" />}
               />
@@ -167,7 +157,7 @@ export const AddToFavoritesDialog = ({ isOpen, onClose }: Props) => {
                         aria-label={isFavorite ? t('feature.favorites.removeAria') : t('feature.favorites.addAria')}
                         aria-pressed={isFavorite}
                         className={cnTw(
-                          'flex size-8 cursor-pointer items-center justify-center rounded-full',
+                          'flex size-control cursor-pointer items-center justify-center rounded-full',
                           'bg-bg-action-active text-fg-primary hover:brightness-95',
                         )}
                         onClick={() => toggle(product.baseName)}
@@ -184,6 +174,6 @@ export const AddToFavoritesDialog = ({ isOpen, onClose }: Props) => {
           )}
         </div>
       </Dialog.Content>
-    </Dialog>
+    </Dialog.Root>
   );
 };

@@ -114,7 +114,7 @@ export class OnboardingPage {
    * not, being ordinary routing.
    */
   async skipOnboarding() {
-    await this.skipButton.locator('button').click({ timeout: VERY_LONG_TIMEOUT });
+    await this.skipButton.click({ timeout: VERY_LONG_TIMEOUT });
     await this.page.waitForURL(/dashboard/, { timeout: DEFAULT_TIMEOUT });
   }
 
@@ -125,7 +125,7 @@ export class OnboardingPage {
   /**
    * Assert the onboarding network selector has `environmentId` selected, and that
    * it is the ONLY selected segment. The active segment carries `aria-pressed=true`
-   * (driven by `settings.environmentId === env.id` in OnboardingScreen).
+   * (the SegmentedControl's `value`, `settings.environmentId`, in OnboardingScreen).
    */
   async expectSelectedEnvironment(environmentId: E2eEnvironmentId) {
     await expect(this.networkButton(environmentId)).toHaveAttribute('aria-pressed', 'true', {

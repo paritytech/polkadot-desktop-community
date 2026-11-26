@@ -47,7 +47,7 @@ export const AddWidgetSidebarIcon = ({ alt, imageUrl, children }: AddWidgetSideb
       <span
         className={cnTw(
           iconSlotClassName,
-          '**:data-[slot=app-icon]:size-4 **:data-[slot=app-icon]:rounded-sm **:data-[slot=app-icon]:bg-transparent',
+          '**:data-[slot=app-icon]:size-4 **:data-[slot=app-icon]:rounded-sm **:data-[slot=app-icon]:bg-transparent **:data-[slot=app-icon]:shadow-none',
           '[&_[data-slot=app-icon]_img]:size-full [&_[data-slot=app-icon]_img]:rounded-sm',
           '[&_svg]:size-4',
         )}

@@ -212,9 +212,6 @@ export const TEST_IDS = {
   contactSearchInput: 'contact-search-input',
   contactResultItem: 'contact-result-item',
   chatSearchEntryButton: 'chat-search-entry-button',
-  contactSearchMessageItem: 'contact-search-message-item',
-  contactSearchRecentItem: 'contact-search-recent-item',
-  contactSearchClearRecent: 'contact-search-clear-recent',
   contactSearchNoResults: 'contact-search-no-results',
 
   // Product Actions Menu
@@ -262,9 +259,7 @@ export const TEST_IDS = {
   callVideoButton: 'call-video-button',
 
   // Network connection settings
-  networkConnectionPreference: 'network-connection-preference',
   networkConnectionChainRow: 'network-connection-chain-row',
-  networkConnectionChainTabs: 'network-connection-chain-tabs',
   productLoadNotice: 'product-load-notice',
   productLoadReloadButton: 'product-load-reload-button',
   productLoadSwitchButton: 'product-load-switch-button',

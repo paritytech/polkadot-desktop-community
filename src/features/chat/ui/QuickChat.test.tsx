@@ -3,7 +3,7 @@
 import 'fake-indexeddb/auto';
 
 import { RouterProvider, createMemoryHistory, createRootRoute, createRouter } from '@tanstack/react-router';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { of } from 'rxjs';
 import { afterEach, describe, expect, it } from 'vitest';
 
@@ -39,6 +39,8 @@ async function renderQuickChat(served: ProductChatRoom) {
 }
 
 afterEach(() => {
+  // Unmount before the runtime state resets: the reset emits to still-mounted readers outside act.
+  cleanup();
   truapiRuntimeUseCase.dispose();
 });
 
@@ -64,5 +66,20 @@ describe('QuickChat', () => {
     await renderQuickChat(room);
 
     expect(await screen.findByTestId(TEST_IDS.chatMessageInput)).toBeInTheDocument();
+  });
+
+  it('heads a room with a back button and the expand control, and returns to the list on back', async () => {
+    await renderQuickChat(room);
+    await screen.findByTestId(TEST_IDS.chatMessageInput);
+
+    expect(screen.queryByText('Quick Chat')).toBeNull();
+    expect(screen.getByTestId(TEST_IDS.quickChatExpandButton)).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Back' }));
+
+    expect(await screen.findByText('Quick Chat')).toBeInTheDocument();
+    expect(screen.getByTestId(TEST_IDS.chatRoomItem)).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Back' })).toBeNull();
+    expect(screen.getByTestId(TEST_IDS.quickChatExpandButton)).toBeInTheDocument();
   });
 });

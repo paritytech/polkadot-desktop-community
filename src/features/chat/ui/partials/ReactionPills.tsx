@@ -1,6 +1,6 @@
-import { Tooltip } from '@novasamatech/tr-ui';
-
+import { Tooltip } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
+import { useTranslation } from '@/shared/translation';
 import { cnTw } from '@/shared/utils';
 import { type ReactionAggregate } from '@/domains/chat';
 
@@ -12,18 +12,22 @@ type ReactionPillsProps = {
 };
 
 export const ReactionPills = ({ reactions, isMe, onToggleReaction }: ReactionPillsProps) => {
+  const { t } = useTranslation();
+
   if (reactions.length === 0) return null;
 
   return (
     <Tooltip.Provider delayDuration={300}>
       <div className="flex gap-1">
         {reactions.map(reaction => (
-          <Tooltip key={reaction.emoji}>
+          <Tooltip.Root key={reaction.emoji}>
             <Tooltip.Trigger asChild>
               <button
+                type="button"
                 data-testid={TEST_IDS.chatReactionPill}
+                data-no-app-focus
                 className={cnTw(
-                  'flex items-center gap-1 rounded-full border px-2 py-1 transition-colors',
+                  'flex h-control-sm items-center gap-1 rounded-full border px-2 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-chrome-focus',
                   isMe
                     ? cnTw(
                         'border-stroke-primary-inverted hover:bg-bg-selection-container-hover-inverted',
@@ -36,13 +40,10 @@ export const ReactionPills = ({ reactions, isMe, onToggleReaction }: ReactionPil
                 )}
                 onClick={() => onToggleReaction(reaction.emoji)}
               >
-                <span className="text-[20px] leading-none">{reaction.emoji}</span>
+                <span className="text-base leading-none">{reaction.emoji}</span>
                 {reaction.count > 1 && (
                   <span
-                    className={cnTw(
-                      'min-w-3 text-center text-sm leading-5',
-                      isMe ? 'text-fg-secondary-inverted' : 'text-fg-secondary',
-                    )}
+                    className={cnTw('min-w-3 text-center text-2xs', isMe ? 'text-fg-secondary-inverted' : 'text-fg-secondary')}
                   >
                     {reaction.count}
                   </span>
@@ -50,9 +51,9 @@ export const ReactionPills = ({ reactions, isMe, onToggleReaction }: ReactionPil
               </button>
             </Tooltip.Trigger>
             <Tooltip.Content side="top" sideOffset={4}>
-              {reaction.reactors.map(r => (r.isMe ? 'You' : r.name)).join(', ')}
+              {reaction.reactors.map(r => (r.isMe ? t('feature.chat.reactions.you') : r.name)).join(', ')}
             </Tooltip.Content>
-          </Tooltip>
+          </Tooltip.Root>
         ))}
       </div>
     </Tooltip.Provider>

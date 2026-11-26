@@ -1,11 +1,11 @@
 // @vitest-environment happy-dom
 
-import { DropdownMenu } from '@novasamatech/tr-ui';
 import { render, screen, waitFor } from '@testing-library/react';
 import { type PropsWithChildren } from 'react';
 import { of } from 'rxjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { DropdownMenu } from '@/shared/components';
 import { TranslationProvider } from '@/shared/translation';
 import { type PersistedProduct, productsResource } from '@/domains/product';
 
@@ -16,12 +16,12 @@ const closeMenu = vi.fn();
 // The item is a Radix `DropdownMenu.Item`, which only renders inside an open menu; a
 // real one is mounted around it so the item's own selection handling is what runs.
 const MenuHost = ({ children }: PropsWithChildren) => (
-  <DropdownMenu open>
+  <DropdownMenu.Root open>
     <DropdownMenu.Trigger asChild>
       <button type="button">menu</button>
     </DropdownMenu.Trigger>
     <DropdownMenu.Content>{children}</DropdownMenu.Content>
-  </DropdownMenu>
+  </DropdownMenu.Root>
 );
 
 // Both children are real: they render a Radix `DropdownMenu.Item` and read translations,

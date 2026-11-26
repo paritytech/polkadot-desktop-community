@@ -24,7 +24,7 @@ const Probe = () => {
   );
 };
 
-// Reads the direction the way every tr-ui component does — through Radix context, not the DOM.
+// Reads the direction the way every Radix primitive does — through context, not the DOM.
 const RadixProbe = () => <span data-testid="radix-dir">{useDirection()}</span>;
 
 // The provider writes to the shared document element, and happy-dom keeps it between cases.
@@ -139,7 +139,7 @@ describe('TranslationProvider document direction', () => {
     expect(document.documentElement.dir).toBe('ltr');
   });
 
-  // The `dir` attribute alone would not reach the Radix primitives tr-ui wraps — dropdown alignment,
+  // The `dir` attribute alone would not reach the Radix primitives the local components wrap — dropdown alignment,
   // select/tabs arrow-key direction and scroll-area all read this context. Without this case the
   // DirectionProvider could be deleted and every other test would still pass.
   it('feeds the direction to Radix context, not just the document', async () => {

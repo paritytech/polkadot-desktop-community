@@ -1,5 +1,4 @@
-import { Button, Dialog } from '@novasamatech/tr-ui';
-
+import { Button, Dialog } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { useDisplayedProduct, usePinProduct } from '@/domains/product';
@@ -26,32 +25,30 @@ export const EnableOfflineDialog = ({ productId, onClose }: Props) => {
     });
 
   return (
-    <Dialog
+    <Dialog.Root
       open
       onOpenChange={open => {
         if (!open) onClose();
       }}
     >
-      <Dialog.Content aria-describedby={undefined} variant="default">
+      <Dialog.Content aria-describedby={undefined}>
         <ProductDialogHeader product={product} />
         <div className="flex flex-col gap-2">
-          <span className="text-2xl leading-8 font-semibold text-fg-primary">
-            {t('feature.offlineAccess.enableDialog.title')}
-          </span>
-          <span className="text-base leading-6 text-fg-secondary">{t('feature.offlineAccess.enableDialog.description')}</span>
+          <span className="text-lg font-semibold text-fg-primary">{t('feature.offlineAccess.enableDialog.title')}</span>
+          <span className="text-base text-fg-secondary">{t('feature.offlineAccess.enableDialog.description')}</span>
         </div>
         <Dialog.Footer>
           <div className="flex w-full gap-2">
             <div className="flex-1">
-              <Button data-testid={TEST_IDS.offlineAccessDialogCancel} variant="outline" fullWidth onClick={onClose}>
+              <Button data-testid={TEST_IDS.offlineAccessDialogCancel} block onClick={onClose}>
                 {t('common.cancel')}
               </Button>
             </div>
             <div className="flex-1">
               <Button
                 data-testid={TEST_IDS.offlineAccessEnableConfirm}
-                variant="default"
-                fullWidth
+                variant="primary"
+                block
                 disabled={pending}
                 onClick={handleConfirm}
               >
@@ -61,6 +58,6 @@ export const EnableOfflineDialog = ({ productId, onClose }: Props) => {
           </div>
         </Dialog.Footer>
       </Dialog.Content>
-    </Dialog>
+    </Dialog.Root>
   );
 };

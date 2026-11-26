@@ -1,7 +1,7 @@
-import { Button } from '@novasamatech/tr-ui';
 import { type ReactNode } from 'react';
 import { FormattedMessage } from 'react-intl';
 
+import { Button } from '@/shared/components';
 import { useTranslation } from '@/shared/translation';
 
 type RequestBannerProps = {
@@ -21,18 +21,16 @@ export const RequestBanner = ({ name, placement, disabled, acceptTestId, onAccep
 
   const content = (
     <>
-      <p className="min-w-0 flex-1 text-sm leading-4.5 text-fg-secondary">
+      <p className="min-w-0 flex-1 text-sm text-fg-secondary">
         <FormattedMessage id="feature.chat.request.banner" values={{ name, b: boldName, br: () => <br /> }} />
       </p>
       <div className="flex shrink-0 items-center gap-2">
-        <Button variant="secondary" size="sm" disabled={disabled} onClick={onDecline}>
+        <Button size="sm" disabled={disabled} onClick={onDecline}>
           {t('feature.chat.request.decline')}
         </Button>
-        <div data-testid={acceptTestId}>
-          <Button size="sm" disabled={disabled} onClick={onAccept}>
-            {t('feature.chat.request.accept')}
-          </Button>
-        </div>
+        <Button variant="primary" size="sm" disabled={disabled} data-testid={acceptTestId} onClick={onAccept}>
+          {t('feature.chat.request.accept')}
+        </Button>
       </div>
     </>
   );

@@ -1,7 +1,7 @@
-import { Button, ScrollArea } from '@novasamatech/tr-ui';
-import { ChevronLeft, ChevronRight, Grid2X2, Link2 } from 'lucide-react';
+import { Grid2X2, Link2 } from 'lucide-react';
 import { type ReactNode, useState } from 'react';
 
+import { Button, ListItem, SettingsList, SettingsSection } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { useDisplayedProduct } from '@/domains/product';
@@ -22,11 +22,10 @@ import { WebDomainsAccessDialog } from './WebDomainsAccessDialog';
 type Props = {
   productId: string;
   permissionId: string;
-  backLabel: string;
   onBack: VoidFunction;
 };
 
-export const AppPermissionEntityPage = ({ productId, permissionId, backLabel, onBack }: Props) => {
+export const AppPermissionEntityPage = ({ productId, permissionId, onBack }: Props) => {
   const { t } = useTranslation();
   const { data: product } = useDisplayedProduct(productId);
   const isAliasPermission = permissionId === 'Alias';
@@ -44,6 +43,10 @@ export const AppPermissionEntityPage = ({ productId, permissionId, backLabel, on
   const productName = product?.displayName ?? productId;
   const hasAliasContexts = accountAccess.length > 0;
   const headerIcon = isAliasPermission ? <Link2 size={20} /> : meta?.icon;
+  const title = t('feature.productSettings.appPermission.title', { productName, permission: permissionLabel });
+  const description = isAliasPermission
+    ? t('feature.productSettings.aliasPermission.description')
+    : t('feature.productSettings.appPermission.description', { permission: permissionLabel.toLowerCase(), productName });
 
   // An account-access row has no single slot to read: its key space is one slot per
   // target product. Roll the entries up instead. The external-request row navigates to
@@ -93,64 +96,39 @@ export const AppPermissionEntityPage = ({ productId, permissionId, backLabel, on
   };
 
   return (
-    <div className="flex min-h-0 flex-col overflow-hidden">
-      <ScrollArea>
-        <div className="flex min-h-0 flex-col items-center">
-          <div className="flex min-h-0 w-150 max-w-full flex-col gap-6 px-2 py-3">
-            <button
-              className="flex items-center gap-2 self-start text-sm leading-5 font-semibold text-fg-primary"
-              onClick={onBack}
-            >
-              <ChevronLeft size={20} />
-              {backLabel}
-            </button>
-
-            <div className="flex flex-col gap-4">
-              <div className="relative size-16">
-                <div className="size-16 shrink-0 overflow-hidden rounded-xl">
-                  <ProductIcon
-                    icon={product?.icon}
-                    className="size-full object-cover"
-                    fallback={
-                      <div className="flex size-full items-center justify-center bg-bg-illustration-dark text-fg-primary-inverted">
-                        <Grid2X2 size={24} />
-                      </div>
-                    }
-                  />
-                </div>
-                <div className="absolute -end-1 -bottom-1 flex size-10 items-center justify-center rounded-xl bg-bg-surface-container text-fg-primary">
-                  {headerIcon}
-                </div>
+    <>
+      <SettingsList title={title} onBack={onBack}>
+        <div className="flex flex-col gap-6">
+          <div className="flex flex-col gap-4">
+            <div className="relative size-16">
+              <div className="size-16 shrink-0 overflow-hidden rounded-xl">
+                <ProductIcon
+                  icon={product?.icon}
+                  className="size-full object-cover"
+                  fallback={
+                    <div className="flex size-full items-center justify-center bg-bg-illustration-dark text-fg-primary-inverted">
+                      <Grid2X2 size={24} />
+                    </div>
+                  }
+                />
               </div>
-
-              <div className="flex flex-col gap-2">
-                <p className="text-2xl leading-8 font-semibold text-fg-primary">
-                  {t('feature.productSettings.appPermission.title', { productName, permission: permissionLabel })}
-                </p>
-                <p className="text-sm leading-5 text-fg-primary">
-                  {isAliasPermission
-                    ? t('feature.productSettings.aliasPermission.description')
-                    : t('feature.productSettings.appPermission.description', {
-                        permission: permissionLabel.toLowerCase(),
-                        productName,
-                      })}
-                </p>
-              </div>
-
-              <div className="flex gap-2">
-                <Button variant="outline" data-testid={TEST_IDS.permissionResetButton} onClick={handleResetToDefault}>
-                  {t('feature.productSettings.appPermission.resetToDefault')}
-                </Button>
+              <div className="absolute -end-1 -bottom-1 flex size-10 items-center justify-center rounded-xl bg-bg-surface-container text-fg-primary">
+                {headerIcon}
               </div>
             </div>
 
+            <div className="flex gap-2">
+              <Button data-testid={TEST_IDS.permissionResetButton} onClick={handleResetToDefault}>
+                {t('feature.productSettings.appPermission.resetToDefault')}
+              </Button>
+            </div>
+          </div>
+
+          <SettingsSection layout="list">
             {!isAliasPermission && meta && meta.id === 'ExternalRequest' ? (
               <PermissionNavigationEntry
                 label={permissionLabel}
-                description={t('feature.productSettings.appPermission.description', {
-                  permission: permissionLabel.toLowerCase(),
-                  productName,
-                })}
+                description={description}
                 noDomainsTitle={t('feature.productSettings.appPermission.noDomainsRequested')}
                 icon={meta.icon}
                 disabled={patterns.length === 0}
@@ -161,10 +139,7 @@ export const AppPermissionEntityPage = ({ productId, permissionId, backLabel, on
             {!isAliasPermission && meta && meta.id !== 'ExternalRequest' ? (
               <PermissionEntry
                 label={permissionLabel}
-                description={t('feature.productSettings.appPermission.description', {
-                  permission: permissionLabel.toLowerCase(),
-                  productName,
-                })}
+                description={description}
                 icon={meta.icon}
                 status={catalogueStatus}
                 onStatusChange={handleStatusChange}
@@ -174,8 +149,8 @@ export const AppPermissionEntityPage = ({ productId, permissionId, backLabel, on
             {isAliasPermission ? (
               <PermissionEntry
                 label={t('feature.productSettings.aliasPermission.label')}
-                description={t('feature.productSettings.aliasPermission.description')}
-                icon={<Link2 size={20} />}
+                description={description}
+                icon={<Link2 />}
                 status={accountAccessStatus}
                 onStatusChange={setEveryAccountAccessStatus}
               />
@@ -185,15 +160,15 @@ export const AppPermissionEntityPage = ({ productId, permissionId, backLabel, on
               <PermissionNavigationEntry
                 label={t('feature.productSettings.aliasPermission.contextsLabel')}
                 description={t('feature.productSettings.aliasPermission.contextsDescription')}
-                icon={<Link2 size={20} />}
+                icon={<Link2 />}
                 noDomainsTitle={t('feature.productSettings.aliasPermission.noContextsRequested')}
                 disabled={!hasAliasContexts}
                 onClick={() => setAliasContextsDialogOpen(true)}
               />
             ) : null}
-          </div>
+          </SettingsSection>
         </div>
-      </ScrollArea>
+      </SettingsList>
       <WebDomainsAccessDialog
         open={webDomainsOpen}
         productId={productId}
@@ -207,27 +182,15 @@ export const AppPermissionEntityPage = ({ productId, permissionId, backLabel, on
         onOpenChange={setAliasContextsDialogOpen}
         onStatusChange={setAccountAccessStatus}
       />
-    </div>
+    </>
   );
 };
 
-type PermissionEntryLayoutProps = {
+type PermissionEntryProps = {
   label: string;
   description: string;
   icon: ReactNode;
 };
-
-const PermissionEntryLayout = ({ label, description, icon }: PermissionEntryLayoutProps) => (
-  <div className="flex min-w-0 flex-1 items-center gap-3">
-    <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-bg-illustration-light text-fg-primary">
-      {icon}
-    </div>
-    <div className="flex min-w-0 flex-1 flex-col">
-      <span className="truncate text-sm font-medium text-fg-primary">{label}</span>
-      <span className="truncate text-xs leading-4 text-fg-tertiary">{description}</span>
-    </div>
-  </div>
-);
 
 const PermissionEntry = ({
   label,
@@ -235,14 +198,17 @@ const PermissionEntry = ({
   icon,
   status,
   onStatusChange,
-}: PermissionEntryLayoutProps & {
+}: PermissionEntryProps & {
   status: PermissionStatus;
   onStatusChange: (status: PermissionStatus) => void;
 }) => (
-  <div className="flex items-center gap-4 rounded-xl p-3" data-testid={TEST_IDS.permissionRow}>
-    <PermissionEntryLayout label={label} description={description} icon={icon} />
-    <PermissionStatusDropdown value={status} onChange={onStatusChange} />
-  </div>
+  <ListItem
+    icon={icon}
+    label={label}
+    description={description}
+    action={<PermissionStatusDropdown value={status} onChange={onStatusChange} />}
+    testId={TEST_IDS.permissionRow}
+  />
 );
 
 const PermissionNavigationEntry = ({
@@ -252,20 +218,19 @@ const PermissionNavigationEntry = ({
   disabled,
   noDomainsTitle,
   onClick,
-}: PermissionEntryLayoutProps & {
+}: PermissionEntryProps & {
   disabled: boolean;
   noDomainsTitle: string;
   onClick: VoidFunction;
 }) => (
-  <button
-    type="button"
-    data-testid={TEST_IDS.permissionRow}
-    className="flex w-full items-center gap-4 rounded-xl p-3 text-start transition-colors enabled:hover:bg-bg-selection-container-hover disabled:cursor-not-allowed disabled:opacity-50"
+  <ListItem
+    icon={icon}
+    label={label}
+    description={description}
+    chevron
     disabled={disabled}
     title={disabled ? noDomainsTitle : undefined}
+    testId={TEST_IDS.permissionRow}
     onClick={onClick}
-  >
-    <PermissionEntryLayout label={label} description={description} icon={icon} />
-    <ChevronRight size={16} className="shrink-0 text-fg-tertiary" />
-  </button>
+  />
 );

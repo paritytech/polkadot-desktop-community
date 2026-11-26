@@ -22,7 +22,9 @@
       "all": "Все",
       "electronics": "Электроника",
       "fashion": "Мода",
-      "downloadLogs": "Скачать логи"
+      "downloadLogs": "Скачать логи",
+      "copied": "Скопировано",
+      "copyFailed": "Не удалось скопировать"
     },
     "label": {
       "signer": "Подписант",
@@ -114,6 +116,7 @@
       "newTab": "Новая вкладка",
       "newTabPrompt": "Введите {tld}-адрес",
       "closeTab": "Закрыть вкладку",
+      "tabsAria": "Открытые вкладки",
       "signTransaction": "Подписать транзакцию",
       "signingRequestTitle": "Запрос на подпись: {call}",
       "operationTitle": {
@@ -240,6 +243,7 @@
       "results": "Результаты ({count})",
       "recent": "Недавние",
       "clear": "Очистить",
+      "moreReactions": "Другие реакции",
       "contacts": "Контакты",
       "noMessages": "Сообщений пока нет",
       "thisIsChat": "Это чат",
@@ -310,8 +314,6 @@
         "tabApps": "Приложения",
         "groupChatsAndContacts": "Чаты и контакты",
         "groupMessages": "Сообщения",
-        "recent": "Недавние",
-        "clear": "Очистить",
         "appsComingSoon": "Поиск по приложениям скоро появится",
         "noResultsTitle": "Ничего не найдено",
         "noResultsHint": "Попробуйте изменить запрос"
@@ -373,7 +375,10 @@
           "tapToCallBack": "Нажмите, чтобы перезвонить",
           "tapToCallAgain": "Нажмите, чтобы позвонить снова"
         }
-      }
+      },
+      "searchPrevious": "Предыдущее совпадение",
+      "searchNext": "Следующее совпадение",
+      "roomActions": "Действия с чатом"
     },
     "productActionsMenu": {
       "trigger": "Действия с продуктом",
@@ -407,7 +412,8 @@
           "title": "Ваш аккаунт ещё настраивается",
           "subtitle": "Попробуйте позже"
         }
-      }
+      },
+      "networkLabel": "Сеть"
     },
     "dashboard": {
       "title": "Панель",
@@ -498,7 +504,8 @@
         "cleanup": "Очистить панель",
         "reload": "Перезагрузить виджет",
         "removeWidget": "Удалить виджет"
-      }
+      },
+      "home": "Главная"
     },
     "ticketApp": {
       "title": "Ticket App",
@@ -718,7 +725,6 @@
       "navItem": "Разрешения",
       "heading": "Разрешения",
       "subheading": "Просматривайте и меняйте доступ приложений к функциям и данным",
-      "categoryHeading": "{name}:",
       "appCount": "{count, plural, =0 {Нет приложений} one {# приложение} few {# приложения} many {# приложений} other {# приложения}}",
       "category": {
         "device": "Доступ к устройству и системе",
@@ -732,7 +738,7 @@
       },
       "detail": {
         "rulesTitle": "Правила и ограничения",
-        "appsLabel": "Приложения:",
+        "appsLabel": "Приложения",
         "noApps": "Ни одно приложение не запрашивало это разрешение",
         "allowedFor": "Разрешено для {modalities}",
         "appSubtitle": "{baseName} • {allowed}"

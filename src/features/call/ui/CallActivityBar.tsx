@@ -32,7 +32,7 @@ export const CallActivityBar = ({ session }: Props) => {
       type="button"
       aria-label={intl.formatMessage({ id: 'feature.call.returnToCall' })}
       className={cnTw(
-        'flex w-full shrink-0 items-center justify-center bg-fg-success py-1',
+        'flex h-control w-full shrink-0 items-center justify-center bg-fg-success',
         'text-sm font-semibold text-fg-primary-inverted',
       )}
       onClick={handleReturn}

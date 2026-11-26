@@ -46,6 +46,13 @@ const incomingText = (messageId: string, text: string, timestamp: number): ChatM
 });
 
 describe('Room', () => {
+  it('titles the header with the room name and offers the room actions menu', async () => {
+    renderRoom(makeSession());
+
+    expect(await screen.findByRole('banner')).toHaveTextContent('Coinflip');
+    expect(screen.getByTestId(TEST_IDS.chatRoomHeaderMenuTrigger)).toBeInTheDocument();
+  });
+
   it('shows the composer for a session without a footer', async () => {
     renderRoom(makeSession());
 

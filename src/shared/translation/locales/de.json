@@ -22,7 +22,9 @@
       "all": "Alle",
       "electronics": "Elektronik",
       "fashion": "Mode",
-      "downloadLogs": "Protokolle herunterladen"
+      "downloadLogs": "Protokolle herunterladen",
+      "copied": "Kopiert",
+      "copyFailed": "Kopieren fehlgeschlagen"
     },
     "label": {
       "signer": "Unterzeichner",
@@ -114,6 +116,7 @@
       "newTab": "Neuer Tab",
       "newTabPrompt": "{tld}-Adresse eingeben",
       "closeTab": "Tab schließen",
+      "tabsAria": "Geöffnete Tabs",
       "signTransaction": "Transaktion signieren",
       "signingRequestTitle": "Signaturanfrage für {call}",
       "operationTitle": {
@@ -240,6 +243,7 @@
       "results": "Ergebnisse ({count})",
       "recent": "Zuletzt",
       "clear": "Leeren",
+      "moreReactions": "Weitere Reaktionen",
       "contacts": "Kontakte",
       "noMessages": "Noch keine Nachrichten",
       "thisIsChat": "Das ist ein Chat",
@@ -310,8 +314,6 @@
         "tabApps": "Apps",
         "groupChatsAndContacts": "Chats und Kontakte",
         "groupMessages": "Nachrichten",
-        "recent": "Zuletzt",
-        "clear": "Leeren",
         "appsComingSoon": "Die App-Suche kommt bald",
         "noResultsTitle": "Keine Ergebnisse",
         "noResultsHint": "Passe deine Suche an"
@@ -373,7 +375,10 @@
           "tapToCallBack": "Zum Zurückrufen tippen",
           "tapToCallAgain": "Zum erneuten Anrufen tippen"
         }
-      }
+      },
+      "searchPrevious": "Vorheriger Treffer",
+      "searchNext": "Nächster Treffer",
+      "roomActions": "Chat-Aktionen"
     },
     "productActionsMenu": {
       "trigger": "Produktaktionen",
@@ -407,7 +412,8 @@
           "title": "Dein Konto wird noch eingerichtet",
           "subtitle": "Bitte versuche es später erneut"
         }
-      }
+      },
+      "networkLabel": "Netzwerk"
     },
     "dashboard": {
       "title": "Dashboard",
@@ -498,7 +504,8 @@
         "cleanup": "Dashboard aufräumen",
         "reload": "Widget neu laden",
         "removeWidget": "Widget entfernen"
-      }
+      },
+      "home": "Startseite"
     },
     "ticketApp": {
       "title": "Ticket App",
@@ -718,7 +725,6 @@
       "navItem": "Berechtigungen",
       "heading": "Berechtigungen",
       "subheading": "Prüfe und verwalte den App-Zugriff auf Funktionen und Daten",
-      "categoryHeading": "{name}:",
       "appCount": "{count, plural, =0 {Keine Apps} one {# App} other {# Apps}}",
       "category": {
         "device": "Geräte- & Systemzugriff",
@@ -732,7 +738,7 @@
       },
       "detail": {
         "rulesTitle": "Regeln & Schutzmaßnahmen",
-        "appsLabel": "Apps:",
+        "appsLabel": "Apps",
         "noApps": "Keine App hat diese Berechtigung angefordert",
         "allowedFor": "Zugelassen für {modalities}",
         "appSubtitle": "{baseName} • {allowed}"

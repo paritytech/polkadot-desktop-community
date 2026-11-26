@@ -48,12 +48,7 @@ export async function resetDesktopChatState(page: Page): Promise<void> {
 
   const homeButton = page.getByTestId(TEST_IDS.homeButton);
   await expect(homeButton).toBeVisible({ timeout: DEFAULT_TIMEOUT });
-  await homeButton
-    .locator('button')
-    .click()
-    .catch(async () => {
-      // Some HeaderButton wrappers render the button at the same level; try direct click.
-      await homeButton.click();
-    });
+  // The test id is on the IconButton itself, so the click goes to it directly.
+  await homeButton.click();
   await page.waitForURL(/dashboard/, { timeout: DEFAULT_TIMEOUT });
 }

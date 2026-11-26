@@ -1,13 +1,9 @@
-import { themes } from '@novasamatech/tr-ui';
 import { Check } from 'lucide-react';
 
 import { useTranslation } from '@/shared/translation';
 import { cnTw } from '@/shared/utils';
-import { type ThemeName, THEME_NAMES, useSetThemeName, useThemeName } from '@/domains/application';
-
-// Each theme's signature swatch = its light `bg-action-primary` (a primitive var,
-// global across themes) so every card renders its own colour regardless of the active theme.
-const swatchColor = (name: ThemeName): string => themes[name]?.light?.['--bg-action-primary'] ?? 'transparent';
+import { THEME_NAMES, useSetThemeName, useThemeName } from '@/domains/application';
+import { THEME_SWATCHES } from '../constants';
 
 export const ThemePicker = () => {
   const { t } = useTranslation();
@@ -37,15 +33,18 @@ export const ThemePicker = () => {
                   : 'ring-1 ring-transparent hover:ring-stroke-secondary',
               )}
             >
-              <span
-                aria-hidden
-                className="flex size-12 items-center justify-center rounded-full"
-                style={{ backgroundColor: swatchColor(name) }}
-              >
-                {selected && <Check className="size-5 text-fg-static-white" strokeWidth={2.5} />}
+              <span aria-hidden className="relative flex size-12 overflow-hidden rounded-full">
+                <span className="h-full flex-1" style={{ backgroundColor: THEME_SWATCHES[name].light }} />
+                <span className="h-full flex-1" style={{ backgroundColor: THEME_SWATCHES[name].dark }} />
+                <span className="absolute inset-0 rounded-full shadow-chrome-ring" />
+                {selected && (
+                  <span className="absolute top-1/2 left-1/2 flex size-6 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-chrome-top text-chrome-text shadow-chrome-ring">
+                    <Check className="size-4" strokeWidth={2.5} />
+                  </span>
+                )}
               </span>
             </span>
-            <span className={cnTw('text-sm leading-5 font-medium', selected ? 'text-fg-primary' : 'text-fg-secondary')}>
+            <span className={cnTw('text-sm font-medium', selected ? 'text-fg-primary' : 'text-fg-secondary')}>
               {t(`feature.themeToggle.${name}`)}
             </span>
           </button>

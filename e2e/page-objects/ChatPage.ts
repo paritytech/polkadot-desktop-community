@@ -7,7 +7,7 @@ export class ChatPage {
   constructor(private readonly page: Page) {}
 
   /**
-   * Toolbar HeaderButton wrapper that opens the QuickChat popover.
+   * Toolbar quick-chat button that opens the QuickChat popover.
    */
   get quickChatTrigger() {
     return this.page.getByTestId(TEST_IDS.quickChatButton);
@@ -117,6 +117,9 @@ export class ChatPage {
       await expect(expandButton).toBeVisible({ timeout: DEFAULT_TIMEOUT });
       await expandButton.click();
       await expect(this.roomList).toBeVisible({ timeout: DEFAULT_TIMEOUT });
+      // The popover stays mounted through its exit animation, and its rooms carry the same test ids as the
+      // fullscreen list, so a room locator matches twice until it is gone.
+      await expect(this.quickChatPopover).toBeHidden({ timeout: DEFAULT_TIMEOUT });
     };
     try {
       await openAndNavigate();

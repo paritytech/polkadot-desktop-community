@@ -1,18 +1,16 @@
 import './index.css';
 
-import { ThemeProvider, Toaster, berlinTheme, themes } from '@novasamatech/tr-ui';
 import { Suspense, useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { ErrorBoundary } from 'react-error-boundary';
 
-import { ElectronSplashScreen, FallbackScreen, WebSplashScreen } from '@/shared/components';
+import { ElectronSplashScreen, FallbackScreen, Toaster, WebSplashScreen } from '@/shared/components';
 import { isElectron, isProductionBuild, reloadApp } from '@/shared/env';
 import { resetFeatureStatuses, updateFeatureStatus } from '@/shared/feature-config';
 import { silenceDebugConsole } from '@/shared/logger';
 import { Sentry, initSentry } from '@/shared/sentry';
 import { TranslationProvider, useLocalePreference } from '@/shared/translation';
 import { delay } from '@/shared/utils';
-import { useThemeName, useThemeVariant } from '@/domains/application';
 // Eager import: registers the call window's `__callInit` MessagePort listener
 // before the preload posts the port on did-finish-load (no-op in the main app).
 import { isCallWindowLocation } from '@/features/call/runtime/callInitPort';
@@ -51,10 +49,15 @@ const CLEAR_LOADING_TIMEOUT = 700;
 const DIRTY_LOADING_TIMEOUT = 2000;
 
 // The A/V call window loads this same bundle at the `#/call` route in its own
-// BrowserWindow. It is dark-only by design (its Figma is built against dark
-// tokens), so pin it to dark and skip the theme syncers below — the app's
-// light/dark preference must not leak into it.
+// BrowserWindow. It is dark only by design (its Figma is built against dark
+// tokens), so it is pinned to dark below and skips the mode syncers: the app's
+// light/dark preference must not leak into it. It keeps the user's palette.
 const isCallWindow = isCallWindowLocation();
+
+if (isCallWindow) {
+  document.documentElement.classList.add('dark');
+  document.documentElement.style.colorScheme = 'dark';
+}
 
 const App = controlledLazy(() => import('./App').then(m => m.App));
 
@@ -146,41 +149,35 @@ const Root = () => {
 
   const splashScreen = renderSplashScreen ? isElectron() ? <ElectronSplashScreen /> : <WebSplashScreen /> : null;
 
-  const browserTheme = useThemeVariant();
   const locale = useLocalePreference();
-  const themeName = useThemeName();
-  const initialTheme = themes[themeName] ?? berlinTheme;
-  const mode = isCallWindow ? 'dark' : browserTheme;
 
   return (
     <TranslationProvider locale={locale}>
-      <ThemeProvider theme={initialTheme} defaultMode={mode}>
-        {!isCallWindow && (
-          <>
-            <ThemeSyncer />
-            <ThemeNameSyncer />
-            <NativeThemeSyncer />
-          </>
-        )}
-        <ErrorBoundary
-          FallbackComponent={FallbackScreen}
-          onError={(error, errorInfo) => {
-            Sentry.captureException(error, { extra: { componentStack: errorInfo.componentStack } });
-            const message = error ? error.toString() : '';
-            console.error(message);
-            console.error(errorInfo.componentStack);
-            if (message.includes('Failed to fetch dynamically imported module')) {
-              reloadApp();
-            }
-          }}
-        >
-          <Suspense fallback={splashScreen}>
-            <App onReady={() => setAppLoaded(true)} />
-            {loadingDelay && <LoadingDelay suspense={loadingDelay} />}
-          </Suspense>
-        </ErrorBoundary>
-        <Toaster />
-      </ThemeProvider>
+      <ThemeNameSyncer />
+      {!isCallWindow && (
+        <>
+          <ThemeSyncer />
+          <NativeThemeSyncer />
+        </>
+      )}
+      <ErrorBoundary
+        FallbackComponent={FallbackScreen}
+        onError={(error, errorInfo) => {
+          Sentry.captureException(error, { extra: { componentStack: errorInfo.componentStack } });
+          const message = error ? error.toString() : '';
+          console.error(message);
+          console.error(errorInfo.componentStack);
+          if (message.includes('Failed to fetch dynamically imported module')) {
+            reloadApp();
+          }
+        }}
+      >
+        <Suspense fallback={splashScreen}>
+          <App onReady={() => setAppLoaded(true)} />
+          {loadingDelay && <LoadingDelay suspense={loadingDelay} />}
+        </Suspense>
+      </ErrorBoundary>
+      <Toaster />
     </TranslationProvider>
   );
 };

@@ -26,13 +26,13 @@ export const Header = memo(() => {
     // the Electron 42.4.0 fix for the AppKit `sendEvent:` regression (#51576).
     <header
       className={cnTw(
-        'flex w-full shrink-0 flex-col transition-colors duration-200',
-        tintUnfocused ? 'bg-bg-surface-nested dark:bg-bg-surface-container' : 'bg-bg-surface-container',
+        'flex w-full shrink-0 flex-col text-chrome-text shadow-chrome-edge',
+        tintUnfocused ? 'bg-chrome-bottom' : 'bg-(image:--chrome-glass)',
       )}
       style={{ appRegion: 'drag' }}
     >
       <div className="flex h-12 items-center">
-        <div className="flex h-full min-w-0 flex-1 basis-0 items-center border-stroke-primary">
+        <div className="flex h-full min-w-0 flex-1 basis-0 items-center">
           {/* The macOS traffic lights are OS chrome pinned to the physical top-left; they do not
               move under `dir="rtl"`. This flex row does, so the spacer that clears them is rendered
               in whichever track ends up on the physical left — the leading one in LTR, the trailing

@@ -146,4 +146,25 @@ describe('InputSpotlight', () => {
 
     await waitFor(() => expect(screen.queryByTestId(TEST_IDS.inputModalitySurface)).toBeNull());
   });
+
+  it('closes when focus moves outside it, as a press that reaches the product webview does', async () => {
+    const outside = document.createElement('button');
+    document.body.append(outside);
+    renderSurface();
+    open();
+
+    act(() => outside.focus());
+
+    await waitFor(() => expect(screen.queryByTestId(TEST_IDS.inputModalitySurface)).toBeNull());
+    outside.remove();
+  });
+
+  it('stays open while focus moves inside it', () => {
+    renderSurface();
+    open();
+
+    act(() => screen.getByTestId(TEST_IDS.inputModalityScanButton).focus());
+
+    expect(screen.getByTestId(TEST_IDS.inputModalitySurface)).toBeInTheDocument();
+  });
 });

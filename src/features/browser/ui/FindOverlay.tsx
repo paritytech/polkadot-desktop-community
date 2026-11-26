@@ -1,9 +1,9 @@
 import { ChevronDown, ChevronUp, Search, X } from 'lucide-react';
-import { type KeyboardEvent, type ReactNode, useEffect, useRef } from 'react';
+import { type KeyboardEvent, useEffect, useRef } from 'react';
 
+import { IconButton } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
-import { cnTw } from '@/shared/utils';
 import { useFindControls, useFindSession } from '@/aggregates/find-in-page';
 
 type Props = {
@@ -55,7 +55,7 @@ export const FindOverlay = ({ tabId }: Props) => {
   return (
     <div
       data-testid={TEST_IDS.findBar}
-      className="animate-find-bar-in absolute end-3 top-3 z-50 flex h-8 items-center gap-2 rounded-lg border border-stroke-primary bg-bg-surface-nested px-3 shadow-md"
+      className="animate-find-bar-in absolute end-3 top-3 z-50 flex h-control items-center gap-2 rounded-lg border border-stroke-primary bg-bg-surface-nested px-3 shadow-md"
       style={{ appRegion: 'no-drag' }}
     >
       <Search className="size-5 shrink-0 text-fg-secondary" aria-hidden />
@@ -97,51 +97,30 @@ export const FindOverlay = ({ tabId }: Props) => {
         </span>
 
         <div className="flex items-center">
-          <FindButton
-            testId={TEST_IDS.findPrevious}
-            ariaLabel={t('feature.browser.findPrevious')}
+          <IconButton
+            size="sm"
+            data-testid={TEST_IDS.findPrevious}
+            label={t('feature.browser.findPrevious')}
             disabled={!hasMatches}
             onClick={prev}
           >
-            <ChevronUp className="size-4" aria-hidden />
-          </FindButton>
-          <FindButton testId={TEST_IDS.findNext} ariaLabel={t('feature.browser.findNext')} disabled={!hasMatches} onClick={next}>
-            <ChevronDown className="size-4" aria-hidden />
-          </FindButton>
+            <ChevronUp aria-hidden />
+          </IconButton>
+          <IconButton
+            size="sm"
+            data-testid={TEST_IDS.findNext}
+            label={t('feature.browser.findNext')}
+            disabled={!hasMatches}
+            onClick={next}
+          >
+            <ChevronDown aria-hidden />
+          </IconButton>
         </div>
 
-        <FindButton testId={TEST_IDS.findClose} ariaLabel={t('feature.browser.findClose')} onClick={close}>
-          <X className="size-4.5" aria-hidden />
-        </FindButton>
+        <IconButton size="sm" data-testid={TEST_IDS.findClose} label={t('feature.browser.findClose')} onClick={close}>
+          <X aria-hidden />
+        </IconButton>
       </div>
     </div>
-  );
-};
-
-type FindButtonProps = {
-  testId: string;
-  ariaLabel: string;
-  disabled?: boolean;
-  onClick: VoidFunction;
-  children: ReactNode;
-};
-
-const FindButton = ({ testId, ariaLabel, disabled = false, onClick, children }: FindButtonProps) => {
-  return (
-    <button
-      type="button"
-      data-testid={testId}
-      aria-label={ariaLabel}
-      disabled={disabled}
-      className={cnTw(
-        'flex size-6 shrink-0 items-center justify-center rounded-full text-fg-secondary transition-all duration-100',
-        disabled
-          ? 'cursor-default opacity-[0.32]'
-          : 'cursor-pointer hover:bg-bg-action-secondary-hover hover:text-fg-primary active:scale-90',
-      )}
-      onClick={onClick}
-    >
-      {children}
-    </button>
   );
 };

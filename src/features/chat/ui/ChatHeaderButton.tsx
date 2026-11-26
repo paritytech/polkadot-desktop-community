@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 
 import ChatBubbleIcon from '@/shared/assets/images/header/chat-bubble.svg?jsx';
-import { HeaderButton, iconBase } from '@/shared/components';
+import { IconButton } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { useProductSessions, useTotalUnreadCount } from '@/domains/chat';
@@ -9,8 +9,6 @@ import { useP2PSessions } from '@/aggregates/p2p-chat';
 import { useTruapiUserId } from '@/aggregates/truapi-runtime';
 
 import { QuickChat } from './QuickChat';
-
-const chatIconClassName = `size-4 ${iconBase}`;
 
 export const ChatHeaderButton = () => {
   const { t } = useTranslation();
@@ -23,22 +21,18 @@ export const ChatHeaderButton = () => {
   const totalUnread = useTotalUnreadCount(sessions);
 
   return (
-    <div className="inline-flex items-center" data-testid={TEST_IDS.quickChatButton}>
-      <QuickChat open={isOpen} onOpenChange={setIsOpen}>
-        {/* The icon is the whole button, so without a label the button is
-            anonymous to a screen reader. The dot needs `role` for its own label
-            to apply at all — `aria-label` on a bare span is ignored. */}
-        <HeaderButton variant="icon" active={isOpen} ariaLabel={t('feature.chat.quickChat')}>
-          <ChatBubbleIcon className={chatIconClassName} aria-hidden />
-          {totalUnread > 0 && (
-            <span
-              role="status"
-              aria-label={t('feature.chat.unreadMessagesAria')}
-              className="absolute end-1.25 top-1.25 block size-2.5 rounded-full border border-bg-surface-container bg-fg-success"
-            />
-          )}
-        </HeaderButton>
-      </QuickChat>
-    </div>
+    <QuickChat open={isOpen} onOpenChange={setIsOpen}>
+      {/* The dot needs `role` for its own label to apply at all — `aria-label` on a bare span is ignored. */}
+      <IconButton label={t('feature.chat.quickChat')} data-testid={TEST_IDS.quickChatButton}>
+        <ChatBubbleIcon className="size-4" aria-hidden />
+        {totalUnread > 0 && (
+          <span
+            role="status"
+            aria-label={t('feature.chat.unreadMessagesAria')}
+            className="absolute end-1.5 top-1.5 block size-1.5 rounded-full bg-chrome-ok"
+          />
+        )}
+      </IconButton>
+    </QuickChat>
   );
 };

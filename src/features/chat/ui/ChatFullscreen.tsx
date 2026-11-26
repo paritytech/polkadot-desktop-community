@@ -1,9 +1,7 @@
-import { toastInfo } from '@novasamatech/tr-ui';
-import { ChevronLeft, MessagesSquare } from 'lucide-react';
+import { MessageCircle, MessagesSquare } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import LastChatsIcon from '@/shared/assets/images/header/last-chats.svg?jsx';
-import { widgetSpanWidthCss } from '@/shared/components';
+import { AppIcon, EmptyState, PaneHeader, SectionLabel, toast, widgetSpanWidthCss } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import {
@@ -38,7 +36,6 @@ import { ChatListSearchBar } from './partials/ChatListSearchBar';
 import { DraftInvitationRoom } from './partials/DraftInvitationRoom';
 import { IncomingRequestRoom } from './partials/IncomingRequestRoom';
 import { NewRequestsItem } from './partials/NewRequestsItem';
-import { NoData } from './partials/NoData';
 import { OutgoingPendingRoom } from './partials/OutgoingPendingRoom';
 import { OutgoingRequestItem } from './partials/OutgoingRequestItem';
 import { RecentContactsRow } from './partials/RecentContactsRow';
@@ -46,6 +43,7 @@ import { RequestConfirmDialog } from './partials/RequestConfirmDialog';
 import { RequestItem } from './partials/RequestItem';
 import { Room } from './partials/Room';
 import { RoomList } from './partials/RoomList';
+import { RoomPane } from './partials/RoomPane';
 import { SearchResultsPanel } from './partials/SearchResultsPanel';
 
 // How many recent-chat avatar chips to surface above the recents list on focus.
@@ -262,7 +260,7 @@ export const ChatFullscreen = ({ selected, onSelect, onDeselect }: Props) => {
     const wasSelected = declineTarget.peerId === selected;
     try {
       await declineRequest(declineTarget.requestId);
-      toastInfo({ title: t('feature.chat.request.declinedToast', { name }) });
+      toast.info({ title: t('feature.chat.request.declinedToast', { name }) });
       if (wasSelected) onDeselect?.();
     } catch (e) {
       console.error('[chat] Failed to decline request:', e);
@@ -284,99 +282,94 @@ export const ChatFullscreen = ({ selected, onSelect, onDeselect }: Props) => {
 
   return (
     <div className="relative flex size-full gap-2 bg-bg-surface-main p-2">
-      <div
-        ref={leftPanelRef}
-        style={sideMenuStyle}
-        className="flex shrink-0 flex-col overflow-hidden rounded-xl border border-stroke-primary bg-bg-surface-container"
-      >
-        {showRequests ? (
-          <RequestsListView
-            requests={pendingRequests}
-            selected={selected}
-            hideByDefault={hideRequestsByDefault}
-            onBack={() => setShowRequests(false)}
-            onSelect={onSelect}
-            onDecline={openDecline}
-          />
-        ) : (
-          <>
-            <ListHeader />
-            <ChatListSearchBar
-              query={query}
-              active={searchActive}
-              inputRef={searchInputRef}
-              onQueryChange={handleQueryChange}
-              onFocus={() => setSearchActive(true)}
-              onClear={handleClearSearch}
-              onEscape={closeSearch}
+      <div ref={leftPanelRef} style={sideMenuStyle} className="flex shrink-0">
+        <RoomPane>
+          {showRequests ? (
+            <RequestsListView
+              requests={pendingRequests}
+              selected={selected}
+              hideByDefault={hideRequestsByDefault}
+              onBack={() => setShowRequests(false)}
+              onSelect={onSelect}
+              onDecline={openDecline}
             />
-            {showResults ? (
-              <SearchResultsPanel
+          ) : (
+            <>
+              <ListHeader />
+              <ChatListSearchBar
                 query={query}
-                sessions={sessions}
-                contactResults={contactResults}
-                messageResults={messageResults}
-                connectedIds={connectedIds}
-                contactsDisabled={!manager}
-                pending={contactsPending || messagesPending}
-                searchError={searchError}
-                onSelectSession={handleSelectSession}
-                onSelectContact={handleSelectContact}
-                onSelectMessage={handleSelectMessage}
+                active={searchActive}
+                inputRef={searchInputRef}
+                onQueryChange={handleQueryChange}
+                onFocus={() => setSearchActive(true)}
+                onClear={handleClearSearch}
+                onEscape={closeSearch}
               />
-            ) : showRecents ? (
-              <RecentsView sessions={sessions} selectedSession={selectedSession} onSelect={handleSelectSession} />
-            ) : (
-              <div data-testid={TEST_IDS.chatRoomList} className="flex flex-1 flex-col overflow-y-auto">
-                <SyncStatusBanner />
-                {pending ? (
-                  skeleton
-                ) : chatListEntries.length === 0 ? (
-                  <div className="flex h-full items-center justify-center">
-                    <NoData
-                      icon={MessagesSquare}
+              {showResults ? (
+                <SearchResultsPanel
+                  query={query}
+                  sessions={sessions}
+                  contactResults={contactResults}
+                  messageResults={messageResults}
+                  connectedIds={connectedIds}
+                  contactsDisabled={!manager}
+                  pending={contactsPending || messagesPending}
+                  searchError={searchError}
+                  onSelectSession={handleSelectSession}
+                  onSelectContact={handleSelectContact}
+                  onSelectMessage={handleSelectMessage}
+                />
+              ) : showRecents ? (
+                <RecentsView sessions={sessions} selectedSession={selectedSession} onSelect={handleSelectSession} />
+              ) : (
+                <div data-testid={TEST_IDS.chatRoomList} className="flex flex-1 flex-col overflow-y-auto">
+                  <SyncStatusBanner />
+                  {pending ? (
+                    skeleton
+                  ) : chatListEntries.length === 0 ? (
+                    <EmptyState
+                      icon={<MessagesSquare />}
                       title={t('feature.chat.noChatsYet')}
                       description={t('feature.chat.yourChatsWillAppear')}
                     />
-                  </div>
-                ) : (
-                  chatListEntries.map((entry, index) => {
-                    if (entry.kind === 'incoming') {
-                      return (
-                        <NewRequestsItem
-                          key="incoming-requests"
-                          count={entry.requests.length}
-                          subtitle={requesterNames}
-                          onClick={() => setShowRequests(true)}
-                        />
-                      );
-                    }
-                    if (entry.kind === 'outgoing') {
-                      return (
-                        <OutgoingRequestItem
-                          key={entry.request.requestId}
-                          request={entry.request}
-                          selected={selected === entry.request.peerId}
-                          onClick={() => onSelect(entry.request.peerId)}
-                        />
-                      );
-                    }
+                  ) : (
+                    chatListEntries.map(entry => {
+                      if (entry.kind === 'incoming') {
+                        return (
+                          <NewRequestsItem
+                            key="incoming-requests"
+                            count={entry.requests.length}
+                            subtitle={requesterNames}
+                            onClick={() => setShowRequests(true)}
+                          />
+                        );
+                      }
+                      if (entry.kind === 'outgoing') {
+                        return (
+                          <OutgoingRequestItem
+                            key={entry.request.requestId}
+                            request={entry.request}
+                            selected={selected === entry.request.peerId}
+                            onClick={() => onSelect(entry.request.peerId)}
+                          />
+                        );
+                      }
 
-                    return (
-                      <ChatItem
-                        key={entry.session.sessionId}
-                        session={entry.session}
-                        isLast={index === chatListEntries.length - 1}
-                        isSelected={selectedSession?.sessionId === entry.session.sessionId}
-                        onClick={() => onSelect(entry.session.sessionId)}
-                      />
-                    );
-                  })
-                )}
-              </div>
-            )}
-          </>
-        )}
+                      return (
+                        <ChatItem
+                          key={entry.session.sessionId}
+                          session={entry.session}
+                          isSelected={selectedSession?.sessionId === entry.session.sessionId}
+                          onClick={() => onSelect(entry.session.sessionId)}
+                        />
+                      );
+                    })
+                  )}
+                </div>
+              )}
+            </>
+          )}
+        </RoomPane>
       </div>
 
       {pane.kind === 'draft' && draftInvitation ? (
@@ -407,7 +400,11 @@ export const ChatFullscreen = ({ selected, onSelect, onDeselect }: Props) => {
           onReveal={handleRevealRequest}
         />
       ) : (
-        <NoData icon={MessagesSquare} title={t('feature.chat.noChatSelected')} description={t('feature.chat.selectChatToView')} />
+        <EmptyState
+          icon={<MessagesSquare />}
+          title={t('feature.chat.noChatSelected')}
+          description={t('feature.chat.selectChatToView')}
+        />
       )}
 
       <RequestConfirmDialog
@@ -431,12 +428,16 @@ const ListHeader = () => {
   const { t } = useTranslation();
 
   return (
-    <div className="shrink-0 bg-bg-surface-container p-2">
-      <div className="flex w-full items-center gap-2">
-        <LastChatsIcon className="size-6 shrink-0 dark:invert" aria-hidden />
-        <span className="text-sm leading-5 font-semibold text-fg-primary">{t('feature.chat.fullscreenTitle')}</span>
-      </div>
-    </div>
+    <PaneHeader
+      variant="list"
+      icon={
+        <AppIcon size="24" alt="">
+          <MessageCircle className="size-4" />
+        </AppIcon>
+      }
+    >
+      {t('feature.chat.fullscreenTitle')}
+    </PaneHeader>
   );
 };
 
@@ -454,8 +455,8 @@ const RecentsView = ({ sessions, selectedSession, onSelect }: RecentsViewProps) 
   return (
     <div className="flex flex-1 flex-col overflow-y-auto">
       <RecentContactsRow sessions={recentSessions.slice(0, RECENT_CHIP_COUNT)} onSelect={onSelect} />
-      <div className="shrink-0 px-4 pt-1 pb-1">
-        <span className="text-sm leading-5 font-medium text-fg-secondary">{t('feature.chat.recent')}</span>
+      <div className="shrink-0 px-3 pt-1 pb-1">
+        <SectionLabel>{t('feature.chat.recent')}</SectionLabel>
       </div>
       <RoomList sessions={sessions} selected={selectedSession} onSelect={onSelect} />
     </div>
@@ -476,21 +477,11 @@ const RequestsListView = ({ requests, selected, hideByDefault, onBack, onSelect,
 
   return (
     <>
-      <div className="shrink-0 bg-bg-surface-container p-2">
-        <div className="flex w-full items-center gap-2">
-          <button
-            className="flex size-6 shrink-0 items-center justify-center rounded-full transition-colors hover:bg-bg-selection-container-hover"
-            onClick={onBack}
-          >
-            <ChevronLeft className="size-4 text-fg-secondary" />
-          </button>
-          <span className="min-w-0 flex-1 truncate text-sm leading-5 font-semibold text-fg-primary">
-            {t('feature.chat.request.entryTitle')}
-          </span>
-        </div>
-      </div>
+      <PaneHeader variant="list" onBack={onBack}>
+        {t('feature.chat.request.entryTitle')}
+      </PaneHeader>
       <div className="px-2 pt-2 pb-1">
-        <div className="rounded-lg bg-bg-surface-nested px-4 py-3 text-center text-sm leading-4.5 text-fg-secondary">
+        <div className="rounded-lg bg-bg-surface-nested px-4 py-3 text-center text-xs text-fg-secondary">
           {t('feature.chat.request.listHint')}
         </div>
       </div>

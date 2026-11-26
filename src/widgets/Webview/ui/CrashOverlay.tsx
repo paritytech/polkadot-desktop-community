@@ -1,6 +1,6 @@
-import { Button } from '@novasamatech/tr-ui';
 import { RefreshCw, XOctagon } from 'lucide-react';
 
+import { Button } from '@/shared/components';
 import { isElectron } from '@/shared/env';
 import { useTranslation } from '@/shared/translation';
 import { type WebviewCrashInfo } from '@/aggregates/webview-registry';
@@ -21,12 +21,12 @@ export const CrashOverlay = ({ crash, onReload }: Props) => {
         <div className="pb-4">
           <XOctagon className="h-8 w-8 text-fg-primary" strokeWidth={1} />
         </div>
-        <h1 className="w-full text-center text-base leading-6 font-medium text-fg-primary">{t('widget.webview.crash.title')}</h1>
-        <p className="w-full text-center text-sm leading-5 font-normal text-fg-secondary">{t('widget.webview.crash.subtitle')}</p>
+        <h1 className="w-full text-center text-base font-medium text-fg-primary">{t('widget.webview.crash.title')}</h1>
+        <p className="w-full text-center text-sm font-normal text-fg-secondary">{t('widget.webview.crash.subtitle')}</p>
       </div>
 
       <div className="flex flex-col items-center gap-4 self-stretch" style={{ appRegion: 'no-drag' }}>
-        <Button data-testid="crash-overlay-reload" variant="outline" onClick={onReload}>
+        <Button data-testid="crash-overlay-reload" onClick={onReload}>
           <RefreshCw className="h-4 w-4" />
           {t('widget.webview.crash.reload')}
         </Button>
@@ -40,9 +40,11 @@ export const CrashOverlay = ({ crash, onReload }: Props) => {
           <span>{crash.url}</span>
           <span>{timestamp}</span>
           {isElectron() && (
-            <button className="mt-1 self-start text-start text-fg-secondary underline" onClick={() => window.App?.exportLogs()}>
-              {t('common.action.downloadLogs')}
-            </button>
+            <span className="-ms-3 mt-1 flex self-start">
+              <Button variant="ghost" size="sm" onClick={() => window.App?.exportLogs()}>
+                {t('common.action.downloadLogs')}
+              </Button>
+            </span>
           )}
         </div>
       </details>

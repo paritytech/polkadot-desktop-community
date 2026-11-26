@@ -2,6 +2,7 @@ import { createBdd } from 'playwright-bdd';
 
 import { authenticatedTest, expect } from '../fixtures/authenticated';
 import { DEFAULT_TIMEOUT } from '../helpers/timeouts';
+import { AppearancePage } from '../page-objects/AppearancePage';
 import { DashboardPage } from '../page-objects/DashboardPage';
 
 const { When, Then } = createBdd(authenticatedTest);
@@ -22,23 +23,15 @@ When('the user opens the appearance settings', async ({ authenticatedApp }) => {
 });
 
 Then('the color mode options Device, Day and Night are available', async ({ authenticatedApp }) => {
-  for (const name of ['Device', 'Day', 'Night']) {
-    await expect(authenticatedApp.window.getByRole('radio', { name, exact: true })).toBeVisible({
-      timeout: DEFAULT_TIMEOUT,
-    });
-  }
+  await new AppearancePage(authenticatedApp.window).expectColorModesVisible(['Device', 'Day', 'Night']);
 });
 
 When('the user selects the {string} color mode', async ({ authenticatedApp }, name: string) => {
-  const radio = authenticatedApp.window.getByRole('radio', { name, exact: true });
-  await expect(radio).toBeVisible({ timeout: DEFAULT_TIMEOUT });
-  await radio.click();
+  await new AppearancePage(authenticatedApp.window).selectColorMode(name);
 });
 
 Then('the {string} color mode is selected', async ({ authenticatedApp }, name: string) => {
-  await expect(authenticatedApp.window.getByRole('radio', { name, exact: true })).toBeChecked({
-    timeout: DEFAULT_TIMEOUT,
-  });
+  await new AppearancePage(authenticatedApp.window).expectColorModeSelected(name);
 });
 
 Then('the authenticated dashboard screenshot is taken as {string}', async ({ authenticatedApp, $testInfo }, name: string) => {

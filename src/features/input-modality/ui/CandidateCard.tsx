@@ -127,11 +127,11 @@ const CandidateChunk = ({ candidate, first, last, onSelect }: ChunkProps) => {
     >
       <ChunkRail first={first} last={last} />
 
-      {content.type === 'text' && <span className="text-sm leading-5 text-fg-primary">{content.text}</span>}
+      {content.type === 'text' && <span className="text-sm text-fg-primary">{content.text}</span>}
 
       {content.type === 'richText' && (
         <>
-          {content.text && <span className="text-sm leading-5 text-fg-primary">{content.text}</span>}
+          {content.text && <span className="text-sm text-fg-primary">{content.text}</span>}
           {content.media.length > 0 && (
             <span className="flex flex-wrap gap-1.5 pt-1">
               {content.media.map((media, mediaIndex) => (

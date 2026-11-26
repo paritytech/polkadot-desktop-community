@@ -1,7 +1,7 @@
-import { Button, Dialog } from '@novasamatech/tr-ui';
 import { AlertCircle, CheckCircle, Loader } from 'lucide-react';
 import { type ReactNode, memo } from 'react';
 
+import { Button, Dialog } from '@/shared/components';
 import { useTranslation } from '@/shared/translation';
 
 export type UpdateStatus = 'idle' | 'checking' | 'up-to-date' | 'downloading' | 'ready-to-install' | 'error' | 'unsupported';
@@ -80,7 +80,7 @@ export const UpdateStatusModal = memo(
     }
 
     return (
-      <Dialog modal open={isOpen} onOpenChange={handleOpenChange}>
+      <Dialog.Root modal open={isOpen} onOpenChange={handleOpenChange}>
         <Dialog.Content>
           <Dialog.Header>
             {icon}
@@ -109,24 +109,24 @@ export const UpdateStatusModal = memo(
             {status === 'ready-to-install' ? (
               <div className="flex w-full gap-2">
                 <div className="flex-1">
-                  <Button fullWidth variant="outline" onClick={onNotNow}>
+                  <Button block onClick={onNotNow}>
                     {t('feature.updateCheck.notNow')}
                   </Button>
                 </div>
                 <div className="flex-1">
-                  <Button fullWidth onClick={onInstallNow}>
+                  <Button variant="primary" block onClick={onInstallNow}>
                     {t('feature.updateCheck.installNow')}
                   </Button>
                 </div>
               </div>
             ) : status === 'up-to-date' || status === 'error' || status === 'unsupported' ? (
-              <Button fullWidth variant="outline" onClick={onClose}>
+              <Button block onClick={onClose}>
                 {t('feature.updateCheck.close')}
               </Button>
             ) : null}
           </Dialog.Footer>
         </Dialog.Content>
-      </Dialog>
+      </Dialog.Root>
     );
   },
 );

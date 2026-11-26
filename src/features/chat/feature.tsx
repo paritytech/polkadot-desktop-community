@@ -14,13 +14,7 @@ import {
   tabContentSlot,
   tabHoverSlot,
 } from '@/features/browser';
-import {
-  type AddableDashboardCard,
-  buildNativeDashboardCard,
-  dashboardCardSDK,
-  widgetTopbarActionButtonClass,
-  widgetTopbarActionVisibilityClass,
-} from '@/features/dashboard';
+import { type AddableDashboardCard, WidgetTopbarAction, buildNativeDashboardCard, dashboardCardSDK } from '@/features/dashboard';
 import { productActionsMenuItemsSlot } from '@/features/product-actions-menu';
 import { settingsPreferencesNavSlot } from '@/features/settings';
 
@@ -104,18 +98,13 @@ const ChatFullscreenAction = () => {
   const openChatTab = useOpenChatTab();
 
   return (
-    <span className={widgetTopbarActionVisibilityClass}>
-      <button
-        type="button"
-        data-testid={TEST_IDS.chatWidgetFullscreenButton}
-        aria-label={t('common.aria.openFullscreen')}
-        className={widgetTopbarActionButtonClass}
-        onClick={openChatTab}
-        onMouseDown={event => event.stopPropagation()}
-      >
-        <Maximize2 className="size-4" aria-hidden />
-      </button>
-    </span>
+    <WidgetTopbarAction
+      data-testid={TEST_IDS.chatWidgetFullscreenButton}
+      label={t('common.aria.openFullscreen')}
+      onClick={openChatTab}
+    >
+      <Maximize2 aria-hidden />
+    </WidgetTopbarAction>
   );
 };
 

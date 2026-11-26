@@ -1,8 +1,8 @@
-import { Button, DropdownMenu } from '@novasamatech/tr-ui';
 import { useNavigate } from '@tanstack/react-router';
 import { MoreHorizontal, Settings } from 'lucide-react';
 import { useCallback, useState } from 'react';
 
+import { Button, DropdownMenu, IconButton } from '@/shared/components';
 import { Slot } from '@/shared/di';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
@@ -19,26 +19,26 @@ export const ProductActionsMenu = ({ productId }: Props) => {
   const closeMenu = useCallback(() => setOpen(false), []);
 
   return (
-    <DropdownMenu open={open} onOpenChange={setOpen}>
-      <DropdownMenu.Trigger asChild>
-        <button
-          type="button"
-          aria-label={t('feature.productActionsMenu.trigger')}
-          data-testid={TEST_IDS.productActionsMenuTrigger}
-          className="-ms-2 -me-1 flex size-6 shrink-0 items-center justify-center rounded-full transition-colors duration-200 hover:bg-bg-action-secondary-hover"
-          onMouseDown={e => e.preventDefault()}
-        >
-          <MoreHorizontal className="size-4 text-fg-secondary" aria-hidden />
-        </button>
-      </DropdownMenu.Trigger>
+    <DropdownMenu.Root open={open} onOpenChange={setOpen}>
+      <span className="-ms-2 -me-1 flex">
+        <DropdownMenu.Trigger asChild>
+          <IconButton
+            size="sm"
+            label={t('feature.productActionsMenu.trigger')}
+            data-testid={TEST_IDS.productActionsMenuTrigger}
+            onMouseDown={e => e.preventDefault()}
+          >
+            <MoreHorizontal aria-hidden />
+          </IconButton>
+        </DropdownMenu.Trigger>
+      </span>
       <DropdownMenu.Content align="start">
-        <div className="flex w-52.5 flex-col gap-0.5 p-1">
+        <div className="flex w-52.5 flex-col gap-0.5">
           <Slot id={productActionsMenuItemsSlot} props={{ productId, closeMenu }} />
           <div className="px-1 pt-1">
             <Button
               data-testid={TEST_IDS.productActionsMenuOpenSettings}
-              variant="outline"
-              fullWidth
+              block
               onClick={() => {
                 setOpen(false);
                 void navigate({ to: '/settings/privacy/apps/$productId', params: { productId } });
@@ -50,6 +50,6 @@ export const ProductActionsMenu = ({ productId }: Props) => {
           </div>
         </div>
       </DropdownMenu.Content>
-    </DropdownMenu>
+    </DropdownMenu.Root>
   );
 };

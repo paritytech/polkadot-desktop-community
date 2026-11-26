@@ -1,9 +1,9 @@
 import { type DragEndEvent, DndContext, PointerSensor, closestCenter, useSensor, useSensors } from '@dnd-kit/core';
 import { SortableContext, arrayMove, rectSortingStrategy } from '@dnd-kit/sortable';
-import { DropdownMenu } from '@novasamatech/tr-ui';
 import { ArrowUpRight, MoreHorizontal, Trash2 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
+import { DropdownMenu, IconButton } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { cnTw } from '@/shared/utils';
@@ -60,8 +60,6 @@ const FolderGridItem = ({
     onRemoveWidget(itemId);
   };
 
-  const menuVisibilityClass = isMenuOpen ? 'opacity-100' : 'opacity-0 group-hover/folder-item:opacity-100';
-
   return (
     <div className="group/folder-item relative flex h-full w-full flex-col items-center justify-center rounded-xl">
       <button
@@ -73,32 +71,34 @@ const FolderGridItem = ({
         <FolderItemContent itemId={itemId} iconSize={iconSize} />
       </button>
 
-      <DropdownMenu open={isMenuOpen} onOpenChange={open => onMenuOpenChange(menuId, open)}>
-        <DropdownMenu.Trigger asChild>
-          <button
-            type="button"
-            className={cnTw(
-              'folder-grid-action absolute end-1 top-1 flex size-6 cursor-pointer items-center justify-center rounded-full bg-bg-action-secondary-hover text-fg-primary transition-opacity hover:brightness-95 focus-visible:ring-4 focus-visible:ring-stroke-tertiary/35 focus-visible:ring-offset-0 focus-visible:outline-none',
-              menuVisibilityClass,
-            )}
-            aria-label={menuLabel}
-            onClick={event => event.stopPropagation()}
-            onMouseDown={event => event.stopPropagation()}
-          >
-            <MoreHorizontal className="size-4" aria-hidden />
-          </button>
-        </DropdownMenu.Trigger>
+      <DropdownMenu.Root open={isMenuOpen} onOpenChange={open => onMenuOpenChange(menuId, open)}>
+        <span
+          className={cnTw(
+            'absolute end-1 top-1 flex transition-opacity motion-reduce:transition-none',
+            isMenuOpen ? 'opacity-100' : 'opacity-0 group-hover/folder-item:opacity-100 focus-within:opacity-100',
+          )}
+        >
+          <DropdownMenu.Trigger asChild>
+            <IconButton
+              size="sm"
+              variant="raised"
+              label={menuLabel}
+              onClick={event => event.stopPropagation()}
+              onMouseDown={event => event.stopPropagation()}
+            >
+              <MoreHorizontal aria-hidden />
+            </IconButton>
+          </DropdownMenu.Trigger>
+        </span>
         <DropdownMenu.Content align="end">
           <div className="w-52.5">
-            <DropdownMenu.Item variant="destructive" onClick={handleRemoveWidget}>
-              <div className="flex h-8 w-full items-center gap-2 rounded-md">
-                <Trash2 className="size-4 text-fg-error" />
-                <span className="flex-1 text-sm leading-5 font-medium">{removeLabel}</span>
-              </div>
+            <DropdownMenu.Item variant="danger" onClick={handleRemoveWidget}>
+              <Trash2 className="size-4" />
+              <span className="flex-1">{removeLabel}</span>
             </DropdownMenu.Item>
           </div>
         </DropdownMenu.Content>
-      </DropdownMenu>
+      </DropdownMenu.Root>
     </div>
   );
 };
@@ -116,7 +116,7 @@ const FolderViewMoreTile = ({ label, onClick }: { label: string; onClick: VoidFu
     onClick={onClick}
   >
     <ArrowUpRight className="size-7 shrink-0 text-fg-primary" aria-hidden />
-    <span className="max-w-full shrink-0 truncate text-title-tiny text-fg-primary">{label}</span>
+    <span className="max-w-full shrink-0 truncate text-xs font-semibold text-fg-primary">{label}</span>
   </button>
 );
 

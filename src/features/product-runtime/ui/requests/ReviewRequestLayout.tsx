@@ -1,6 +1,6 @@
-import { Button } from '@novasamatech/tr-ui';
 import { type ReactNode, useState } from 'react';
 
+import { Button } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { ProductRequestDialog } from '../ProductRequestDialog';
@@ -78,8 +78,7 @@ export const ReviewRequestLayout = ({
                   <div className="mt-1 w-full">
                     <Button
                       type="button"
-                      variant="secondary"
-                      fullWidth
+                      block
                       aria-expanded={showDetails}
                       data-testid={TEST_IDS.signReviewMoreDetails}
                       onClick={toggleDetails}

@@ -19,7 +19,7 @@ export class AddWidgetModalPage {
   }
 
   get searchInput() {
-    return this.page.getByTestId(TEST_IDS.addWidgetSearchInput).locator('input');
+    return this.page.getByTestId(TEST_IDS.addWidgetSearchInput);
   }
 
   get sidebarItems() {

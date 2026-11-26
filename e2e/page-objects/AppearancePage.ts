@@ -1,6 +1,7 @@
 import { type Page, expect } from '@playwright/test';
 
 import { TEST_IDS } from '@/shared/test-ids';
+import { colorModeButton } from '../helpers/colorMode';
 import { DEFAULT_TIMEOUT } from '../helpers/timeouts';
 
 import { DashboardPage } from './DashboardPage';
@@ -8,17 +9,15 @@ import { DashboardPage } from './DashboardPage';
 /**
  * Page Object for Settings → Appearance (post-redesign, PR #744).
  *
- * The page hosts two radiogroups with disjoint accessible names:
- *  - "Color mode" — Device / Day / Night (segmented control);
- *  - "Theme" — Berlin / Tokyo / Lisbon / Malta (swatch cards, aria-label).
+ * The page hosts two groups with disjoint accessible names:
+ *  - "Color mode" — Device / Day / Night (segmented control of aria-pressed buttons);
+ *  - "Theme" — Berlin / Tokyo / Lisbon / Malta (radiogroup of swatch cards, aria-label).
  * Plus a decorative chat-mock preview (aria-hidden, located by testid).
  *
- * Applied-state signals (what the app actually renders, beyond aria-checked):
- *  - dark/light: tr-ui toggles the `dark` class on <html>, and ThemeSyncer
- *    mirrors the resolved mode into `color-scheme` on <html>;
- *  - theme palette: tr-ui writes the theme's CSS variables inline on <html>,
- *    so `--bg-action-primary` changes with the selected theme. Assertions
- *    check that the value *changes* rather than pin exact tr-ui var names.
+ * Applied-state signals (what the app actually renders, beyond aria-checked / aria-pressed):
+ *  - dark/light: `ThemeSyncer` toggles the `dark` class on <html> and mirrors the mode into `color-scheme`;
+ *  - theme palette: `ThemeNameSyncer` writes `data-theme` on <html>, and `chrome.css` gives each palette its own
+ *    `--chrome-top`; assertions check that the computed value changes.
  */
 export class AppearancePage {
   constructor(private readonly page: Page) {}
@@ -34,7 +33,29 @@ export class AppearancePage {
     await appearanceLink.click();
   }
 
-  // --- Radios (color mode and theme share the locator shape; names are disjoint) ---
+  // --- Color mode (pressed buttons) ------------------------------------------
+
+  colorMode(name: string) {
+    return colorModeButton(this.page, name);
+  }
+
+  async expectColorModesVisible(names: string[]) {
+    for (const name of names) {
+      await expect(this.colorMode(name)).toBeVisible({ timeout: DEFAULT_TIMEOUT });
+    }
+  }
+
+  async selectColorMode(name: string) {
+    const option = this.colorMode(name);
+    await expect(option).toBeVisible({ timeout: DEFAULT_TIMEOUT });
+    await option.click();
+  }
+
+  async expectColorModeSelected(name: string) {
+    await expect(this.colorMode(name)).toHaveAttribute('aria-pressed', 'true', { timeout: DEFAULT_TIMEOUT });
+  }
+
+  // --- Theme picker (radios) -------------------------------------------------
 
   radio(name: string) {
     return this.page.getByRole('radio', { name, exact: true });
@@ -50,6 +71,8 @@ export class AppearancePage {
     const radio = this.radio(name);
     await expect(radio).toBeVisible({ timeout: DEFAULT_TIMEOUT });
     await radio.click();
+    // `aria-checked` follows the stored theme row, so a caller that reloads next does not lose the choice.
+    await expect(radio).toBeChecked({ timeout: DEFAULT_TIMEOUT });
   }
 
   async expectRadioSelected(name: string) {
@@ -61,8 +84,7 @@ export class AppearancePage {
   /** The resolved dark/light mode actually rendered by the app shell. */
   async expectAppliedMode(mode: 'dark' | 'light') {
     const html = this.page.locator('html');
-    // tr-ui applies the mode inside requestAnimationFrame — web-first
-    // assertions poll until it lands.
+    // the syncer applies the mode in an effect after the stored row is read
     if (mode === 'dark') {
       await expect(html).toHaveClass(/(?:^|\s)dark(?:\s|$)/, { timeout: DEFAULT_TIMEOUT });
     } else {
@@ -71,15 +93,15 @@ export class AppearancePage {
     await expect(html).toHaveCSS('color-scheme', mode, { timeout: DEFAULT_TIMEOUT });
   }
 
-  /** Inline value of the theme's signature CSS variable on <html>. */
-  readPrimaryPaletteVar(): Promise<string> {
-    return this.page.evaluate(() => document.documentElement.style.getPropertyValue('--bg-action-primary'));
+  /** Computed value of the palette's signature CSS variable on <html>. */
+  readPaletteVar(): Promise<string> {
+    return this.page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--chrome-top').trim());
   }
 
   /** Poll until the applied palette differs from a previously captured value. */
   async expectPaletteChangedFrom(previous: string) {
-    await expect.poll(() => this.readPrimaryPaletteVar(), { timeout: DEFAULT_TIMEOUT }).not.toBe(previous);
-    expect(await this.readPrimaryPaletteVar()).not.toBe('');
+    await expect.poll(() => this.readPaletteVar(), { timeout: DEFAULT_TIMEOUT }).not.toBe(previous);
+    expect(await this.readPaletteVar()).not.toBe('');
   }
 
   // --- Preview ---------------------------------------------------------------

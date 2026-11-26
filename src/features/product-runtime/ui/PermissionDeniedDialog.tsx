@@ -1,6 +1,6 @@
-import { Button, Dialog } from '@novasamatech/tr-ui';
 import { cloneElement, memo } from 'react';
 
+import { Button, Dialog } from '@/shared/components';
 import { useTranslation } from '@/shared/translation';
 import { getPermissionMeta } from '@/widgets/Permission';
 
@@ -23,34 +23,29 @@ export const PermissionDeniedDialog = memo(({ permission, onOpenSettings, onClos
   };
 
   return (
-    <Dialog open onOpenChange={open => !open && onClose()}>
-      <Dialog.Content
-        aria-describedby={undefined}
-        variant="default"
-        showCloseButton={false}
-        onInteractOutside={event => event.preventDefault()}
-      >
+    <Dialog.Root open onOpenChange={open => !open && onClose()}>
+      <Dialog.Content aria-describedby={undefined} showCloseButton={false} onInteractOutside={event => event.preventDefault()}>
         <div className="flex size-16 items-center justify-center rounded-xl bg-bg-illustration-light text-fg-primary">{icon}</div>
 
         <div className="flex w-full flex-col gap-2 py-1 text-start">
           <Dialog.Title>
-            <span className="text-2xl leading-8 font-semibold text-fg-primary">{t(`${keyBase}.title`)}</span>
+            <span className="text-fg-primary">{t(`${keyBase}.title`)}</span>
           </Dialog.Title>
           <Dialog.Description>
-            <span className="text-base leading-6 font-normal text-fg-primary">{t(`${keyBase}.description`)}</span>
+            <span className="text-base font-normal text-fg-primary">{t(`${keyBase}.description`)}</span>
           </Dialog.Description>
         </div>
 
         <div className="flex w-full gap-2">
-          <Button type="button" variant="outline" fullWidth onClick={onClose}>
+          <Button type="button" block onClick={onClose}>
             {t('common.action.cancel')}
           </Button>
-          <Button type="button" variant="default" fullWidth onClick={() => void handleOpenSettings()}>
+          <Button type="button" variant="primary" block onClick={() => void handleOpenSettings()}>
             {t('feature.productRuntime.permissionDenied.systemDeviceSettings')}
           </Button>
         </div>
       </Dialog.Content>
-    </Dialog>
+    </Dialog.Root>
   );
 });
 

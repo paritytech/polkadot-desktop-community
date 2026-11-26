@@ -52,14 +52,12 @@ export const CallMessageBubble = ({ message, content, state, isMe, isSeen = fals
             <CallIcon className={cnTw('size-5', isMe ? 'text-fg-primary-inverted' : 'text-fg-primary')} />
           </div>
           <div className="flex flex-col items-start justify-center">
-            <p className={cnTw('text-base leading-5 whitespace-nowrap', isMe ? 'text-fg-primary-inverted' : 'text-fg-primary')}>
-              {title}
-            </p>
+            <p className={cnTw('text-base whitespace-nowrap', isMe ? 'text-fg-primary-inverted' : 'text-fg-primary')}>{title}</p>
             <div className="flex items-center gap-0.5">
               <StatusArrow className={cnTw('size-4 shrink-0', statusArrowColor)} />
               <p
                 className={cnTw(
-                  'text-xs leading-4 font-medium whitespace-nowrap',
+                  'text-xs font-medium whitespace-nowrap',
                   isMe ? 'text-fg-secondary-inverted' : 'text-fg-secondary',
                 )}
               >
@@ -70,10 +68,7 @@ export const CallMessageBubble = ({ message, content, state, isMe, isSeen = fals
         </div>
         <div className="flex shrink-0 items-center justify-center gap-0.5 self-end">
           <span
-            className={cnTw(
-              'text-xs leading-4 font-medium whitespace-nowrap',
-              isMe ? 'text-fg-secondary-inverted' : 'text-fg-tertiary',
-            )}
+            className={cnTw('text-xs font-medium whitespace-nowrap', isMe ? 'text-fg-secondary-inverted' : 'text-fg-tertiary')}
           >
             {chatService.formatMessageDate(message.timestamp)}
           </span>

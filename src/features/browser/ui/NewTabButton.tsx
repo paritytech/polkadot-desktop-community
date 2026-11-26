@@ -1,14 +1,12 @@
 import { nanoid } from 'nanoid';
 
 import PlusIcon from '@/shared/assets/images/header/plus.svg?jsx';
-import { HeaderButton, iconBase } from '@/shared/components';
+import { IconButton } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { browserTabs } from '@/aggregates/browser-tabs';
 import { focusAddressBarSideEffect } from '../di';
 import { NEW_TAB } from '../tabs/helpers';
-
-const plusIconClassName = `h-[10.6px] w-[10.6px] ${iconBase}`;
 
 export const NewTabButton = () => {
   const { t } = useTranslation();
@@ -22,8 +20,8 @@ export const NewTabButton = () => {
   };
 
   return (
-    <HeaderButton variant="icon" ariaLabel={t('feature.browser.newTab')} testId={TEST_IDS.newTabButton} onClick={handleNewTab}>
-      <PlusIcon className={plusIconClassName} aria-hidden />
-    </HeaderButton>
+    <IconButton label={t('feature.browser.newTab')} data-testid={TEST_IDS.newTabButton} onClick={handleNewTab}>
+      <PlusIcon className="size-2.75" aria-hidden />
+    </IconButton>
   );
 };

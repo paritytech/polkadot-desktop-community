@@ -1,7 +1,7 @@
-import { Dialog, Input } from '@novasamatech/tr-ui';
 import { Search } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 
+import { Dialog, Input } from '@/shared/components';
 import { useTransformer } from '@/shared/di';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
@@ -57,14 +57,14 @@ const SidebarItem = ({
       data-testid={TEST_IDS.addWidgetSidebarItem}
       aria-pressed={isSelected}
       className={cnTw(
-        'flex h-8 w-full items-center rounded-md px-3 py-1 text-start transition-colors',
+        'flex h-control w-full items-center rounded-md px-3 text-start transition-colors',
         isSelected ? 'bg-bg-selection-container-hover' : 'hover:bg-bg-selection-container-hover',
       )}
       onClick={onClick}
     >
       <div className="flex min-w-0 flex-1 items-center gap-2 overflow-hidden">
         <SidebarItemIcon entry={entry} />
-        <span className="truncate text-sm leading-5 font-normal text-fg-primary">{label}</span>
+        <span className="truncate text-sm font-normal text-fg-primary">{label}</span>
       </div>
     </button>
   );
@@ -156,28 +156,25 @@ export const AddWidgetModalDb = ({
   );
 
   return (
-    <Dialog
+    <Dialog.Root
       modal
       open={isOpen}
       onOpenChange={open => {
         if (!open) handleClose();
       }}
     >
-      <Dialog.Content showCloseButton variant="default" size="xl" aria-describedby={undefined}>
-        <div className="flex h-170 bg-bg-surface-container">
-          <div className="flex w-[320px] shrink-0 flex-col gap-4 border-e border-stroke-primary bg-bg-surface-container pe-6">
-            <div className="relative min-h-9">
-              <Search className="pointer-events-none absolute start-3 top-1/2 size-5 -translate-y-1/2 text-fg-secondary" />
-              <div className="[&_input]:min-h-9 [&_input]:ps-9" data-testid={TEST_IDS.addWidgetSearchInput}>
-                <Input
-                  type="search"
-                  value={searchQuery}
-                  placeholder={t('feature.dashboard.addWidget.searchPlaceholder', { tld })}
-                  aria-label={t('feature.dashboard.addWidget.searchAriaLabel')}
-                  onChange={event => setSearchQuery(event.target.value)}
-                />
-              </div>
-            </div>
+      <Dialog.Content width="xl" aria-describedby={undefined}>
+        <div className="flex h-170">
+          <div className="flex w-[320px] shrink-0 flex-col gap-4 border-e border-stroke-primary pe-6">
+            <Input
+              leading={<Search />}
+              type="search"
+              data-testid={TEST_IDS.addWidgetSearchInput}
+              value={searchQuery}
+              placeholder={t('feature.dashboard.addWidget.searchPlaceholder', { tld })}
+              aria-label={t('feature.dashboard.addWidget.searchAriaLabel')}
+              onChange={event => setSearchQuery(event.target.value)}
+            />
 
             <div className="flex min-h-0 flex-1 flex-col overflow-y-auto">
               {catalogError ? (
@@ -214,12 +211,12 @@ export const AddWidgetModalDb = ({
               <SelectedEntryPanel entry={selectedEntry} context={panelContext} />
             </div>
           ) : (
-            <div className="flex min-h-0 min-w-0 flex-1 items-center justify-center bg-bg-surface-container ps-6 text-fg-secondary">
+            <div className="flex min-h-0 min-w-0 flex-1 items-center justify-center ps-6 text-fg-secondary">
               <p>{t('feature.dashboard.addWidget.selectWidget')}</p>
             </div>
           )}
         </div>
       </Dialog.Content>
-    </Dialog>
+    </Dialog.Root>
   );
 };

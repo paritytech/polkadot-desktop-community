@@ -25,7 +25,7 @@ Feature: Appearance settings
     Then the "Device" browser color mode is selected
 
   # Extra coverage beyond TestOps plan 900 (no matching case yet) — asserts the
-  # rendered appearance, not just the radio state.
+  # rendered appearance, not just the pressed state of the color mode button.
   Scenario: Night color mode applies dark appearance to the app
     When the user opens the browser appearance settings
     And the user selects the "Night" browser color mode

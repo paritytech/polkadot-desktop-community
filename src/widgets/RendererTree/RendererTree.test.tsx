@@ -59,6 +59,33 @@ describe('RendererTree', () => {
     expect(screen.getByText('hello')).toBeInTheDocument();
   });
 
+  it('draws a labelled text field and a button as host controls', () => {
+    const { sink } = renderWithSink();
+
+    act(() =>
+      sink.onNode({
+        tag: 'Column',
+        value: {
+          modifiers: [],
+          props: {},
+          children: [
+            {
+              tag: 'TextField',
+              value: { modifiers: [], props: { text: 'draft', label: 'Amount' } },
+            },
+            {
+              tag: 'Button',
+              value: { modifiers: [], props: { text: 'Send' }, children: [] },
+            },
+          ],
+        },
+      }),
+    );
+
+    expect(screen.getByLabelText('Amount')).toHaveValue('draft');
+    expect(screen.getByRole('button', { name: 'Send' })).toBeInTheDocument();
+  });
+
   it('replaces the tree on each update rather than patching', () => {
     const { sink } = renderWithSink();
 

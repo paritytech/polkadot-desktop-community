@@ -12,9 +12,9 @@ import { DEFAULT_TIMEOUT } from '../helpers/timeouts';
  * one before any of these pages list anything. See permission-settings.feature.
  *
  * Rows on the apps list (`ProductListSettingsPage`) and the permission list
- * (`PermissionListPage`) render as clickable `ListItem` divs with no test-id;
+ * (`PermissionListPage`) render as `ListItem` buttons with no test-id;
  * they are matched by their visible product/permission text (the click bubbles
- * to the row's `onClick`). The modality status rows and the reset button on the
+ * to the button). The modality status rows and the reset button on the
  * per-app entity page do carry test-ids.
  */
 export class PermissionSettingsPage {
@@ -113,7 +113,7 @@ export class PermissionSettingsPage {
   /** Open a permission's detail page from the grouped permission list. */
   async openPermissionDetail(label: string) {
     await this.page.getByText(label, { exact: true }).first().click();
-    await expect(this.page.getByText('Apps:', { exact: true })).toBeVisible({ timeout: DEFAULT_TIMEOUT });
+    await expect(this.page.getByRole('heading', { name: 'Apps', exact: true })).toBeVisible({ timeout: DEFAULT_TIMEOUT });
   }
 
   // --- Permission detail page (apps using the permission) -------------------
@@ -122,7 +122,7 @@ export class PermissionSettingsPage {
     return this.page.getByRole('button').filter({ has: this.page.getByText(query, { exact: false }) });
   }
 
-  /** Assert an app is listed under the permission's "Apps:" section. */
+  /** Assert an app is listed under the permission's "Apps" section. */
   async expectAppListed(query: string) {
     await expect(this.appDetailButton(query).first()).toBeVisible({ timeout: DEFAULT_TIMEOUT });
   }

@@ -1,8 +1,9 @@
 import { ChevronDown, Heart } from 'lucide-react';
 import { type PropsWithChildren } from 'react';
 
+import { IconButton } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
-import { cnTw } from '@/shared/utils';
+import { useTranslation } from '@/shared/translation';
 
 type ScrollControlsProps = {
   isAtBottom: boolean;
@@ -19,6 +20,8 @@ export const ScrollControls = ({
   onScrollToBottom,
   onScrollToReaction,
 }: ScrollControlsProps) => {
+  const { t } = useTranslation();
+
   const showChevron = !isAtBottom;
   const showHeart = unreadReactionCount > 0;
 
@@ -27,13 +30,23 @@ export const ScrollControls = ({
   return (
     <div className="pointer-events-none absolute end-6 bottom-4 flex flex-col items-center gap-3">
       {showHeart && (
-        <FabButton testId={TEST_IDS.chatUnreadReactionsButton} count={unreadReactionCount} onClick={onScrollToReaction}>
-          <Heart className="size-5 text-fg-secondary" />
+        <FabButton
+          testId={TEST_IDS.chatUnreadReactionsButton}
+          label={t('feature.chat.scroll.toReaction')}
+          count={unreadReactionCount}
+          onClick={onScrollToReaction}
+        >
+          <Heart />
         </FabButton>
       )}
       {showChevron && (
-        <FabButton testId={TEST_IDS.chatScrollToBottomButton} count={unreadCount} onClick={onScrollToBottom}>
-          <ChevronDown className="size-5 text-fg-secondary" />
+        <FabButton
+          testId={TEST_IDS.chatScrollToBottomButton}
+          label={t('feature.chat.scroll.toBottom')}
+          count={unreadCount}
+          onClick={onScrollToBottom}
+        >
+          <ChevronDown />
         </FabButton>
       )}
     </div>
@@ -42,25 +55,20 @@ export const ScrollControls = ({
 
 type FabButtonProps = PropsWithChildren<{
   testId: string;
+  label: string;
   count: number;
   onClick: () => void;
 }>;
 
-const FabButton = ({ testId, count, onClick, children }: FabButtonProps) => (
-  <button
-    data-testid={testId}
-    className={cnTw(
-      'pointer-events-auto relative flex size-11 items-center justify-center rounded-full',
-      'border border-stroke-primary bg-bg-surface-container shadow-[0px_4px_12px_var(--shadow-soft)]',
-      'transition-colors hover:bg-bg-selection-container-hover',
-    )}
-    onClick={onClick}
-  >
-    {children}
+const FabButton = ({ testId, label, count, onClick, children }: FabButtonProps) => (
+  <span className="pointer-events-auto relative flex">
+    <IconButton variant="raised" label={label} data-testid={testId} onClick={onClick}>
+      {children}
+    </IconButton>
     {count > 0 && (
-      <span className="absolute end-1 -top-1 min-w-4 rounded-full bg-bg-action-primary px-1 text-center text-label-small text-fg-primary-inverted">
+      <span className="pointer-events-none absolute end-1 -top-1 min-w-4 rounded-full bg-bg-action-primary px-1 text-center text-2xs font-medium text-fg-primary-inverted">
         {count}
       </span>
     )}
-  </button>
+  </span>
 );

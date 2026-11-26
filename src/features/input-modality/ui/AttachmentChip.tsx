@@ -1,5 +1,6 @@
 import { FileText, Image, Music, Video, X } from 'lucide-react';
 
+import { IconButton } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
 import { formatBytes } from '@/shared/utils';
 import { type AttachmentCategory } from '@/domains/input-routing';
@@ -18,7 +19,7 @@ const categoryIcon: Record<AttachmentCategory, typeof FileText> = {
 type Props = {
   attachment: DraftAttachment;
   onRemove?: (id: string) => void;
-  removeLabel?: string;
+  removeLabel: string;
 };
 
 export const AttachmentChip = ({ attachment, onRemove, removeLabel }: Props) => {
@@ -41,14 +42,9 @@ export const AttachmentChip = ({ attachment, onRemove, removeLabel }: Props) => 
       <span className="min-w-0 flex-1 truncate text-xs text-fg-primary">{fileName}</span>
       <span className="shrink-0 text-xs text-fg-secondary">{formatBytes(attachment.sizeBytes)}</span>
       {onRemove && (
-        <button
-          type="button"
-          aria-label={removeLabel}
-          className="flex size-5 shrink-0 items-center justify-center rounded-full transition-colors hover:bg-bg-selection-container-hover"
-          onClick={() => onRemove(attachment.id)}
-        >
-          <X className="size-3 text-fg-secondary" aria-hidden />
-        </button>
+        <IconButton size="sm" label={removeLabel} onClick={() => onRemove(attachment.id)}>
+          <X aria-hidden />
+        </IconButton>
       )}
     </div>
   );

@@ -1,12 +1,12 @@
 import { MessagesSquare } from 'lucide-react';
 
+import { EmptyState } from '@/shared/components';
 import { useTranslation } from '@/shared/translation';
 import { type ChatSession } from '@/domains/chat';
 import { useSortedSessions } from '../../hooks/useSortedSessions';
 import { type ChatItemDensity } from '../../service';
 
 import { ChatItem } from './ChatItem';
-import { NoData } from './NoData';
 
 type Props = {
   sessions: ChatSession[];
@@ -29,7 +29,11 @@ export const RoomList = ({ sessions, selected, onSelect, hideEmpty, visibleCount
     if (hideEmpty) return null;
     return (
       <div className="flex h-full items-center justify-center">
-        <NoData icon={MessagesSquare} title={t('feature.chat.noChatsYet')} description={t('feature.chat.yourChatsWillAppear')} />
+        <EmptyState
+          icon={<MessagesSquare />}
+          title={t('feature.chat.noChatsYet')}
+          description={t('feature.chat.yourChatsWillAppear')}
+        />
       </div>
     );
   }
@@ -38,11 +42,10 @@ export const RoomList = ({ sessions, selected, onSelect, hideEmpty, visibleCount
 
   return (
     <>
-      {visibleSessions.map((session, index) => (
+      {visibleSessions.map(session => (
         <ChatItem
           key={session.sessionId}
           session={session}
-          isLast={index === visibleSessions.length - 1}
           isSelected={selected?.sessionId === session.sessionId}
           density={density}
           itemHeight={itemHeight}

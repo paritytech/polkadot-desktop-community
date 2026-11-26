@@ -1,31 +1,28 @@
-import { Heart } from 'lucide-react';
 import { useMemo } from 'react';
 import { useObservable } from 'react-rx';
 import { map } from 'rxjs';
 
+import { ListItem } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
-import { cnTw } from '@/shared/utils';
 import { type ChatSession } from '@/domains/chat';
 import { useLastMessagePreview } from '../../hooks/useLastMessagePreview';
 import { type ChatItemDensity, chatService } from '../../service';
 
 import { Avatar } from './Avatar';
 import { PreviewIcon } from './PreviewIcon';
+import { UnreadCount } from './UnreadCount';
 
 type ChatItemProps = {
   session: ChatSession;
   isSelected?: boolean;
-  isLast?: boolean;
-  // Visual density. `compact` shrinks the avatar and drops the group-sender line
-  // so the item fits a short widget slot. Defaults to the rich `regular` layout.
+  // `compact` drops the group-sender line so the row fits a short widget slot.
   density?: ChatItemDensity;
-  // Fixed row height in px for the non-scrolling widget. When omitted the item
-  // keeps its natural 88px height (used by QuickChat / fullscreen).
+  // Fixed row height in px for the non-scrolling widget; the row stretches to it and a shorter slot clips it.
   itemHeight?: number;
-  onClick?: () => void;
+  onClick?: VoidFunction;
 };
 
-export const ChatItem = ({ session, isSelected, isLast, density = 'regular', itemHeight, onClick }: ChatItemProps) => {
+export const ChatItem = ({ session, isSelected, density = 'regular', itemHeight, onClick }: ChatItemProps) => {
   const rawName = useObservable(session.name, '');
   const name = chatService.formatPeerName(rawName, session.roomId);
   const lastMessage = useObservable(session.lastMessage, null);
@@ -48,72 +45,42 @@ export const ChatItem = ({ session, isSelected, isLast, density = 'regular', ite
     [session.messages],
   );
   const hasUnreadReaction = useObservable(hasUnreadReaction$, false);
-  const hasLastMessage = lastMessage !== null;
   const isGroup = participants.length > 1;
-  const hasBadges = hasUnreadReaction || unreadCount > 0;
   const isCompact = density === 'compact';
-  const rowStyle = useMemo(() => (itemHeight != null ? { height: itemHeight } : undefined), [itemHeight]);
+  const rowStyle = useMemo(() => ({ height: itemHeight }), [itemHeight]);
+
+  const row = (
+    <ListItem
+      icon={<Avatar name={name} size="40" />}
+      label={name}
+      description={
+        lastMessage ? (
+          <>
+            {isGroup && !isCompact ? <span>{lastMessage.peer.name}</span> : null}
+            <span>
+              <PreviewIcon kind={previewIcon} />
+              {previewText}
+            </span>
+          </>
+        ) : null
+      }
+      meta={
+        <span className="flex flex-col items-end gap-1">
+          {lastMessage ? <span>{chatService.formatChatListTime(lastMessage.timestamp)}</span> : null}
+          <UnreadCount count={unreadCount} reaction={hasUnreadReaction} />
+        </span>
+      }
+      selected={isSelected}
+      testId={TEST_IDS.chatRoomItem}
+      onClick={onClick}
+    />
+  );
+
+  if (itemHeight == null) return row;
 
   return (
-    <div
-      data-testid={TEST_IDS.chatRoomItem}
-      style={rowStyle}
-      className={cnTw(
-        'relative flex w-full cursor-pointer transition-colors hover:bg-bg-selection-container-hover',
-        // Fixed-height widget slots center their content so the avatar keeps even
-        // breathing room from the top and bottom edges; the natural-height list
-        // (QuickChat / fullscreen) stays top-aligned.
-        itemHeight == null ? 'h-22 items-start' : 'items-center',
-        isCompact ? 'gap-2 p-2' : 'gap-3 p-3',
-        {
-          'bg-bg-selection-container-active': isSelected,
-          'after:absolute after:bottom-0 after:h-px after:bg-stroke-secondary': !isLast,
-          'after:start-22 after:end-3': !isLast && !isCompact,
-          'after:start-16 after:end-2': !isLast && isCompact,
-        },
-      )}
-      onClick={onClick}
-    >
-      <Avatar name={name} size={isCompact ? 'chat-list-compact' : 'chat-list'} />
-      <div className="flex min-w-0 flex-1 flex-col">
-        <div className="flex w-full items-end gap-2">
-          <span className="min-w-0 flex-1 truncate text-base leading-6 font-semibold text-fg-primary">{name}</span>
-          {hasLastMessage && (
-            <span className="shrink-0 text-sm leading-5 font-medium text-fg-tertiary">
-              {chatService.formatChatListTime(lastMessage.timestamp)}
-            </span>
-          )}
-        </div>
-        <div className="flex w-full items-start gap-2">
-          <div className={cnTw('flex min-w-0 flex-1 flex-col items-start', !isCompact && 'max-h-9')}>
-            {hasLastMessage && isGroup && !isCompact && (
-              <span className="w-full truncate text-sm leading-4.5 text-fg-primary">{lastMessage.peer.name}</span>
-            )}
-            {hasLastMessage && (
-              <div className="flex w-full items-center gap-1">
-                <PreviewIcon kind={previewIcon} className="text-fg-secondary" />
-                <span className="line-clamp-1 min-w-0 flex-1 text-sm leading-4.5 text-fg-secondary">{previewText}</span>
-              </div>
-            )}
-          </div>
-          {hasBadges && (
-            <div className="flex shrink-0 items-center gap-2 pt-1">
-              {hasUnreadReaction && (
-                <div className="flex size-5 items-center justify-center rounded-full bg-bg-illustration-dark">
-                  <Heart className="size-3 fill-current text-fg-primary-inverted" />
-                </div>
-              )}
-              {unreadCount > 0 && (
-                <div className="flex h-5 min-w-5 items-center justify-center rounded-full bg-bg-illustration-dark px-1">
-                  <span className="text-center text-xs leading-4 font-semibold tracking-[1px] text-fg-primary-inverted uppercase">
-                    {unreadCount}
-                  </span>
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-      </div>
+    <div className="flex overflow-hidden" style={rowStyle}>
+      {row}
     </div>
   );
 };

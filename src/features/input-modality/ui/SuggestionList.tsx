@@ -2,6 +2,7 @@ import { X } from 'lucide-react';
 import { type KeyboardEvent, type MouseEvent, type ReactNode, useEffect, useRef } from 'react';
 
 import PolkadotIcon from '@/shared/assets/images/polkadot-half-logo.svg?jsx';
+import { Button, IconButton } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { cnTw } from '@/shared/utils';
@@ -78,7 +79,7 @@ export const ProductItem = ({
       tabIndex={-1}
       style={{ animationDelay: staggerDelay(index) }}
       className={cnTw(
-        'animate-spotlight-row-in group flex h-9 w-full cursor-pointer items-center gap-1.5 rounded-2xl p-2 text-sm transition-[background-color,transform] active:scale-[0.99]',
+        'animate-spotlight-row-in group flex h-control w-full cursor-pointer items-center gap-1.5 rounded-2xl px-2 text-sm transition-[background-color,transform] active:scale-[0.99]',
         isActive ? 'bg-bg-selection-container-hover' : 'hover:bg-bg-selection-container-hover',
       )}
       onMouseDown={preventBlur}
@@ -102,19 +103,16 @@ export const ProductItem = ({
         <HighlightMatch text={product.baseName} query={query} />
       </span>
       {onRemove && (
-        <button
-          type="button"
-          aria-label={t('common.aria.close')}
-          tabIndex={-1}
+        <span
           className={cnTw(
-            'flex size-6 shrink-0 items-center justify-center rounded-full text-fg-secondary transition-[opacity,color,background-color] hover:bg-fg-primary/10 hover:text-fg-primary',
+            'flex shrink-0 transition-opacity motion-reduce:transition-none',
             isActive ? 'opacity-100' : 'opacity-0 group-hover:opacity-100',
           )}
-          onMouseDown={preventBlur}
-          onClick={handleRemove}
         >
-          <X className="size-4" />
-        </button>
+          <IconButton size="sm" label={t('common.aria.close')} tabIndex={-1} onMouseDown={preventBlur} onClick={handleRemove}>
+            <X />
+          </IconButton>
+        </span>
       )}
     </div>
   );
@@ -122,7 +120,7 @@ export const ProductItem = ({
 
 export const SectionHeader = ({ label, action }: { label: string; action?: ReactNode }) => (
   <div className="flex h-6 items-center gap-2 ps-2">
-    <span className="flex-1 text-xs leading-4 font-medium text-fg-secondary">{label}</span>
+    <span className="flex-1 text-xs font-medium text-fg-secondary">{label}</span>
     {action}
   </div>
 );
@@ -180,14 +178,9 @@ export const SuggestionList = ({
           <SectionHeader
             label={t('feature.inputModality.recentlyVisited')}
             action={
-              <button
-                type="button"
-                className="rounded-xs px-2 py-0.5 text-xs leading-4 font-medium text-fg-link transition-colors hover:text-fg-link-hover"
-                onMouseDown={preventBlur}
-                onClick={onClearRecent}
-              >
+              <Button variant="ghost" size="sm" onMouseDown={preventBlur} onClick={onClearRecent}>
                 {t('feature.inputModality.clearRecent')}
-              </button>
+              </Button>
             }
           />
           {recentProducts.map(product => renderItem(product, onRemoveRecent))}

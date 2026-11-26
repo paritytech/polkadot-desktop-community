@@ -1,9 +1,9 @@
 import { Minus, Plus, RotateCcw } from 'lucide-react';
-import { type ReactNode, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
+import { IconButton } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
-import { cnTw } from '@/shared/utils';
 import { useZoomControls, useZoomPercent } from '@/aggregates/webview-zoom';
 
 type Props = {
@@ -41,12 +41,12 @@ export const ZoomIndicator = ({ tabId }: Props) => {
   return (
     <div
       data-testid={TEST_IDS.zoomIndicator}
-      className="animate-find-bar-in absolute top-3 left-1/2 z-50 flex h-8 -translate-x-1/2 items-center gap-1 rounded-lg border border-stroke-primary bg-bg-surface-nested px-2 shadow-md"
+      className="animate-find-bar-in absolute top-3 left-1/2 z-50 flex h-control -translate-x-1/2 items-center gap-1 rounded-lg border border-stroke-primary bg-bg-surface-nested px-2 shadow-md"
       style={{ appRegion: 'no-drag' }}
     >
-      <ZoomButton testId={TEST_IDS.zoomOut} ariaLabel={t('feature.browser.zoomOut')} onClick={zoomOut}>
-        <Minus className="size-4" aria-hidden />
-      </ZoomButton>
+      <IconButton size="sm" data-testid={TEST_IDS.zoomOut} label={t('feature.browser.zoomOut')} onClick={zoomOut}>
+        <Minus aria-hidden />
+      </IconButton>
 
       <span
         role="status"
@@ -57,37 +57,13 @@ export const ZoomIndicator = ({ tabId }: Props) => {
         {t('feature.browser.zoomPercent', { percent })}
       </span>
 
-      <ZoomButton testId={TEST_IDS.zoomIn} ariaLabel={t('feature.browser.zoomIn')} onClick={zoomIn}>
-        <Plus className="size-4" aria-hidden />
-      </ZoomButton>
+      <IconButton size="sm" data-testid={TEST_IDS.zoomIn} label={t('feature.browser.zoomIn')} onClick={zoomIn}>
+        <Plus aria-hidden />
+      </IconButton>
 
-      <ZoomButton testId={TEST_IDS.zoomReset} ariaLabel={t('feature.browser.zoomReset')} onClick={reset}>
-        <RotateCcw className="size-4" aria-hidden />
-      </ZoomButton>
+      <IconButton size="sm" data-testid={TEST_IDS.zoomReset} label={t('feature.browser.zoomReset')} onClick={reset}>
+        <RotateCcw aria-hidden />
+      </IconButton>
     </div>
-  );
-};
-
-type ZoomButtonProps = {
-  testId: string;
-  ariaLabel: string;
-  onClick: VoidFunction;
-  children: ReactNode;
-};
-
-const ZoomButton = ({ testId, ariaLabel, onClick, children }: ZoomButtonProps) => {
-  return (
-    <button
-      type="button"
-      data-testid={testId}
-      aria-label={ariaLabel}
-      className={cnTw(
-        'flex size-6 shrink-0 cursor-pointer items-center justify-center rounded-full text-fg-secondary transition-all duration-100',
-        'hover:bg-bg-action-secondary-hover hover:text-fg-primary active:scale-90',
-      )}
-      onClick={onClick}
-    >
-      {children}
-    </button>
   );
 };

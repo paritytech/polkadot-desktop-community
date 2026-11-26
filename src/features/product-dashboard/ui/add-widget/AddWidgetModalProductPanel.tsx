@@ -1,6 +1,6 @@
-import { ScrollArea, toast } from '@novasamatech/tr-ui';
 import { useEffect, useMemo, useState } from 'react';
 
+import { ScrollArea, toast } from '@/shared/components';
 import { useTranslation } from '@/shared/translation';
 import { type WidgetSizeIconVariant, dashboardLayoutService } from '@/domains/application';
 import { type Product, productService, resolveProductUseCase } from '@/domains/product';
@@ -123,13 +123,13 @@ export const AddWidgetModalProductPanel = ({
 
     const resolved = await resolveWidgetProduct();
     if (!resolved || !productService.hasWidget(resolved)) {
-      toast.error(t('feature.dashboard.addWidget.toast.widgetAddFailed'));
+      toast.error({ title: t('feature.dashboard.addWidget.toast.widgetAddFailed') });
       return;
     }
 
     const outcome = await onSelectProduct(resolved, WIDGET_SIZE_CONFIG[variant].size);
     if (!outcome.ok) {
-      toast.error(t('feature.dashboard.addWidget.toast.widgetAddFailed'));
+      toast.error({ title: t('feature.dashboard.addWidget.toast.widgetAddFailed') });
       return;
     }
 
@@ -150,7 +150,7 @@ export const AddWidgetModalProductPanel = ({
 
     const outcome = await onSelectProduct(selectedProduct, { w: 1, h: 1 });
     if (!outcome.ok) {
-      toast.error(t('feature.dashboard.addWidget.toast.favoritesAddFailed'));
+      toast.error({ title: t('feature.dashboard.addWidget.toast.favoritesAddFailed') });
       return;
     }
 

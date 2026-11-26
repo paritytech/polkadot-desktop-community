@@ -1,7 +1,6 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { type ReactNode } from 'react';
 
-import { cnTw } from '@/shared/utils';
+import { IconButton } from '../IconButton/IconButton';
 
 type Props = {
   canGoBack: boolean;
@@ -26,41 +25,12 @@ export const HistoryNavigationButtons = ({
 }: Props) => {
   return (
     <div className="flex items-center gap-1">
-      <NavigationButton testId={backTestId} ariaLabel={backAriaLabel} disabled={!canGoBack} onClick={goBack}>
-        <ChevronLeft size={16} />
-      </NavigationButton>
-      <NavigationButton testId={forwardTestId} ariaLabel={forwardAriaLabel} disabled={!canGoForward} onClick={goForward}>
-        <ChevronRight size={16} />
-      </NavigationButton>
+      <IconButton label={backAriaLabel} data-testid={backTestId} disabled={!canGoBack} onClick={goBack}>
+        <ChevronLeft size={16} aria-hidden />
+      </IconButton>
+      <IconButton label={forwardAriaLabel} data-testid={forwardTestId} disabled={!canGoForward} onClick={goForward}>
+        <ChevronRight size={16} aria-hidden />
+      </IconButton>
     </div>
-  );
-};
-
-type NavigationButtonProps = {
-  testId?: string;
-  ariaLabel: string;
-  disabled: boolean;
-  onClick: VoidFunction;
-  children: ReactNode;
-};
-
-const NavigationButton = ({ testId, ariaLabel, disabled, onClick, children }: NavigationButtonProps) => {
-  return (
-    <button
-      type="button"
-      data-testid={testId}
-      aria-label={ariaLabel}
-      disabled={disabled}
-      className={cnTw(
-        'relative flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-transparent transition-colors',
-        disabled
-          ? 'cursor-default text-fg-tertiary opacity-50'
-          : 'cursor-pointer text-fg-secondary hover:bg-bg-action-secondary-hover',
-      )}
-      style={{ appRegion: 'no-drag' }}
-      onClick={onClick}
-    >
-      {children}
-    </button>
   );
 };

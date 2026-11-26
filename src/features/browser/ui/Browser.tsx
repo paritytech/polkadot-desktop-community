@@ -105,14 +105,15 @@ const Content = memo(
 
     return (
       <div
-        className={cnTw('overflow-hidden p-2', visible ? 'relative h-full w-full' : 'invisible absolute inset-0')}
+        className={cnTw(
+          'flex flex-col overflow-hidden bg-bg-surface-container',
+          visible ? 'relative h-full w-full' : 'invisible absolute inset-0',
+        )}
         aria-hidden={!visible}
       >
-        <div className="relative flex h-full w-full flex-col overflow-hidden rounded-xl border border-stroke-primary bg-bg-surface-container shadow-sm">
-          {content}
-          {isElectron() && visible && <FindOverlay tabId={tab.id} />}
-          {isElectron() && visible && <ZoomIndicator tabId={tab.id} />}
-        </div>
+        {content}
+        {isElectron() && visible && <FindOverlay tabId={tab.id} />}
+        {isElectron() && visible && <ZoomIndicator tabId={tab.id} />}
       </div>
     );
   },

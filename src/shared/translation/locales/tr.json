@@ -22,7 +22,9 @@
       "all": "Tümü",
       "electronics": "Elektronik",
       "fashion": "Moda",
-      "downloadLogs": "Günlükleri indir"
+      "downloadLogs": "Günlükleri indir",
+      "copied": "Kopyalandı",
+      "copyFailed": "Kopyalanamadı"
     },
     "label": {
       "signer": "İmzalayan",
@@ -114,6 +116,7 @@
       "newTab": "Yeni sekme",
       "newTabPrompt": "{tld} adresi gir",
       "closeTab": "Sekmeyi kapat",
+      "tabsAria": "Açık sekmeler",
       "signTransaction": "İşlemi imzala",
       "signingRequestTitle": "{call} imzalama isteği",
       "operationTitle": {
@@ -240,6 +243,7 @@
       "results": "Sonuçlar ({count})",
       "recent": "Son kullanılanlar",
       "clear": "Temizle",
+      "moreReactions": "Diğer tepkiler",
       "contacts": "Kişiler",
       "noMessages": "Henüz mesaj yok",
       "thisIsChat": "Bu bir sohbet",
@@ -310,8 +314,6 @@
         "tabApps": "Uygulamalar",
         "groupChatsAndContacts": "Sohbetler ve kişiler",
         "groupMessages": "Mesajlar",
-        "recent": "Son kullanılanlar",
-        "clear": "Temizle",
         "appsComingSoon": "Uygulama araması yakında geliyor",
         "noResultsTitle": "Sonuç yok",
         "noResultsHint": "Aramanı değiştirmeyi dene"
@@ -373,7 +375,10 @@
           "tapToCallBack": "Geri aramak için dokun",
           "tapToCallAgain": "Tekrar aramak için dokun"
         }
-      }
+      },
+      "searchPrevious": "Önceki eşleşme",
+      "searchNext": "Sonraki eşleşme",
+      "roomActions": "Sohbet işlemleri"
     },
     "productActionsMenu": {
       "trigger": "Ürün işlemleri",
@@ -407,7 +412,8 @@
           "title": "Hesabın hâlâ hazırlanıyor",
           "subtitle": "Lütfen daha sonra yeniden dene"
         }
-      }
+      },
+      "networkLabel": "Ağ"
     },
     "dashboard": {
       "title": "Pano",
@@ -498,7 +504,8 @@
         "cleanup": "Panoyu düzenle",
         "reload": "Widget'ı yeniden yükle",
         "removeWidget": "Widget'ı kaldır"
-      }
+      },
+      "home": "Ana sayfa"
     },
     "ticketApp": {
       "title": "Ticket App",
@@ -718,7 +725,6 @@
       "navItem": "İzinler",
       "heading": "İzinler",
       "subheading": "Uygulamaların özelliklere ve verilere erişimini incele ve yönet",
-      "categoryHeading": "{name}:",
       "appCount": "{count, plural, =0 {Uygulama yok} one {# uygulama} other {# uygulama}}",
       "category": {
         "device": "Cihaz ve sistem erişimi",
@@ -732,7 +738,7 @@
       },
       "detail": {
         "rulesTitle": "Kurallar ve güvenceler",
-        "appsLabel": "Uygulamalar:",
+        "appsLabel": "Uygulamalar",
         "noApps": "Bu izni isteyen uygulama yok",
         "allowedFor": "{modalities} için izin verildi",
         "appSubtitle": "{baseName} • {allowed}"

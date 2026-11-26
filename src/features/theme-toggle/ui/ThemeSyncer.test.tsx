@@ -1,42 +1,40 @@
 // @vitest-environment happy-dom
 
-import { render, waitFor } from '@testing-library/react';
-import { of } from 'rxjs';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { act, render, waitFor } from '@testing-library/react';
+import { BehaviorSubject, of } from 'rxjs';
+import { afterEach, describe, expect, it } from 'vitest';
 
-import { type ResolvedTheme, themeResource } from '@/domains/application';
+import { type ResolvedTheme, type Theme, themeResource } from '@/domains/application';
 
 import { ThemeSyncer } from './ThemeSyncer';
 
-const setMode = vi.fn();
-vi.mock('@novasamatech/tr-ui', () => ({
-  useTheme: () => ({ setMode }),
-}));
-
-const showVariant = (variant: ResolvedTheme) => {
-  themeResource.instead(() => of({ preference: variant, variant, name: 'berlin' }));
-};
+const themeOf = (variant: ResolvedTheme): Theme => ({ preference: variant, variant, name: 'berlin' });
 
 afterEach(() => {
-  vi.clearAllMocks();
+  document.documentElement.classList.remove('dark');
   document.documentElement.style.colorScheme = '';
 });
 
 describe('ThemeSyncer', () => {
-  it('binds the host color-scheme to the resolved app theme', async () => {
-    showVariant('dark');
+  it('binds the dark class and the host color-scheme to a dark resolved theme', async () => {
+    themeResource.instead(() => of(themeOf('dark')));
 
     render(<ThemeSyncer />);
 
     await waitFor(() => expect(document.documentElement.style.colorScheme).toBe('dark'));
-    expect(setMode).toHaveBeenCalledWith('dark');
+    expect(document.documentElement.classList.contains('dark')).toBe(true);
   });
 
-  it('follows a light resolved theme too', async () => {
-    showVariant('light');
+  it('removes the dark class when the resolved theme turns light', async () => {
+    const theme$ = new BehaviorSubject<Theme>(themeOf('dark'));
+    themeResource.instead(() => theme$);
 
     render(<ThemeSyncer />);
+    await waitFor(() => expect(document.documentElement.classList.contains('dark')).toBe(true));
+
+    act(() => theme$.next(themeOf('light')));
 
     await waitFor(() => expect(document.documentElement.style.colorScheme).toBe('light'));
+    expect(document.documentElement.classList.contains('dark')).toBe(false);
   });
 });

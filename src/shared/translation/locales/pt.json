@@ -22,7 +22,9 @@
       "all": "Tudo",
       "electronics": "Eletrônicos",
       "fashion": "Moda",
-      "downloadLogs": "Baixar registros"
+      "downloadLogs": "Baixar registros",
+      "copied": "Copiado",
+      "copyFailed": "Falha ao copiar"
     },
     "label": {
       "signer": "Signatário",
@@ -114,6 +116,7 @@
       "newTab": "Nova aba",
       "newTabPrompt": "Digite um endereço {tld}",
       "closeTab": "Fechar aba",
+      "tabsAria": "Abas abertas",
       "signTransaction": "Assinar transação",
       "signingRequestTitle": "Solicitação de assinatura de {call}",
       "operationTitle": {
@@ -240,6 +243,7 @@
       "results": "Resultados ({count})",
       "recent": "Recentes",
       "clear": "Limpar",
+      "moreReactions": "Mais reações",
       "contacts": "Contatos",
       "noMessages": "Ainda não há mensagens",
       "thisIsChat": "Isto é um chat",
@@ -310,8 +314,6 @@
         "tabApps": "Apps",
         "groupChatsAndContacts": "Chats e contatos",
         "groupMessages": "Mensagens",
-        "recent": "Recentes",
-        "clear": "Limpar",
         "appsComingSoon": "A busca de apps chega em breve",
         "noResultsTitle": "Nenhum resultado",
         "noResultsHint": "Tente ajustar sua pesquisa"
@@ -373,7 +375,10 @@
           "tapToCallBack": "Toque para retornar a ligação",
           "tapToCallAgain": "Toque para ligar de novo"
         }
-      }
+      },
+      "searchPrevious": "Correspondência anterior",
+      "searchNext": "Próxima correspondência",
+      "roomActions": "Ações do chat"
     },
     "productActionsMenu": {
       "trigger": "Ações do produto",
@@ -407,7 +412,8 @@
           "title": "Sua conta ainda está sendo configurada",
           "subtitle": "Tente novamente mais tarde"
         }
-      }
+      },
+      "networkLabel": "Rede"
     },
     "dashboard": {
       "title": "Painel",
@@ -498,7 +504,8 @@
         "cleanup": "Limpar o painel",
         "reload": "Recarregar widget",
         "removeWidget": "Remover widget"
-      }
+      },
+      "home": "Início"
     },
     "ticketApp": {
       "title": "Ticket App",
@@ -718,7 +725,6 @@
       "navItem": "Permissões",
       "heading": "Permissões",
       "subheading": "Revise e gerencie o acesso dos apps a recursos e dados",
-      "categoryHeading": "{name}:",
       "appCount": "{count, plural, =0 {Nenhum app} one {# app} other {# apps}}",
       "category": {
         "device": "Acesso ao dispositivo e ao sistema",
@@ -732,7 +738,7 @@
       },
       "detail": {
         "rulesTitle": "Regras e salvaguardas",
-        "appsLabel": "Apps:",
+        "appsLabel": "Apps",
         "noApps": "Nenhum app solicitou esta permissão",
         "allowedFor": "Permitido para {modalities}",
         "appSubtitle": "{baseName} • {allowed}"

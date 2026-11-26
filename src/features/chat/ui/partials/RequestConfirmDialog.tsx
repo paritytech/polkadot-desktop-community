@@ -1,4 +1,6 @@
-import { Button, Dialog } from '@novasamatech/tr-ui';
+import { type MouseEvent } from 'react';
+
+import { AlertDialog } from '@/shared/components';
 
 type RequestConfirmDialogProps = {
   isOpen: boolean;
@@ -23,22 +25,26 @@ export const RequestConfirmDialog = ({
   onClose,
   onConfirm,
 }: RequestConfirmDialogProps) => {
+  // Radix closes an alert dialog on its Action; the callers close it themselves once the request settles.
+  const handleConfirm = (event: MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    onConfirm();
+  };
+
   return (
-    <Dialog modal open={isOpen} onOpenChange={open => !open && onClose()}>
-      <Dialog.Content>
-        <div data-testid={testId} className="flex flex-col gap-4 p-8">
-          <h3 className="text-xl leading-7 font-semibold text-fg-primary">{title}</h3>
-          <p className="text-sm leading-4.5 text-fg-secondary">{description}</p>
-          <div className="flex items-center justify-end gap-2">
-            <Button variant="outline" onClick={onClose}>
-              {cancelLabel}
-            </Button>
-            <Button data-testid={confirmTestId} onClick={onConfirm}>
-              {confirmLabel}
-            </Button>
-          </div>
-        </div>
-      </Dialog.Content>
-    </Dialog>
+    <AlertDialog.Root open={isOpen} onOpenChange={open => !open && onClose()}>
+      <AlertDialog.Content data-testid={testId}>
+        <AlertDialog.Header>
+          <AlertDialog.Title>{title}</AlertDialog.Title>
+          <AlertDialog.Description>{description}</AlertDialog.Description>
+        </AlertDialog.Header>
+        <AlertDialog.Footer>
+          <AlertDialog.Cancel>{cancelLabel}</AlertDialog.Cancel>
+          <AlertDialog.Action variant="primary" data-testid={confirmTestId} onClick={handleConfirm}>
+            {confirmLabel}
+          </AlertDialog.Action>
+        </AlertDialog.Footer>
+      </AlertDialog.Content>
+    </AlertDialog.Root>
   );
 };

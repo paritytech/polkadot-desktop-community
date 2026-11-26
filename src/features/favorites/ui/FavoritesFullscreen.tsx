@@ -1,20 +1,18 @@
 import { type DragEndEvent, DndContext, PointerSensor, closestCenter, useSensor, useSensors } from '@dnd-kit/core';
 import { SortableContext, arrayMove, rectSortingStrategy } from '@dnd-kit/sortable';
-import { AppIcon, Button, Input } from '@novasamatech/tr-ui';
 import { Plus, Search, SearchX, Star, StarOff } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 
+import { AppIcon, Button, EmptyState, IconButton, Input } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
-import { cnTw } from '@/shared/utils';
 import { FAVORITES_FOLDER_ID, foldersUseCase, useFavoriteProductIds, useRemoveItemFromFolder } from '@/domains/application';
 import { useDotNsLabels } from '@/domains/product';
 import { isNativeAddableDashboardId, openFavoriteItemSideEffect } from '@/features/dashboard';
 import { favoritesService } from '../service';
 import { openAddToFavoritesDialog } from '../state/addToFavoritesDialog';
 
-import { FavoritesStatePlaceholder } from './FavoritesStatePlaceholder';
 import { SortableFavoriteItem } from './SortableFavoriteItem';
 
 export const FavoritesFullscreen = () => {
@@ -71,19 +69,16 @@ export const FavoritesFullscreen = () => {
   };
 
   const renderRemoveAction = (itemId: string) => (
-    <button
-      type="button"
+    <IconButton
+      size="sm"
+      variant="raised"
+      label={t('feature.favorites.removeAria')}
       data-testid={TEST_IDS.favoritesCardRemove}
-      aria-label={t('feature.favorites.removeAria')}
-      className={cnTw(
-        'flex size-8 cursor-pointer items-center justify-center rounded-full',
-        'bg-bg-action-active text-fg-primary hover:brightness-95',
-      )}
       onPointerDown={event => event.stopPropagation()}
       onClick={() => removeItemFromFolder(itemId)}
     >
-      <StarOff className="size-4" aria-hidden />
-    </button>
+      <StarOff aria-hidden />
+    </IconButton>
   );
 
   return (
@@ -92,54 +87,52 @@ export const FavoritesFullscreen = () => {
       className="flex h-full w-full flex-col overflow-hidden bg-bg-surface-container p-2"
     >
       <div className="flex items-center gap-2 px-2">
-        <AppIcon size="sm" alt="">
+        <AppIcon size="24" alt="">
           <Star className="size-4" aria-hidden />
         </AppIcon>
-        <span className="flex-1 text-sm leading-5 font-semibold text-fg-primary">
+        <span className="flex-1 text-sm font-semibold text-fg-primary">
           <FormattedMessage id="feature.favorites.title" />
         </span>
-        <button
-          type="button"
+        <IconButton
+          size="sm"
+          label={t('feature.favorites.addAria')}
           data-testid={TEST_IDS.favoritesAddButton}
-          aria-label={t('feature.favorites.addAria')}
-          className="flex size-6 cursor-pointer items-center justify-center rounded-full text-fg-primary hover:bg-bg-action-secondary-hover"
           onClick={openAddToFavoritesDialog}
         >
-          <Plus className="size-4" aria-hidden />
-        </button>
+          <Plus aria-hidden />
+        </IconButton>
       </div>
 
       <div className="pt-4">
-        <div className="relative px-2">
-          <Search className="pointer-events-none absolute start-5 top-1/2 size-5 -translate-y-1/2 text-fg-secondary" />
-          <div className="[&_input]:ps-9" data-testid={TEST_IDS.favoritesSearchInput}>
-            <Input
-              type="search"
-              value={query}
-              placeholder={t('feature.favorites.searchPlaceholder')}
-              aria-label={t('feature.favorites.searchAriaLabel')}
-              onChange={event => setQuery(event.target.value)}
-            />
-          </div>
+        <div className="px-2">
+          <Input
+            leading={<Search />}
+            type="search"
+            data-testid={TEST_IDS.favoritesSearchInput}
+            value={query}
+            placeholder={t('feature.favorites.searchPlaceholder')}
+            aria-label={t('feature.favorites.searchAriaLabel')}
+            onChange={event => setQuery(event.target.value)}
+          />
         </div>
       </div>
 
       {order.length === 0 ? (
-        <FavoritesStatePlaceholder
+        <EmptyState
           testId={TEST_IDS.favoritesEmptyState}
-          icon={<Star className="size-5" aria-hidden />}
+          icon={<Star aria-hidden />}
           title={<FormattedMessage id="feature.favorites.emptyTitle" />}
           description={<FormattedMessage id="feature.favorites.emptyDescription" />}
           action={
-            <Button size="sm" data-testid={TEST_IDS.favoritesBrowseApps} onClick={openAddToFavoritesDialog}>
+            <Button variant="primary" size="sm" data-testid={TEST_IDS.favoritesBrowseApps} onClick={openAddToFavoritesDialog}>
               <FormattedMessage id="feature.favorites.browseApps" />
             </Button>
           }
         />
       ) : visibleIds.length === 0 ? (
-        <FavoritesStatePlaceholder
+        <EmptyState
           testId={TEST_IDS.favoritesSearchNoResults}
-          icon={<SearchX className="size-5" aria-hidden />}
+          icon={<SearchX aria-hidden />}
           title={<FormattedMessage id="feature.favorites.searchNoResults.title" />}
           description={<FormattedMessage id="feature.favorites.searchNoResults.description" />}
         />
