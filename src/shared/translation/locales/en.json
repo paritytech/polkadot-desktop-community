@@ -389,7 +389,14 @@
       },
       "searchPrevious": "Previous match",
       "searchNext": "Next match",
-      "roomActions": "Chat actions"
+      "roomActions": "Chat actions",
+      "scroll": {
+        "toBottom": "Scroll to latest",
+        "toReaction": "Scroll to reaction"
+      },
+      "reactions": {
+        "you": "You"
+      }
     },
     "productActionsMenu": {
       "trigger": "Product actions",

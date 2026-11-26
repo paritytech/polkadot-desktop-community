@@ -28,7 +28,9 @@ const RecentChip = ({ session, onSelect }: { session: ChatSession; onSelect: Voi
 
   return (
     <button
-      className="flex w-16 shrink-0 flex-col items-center gap-1 rounded-lg p-1 transition-colors hover:bg-bg-selection-container-hover"
+      type="button"
+      className="flex w-16 shrink-0 flex-col items-center gap-1 rounded-lg p-1 transition-colors hover:bg-bg-selection-container-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-chrome-focus"
+      data-no-app-focus
       onClick={onSelect}
     >
       <Avatar name={name} size="48" />
