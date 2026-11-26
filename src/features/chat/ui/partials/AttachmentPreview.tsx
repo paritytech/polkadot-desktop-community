@@ -1,6 +1,5 @@
 import { FileText, X } from 'lucide-react';
 
-import { IconButton } from '@/shared/components';
 import { useTranslation } from '@/shared/translation';
 
 export type SelectedAttachment = {
@@ -39,10 +38,16 @@ export const AttachmentPreview = ({ attachments, onRemove }: Props) => {
               </span>
             </div>
           )}
-          <span className="absolute -end-1 -top-1 flex opacity-0 group-hover:opacity-100">
-            <IconButton size="sm" label={t('feature.inputModality.removeAttachment')} onClick={() => onRemove(attachment.id)}>
-              <X />
-            </IconButton>
+          <span className="absolute -end-1 -top-1 flex opacity-0 transition-opacity group-hover:opacity-100 motion-reduce:transition-none">
+            <button
+              type="button"
+              aria-label={t('feature.inputModality.removeAttachment')}
+              data-no-app-focus
+              className="flex size-control-sm items-center justify-center rounded-full bg-bg-surface-container-inverted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-chrome-focus"
+              onClick={() => onRemove(attachment.id)}
+            >
+              <X className="size-3 text-fg-primary-inverted" />
+            </button>
           </span>
         </div>
       ))}
