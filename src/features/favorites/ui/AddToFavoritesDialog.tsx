@@ -2,7 +2,7 @@ import { CircleAlert, LayoutGrid, RotateCw, Search, SearchX, Star, StarOff } fro
 import { useEffect, useMemo, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 
-import { Button, Dialog, Input, Spinner } from '@/shared/components';
+import { Button, Dialog, EmptyState, Input, Spinner } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { cnTw } from '@/shared/utils';
@@ -11,7 +11,6 @@ import { browseService, dotNsService, useDotNsTld, usePublishedAppListings } fro
 import { favoritesService } from '../service';
 
 import { FavoriteProductCard } from './FavoriteProductCard';
-import { FavoritesStatePlaceholder } from './FavoritesStatePlaceholder';
 
 type Props = {
   isOpen: boolean;
@@ -108,7 +107,7 @@ export const AddToFavoritesDialog = ({ isOpen, onClose }: Props) => {
               <Spinner size={48} />
             </div>
           ) : error || tldError ? (
-            <FavoritesStatePlaceholder
+            <EmptyState
               testId={TEST_IDS.addToFavoritesError}
               icon={<CircleAlert aria-hidden />}
               title={<FormattedMessage id="feature.favorites.addDialog.error.title" />}
@@ -128,14 +127,14 @@ export const AddToFavoritesDialog = ({ isOpen, onClose }: Props) => {
             />
           ) : visibleProducts.length === 0 ? (
             hasQuery ? (
-              <FavoritesStatePlaceholder
+              <EmptyState
                 testId={TEST_IDS.addToFavoritesNoResults}
                 icon={<SearchX aria-hidden />}
                 title={<FormattedMessage id="feature.favorites.addDialog.noResults.title" />}
                 description={<FormattedMessage id="feature.favorites.addDialog.noResults.description" />}
               />
             ) : (
-              <FavoritesStatePlaceholder
+              <EmptyState
                 testId={TEST_IDS.addToFavoritesNothingToAdd}
                 icon={<LayoutGrid aria-hidden />}
                 title={<FormattedMessage id="feature.favorites.addDialog.nothingToAdd.title" />}

@@ -4,7 +4,7 @@ import { Plus, Search, SearchX, Star, StarOff } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 
-import { AppIcon, Button, IconButton, Input } from '@/shared/components';
+import { AppIcon, Button, EmptyState, IconButton, Input } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { FAVORITES_FOLDER_ID, foldersUseCase, useFavoriteProductIds, useRemoveItemFromFolder } from '@/domains/application';
@@ -13,7 +13,6 @@ import { isNativeAddableDashboardId, openFavoriteItemSideEffect } from '@/featur
 import { favoritesService } from '../service';
 import { openAddToFavoritesDialog } from '../state/addToFavoritesDialog';
 
-import { FavoritesStatePlaceholder } from './FavoritesStatePlaceholder';
 import { SortableFavoriteItem } from './SortableFavoriteItem';
 
 export const FavoritesFullscreen = () => {
@@ -119,7 +118,7 @@ export const FavoritesFullscreen = () => {
       </div>
 
       {order.length === 0 ? (
-        <FavoritesStatePlaceholder
+        <EmptyState
           testId={TEST_IDS.favoritesEmptyState}
           icon={<Star aria-hidden />}
           title={<FormattedMessage id="feature.favorites.emptyTitle" />}
@@ -131,7 +130,7 @@ export const FavoritesFullscreen = () => {
           }
         />
       ) : visibleIds.length === 0 ? (
-        <FavoritesStatePlaceholder
+        <EmptyState
           testId={TEST_IDS.favoritesSearchNoResults}
           icon={<SearchX aria-hidden />}
           title={<FormattedMessage id="feature.favorites.searchNoResults.title" />}
