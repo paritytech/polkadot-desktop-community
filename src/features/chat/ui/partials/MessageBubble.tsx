@@ -148,7 +148,7 @@ export const MessageBubble = ({
         )}
         <div className={cnTw('flex w-full items-end justify-between gap-2', quotedMessage && 'ps-2 pe-1')}>
           <div className="flex min-w-0 flex-1 items-center">
-            <p className="max-w-130 text-base wrap-break-word whitespace-pre-line">
+            <p className="max-w-130 text-base wrap-anywhere whitespace-pre-line">
               <MessageText text={editedText ?? getPlainText(message.content)} />
             </p>
           </div>
