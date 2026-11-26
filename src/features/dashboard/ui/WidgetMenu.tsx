@@ -1,7 +1,7 @@
 import { Check, LayoutDashboard, MoreHorizontal, Trash2 } from 'lucide-react';
 import { type ReactNode, useState } from 'react';
 
-import { DropdownMenu, IconButton } from '@/shared/components';
+import { DropdownMenu } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { cnTw } from '@/shared/utils';
@@ -9,6 +9,7 @@ import { type WidgetSizeIconVariant } from '@/domains/application';
 import { WIDGET_SIZE_CONFIG } from '../constants';
 import { type WidgetSize } from '../types';
 
+import { WidgetTopbarAction } from './WidgetTopbarAction';
 import { WidgetSizeIcon } from './icons/WidgetSizeIcon';
 
 export const widgetTopbarActionVisibilityClass = cnTw(
@@ -56,18 +57,11 @@ export const WidgetMenu = ({
 
   return (
     <DropdownMenu.Root open={isOpen} onOpenChange={handleOpenChange}>
-      <span className={widgetTopbarActionVisibilityClass}>
-        <DropdownMenu.Trigger asChild>
-          <IconButton
-            size="sm"
-            label={t('common.action.moreDetails')}
-            data-testid={TEST_IDS.dashboardWidgetMenuTrigger}
-            onMouseDown={event => event.stopPropagation()}
-          >
-            <MoreHorizontal aria-hidden />
-          </IconButton>
-        </DropdownMenu.Trigger>
-      </span>
+      <DropdownMenu.Trigger asChild>
+        <WidgetTopbarAction label={t('common.action.moreDetails')} data-testid={TEST_IDS.dashboardWidgetMenuTrigger}>
+          <MoreHorizontal aria-hidden />
+        </WidgetTopbarAction>
+      </DropdownMenu.Trigger>
       <DropdownMenu.Content align="end">
         <div className="w-52.5">
           {showSizeSection ? (
