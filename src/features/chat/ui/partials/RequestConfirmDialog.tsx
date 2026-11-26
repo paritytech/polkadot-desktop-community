@@ -1,3 +1,5 @@
+import { type MouseEvent } from 'react';
+
 import { AlertDialog } from '@/shared/components';
 
 type RequestConfirmDialogProps = {
@@ -23,6 +25,12 @@ export const RequestConfirmDialog = ({
   onClose,
   onConfirm,
 }: RequestConfirmDialogProps) => {
+  // Radix closes an alert dialog on its Action; the callers close it themselves once the request settles.
+  const handleConfirm = (event: MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    onConfirm();
+  };
+
   return (
     <AlertDialog.Root open={isOpen} onOpenChange={open => !open && onClose()}>
       <AlertDialog.Content data-testid={testId}>
@@ -31,8 +39,8 @@ export const RequestConfirmDialog = ({
           <AlertDialog.Description>{description}</AlertDialog.Description>
         </AlertDialog.Header>
         <AlertDialog.Footer>
-          <AlertDialog.Cancel onClick={onClose}>{cancelLabel}</AlertDialog.Cancel>
-          <AlertDialog.Action variant="primary" data-testid={confirmTestId} onClick={onConfirm}>
+          <AlertDialog.Cancel>{cancelLabel}</AlertDialog.Cancel>
+          <AlertDialog.Action variant="primary" data-testid={confirmTestId} onClick={handleConfirm}>
             {confirmLabel}
           </AlertDialog.Action>
         </AlertDialog.Footer>
