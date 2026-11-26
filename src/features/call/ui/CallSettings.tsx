@@ -72,7 +72,7 @@ export const CallSettings = ({ devices, selection, labels, onSelect, onClose }: 
         <h2 className="pe-10 text-lg font-semibold text-fg-primary">{labels.title}</h2>
         <span className="absolute end-3 top-3 flex">
           <IconButton label={labels.close} onClick={onClose}>
-            <X className="size-5" />
+            <X />
           </IconButton>
         </span>
         <div className="flex flex-col gap-2">

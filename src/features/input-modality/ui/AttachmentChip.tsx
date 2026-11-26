@@ -19,7 +19,7 @@ const categoryIcon: Record<AttachmentCategory, typeof FileText> = {
 type Props = {
   attachment: DraftAttachment;
   onRemove?: (id: string) => void;
-  removeLabel?: string;
+  removeLabel: string;
 };
 
 export const AttachmentChip = ({ attachment, onRemove, removeLabel }: Props) => {
@@ -42,7 +42,7 @@ export const AttachmentChip = ({ attachment, onRemove, removeLabel }: Props) => 
       <span className="min-w-0 flex-1 truncate text-xs text-fg-primary">{fileName}</span>
       <span className="shrink-0 text-xs text-fg-secondary">{formatBytes(attachment.sizeBytes)}</span>
       {onRemove && (
-        <IconButton size="sm" label={removeLabel ?? ''} onClick={() => onRemove(attachment.id)}>
+        <IconButton size="sm" label={removeLabel} onClick={() => onRemove(attachment.id)}>
           <X aria-hidden />
         </IconButton>
       )}

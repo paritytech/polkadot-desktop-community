@@ -38,7 +38,7 @@ export const ChatListSearchBar = ({ query, active, inputRef, onQueryChange, onFo
         />
         {active && (
           <IconButton size="sm" label={t('common.aria.clear')} onClick={onClear}>
-            <X strokeWidth={1.75} className="size-4" />
+            <X strokeWidth={1.75} />
           </IconButton>
         )}
       </div>

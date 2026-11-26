@@ -38,7 +38,7 @@ export const AttachmentPreview = ({ attachments, onRemove }: Props) => {
               </span>
             </div>
           )}
-          <span className="absolute -end-1 -top-1 flex opacity-0 transition-opacity group-hover:opacity-100 motion-reduce:transition-none">
+          <span className="absolute -end-1 -top-1 flex opacity-0 transition-opacity group-hover:opacity-100 focus-within:opacity-100 motion-reduce:transition-none">
             <button
               type="button"
               aria-label={t('feature.inputModality.removeAttachment')}

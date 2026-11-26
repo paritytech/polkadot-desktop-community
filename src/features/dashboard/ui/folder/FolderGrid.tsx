@@ -60,7 +60,9 @@ const FolderGridItem = ({
     onRemoveWidget(itemId);
   };
 
-  const menuVisibilityClass = isMenuOpen ? 'opacity-100' : 'opacity-0 group-hover/folder-item:opacity-100';
+  const menuVisibilityClass = isMenuOpen
+    ? 'opacity-100'
+    : 'opacity-0 group-hover/folder-item:opacity-100 focus-within:opacity-100';
 
   return (
     <div className="group/folder-item relative flex h-full w-full flex-col items-center justify-center rounded-xl">
@@ -74,7 +76,7 @@ const FolderGridItem = ({
       </button>
 
       <DropdownMenu.Root open={isMenuOpen} onOpenChange={open => onMenuOpenChange(menuId, open)}>
-        <span className={cnTw('absolute end-1 top-1 flex transition-opacity', menuVisibilityClass)}>
+        <span className={cnTw('absolute end-1 top-1 flex transition-opacity motion-reduce:transition-none', menuVisibilityClass)}>
           <DropdownMenu.Trigger asChild>
             <IconButton
               size="sm"

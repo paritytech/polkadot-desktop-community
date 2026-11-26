@@ -23,7 +23,7 @@ export const EditHistory = ({ isOpen, originalText, entries, onClose }: EditHist
     <Dialog.Root modal open={isOpen} onOpenChange={open => !open && onClose()}>
       <Dialog.Content aria-describedby={undefined}>
         <Dialog.Title>
-          <span className="text-lg font-semibold text-fg-primary">{t('feature.chat.editHistory')}</span>
+          <span className="text-fg-primary">{t('feature.chat.editHistory')}</span>
         </Dialog.Title>
 
         <div className="flex max-h-[60dvh] flex-col gap-2 overflow-y-auto pe-2">

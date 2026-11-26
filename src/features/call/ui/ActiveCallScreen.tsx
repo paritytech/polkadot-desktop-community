@@ -294,7 +294,7 @@ export const ActiveCallScreen = ({
           device picker. Present on both audio and video layouts. */}
       <span className="absolute end-4 top-4 z-30 flex">
         <IconButton label={settingsLabel} onClick={onOpenSettings}>
-          <Settings className="size-5" />
+          <Settings />
         </IconButton>
       </span>
 

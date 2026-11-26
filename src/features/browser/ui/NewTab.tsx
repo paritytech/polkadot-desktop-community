@@ -227,11 +227,11 @@ const ClearedToast = ({ secondsLeft, onUndo, onDismiss }: ClearedToastProps) => 
     <div
       data-testid={TEST_IDS.newTabRecentToast}
       className={cnTw(
-        'fixed end-4 top-4 z-50 flex max-w-80 items-start gap-2 rounded-xl border border-stroke-primary bg-bg-surface-container p-3 shadow-lg',
+        'fixed end-4 top-4 z-50 flex max-w-80 items-center gap-2 rounded-xl border border-stroke-primary bg-bg-surface-container p-3 shadow-lg',
         'duration-200 animate-in fade-in slide-in-from-top-2',
       )}
     >
-      <Check className="mt-0.5 size-4 shrink-0 text-fg-success" />
+      <Check className="size-4 shrink-0 text-fg-success" />
       <div className="flex-1 text-sm text-fg-primary">{t('feature.browser.recentClearedTitle')}</div>
       <Button variant="ghost" size="sm" data-testid={TEST_IDS.newTabRecentUndo} onClick={onUndo}>
         {t('feature.browser.undoLabel', { seconds: secondsLeft })}

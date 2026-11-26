@@ -36,7 +36,7 @@ export const PermissionDetailPage = ({ permissionId, backLabel, onBack }: Props)
       <ScrollArea>
         <div className="flex min-h-0 flex-col items-center">
           <div className="flex min-h-0 w-150 max-w-full flex-col gap-6 px-2 py-3">
-            <span className="flex self-start">
+            <span className="-ms-3 flex self-start">
               <Button variant="ghost" onClick={onBack}>
                 <ChevronLeft />
                 {backLabel}

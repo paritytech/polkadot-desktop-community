@@ -69,7 +69,7 @@ export const ProductSettingsPage = ({ productId, backLabel, onBack }: Props) => 
       <ScrollArea>
         <div className="flex min-h-0 flex-col items-center">
           <div className="flex min-h-0 w-150 max-w-full flex-col gap-6 px-2 py-3">
-            <span className="flex self-start">
+            <span className="-ms-3 flex self-start">
               <Button variant="ghost" onClick={onBack}>
                 <ChevronLeft />
                 {backLabel}
@@ -201,7 +201,7 @@ const ConfirmDialog = ({
       <Dialog.Header>
         <div className="w-full text-start">
           <Dialog.Title>
-            <span className="mb-3 block text-lg font-semibold text-fg-primary">{title}</span>
+            <span className="mb-3 block text-fg-primary">{title}</span>
           </Dialog.Title>
           <Dialog.Description>
             <span className="block text-base font-normal text-fg-primary">{description}</span>

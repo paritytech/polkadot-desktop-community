@@ -70,7 +70,7 @@ export const EmojiPicker = ({ onSelect, onClose }: EmojiPickerProps) => {
             </button>
           ))}
         </div>
-        <span className="ms-1 flex">
+        <span className="ms-1 flex shrink-0">
           <IconButton size="sm" label={t('common.aria.close')} onClick={onClose}>
             <X />
           </IconButton>

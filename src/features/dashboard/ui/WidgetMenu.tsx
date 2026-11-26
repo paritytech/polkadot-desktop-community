@@ -12,7 +12,7 @@ import { type WidgetSize } from '../types';
 import { WidgetSizeIcon } from './icons/WidgetSizeIcon';
 
 export const widgetTopbarActionVisibilityClass = cnTw(
-  'widget-topbar-action inline-flex shrink-0 opacity-0 transition-opacity group-hover/widget:opacity-100 group-[.widget-topbar-menu-open]/widget:opacity-100 focus-visible:opacity-100',
+  'widget-topbar-action inline-flex shrink-0 opacity-0 transition-opacity group-hover/widget:opacity-100 group-[.widget-topbar-menu-open]/widget:opacity-100 focus-within:opacity-100 motion-reduce:transition-none',
 );
 
 type WidgetMenuProps = {

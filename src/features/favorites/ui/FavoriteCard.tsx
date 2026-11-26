@@ -29,7 +29,7 @@ export const FavoriteCard = ({ title, iconUrl, onOpen, action }: Props) => {
       </button>
 
       {action ? (
-        <span className="absolute end-1 top-1 opacity-0 transition-opacity group-hover/favorite-card:opacity-100 focus-within:opacity-100">
+        <span className="absolute end-1 top-1 opacity-0 transition-opacity group-hover/favorite-card:opacity-100 focus-within:opacity-100 motion-reduce:transition-none">
           {action}
         </span>
       ) : null}
