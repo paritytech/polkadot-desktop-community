@@ -16,7 +16,7 @@ const TABLE_NAMES = [
   'declinedUpdates',
   'coreStorage',
   'themeSettings',
-  'lightClientDatabases',
+  'lightClientStackDatabases',
 ] as const;
 
 const MIGRATION_DB_NAME = 'schema-spec-migration-test';
@@ -29,9 +29,9 @@ describe('unified database', () => {
     await Dexie.delete(MIGRATION_DB_NAME);
   });
 
-  it('opens at version 14 with all 8 tables', async () => {
+  it('opens at version 15 with all 8 tables', async () => {
     await appDatabase.open();
-    expect(appDatabase.verno).toBe(14);
+    expect(appDatabase.verno).toBe(15);
     expect(appDatabase.tables.map(t => t.name).sort()).toEqual([...TABLE_NAMES].sort());
   });
 
@@ -40,6 +40,14 @@ describe('unified database', () => {
     await database.productStorage.put({ key: 'k', value });
     const row = await database.productStorage.get('k');
     expect(row?.value).toEqual(value);
+  });
+
+  it('keeps one light-client blob per stack and genesis hash', async () => {
+    await database.lightClientStackDatabases.put({ stack: 'a', genesisHash: '0x01', blob: 'from-a', updatedAt: 1 });
+    await database.lightClientStackDatabases.put({ stack: 'b', genesisHash: '0x01', blob: 'from-b', updatedAt: 2 });
+
+    expect((await database.lightClientStackDatabases.get(['a', '0x01']))?.blob).toBe('from-a');
+    expect((await database.lightClientStackDatabases.get(['b', '0x01']))?.blob).toBe('from-b');
   });
 
   it('exposes the productExecutableCache table', async () => {
