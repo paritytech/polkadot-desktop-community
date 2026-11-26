@@ -121,4 +121,10 @@ describe('ListItem', () => {
     expect(root).toContainElement(screen.getByRole('button', { name: 'Remove' }));
     expect(root).toContainElement(screen.getByRole('button', { name: 'Wallet' }));
   });
+
+  it('draws the focus ring of a row with an action over the whole row', () => {
+    render(<ListItem label="Wallet" action={<button type="button">Remove</button>} onClick={vi.fn()} />);
+
+    expect(screen.getByRole('button', { name: 'Wallet' })).toHaveClass('focus-visible:after:outline-2');
+  });
 });

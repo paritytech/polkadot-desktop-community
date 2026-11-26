@@ -106,7 +106,7 @@ export const ListItem = ({
           aria-current={selected ? 'true' : undefined}
           data-no-app-focus
           style={{ appRegion: 'no-drag' }}
-          className="flex min-w-0 flex-1 text-start after:absolute after:inset-0 after:rounded-xl focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-chrome-focus"
+          className="flex min-w-0 flex-1 text-start outline-none after:absolute after:inset-0 after:rounded-xl focus-visible:after:outline-2 focus-visible:after:-outline-offset-2 focus-visible:after:outline-chrome-focus"
           onClick={onClick}
         >
           {text}
