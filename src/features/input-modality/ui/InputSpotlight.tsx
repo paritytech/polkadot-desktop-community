@@ -95,6 +95,7 @@ const InputSpotlightSurface = () => {
   const [entry, setEntry] = useState<{ text: string; source: InputSource }>({ text: initialText, source: 'user' });
   const [scanning, setScanning] = useState(false);
   const fieldRef = useRef<HTMLInputElement>(null);
+  const rootRef = useRef<HTMLDivElement>(null);
   const mountedRef = useRef(true);
   const mounted = () => mountedRef.current;
 
@@ -178,6 +179,30 @@ const InputSpotlightSurface = () => {
     document.addEventListener('keydown', onKey);
 
     return () => document.removeEventListener('keydown', onKey);
+  }, [setOpen]);
+
+  // A press on the backdrop can still reach the product webview under it: Chromium routes input to an out-of-process
+  // frame by hit-test data that trails a freshly painted overlay, so the backdrop's `pointerdown` never fires. The press
+  // still moves focus into the webview, so focus landing outside the surface is what closes it. The webview raises no
+  // `focusin` in this document, so the check runs after `focusout`, once `activeElement` has settled. `body` is left
+  // alone: a press on a bare part of the card focuses it. Not window `blur` either, which a system prompt such as the
+  // camera permission raises while the field keeps its focus.
+  useEffect(() => {
+    let pending: ReturnType<typeof setTimeout> | undefined;
+    const onFocusOut = () => {
+      clearTimeout(pending);
+      pending = setTimeout(() => {
+        const active = document.activeElement;
+        if (!active || active === document.body || rootRef.current?.contains(active)) return;
+        setOpen(false);
+      });
+    };
+    document.addEventListener('focusout', onFocusOut);
+
+    return () => {
+      clearTimeout(pending);
+      document.removeEventListener('focusout', onFocusOut);
+    };
   }, [setOpen]);
 
   // PARKED — product querying.
@@ -311,6 +336,7 @@ const InputSpotlightSurface = () => {
 
   return createPortal(
     <div
+      ref={rootRef}
       className="animate-spotlight-backdrop-in fixed inset-0 z-50 flex justify-center bg-black/40 pt-48"
       style={{ appRegion: 'no-drag' }}
       onPointerDown={() => setOpen(false)}
