@@ -73,6 +73,20 @@ describe('ListItem', () => {
     expect(onClick).not.toHaveBeenCalled();
   });
 
+  it('fades the label and drops the hover fill of a disabled row', () => {
+    render(<ListItem label="Wallet" description="Main" disabled onClick={vi.fn()} />);
+
+    expect(screen.getByText('Wallet')).toHaveClass('text-chrome-faint');
+    expect(screen.getByText('Main')).toHaveClass('text-chrome-faint');
+    expect(screen.getByRole('button')).not.toHaveClass('hover:bg-chrome-fill');
+  });
+
+  it('fills the selected row', () => {
+    render(<ListItem label="Wallet" selected onClick={vi.fn()} />);
+
+    expect(screen.getByRole('button')).toHaveClass('bg-chrome-fill');
+  });
+
   it('puts the title on the root button', () => {
     render(<ListItem label="Wallet" title="Opens the wallet" testId="row" onClick={vi.fn()} />);
 

@@ -31,6 +31,8 @@ export const Default: Story = {
   ),
 };
 
+export const Disabled: Story = { ...Default, args: { disabled: true, defaultValue: 'polkadot' } };
+
 export const Open: Story = {
   ...Default,
   args: { defaultOpen: true, defaultValue: 'kusama' },

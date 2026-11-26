@@ -19,8 +19,6 @@ type Story = StoryObj<typeof AppIcon>;
 
 const sizes = ['24', '44', '64'] as const;
 
-export const Default: Story = {};
-
 export const WithImage: Story = {
   render: args => (
     <div className="flex items-center gap-4">

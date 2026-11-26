@@ -728,7 +728,7 @@
       "navItem": "Berechtigungen",
       "heading": "Berechtigungen",
       "subheading": "Prüfe und verwalte den App-Zugriff auf Funktionen und Daten",
-      "categoryHeading": "{name}:",
+      "categoryHeading": "{name}",
       "appCount": "{count, plural, =0 {Keine Apps} one {# App} other {# Apps}}",
       "category": {
         "device": "Geräte- & Systemzugriff",

@@ -69,12 +69,12 @@ const RulesCard = ({ ruleKeys }: { ruleKeys: string[] }) => {
   return (
     <SettingsSection>
       <div className="mb-2 flex items-center gap-1">
-        <Shield size={16} className="text-fg-secondary" />
-        <span className="text-sm font-medium text-fg-secondary">{t('feature.permissionSettings.detail.rulesTitle')}</span>
+        <Shield size={16} className="text-chrome-muted" />
+        <span className="text-sm font-medium text-chrome-muted">{t('feature.permissionSettings.detail.rulesTitle')}</span>
       </div>
       <ol className="flex list-decimal flex-col ps-5">
         {ruleKeys.map(key => (
-          <li key={key} className="text-sm text-fg-primary">
+          <li key={key} className="text-sm text-chrome-text">
             {t(key)}
           </li>
         ))}
@@ -90,7 +90,6 @@ const AppPermissionRow = ({ app, onNavigate }: { app: AppPermissionEntry; onNavi
     <ListItem
       icon={<ProductIcon icon={product?.icon} className="size-full object-cover" fallback={<Grid2X2 />} />}
       label={product?.displayName ?? app.productId}
-      // A decision no longer carries a surface, so the base name is the whole subtitle.
       description={product?.baseName ?? app.productId}
       chevron
       onClick={onNavigate}

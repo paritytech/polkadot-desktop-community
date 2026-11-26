@@ -13,7 +13,7 @@ type Story = StoryObj<typeof ScrollArea>;
 
 export const Overflowing: Story = {
   render: args => (
-    <div className="h-48 w-64 rounded-lg border border-chrome-text/10">
+    <div className="h-48 w-64 rounded-lg border border-chrome-line">
       <ScrollArea {...args}>
         {Array.from({ length: 30 }, (_, index) => (
           <p key={index} className="px-3 py-2 text-sm text-chrome-text">

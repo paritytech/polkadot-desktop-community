@@ -51,25 +51,27 @@ export const ProductListSettingsPage = () => {
           onChange={event => setQuery(event.target.value)}
         />
 
-        <SettingsSection layout="list">
-          {filtered.map(entry =>
-            entry.kind === 'committed' ? (
-              <ProductRow
-                key={entry.product.baseName}
-                icon={entry.product.icon}
-                label={entry.product.displayName}
-                description={entry.product.baseName}
-                onClick={() => openProduct(entry.product.baseName)}
-              />
-            ) : (
-              <PermissionOnlyProductRow
-                key={entry.productId}
-                productId={entry.productId}
-                onClick={() => openProduct(entry.productId)}
-              />
-            ),
-          )}
-        </SettingsSection>
+        {filtered.length > 0 ? (
+          <SettingsSection layout="list">
+            {filtered.map(entry =>
+              entry.kind === 'committed' ? (
+                <ProductRow
+                  key={entry.product.baseName}
+                  icon={entry.product.icon}
+                  label={entry.product.displayName}
+                  description={entry.product.baseName}
+                  onClick={() => openProduct(entry.product.baseName)}
+                />
+              ) : (
+                <PermissionOnlyProductRow
+                  key={entry.productId}
+                  productId={entry.productId}
+                  onClick={() => openProduct(entry.productId)}
+                />
+              ),
+            )}
+          </SettingsSection>
+        ) : null}
       </div>
     </SettingsList>
   );
@@ -87,7 +89,7 @@ const ProductRow = ({
   onClick: VoidFunction;
 }) => (
   <ListItem
-    icon={<ProductIcon icon={icon} className="size-full rounded-xl object-cover" fallback={<Grid2X2 size={16} />} />}
+    icon={<ProductIcon icon={icon} className="size-full rounded-xl object-cover" fallback={<Grid2X2 />} />}
     label={label}
     description={description}
     chevron

@@ -728,7 +728,7 @@
       "navItem": "Разрешения",
       "heading": "Разрешения",
       "subheading": "Просматривайте и меняйте доступ приложений к функциям и данным",
-      "categoryHeading": "{name}:",
+      "categoryHeading": "{name}",
       "appCount": "{count, plural, =0 {Нет приложений} one {# приложение} few {# приложения} many {# приложений} other {# приложения}}",
       "category": {
         "device": "Доступ к устройству и системе",

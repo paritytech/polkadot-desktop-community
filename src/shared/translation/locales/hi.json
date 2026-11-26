@@ -728,7 +728,7 @@
       "navItem": "अनुमतियाँ",
       "heading": "अनुमतियाँ",
       "subheading": "सुविधाओं और डेटा तक ऐप्स की पहुँच की समीक्षा करें और उसे प्रबंधित करें",
-      "categoryHeading": "{name}:",
+      "categoryHeading": "{name}",
       "appCount": "{count, plural, =0 {कोई ऐप नहीं} one {# ऐप} other {# ऐप्स}}",
       "category": {
         "device": "डिवाइस और सिस्टम पहुँच",

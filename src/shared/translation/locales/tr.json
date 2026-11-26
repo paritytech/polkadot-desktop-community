@@ -728,7 +728,7 @@
       "navItem": "İzinler",
       "heading": "İzinler",
       "subheading": "Uygulamaların özelliklere ve verilere erişimini incele ve yönet",
-      "categoryHeading": "{name}:",
+      "categoryHeading": "{name}",
       "appCount": "{count, plural, =0 {Uygulama yok} one {# uygulama} other {# uygulama}}",
       "category": {
         "device": "Cihaz ve sistem erişimi",

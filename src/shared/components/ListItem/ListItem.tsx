@@ -3,6 +3,9 @@ import { type ReactNode } from 'react';
 
 import { cnTw } from '@/shared/utils';
 
+// `icon`, `description` and `meta` render inside spans (and, in the button shape, inside a <button>): pass phrasing
+// content only. A description with several lines wraps each line's pieces in one <span>; every top-level element of
+// the node becomes its own truncated line.
 type Props = {
   icon?: ReactNode;
   label: ReactNode;

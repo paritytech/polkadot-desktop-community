@@ -728,7 +728,7 @@
       "navItem": "권한",
       "heading": "권한",
       "subheading": "기능과 데이터에 대한 앱의 접근을 검토하고 관리합니다",
-      "categoryHeading": "{name}:",
+      "categoryHeading": "{name}",
       "appCount": "{count, plural, =0 {앱 없음} other {앱 #개}}",
       "category": {
         "device": "기기 및 시스템 접근",

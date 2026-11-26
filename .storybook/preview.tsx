@@ -11,6 +11,13 @@ type Mode = 'light' | 'dark';
 // Listed here rather than imported from the application domain so the preview loads no domain code.
 type Palette = 'berlin' | 'tokyo' | 'lisbon' | 'malta';
 
+const MODES: Mode[] = ['light', 'dark'];
+const PALETTES: Palette[] = ['berlin', 'tokyo', 'lisbon', 'malta'];
+const LOCALES: Locale[] = ['en', 'ar'];
+
+// Storybook types `globals` as `any`, and a URL can set any value, so each global is checked against its toolbar values.
+const pick = <T extends string>(values: T[], value: unknown, fallback: T): T => values.find(item => item === value) ?? fallback;
+
 type StoryThemeProps = PropsWithChildren<{
   mode: Mode;
   palette: Palette;
@@ -84,7 +91,11 @@ const preview: Preview = {
   },
   decorators: [
     (Story, { globals }) => (
-      <StoryTheme mode={globals['mode']} palette={globals['palette']} locale={globals['locale']}>
+      <StoryTheme
+        mode={pick(MODES, globals['mode'], 'light')}
+        palette={pick(PALETTES, globals['palette'], 'berlin')}
+        locale={pick(LOCALES, globals['locale'], 'en')}
+      >
         <Story />
       </StoryTheme>
     ),

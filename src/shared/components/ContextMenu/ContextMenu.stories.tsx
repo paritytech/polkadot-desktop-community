@@ -15,7 +15,7 @@ export const Default: Story = {
   render: args => (
     <ContextMenu.Root {...args}>
       <ContextMenu.Trigger asChild>
-        <div className="border-chrome-border flex h-48 w-96 items-center justify-center rounded-lg border border-dashed text-sm text-chrome-text">
+        <div className="flex h-48 w-96 items-center justify-center rounded-lg border border-dashed border-chrome-line text-sm text-chrome-text">
           Right-click this region
         </div>
       </ContextMenu.Trigger>

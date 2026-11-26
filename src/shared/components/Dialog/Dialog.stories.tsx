@@ -44,8 +44,6 @@ export default meta;
 
 type Story = StoryObj<typeof DialogDemo>;
 
-export const Default: Story = {};
-
 export const Small: Story = { args: { width: 'sm' } };
 
 export const Medium: Story = { args: { width: 'md' } };

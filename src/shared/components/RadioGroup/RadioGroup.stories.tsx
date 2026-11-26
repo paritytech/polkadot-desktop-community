@@ -6,6 +6,7 @@ import { RadioGroup } from './RadioGroup';
 const meta: Meta<typeof RadioGroup.Root> = {
   component: RadioGroup.Root,
   title: 'Design System/kit/RadioGroup',
+  parameters: { controls: { disable: true } },
 };
 
 export default meta;

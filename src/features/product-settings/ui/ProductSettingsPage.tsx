@@ -226,7 +226,7 @@ function buildRequestedPermissions(
     result.push({
       id: 'Alias',
       label: t('feature.productSettings.aliasPermission.label'),
-      icon: <Link2 size={20} />,
+      icon: <Link2 />,
       statusText: t(STATUS_LABEL_KEYS[aliasStatus]),
     });
   }

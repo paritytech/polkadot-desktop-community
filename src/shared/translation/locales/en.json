@@ -743,7 +743,7 @@
       "navItem": "Permissions",
       "heading": "Permissions",
       "subheading": "Review and manage app access to features and data",
-      "categoryHeading": "{name}:",
+      "categoryHeading": "{name}",
       "appCount": "{count, plural, =0 {No apps} one {# app} other {# apps}}",
       "category": {
         "device": "Device & System Access",

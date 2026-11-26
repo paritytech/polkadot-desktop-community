@@ -7,6 +7,7 @@ const meta: Meta<typeof Switch> = {
   component: Switch,
   title: 'Design System/kit/Switch',
   args: { label: 'Notifications', checked: false, onCheckedChange: () => {} },
+  parameters: { controls: { include: ['label'] } },
 };
 
 export default meta;

@@ -29,6 +29,7 @@ export const Input = ({ leading, trailing, style, ...rest }: InputProps) => {
         'flex h-control w-full min-w-0 items-center gap-2 rounded-full bg-chrome-well px-3 shadow-chrome-inset has-[input:focus-visible]:outline-2 has-[input:focus-visible]:outline-offset-0 has-[input:focus-visible]:outline-chrome-focus',
         Boolean(trailing) && 'pe-1',
       )}
+      style={{ appRegion: 'no-drag' }}
       onMouseDown={focusField}
     >
       {leading ? (

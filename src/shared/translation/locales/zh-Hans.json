@@ -728,7 +728,7 @@
       "navItem": "权限",
       "heading": "权限",
       "subheading": "查看和管理应用对功能与数据的访问权限",
-      "categoryHeading": "{name}：",
+      "categoryHeading": "{name}",
       "appCount": "{count, plural, =0 {没有应用} other {# 个应用}}",
       "category": {
         "device": "设备与系统访问",

@@ -6,6 +6,7 @@ import { SegmentedControl } from './SegmentedControl';
 const meta: Meta<typeof SegmentedControl.Root> = {
   component: SegmentedControl.Root,
   title: 'Design System/kit/SegmentedControl',
+  parameters: { controls: { disable: true } },
 };
 
 export default meta;

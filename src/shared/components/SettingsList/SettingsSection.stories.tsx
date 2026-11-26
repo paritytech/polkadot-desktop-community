@@ -27,7 +27,6 @@ export const Plain: Story = {
 
 export const List: Story = {
   args: {
-    title: 'Networks',
     layout: 'list',
     children: (
       <>

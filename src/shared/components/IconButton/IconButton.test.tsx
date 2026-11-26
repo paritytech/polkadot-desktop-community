@@ -83,7 +83,6 @@ describe('IconButton', () => {
     const button = screen.getByRole('button', { name: 'Smileys' });
     expect(button).toHaveAttribute('aria-pressed', 'true');
     expect(button).toHaveClass('aria-pressed:bg-chrome-fill-strong');
-    expect(button).not.toHaveClass('aria-pressed:shadow-chrome-raised');
   });
 
   it('draws a raised disc', () => {

@@ -728,7 +728,7 @@
       "navItem": "الأذونات",
       "heading": "الأذونات",
       "subheading": "راجع وصول التطبيقات إلى الميزات والبيانات وأدره",
-      "categoryHeading": "{name}:",
+      "categoryHeading": "{name}",
       "appCount": "{count, plural, =0 {لا توجد تطبيقات} one {تطبيق واحد} two {تطبيقان} few {# تطبيقات} many {# تطبيقًا} other {# تطبيق}}",
       "category": {
         "device": "الوصول إلى الجهاز والنظام",

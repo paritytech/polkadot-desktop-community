@@ -45,9 +45,11 @@ const UpdateRow = ({ productId, kind, fromVersion, toVersion }: UpdateRowProps) 
       label={
         <span className="flex items-center gap-2">
           <span className="size-1.5 shrink-0 rounded-full bg-bg-accent" aria-hidden />
-          {t('feature.offlineAccess.section.updateTitle', {
-            modality: t(`feature.offlineAccess.section.modality.${kind}`),
-          })}
+          <span className="min-w-0 truncate">
+            {t('feature.offlineAccess.section.updateTitle', {
+              modality: t(`feature.offlineAccess.section.modality.${kind}`),
+            })}
+          </span>
         </span>
       }
       description={

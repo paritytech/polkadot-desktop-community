@@ -14,7 +14,7 @@ describe('WidgetTopbarAction', () => {
 
     const button = screen.getByRole('button', { name: 'More' });
 
-    expect(button.closest('.widget-topbar-action')).toBeTruthy();
+    expect(button.closest('.widget-topbar-action')).not.toBeNull();
   });
 
   it('keeps mousedown from the parent and still runs the caller handler', () => {

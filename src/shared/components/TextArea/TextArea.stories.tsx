@@ -18,9 +18,16 @@ type Story = StoryObj<typeof TextArea>;
 export const Empty: Story = {};
 
 export const LongText: Story = {
+  decorators: [
+    Story => (
+      <div className="w-96">
+        <Story />
+      </div>
+    ),
+  ],
   args: {
     rows: 4,
-    defaultValue: 'A long message that runs over several lines. '.repeat(12),
+    defaultValue: 'A long message that runs over several lines. '.repeat(3),
   },
 };
 
