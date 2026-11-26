@@ -2,7 +2,7 @@ import { useNavigate } from '@tanstack/react-router';
 import { Grid2X2 } from 'lucide-react';
 import { useMemo, useState } from 'react';
 
-import { Input, ListItem, SettingsList } from '@/shared/components';
+import { Input, ListItem, SettingsList, SettingsSection } from '@/shared/components';
 import { useTranslation } from '@/shared/translation';
 import {
   type Icon,
@@ -51,7 +51,7 @@ export const ProductListSettingsPage = () => {
           onChange={event => setQuery(event.target.value)}
         />
 
-        <div className="flex flex-col">
+        <SettingsSection layout="list">
           {filtered.map(entry =>
             entry.kind === 'committed' ? (
               <ProductRow
@@ -69,7 +69,7 @@ export const ProductListSettingsPage = () => {
               />
             ),
           )}
-        </div>
+        </SettingsSection>
       </div>
     </SettingsList>
   );
@@ -90,6 +90,7 @@ const ProductRow = ({
     icon={<ProductIcon icon={icon} className="size-full rounded-xl object-cover" fallback={<Grid2X2 size={16} />} />}
     label={label}
     description={description}
+    chevron
     onClick={onClick}
   />
 );

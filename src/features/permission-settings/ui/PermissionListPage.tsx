@@ -1,8 +1,7 @@
 import { useNavigate } from '@tanstack/react-router';
-import { type PropsWithChildren } from 'react';
 import { FormattedMessage } from 'react-intl';
 
-import { ListItem, SettingsList } from '@/shared/components';
+import { ListItem, SettingsList, SettingsSection } from '@/shared/components';
 import { useTranslation } from '@/shared/translation';
 import { type PermissionId, useWatchAggregatedPermissions } from '@/domains/product';
 import { PERMISSION_CATEGORIES, PERMISSION_METADATA } from '@/widgets/Permission';
@@ -27,7 +26,8 @@ export const PermissionListPage = () => {
           }));
 
           return (
-            <PermissionGroup
+            <SettingsSection
+              layout="list"
               key={category.key}
               title={t('feature.permissionSettings.categoryHeading', { name: t(category.labelKey) })}
             >
@@ -39,20 +39,14 @@ export const PermissionListPage = () => {
                   description={
                     <FormattedMessage id="feature.permissionSettings.appCount" values={{ count: agg?.apps.length ?? 0 }} />
                   }
+                  chevron
                   onClick={() => handleClick(meta.id)}
                 />
               ))}
-            </PermissionGroup>
+            </SettingsSection>
           );
         })}
       </div>
     </SettingsList>
   );
 };
-
-const PermissionGroup = ({ title, children }: PropsWithChildren<{ title: string }>) => (
-  <div className="flex flex-col gap-1">
-    <div className="text-sm font-semibold text-fg-primary">{title}</div>
-    <div className="flex flex-col">{children}</div>
-  </div>
-);
