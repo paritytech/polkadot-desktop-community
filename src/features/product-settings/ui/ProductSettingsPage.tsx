@@ -1,8 +1,8 @@
 import { useNavigate } from '@tanstack/react-router';
-import { ChevronLeft, ExternalLink, Grid2X2, Link2, Paintbrush, Trash2 } from 'lucide-react';
+import { Grid2X2, Link2, Paintbrush, Trash2 } from 'lucide-react';
 import { type ReactNode, useState } from 'react';
 
-import { Button, Dialog, ScrollArea, toast } from '@/shared/components';
+import { Button, Dialog, ListItem, SettingsList, SettingsSection, toast } from '@/shared/components';
 import { Slot } from '@/shared/di';
 import { useTranslation } from '@/shared/translation';
 import { formatBytes } from '@/shared/utils';
@@ -24,11 +24,10 @@ import { productSettingsSectionsSlot } from '../di';
 
 type Props = {
   productId: string;
-  backLabel: string;
   onBack: VoidFunction;
 };
 
-export const ProductSettingsPage = ({ productId, backLabel, onBack }: Props) => {
+export const ProductSettingsPage = ({ productId, onBack }: Props) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { data: product } = useDisplayedProduct(productId);
@@ -65,92 +64,59 @@ export const ProductSettingsPage = ({ productId, backLabel, onBack }: Props) => 
   const requestedPermissions = buildRequestedPermissions(permissionEntries, accountAccess, t);
 
   return (
-    <div className="flex min-h-0 flex-col overflow-hidden">
-      <ScrollArea>
-        <div className="flex min-h-0 flex-col items-center">
-          <div className="flex min-h-0 w-150 max-w-full flex-col gap-6 px-2 py-3">
-            <span className="-ms-3 flex self-start">
-              <Button variant="ghost" onClick={onBack}>
-                <ChevronLeft />
-                {backLabel}
-              </Button>
-            </span>
-
-            <div className="flex flex-col gap-4">
-              <div className="size-16 shrink-0 overflow-hidden rounded-xl">
-                <ProductIcon
-                  icon={product?.icon}
-                  className="size-full object-cover"
-                  fallback={
-                    <div className="flex size-full items-center justify-center bg-bg-illustration-dark text-fg-primary-inverted">
-                      <Grid2X2 size={24} />
-                    </div>
-                  }
-                />
-              </div>
-
-              <div className="flex flex-col gap-2">
-                <div className="flex items-center gap-3">
-                  <p className="text-2xl font-semibold text-fg-primary">{productName}</p>
-                  {cacheSize > 0 ? (
-                    <span className="rounded-md border border-stroke-secondary px-2 py-0.5 text-xs text-fg-tertiary-inverted">
-                      {formatBytes(cacheSize)}
-                    </span>
-                  ) : null}
-                </div>
-                {product?.description ? <p className="text-sm font-medium text-fg-primary">{product.description}</p> : null}
-              </div>
-
-              <div className="flex gap-2">
-                <Button size="sm" onClick={() => setClearCacheDialogOpen(true)}>
-                  <Paintbrush size={16} />
-                  {t('feature.productSettings.clearCache')}
-                </Button>
-                <Button size="sm" onClick={() => setForgetDialogOpen(true)}>
-                  <Trash2 size={16} />
-                  {t('feature.productSettings.forgetApp')}
-                </Button>
-              </div>
+    <>
+      <SettingsList title={productName} subtitle={product?.description} onBack={onBack}>
+        <div className="flex flex-col gap-6">
+          <div className="flex flex-col gap-4">
+            <div className="size-16 shrink-0 overflow-hidden rounded-xl">
+              <ProductIcon
+                icon={product?.icon}
+                className="size-full object-cover"
+                fallback={
+                  <div className="flex size-full items-center justify-center bg-bg-illustration-dark text-fg-primary-inverted">
+                    <Grid2X2 size={24} />
+                  </div>
+                }
+              />
             </div>
 
-            <Slot id={productSettingsSectionsSlot} props={{ productId }} />
-
-            <div className="flex flex-col">
-              <div className="py-2 text-base font-semibold text-fg-primary">
-                {t('feature.productSettings.requestedPermissions')}
-              </div>
-              <div className="flex flex-col">
-                {requestedPermissions.length === 0 && (
-                  <div className="py-4 text-center text-sm text-fg-tertiary">{t('feature.productSettings.noPermissions')}</div>
-                )}
-                {requestedPermissions.map(({ id, label, icon: permIcon, statusText }) => (
-                  <button
-                    key={id}
-                    className="flex w-full items-center gap-4 rounded-xl p-3 text-start transition-colors hover:bg-bg-selection-container-hover"
-                    onClick={() =>
-                      navigate({
-                        to: '/settings/privacy/apps/$productId/$permissionId',
-                        params: { productId, permissionId: id },
-                      })
-                    }
-                  >
-                    <div className="flex min-w-0 flex-1 items-center gap-3">
-                      <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-bg-illustration-light text-fg-primary">
-                        {permIcon}
-                      </div>
-                      <div className="flex min-w-0 flex-1 flex-col items-start">
-                        <span className="truncate text-sm font-medium text-fg-primary">{label}</span>
-                        <span className="truncate text-xs text-fg-tertiary">{statusText}</span>
-                      </div>
-                    </div>
-                    <ExternalLink size={16} className="shrink-0 text-fg-tertiary" />
-                  </button>
-                ))}
-              </div>
+            <div className="flex items-center gap-2">
+              <Button size="sm" onClick={() => setClearCacheDialogOpen(true)}>
+                <Paintbrush size={16} />
+                {t('feature.productSettings.clearCache')}
+              </Button>
+              <Button size="sm" onClick={() => setForgetDialogOpen(true)}>
+                <Trash2 size={16} />
+                {t('feature.productSettings.forgetApp')}
+              </Button>
+              {cacheSize > 0 ? <span className="text-xs text-chrome-muted">{formatBytes(cacheSize)}</span> : null}
             </div>
           </div>
+
+          <Slot id={productSettingsSectionsSlot} props={{ productId }} />
+
+          <SettingsSection layout="list" title={t('feature.productSettings.requestedPermissions')}>
+            {requestedPermissions.length === 0 && (
+              <div className="px-3 py-4 text-center text-xs text-chrome-muted">{t('feature.productSettings.noPermissions')}</div>
+            )}
+            {requestedPermissions.map(({ id, label, icon: permIcon, statusText }) => (
+              <ListItem
+                key={id}
+                icon={permIcon}
+                label={label}
+                description={statusText}
+                chevron
+                onClick={() =>
+                  navigate({
+                    to: '/settings/privacy/apps/$productId/$permissionId',
+                    params: { productId, permissionId: id },
+                  })
+                }
+              />
+            ))}
+          </SettingsSection>
         </div>
-      </ScrollArea>
+      </SettingsList>
 
       <ConfirmDialog
         confirmLabel={t('feature.productSettings.clearCache')}
@@ -173,7 +139,7 @@ export const ProductSettingsPage = ({ productId, backLabel, onBack }: Props) => 
         onConfirm={handleForget}
         onOpenChange={setForgetDialogOpen}
       />
-    </div>
+    </>
   );
 };
 

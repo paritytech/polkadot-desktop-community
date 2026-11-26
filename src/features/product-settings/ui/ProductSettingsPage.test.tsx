@@ -27,7 +27,7 @@ function seedProducts(records: Partial<PersistedProduct>[]) {
 const renderPage = (productId: string) =>
   render(
     <TranslationProvider>
-      <ProductSettingsPage productId={productId} backLabel="Back" onBack={vi.fn()} />
+      <ProductSettingsPage productId={productId} onBack={vi.fn()} />
     </TranslationProvider>,
   );
 
