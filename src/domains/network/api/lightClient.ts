@@ -96,8 +96,8 @@ function getHandle(): Promise<ChainProviderHandle> {
   return handlePromise;
 }
 
-/** Load the catalog, whatever the current mode. Memoized; failure is not fatal. */
-export async function ensureLightClientCatalog(): Promise<void> {
+/** Build the light client, whatever the current mode. Memoized; failure is not fatal. */
+export async function ensureLightClient(): Promise<void> {
   await getHandle();
 }
 
