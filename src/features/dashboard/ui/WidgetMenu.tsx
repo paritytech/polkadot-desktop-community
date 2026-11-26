@@ -4,17 +4,12 @@ import { type ReactNode, useState } from 'react';
 import { DropdownMenu } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
-import { cnTw } from '@/shared/utils';
 import { type WidgetSizeIconVariant } from '@/domains/application';
 import { WIDGET_SIZE_CONFIG } from '../constants';
 import { type WidgetSize } from '../types';
 
 import { WidgetTopbarAction } from './WidgetTopbarAction';
 import { WidgetSizeIcon } from './icons/WidgetSizeIcon';
-
-export const widgetTopbarActionVisibilityClass = cnTw(
-  'widget-topbar-action inline-flex shrink-0 opacity-0 transition-opacity group-hover/widget:opacity-100 group-[.widget-topbar-menu-open]/widget:opacity-100 focus-within:opacity-100 motion-reduce:transition-none',
-);
 
 type WidgetMenuProps = {
   sizes: WidgetSizeIconVariant[];

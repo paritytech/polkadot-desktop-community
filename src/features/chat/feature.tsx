@@ -2,7 +2,7 @@ import { Maximize2, MessageCircle } from 'lucide-react';
 import { FormattedMessage } from 'react-intl';
 
 import LastChatsIcon from '@/shared/assets/images/header/last-chats.svg?jsx';
-import { IconButton, Sidebar } from '@/shared/components';
+import { Sidebar } from '@/shared/components';
 import { createFeature } from '@/shared/feature';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
@@ -14,12 +14,7 @@ import {
   tabContentSlot,
   tabHoverSlot,
 } from '@/features/browser';
-import {
-  type AddableDashboardCard,
-  buildNativeDashboardCard,
-  dashboardCardSDK,
-  widgetTopbarActionVisibilityClass,
-} from '@/features/dashboard';
+import { type AddableDashboardCard, WidgetTopbarAction, buildNativeDashboardCard, dashboardCardSDK } from '@/features/dashboard';
 import { productActionsMenuItemsSlot } from '@/features/product-actions-menu';
 import { settingsPreferencesNavSlot } from '@/features/settings';
 
@@ -103,17 +98,13 @@ const ChatFullscreenAction = () => {
   const openChatTab = useOpenChatTab();
 
   return (
-    <span className={widgetTopbarActionVisibilityClass}>
-      <IconButton
-        size="sm"
-        data-testid={TEST_IDS.chatWidgetFullscreenButton}
-        label={t('common.aria.openFullscreen')}
-        onClick={openChatTab}
-        onMouseDown={event => event.stopPropagation()}
-      >
-        <Maximize2 aria-hidden />
-      </IconButton>
-    </span>
+    <WidgetTopbarAction
+      data-testid={TEST_IDS.chatWidgetFullscreenButton}
+      label={t('common.aria.openFullscreen')}
+      onClick={openChatTab}
+    >
+      <Maximize2 aria-hidden />
+    </WidgetTopbarAction>
   );
 };
 

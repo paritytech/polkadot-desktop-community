@@ -1,7 +1,7 @@
 import { useNavigate } from '@tanstack/react-router';
 import { Maximize2, RotateCw } from 'lucide-react';
 
-import { DropdownMenu, IconButton } from '@/shared/components';
+import { DropdownMenu } from '@/shared/components';
 import { isElectron } from '@/shared/env';
 import { createFeature } from '@/shared/feature';
 import { TEST_IDS } from '@/shared/test-ids';
@@ -14,12 +14,7 @@ import {
 } from '@/domains/application';
 import { productService, useDisplayedProduct, useExecutableArchive, usePersistedProductById } from '@/domains/product';
 import { onProductRefreshRequestedSideEffect } from '@/aggregates/product-loading';
-import {
-  type CardRenderProps,
-  DashboardCardChrome,
-  dashboardCardSDK,
-  widgetTopbarActionVisibilityClass,
-} from '@/features/dashboard';
+import { type CardRenderProps, DashboardCardChrome, WidgetTopbarAction, dashboardCardSDK } from '@/features/dashboard';
 import { ProductIcon } from '@/widgets/ProductIcon';
 
 import { ProductShortcutCard } from './ui/ProductShortcutCard';
@@ -170,17 +165,13 @@ const FullscreenAction = ({ productId }: { productId: string }) => {
   if (!product || !productService.hasApp(product)) return null;
 
   return (
-    <span className={widgetTopbarActionVisibilityClass}>
-      <IconButton
-        size="sm"
-        data-testid={TEST_IDS.dashboardWidgetFullscreenButton}
-        label={t('common.aria.openFullscreen')}
-        onClick={() => navigate({ to: '/product/$id/{-$route}', params: { id: product.baseName } })}
-        onMouseDown={event => event.stopPropagation()}
-      >
-        <Maximize2 aria-hidden />
-      </IconButton>
-    </span>
+    <WidgetTopbarAction
+      data-testid={TEST_IDS.dashboardWidgetFullscreenButton}
+      label={t('common.aria.openFullscreen')}
+      onClick={() => navigate({ to: '/product/$id/{-$route}', params: { id: product.baseName } })}
+    >
+      <Maximize2 aria-hidden />
+    </WidgetTopbarAction>
   );
 };
 
