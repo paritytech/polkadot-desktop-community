@@ -240,6 +240,9 @@
       "sending": "Sending...",
       "sendRequest": "Send Request",
       "search": "Search",
+      "inChatSearch": {
+        "placeholder": "Search in chat..."
+      },
       "noResults": "No results found for \"{query}\"",
       "results": "Results ({count})",
       "recent": "Recent",

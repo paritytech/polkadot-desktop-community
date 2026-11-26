@@ -1,7 +1,7 @@
 import { ChevronDown, ChevronUp, Search, X } from 'lucide-react';
 import { type Ref } from 'react';
 
-import { IconButton } from '@/shared/components';
+import { IconButton, Input } from '@/shared/components';
 import { useTranslation } from '@/shared/translation';
 
 type Props = {
@@ -23,30 +23,30 @@ export const ChatSearchBar = ({ query, inputRef, resultCount, resultIndex, onQue
 
   return (
     <div className="flex h-12 shrink-0 items-center gap-2 border-b border-stroke-primary bg-bg-surface-container px-2">
-      <div className="flex h-control min-w-0 flex-1 items-center gap-2 rounded-full bg-bg-action-secondary px-3">
-        <Search strokeWidth={1.75} className="size-4 shrink-0 text-fg-tertiary" />
-        <input
-          ref={inputRef}
-          type="text"
-          data-no-app-focus
-          value={query}
-          /* eslint-disable-next-line formatjs/no-literal-string-in-jsx -- v1 search; not localized yet */
-          placeholder="Search in chat..."
-          className="min-w-0 flex-1 bg-transparent text-sm text-fg-primary outline-none placeholder:text-fg-tertiary"
-          onChange={e => onQueryChange(e.target.value)}
-        />
-        {hasQuery && (
-          <IconButton size="sm" label={t('common.aria.clear')} onClick={() => onQueryChange('')}>
-            <X strokeWidth={1.75} />
-          </IconButton>
-        )}
-        {canNavigate && (
-          <span className="shrink-0 text-xs font-medium text-fg-tertiary">
-            {/* eslint-disable-next-line formatjs/no-literal-string-in-jsx -- numeric counter */}
-            {resultIndex + 1} / {resultCount}
-          </span>
-        )}
-      </div>
+      <Input
+        ref={inputRef}
+        leading={<Search />}
+        type="text"
+        value={query}
+        placeholder={t('feature.chat.inChatSearch.placeholder')}
+        aria-label={t('feature.chat.inChatSearch.placeholder')}
+        trailing={
+          <>
+            {canNavigate && (
+              <span className="text-2xs text-chrome-muted tabular-nums">
+                {/* eslint-disable-next-line formatjs/no-literal-string-in-jsx -- numeric counter */}
+                {resultIndex + 1} / {resultCount}
+              </span>
+            )}
+            {hasQuery && (
+              <IconButton size="sm" label={t('common.aria.clear')} onClick={() => onQueryChange('')}>
+                <X strokeWidth={1.75} />
+              </IconButton>
+            )}
+          </>
+        }
+        onChange={e => onQueryChange(e.target.value)}
+      />
       <IconButton label={t('feature.chat.searchPrevious')} disabled={!canNavigate} onClick={onPrev}>
         <ChevronUp strokeWidth={1.75} />
       </IconButton>
