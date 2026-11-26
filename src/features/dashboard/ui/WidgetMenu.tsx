@@ -1,7 +1,7 @@
 import { Check, LayoutDashboard, MoreHorizontal, Trash2 } from 'lucide-react';
 import { type ReactNode, useState } from 'react';
 
-import { DropdownMenu } from '@/shared/components';
+import { DropdownMenu, IconButton } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { cnTw } from '@/shared/utils';
@@ -13,15 +13,6 @@ import { WidgetSizeIcon } from './icons/WidgetSizeIcon';
 
 export const widgetTopbarActionVisibilityClass = cnTw(
   'widget-topbar-action inline-flex shrink-0 opacity-0 transition-opacity group-hover/widget:opacity-100 group-[.widget-topbar-menu-open]/widget:opacity-100 focus-visible:opacity-100',
-);
-
-export const widgetTopbarActionButtonClass = cnTw(
-  'widget-topbar-action flex size-6 shrink-0 cursor-pointer items-center justify-center rounded-full text-fg-primary transition-colors hover:bg-bg-action-secondary-hover focus-visible:bg-bg-action-secondary-hover focus-visible:ring-4 focus-visible:ring-stroke-tertiary/35 focus-visible:ring-offset-0 focus-visible:outline-none',
-);
-
-export const widgetTopbarActionMenuTriggerClass = cnTw(
-  widgetTopbarActionButtonClass,
-  'data-[state=open]:bg-bg-action-secondary-hover',
 );
 
 type WidgetMenuProps = {
@@ -67,15 +58,14 @@ export const WidgetMenu = ({
     <DropdownMenu.Root open={isOpen} onOpenChange={handleOpenChange}>
       <span className={widgetTopbarActionVisibilityClass}>
         <DropdownMenu.Trigger asChild>
-          <button
-            type="button"
+          <IconButton
+            size="sm"
+            label={t('common.action.moreDetails')}
             data-testid={TEST_IDS.dashboardWidgetMenuTrigger}
-            className={widgetTopbarActionMenuTriggerClass}
-            aria-label={t('common.action.moreDetails')}
             onMouseDown={event => event.stopPropagation()}
           >
-            <MoreHorizontal className="size-4" aria-hidden />
-          </button>
+            <MoreHorizontal aria-hidden />
+          </IconButton>
         </DropdownMenu.Trigger>
       </span>
       <DropdownMenu.Content align="end">

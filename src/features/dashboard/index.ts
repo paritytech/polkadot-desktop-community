@@ -26,12 +26,7 @@ export { AddToDashboardDialogShell } from './ui/AddToDashboardDialogShell';
 export { WidgetSizeIcon } from './ui/icons/WidgetSizeIcon';
 export { DashboardCardChrome } from './ui/DashboardCardChrome';
 export { ShortcutIcon } from './ui/ShortcutIcon';
-export {
-  WidgetMenu,
-  widgetTopbarActionButtonClass,
-  widgetTopbarActionMenuTriggerClass,
-  widgetTopbarActionVisibilityClass,
-} from './ui/WidgetMenu';
+export { WidgetMenu, widgetTopbarActionVisibilityClass } from './ui/WidgetMenu';
 export type { CardRenderProps, DashboardCardMetadata, FolderItemIconSize, WidgetSize } from './types';
 
 // Generic dashboard host seams a content provider (e.g. `product-dashboard`)
