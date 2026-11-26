@@ -6,7 +6,7 @@ import { of } from 'rxjs';
 
 import ChatBubbleOvalLeftIcon from '@/shared/assets/images/header/chat-bubble-oval-left.svg?jsx';
 import MaximizeIcon from '@/shared/assets/images/header/maximize.svg?jsx';
-import { DismissOverlay, Popover } from '@/shared/components';
+import { DismissOverlay, IconButton, Popover } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { type ChatSession, type RoomFooter, useProductSessions } from '@/domains/chat';
@@ -178,16 +178,12 @@ const QuickChatPageHeader = ({ session, onBack, onExpand }: QuickChatPageHeaderP
   const sessionName = session ? chatService.formatPeerName(rawSessionName, session.roomId) : '';
 
   return (
-    <div className="flex h-10 shrink-0 items-center gap-2 p-2">
+    <div className="flex h-12 shrink-0 items-center gap-2 p-2">
       {onBack ? (
         <>
-          <button
-            className="flex size-7 shrink-0 items-center justify-center rounded-full transition-colors hover:bg-bg-selection-container-hover"
-            aria-label={t('common.action.back')}
-            onClick={onBack}
-          >
-            <ArrowLeft className="size-4 text-fg-secondary" />
-          </button>
+          <IconButton label={t('common.action.back')} onClick={onBack}>
+            <ArrowLeft aria-hidden />
+          </IconButton>
           <Avatar name={sessionName} size="tiny" />
           <span className="min-w-0 flex-1 truncate text-sm font-semibold text-fg-primary">{sessionName}</span>
         </>
@@ -199,14 +195,9 @@ const QuickChatPageHeader = ({ session, onBack, onExpand }: QuickChatPageHeaderP
           <span className="truncate text-sm font-semibold text-fg-primary">{t('feature.chat.quickChat')}</span>
         </div>
       )}
-      <button
-        data-testid={TEST_IDS.quickChatExpandButton}
-        className="flex size-7 shrink-0 items-center justify-center rounded-full transition-colors hover:bg-bg-selection-container-hover"
-        aria-label={t('feature.chat.viewMore')}
-        onClick={() => onExpand()}
-      >
-        <MaximizeIcon className="size-4 text-fg-secondary" aria-hidden />
-      </button>
+      <IconButton data-testid={TEST_IDS.quickChatExpandButton} label={t('feature.chat.viewMore')} onClick={() => onExpand()}>
+        <MaximizeIcon aria-hidden />
+      </IconButton>
     </div>
   );
 };

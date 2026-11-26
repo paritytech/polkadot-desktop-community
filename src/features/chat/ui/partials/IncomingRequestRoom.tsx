@@ -1,6 +1,7 @@
 import { X } from 'lucide-react';
 import { useCallback } from 'react';
 
+import { Button } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { type P2PChatRequest, p2pService } from '@/domains/chat';
@@ -65,12 +66,11 @@ export const IncomingRequestRoom = (props: IncomingRequestRoomProps) => {
                 </p>
               </div>
               {isHidden && (
-                <button
-                  className="mt-1 rounded text-sm font-medium text-fg-link transition-colors hover:text-fg-link-hover"
-                  onClick={handleReveal}
-                >
-                  {t('feature.chat.request.viewMessage')}
-                </button>
+                <span className="mt-1 flex">
+                  <Button variant="ghost" size="sm" onClick={handleReveal}>
+                    {t('feature.chat.request.viewMessage')}
+                  </Button>
+                </span>
               )}
             </div>
           </>

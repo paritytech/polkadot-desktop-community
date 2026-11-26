@@ -2,7 +2,7 @@ import { ChevronLeft, MessagesSquare } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import LastChatsIcon from '@/shared/assets/images/header/last-chats.svg?jsx';
-import { toast, widgetSpanWidthCss } from '@/shared/components';
+import { IconButton, toast, widgetSpanWidthCss } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import {
@@ -477,12 +477,9 @@ const RequestsListView = ({ requests, selected, hideByDefault, onBack, onSelect,
     <>
       <div className="shrink-0 bg-bg-surface-container p-2">
         <div className="flex w-full items-center gap-2">
-          <button
-            className="flex size-6 shrink-0 items-center justify-center rounded-full transition-colors hover:bg-bg-selection-container-hover"
-            onClick={onBack}
-          >
-            <ChevronLeft className="size-4 text-fg-secondary" />
-          </button>
+          <IconButton label={t('common.action.back')} onClick={onBack}>
+            <ChevronLeft aria-hidden />
+          </IconButton>
           <span className="min-w-0 flex-1 truncate text-sm font-semibold text-fg-primary">
             {t('feature.chat.request.entryTitle')}
           </span>

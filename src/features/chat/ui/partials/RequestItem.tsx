@@ -1,6 +1,7 @@
 import { X } from 'lucide-react';
 import { type MouseEvent } from 'react';
 
+import { IconButton } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { cnTw } from '@/shared/utils';
@@ -42,12 +43,9 @@ export const RequestItem = ({ request, selected, hideByDefault, onSelect, onDecl
         <span className="min-w-0 truncate text-base font-semibold text-fg-primary">{name}</span>
         <span className="min-w-0 truncate text-sm text-fg-secondary">{preview}</span>
       </div>
-      <button
-        className="flex size-7 shrink-0 items-center justify-center rounded-full bg-bg-surface-nested transition-colors hover:bg-bg-selection-container-hover"
-        onClick={handleDecline}
-      >
-        <X className="size-4 text-fg-secondary" />
-      </button>
+      <IconButton size="sm" label={t('feature.chat.request.decline')} onClick={handleDecline}>
+        <X aria-hidden />
+      </IconButton>
     </div>
   );
 };
