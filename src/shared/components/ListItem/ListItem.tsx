@@ -1,24 +1,121 @@
+import { ChevronRight } from 'lucide-react';
 import { type ReactNode } from 'react';
 
+import { cnTw } from '@/shared/utils';
+
 type Props = {
-  icon: ReactNode;
+  icon?: ReactNode;
   label: ReactNode;
   description?: ReactNode;
-  onClick: VoidFunction;
+  meta?: ReactNode;
+  chevron?: boolean;
+  action?: ReactNode;
+  selected?: boolean;
+  disabled?: boolean;
+  title?: string;
+  onClick?: VoidFunction;
+  testId?: string;
 };
 
-export const ListItem = ({ icon, label, description, onClick }: Props) => (
-  <button
-    type="button"
-    data-no-app-focus
-    style={{ appRegion: 'no-drag' }}
-    className="flex w-full cursor-pointer items-center gap-3 rounded-xl bg-chrome-well p-3 text-start shadow-chrome-line transition-shadow duration-150 hover:shadow-chrome-ring focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-chrome-focus motion-reduce:transition-none"
-    onClick={onClick}
-  >
-    <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-chrome-fill">{icon}</span>
-    <span className="flex min-w-0 flex-1 flex-col">
-      <span className="truncate text-sm text-chrome-text">{label}</span>
-      {description && <span className="truncate text-xs text-chrome-muted">{description}</span>}
-    </span>
-  </button>
+type TextColumnProps = {
+  label: ReactNode;
+  description?: ReactNode;
+  disabled?: boolean;
+};
+
+const TextColumn = ({ label, description, disabled }: TextColumnProps) => (
+  <span className="flex min-w-0 flex-1 flex-col">
+    <span className={cnTw('truncate text-sm font-semibold text-chrome-text', disabled && 'text-chrome-faint')}>{label}</span>
+    {typeof description === 'string' ? (
+      <span className={cnTw('truncate text-xs text-chrome-muted', disabled && 'text-chrome-faint')}>{description}</span>
+    ) : description ? (
+      <span className={cnTw('flex min-w-0 flex-col text-xs text-chrome-muted [&>*]:truncate', disabled && 'text-chrome-faint')}>
+        {description}
+      </span>
+    ) : null}
+  </span>
 );
+
+// With an action the row cannot be one <button> (no button nests in a button): the main button stretches over the row
+// through its ::after, and the action box is positioned so it paints above that overlay and keeps its own clicks.
+export const ListItem = ({
+  icon,
+  label,
+  description,
+  meta,
+  chevron,
+  action,
+  selected,
+  disabled,
+  title,
+  onClick,
+  testId,
+}: Props) => {
+  const leading = icon ? (
+    <span className="flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-xl [&>svg]:size-5 [&>svg]:text-chrome-muted">
+      {icon}
+    </span>
+  ) : null;
+  const text = <TextColumn label={label} description={description} disabled={disabled} />;
+  const trailing = (
+    <>
+      {meta ? <span className="shrink-0 text-xs text-chrome-muted">{meta}</span> : null}
+      {chevron ? <ChevronRight aria-hidden className="size-4 shrink-0 text-chrome-muted rtl:-scale-x-100" /> : null}
+    </>
+  );
+
+  if (onClick && !action) {
+    return (
+      <button
+        type="button"
+        data-testid={testId}
+        title={title}
+        disabled={disabled}
+        aria-current={selected ? 'true' : undefined}
+        data-no-app-focus
+        style={{ appRegion: 'no-drag' }}
+        className={cnTw(
+          'relative flex min-h-14 w-full items-center gap-3 rounded-xl px-3 py-2 text-start focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-chrome-focus',
+          !disabled && 'hover:bg-chrome-fill',
+          selected && 'bg-chrome-fill',
+        )}
+        onClick={onClick}
+      >
+        {leading}
+        {text}
+        {trailing}
+      </button>
+    );
+  }
+
+  return (
+    <div
+      data-testid={testId}
+      title={title}
+      className={cnTw(
+        'relative flex min-h-14 w-full items-center gap-3 rounded-xl px-3 py-2 text-start',
+        onClick && !disabled && 'hover:bg-chrome-fill',
+        selected && 'bg-chrome-fill',
+      )}
+    >
+      {leading}
+      {onClick ? (
+        <button
+          type="button"
+          disabled={disabled}
+          aria-current={selected ? 'true' : undefined}
+          data-no-app-focus
+          style={{ appRegion: 'no-drag' }}
+          className="flex min-w-0 flex-1 text-start after:absolute after:inset-0 after:rounded-xl focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-chrome-focus"
+          onClick={onClick}
+        >
+          {text}
+        </button>
+      ) : (
+        text
+      )}
+      {trailing}
+      {action ? <span className="relative flex shrink-0">{action}</span> : null}
+    </div>
+  );
+};
