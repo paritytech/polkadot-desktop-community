@@ -69,7 +69,7 @@ describe('IconButton', () => {
     render(
       <DropdownMenu.Root>
         <DropdownMenu.Trigger asChild>
-          <IconButton size="xs" label="Menu" onClick={onClick}>
+          <IconButton size="sm" label="Menu" onClick={onClick}>
             <svg />
           </IconButton>
         </DropdownMenu.Trigger>
@@ -77,7 +77,7 @@ describe('IconButton', () => {
     );
 
     const button = screen.getByRole('button', { name: 'Menu' });
-    expect(button).toHaveClass('size-6', 'rounded-full');
+    expect(button).toHaveClass('size-control-sm', 'rounded-full');
     expect(button).toHaveAttribute('aria-haspopup', 'menu');
     expect(button).toHaveAttribute('aria-expanded', 'false');
     expect(button).toHaveAttribute('data-state', 'closed');

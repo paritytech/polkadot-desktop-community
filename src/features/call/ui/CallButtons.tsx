@@ -38,7 +38,6 @@ export const CallButtons = ({ session }: Props) => {
   return (
     <>
       <IconButton
-        size="sm"
         disabled={inCall}
         data-testid={TEST_IDS.callAudioButton}
         label={intl.formatMessage({ id: 'feature.call.audioCall' })}
@@ -47,7 +46,6 @@ export const CallButtons = ({ session }: Props) => {
         <Phone strokeWidth={1.75} className="size-5" />
       </IconButton>
       <IconButton
-        size="sm"
         disabled={inCall}
         data-testid={TEST_IDS.callVideoButton}
         label={intl.formatMessage({ id: 'feature.call.videoCall' })}

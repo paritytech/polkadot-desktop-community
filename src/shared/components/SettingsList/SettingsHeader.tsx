@@ -27,7 +27,7 @@ export const SettingsHeader = ({ icon, subtitle, onBack, variant = 'page', child
       )}
     >
       {onBack ? (
-        <IconButton size="sm" label={t('common.action.back')} onClick={onBack}>
+        <IconButton label={t('common.action.back')} onClick={onBack}>
           <ChevronLeft />
         </IconButton>
       ) : null}

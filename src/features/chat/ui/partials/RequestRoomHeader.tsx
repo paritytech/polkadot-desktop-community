@@ -36,13 +36,13 @@ export const RequestRoomHeader = ({ name, actionIcon, actionLabel, onAction }: R
             <span className="w-full min-w-0 truncate text-base font-semibold text-fg-primary">{name}</span>
           </div>
           <div className="flex shrink-0 items-center gap-2">
-            <IconButton size="sm" label={t('feature.chat.search')}>
+            <IconButton label={t('feature.chat.search')}>
               <Search strokeWidth={1.75} className="size-5" />
             </IconButton>
             {onAction && (
               <DropdownMenu.Root>
                 <DropdownMenu.Trigger asChild>
-                  <IconButton size="sm" label={t('feature.chat.roomActions')}>
+                  <IconButton label={t('feature.chat.roomActions')}>
                     <Ellipsis strokeWidth={1.75} className="size-5" />
                   </IconButton>
                 </DropdownMenu.Trigger>

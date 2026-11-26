@@ -23,7 +23,7 @@ export const ProductActionsMenu = ({ productId }: Props) => {
       <span className="-ms-2 -me-1 flex">
         <DropdownMenu.Trigger asChild>
           <IconButton
-            size="xs"
+            size="sm"
             label={t('feature.productActionsMenu.trigger')}
             data-testid={TEST_IDS.productActionsMenuTrigger}
             onMouseDown={e => e.preventDefault()}

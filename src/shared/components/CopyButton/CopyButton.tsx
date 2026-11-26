@@ -44,7 +44,7 @@ export const CopyButton = ({ value, label, disabled }: CopyButtonProps) => {
   }[status];
 
   return (
-    <IconButton disabled={disabled} label={feedback.label} size="sm" onClick={handleClick}>
+    <IconButton disabled={disabled} label={feedback.label} onClick={handleClick}>
       {feedback.icon}
     </IconButton>
   );

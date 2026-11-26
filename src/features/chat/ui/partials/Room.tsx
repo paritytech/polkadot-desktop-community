@@ -268,12 +268,12 @@ export const Room = ({ session, initialSearch, onDeleted }: ChatConversationView
             </div>
             <div className="flex shrink-0 items-center gap-2">
               <Slot id={chatRoomHeaderActionsSlot} props={{ session }} />
-              <IconButton size="sm" label={t('feature.chat.search')} onClick={handleOpenSearch}>
+              <IconButton label={t('feature.chat.search')} onClick={handleOpenSearch}>
                 <Search strokeWidth={1.75} className="size-5" />
               </IconButton>
               <DropdownMenu.Root>
                 <DropdownMenu.Trigger asChild>
-                  <IconButton data-testid={TEST_IDS.chatRoomHeaderMenuTrigger} size="sm" label={t('feature.chat.roomActions')}>
+                  <IconButton data-testid={TEST_IDS.chatRoomHeaderMenuTrigger} label={t('feature.chat.roomActions')}>
                     <Ellipsis strokeWidth={1.75} className="size-5" />
                   </IconButton>
                 </DropdownMenu.Trigger>

@@ -50,13 +50,13 @@ export const ChatSearchBar = ({ query, inputRef, resultCount, resultIndex, onQue
           </span>
         )}
       </div>
-      <IconButton size="sm" label={t('feature.chat.searchPrevious')} disabled={!canNavigate} onClick={onPrev}>
+      <IconButton label={t('feature.chat.searchPrevious')} disabled={!canNavigate} onClick={onPrev}>
         <ChevronUp strokeWidth={1.75} className="size-5" />
       </IconButton>
-      <IconButton size="sm" label={t('feature.chat.searchNext')} disabled={!canNavigate} onClick={onNext}>
+      <IconButton label={t('feature.chat.searchNext')} disabled={!canNavigate} onClick={onNext}>
         <ChevronDown strokeWidth={1.75} className="size-5" />
       </IconButton>
-      <IconButton size="sm" label={t('common.aria.close')} onClick={onClose}>
+      <IconButton label={t('common.aria.close')} onClick={onClose}>
         <X strokeWidth={1.75} className="size-5" />
       </IconButton>
     </div>

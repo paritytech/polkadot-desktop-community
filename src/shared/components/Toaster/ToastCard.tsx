@@ -34,7 +34,7 @@ export const ToastCard = ({ tone, title, description, action, onClose }: ToastCa
           {action.label}
         </Button>
       )}
-      <IconButton size="xs" label={t('common.aria.close')} onClick={onClose}>
+      <IconButton size="sm" label={t('common.aria.close')} onClick={onClose}>
         <X />
       </IconButton>
     </div>

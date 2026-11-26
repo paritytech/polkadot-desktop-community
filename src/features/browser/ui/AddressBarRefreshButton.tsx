@@ -17,7 +17,7 @@ export const AddressBarRefreshButton = ({ product }: Props) => {
   return (
     <span className="-me-2 flex">
       <IconButton
-        size="xs"
+        size="sm"
         label={t('common.aria.reload')}
         data-testid={TEST_IDS.browserRefreshButton}
         onMouseDown={e => {

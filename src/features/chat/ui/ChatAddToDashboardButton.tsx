@@ -21,7 +21,7 @@ export const ChatAddToDashboardButton = () => {
   return (
     <span className="-ms-2 -me-1 flex">
       <IconButton
-        size="xs"
+        size="sm"
         label={t('feature.dashboard.addToDashboard.label')}
         data-testid={TEST_IDS.chatAddToDashboardButton}
         onMouseDown={event => event.preventDefault()}

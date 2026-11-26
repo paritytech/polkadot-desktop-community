@@ -29,7 +29,7 @@ const DialogContent = ({ width, height, showCloseButton = true, children, ...pro
           {showCloseButton && (
             <span className="absolute end-3 top-3">
               <DialogPrimitive.Close asChild>
-                <IconButton label={t('common.aria.close')} size="sm">
+                <IconButton label={t('common.aria.close')}>
                   <X />
                 </IconButton>
               </DialogPrimitive.Close>

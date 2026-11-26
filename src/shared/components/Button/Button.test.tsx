@@ -73,7 +73,7 @@ describe('Button', () => {
     );
 
     const button = screen.getByRole('button', { name: 'Save' });
-    expect(button).toHaveClass('inline-flex', 'rounded-full', 'h-9');
+    expect(button).toHaveClass('inline-flex', 'rounded-full', 'h-control');
     expect(button).toHaveAttribute('aria-haspopup', 'menu');
   });
 });
