@@ -1,6 +1,7 @@
 import { Timer } from 'lucide-react';
 
-import { cnTw } from '@/shared/utils';
+import { ListItem } from '@/shared/components';
+import { TEST_IDS } from '@/shared/test-ids';
 import { type P2PChatRequest } from '@/domains/chat';
 import { chatService } from '../../service';
 
@@ -17,22 +18,19 @@ export const OutgoingRequestItem = ({ request, selected, onClick }: OutgoingRequ
   const time = chatService.formatChatListTime(request.timestamp);
 
   return (
-    <div
-      className={cnTw(
-        'relative flex h-22 w-full cursor-pointer items-start gap-3 p-3 transition-colors after:absolute after:start-22 after:end-3 after:bottom-0 after:h-px after:bg-stroke-secondary',
-        selected ? 'bg-bg-selection-container-active' : 'hover:bg-bg-selection-container-hover',
-      )}
+    <ListItem
+      icon={<Avatar name={name} size="40" />}
+      label={name}
+      description={<span>{request.welcomeMessage ?? ''}</span>}
+      meta={
+        <span className="flex items-center gap-1">
+          <Timer aria-hidden className="size-3" />
+          {time}
+        </span>
+      }
+      selected={selected}
+      testId={TEST_IDS.chatOutgoingRequestItem}
       onClick={onClick}
-    >
-      <Avatar name={name} size="40" />
-      <div className="flex min-w-0 flex-1 flex-col justify-center gap-0.5">
-        <div className="flex w-full items-end gap-2">
-          <span className="max-w-full min-w-0 truncate text-base font-semibold text-fg-primary">{name}</span>
-          <Timer className="size-4 shrink-0 text-fg-tertiary" />
-          <span className="ms-auto shrink-0 text-sm font-medium text-fg-tertiary">{time}</span>
-        </div>
-        <span className="min-w-0 truncate text-sm text-fg-secondary">{request.welcomeMessage ?? ''}</span>
-      </div>
-    </div>
+    />
   );
 };
