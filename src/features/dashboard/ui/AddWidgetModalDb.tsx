@@ -57,7 +57,7 @@ const SidebarItem = ({
       data-testid={TEST_IDS.addWidgetSidebarItem}
       aria-pressed={isSelected}
       className={cnTw(
-        'flex h-8 w-full items-center rounded-md px-3 py-1 text-start transition-colors',
+        'flex h-control w-full items-center rounded-md px-3 text-start transition-colors',
         isSelected ? 'bg-bg-selection-container-hover' : 'hover:bg-bg-selection-container-hover',
       )}
       onClick={onClick}

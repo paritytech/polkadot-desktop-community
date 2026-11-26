@@ -158,7 +158,7 @@ export const AddToFavoritesDialog = ({ isOpen, onClose }: Props) => {
                         aria-label={isFavorite ? t('feature.favorites.removeAria') : t('feature.favorites.addAria')}
                         aria-pressed={isFavorite}
                         className={cnTw(
-                          'flex size-8 cursor-pointer items-center justify-center rounded-full',
+                          'flex size-control cursor-pointer items-center justify-center rounded-full',
                           'bg-bg-action-active text-fg-primary hover:brightness-95',
                         )}
                         onClick={() => toggle(product.baseName)}

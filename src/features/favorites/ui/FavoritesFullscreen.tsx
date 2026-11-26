@@ -4,10 +4,9 @@ import { Plus, Search, SearchX, Star, StarOff } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 
-import { AppIcon, Button, Input } from '@/shared/components';
+import { AppIcon, Button, IconButton, Input } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
-import { cnTw } from '@/shared/utils';
 import { FAVORITES_FOLDER_ID, foldersUseCase, useFavoriteProductIds, useRemoveItemFromFolder } from '@/domains/application';
 import { useDotNsLabels } from '@/domains/product';
 import { isNativeAddableDashboardId, openFavoriteItemSideEffect } from '@/features/dashboard';
@@ -71,19 +70,15 @@ export const FavoritesFullscreen = () => {
   };
 
   const renderRemoveAction = (itemId: string) => (
-    <button
-      type="button"
+    <IconButton
+      size="sm"
+      label={t('feature.favorites.removeAria')}
       data-testid={TEST_IDS.favoritesCardRemove}
-      aria-label={t('feature.favorites.removeAria')}
-      className={cnTw(
-        'flex size-8 cursor-pointer items-center justify-center rounded-full',
-        'bg-bg-action-active text-fg-primary hover:brightness-95',
-      )}
       onPointerDown={event => event.stopPropagation()}
       onClick={() => removeItemFromFolder(itemId)}
     >
-      <StarOff className="size-4" aria-hidden />
-    </button>
+      <StarOff aria-hidden />
+    </IconButton>
   );
 
   return (
@@ -98,15 +93,14 @@ export const FavoritesFullscreen = () => {
         <span className="flex-1 text-sm font-semibold text-fg-primary">
           <FormattedMessage id="feature.favorites.title" />
         </span>
-        <button
-          type="button"
+        <IconButton
+          size="sm"
+          label={t('feature.favorites.addAria')}
           data-testid={TEST_IDS.favoritesAddButton}
-          aria-label={t('feature.favorites.addAria')}
-          className="flex size-6 cursor-pointer items-center justify-center rounded-full text-fg-primary hover:bg-bg-action-secondary-hover"
           onClick={openAddToFavoritesDialog}
         >
-          <Plus className="size-4" aria-hidden />
-        </button>
+          <Plus aria-hidden />
+        </IconButton>
       </div>
 
       <div className="pt-4">

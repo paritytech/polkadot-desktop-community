@@ -3,7 +3,7 @@ import { SortableContext, arrayMove, rectSortingStrategy } from '@dnd-kit/sortab
 import { ArrowUpRight, MoreHorizontal, Trash2 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
-import { DropdownMenu } from '@/shared/components';
+import { DropdownMenu, IconButton } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { cnTw } from '@/shared/utils';
@@ -74,20 +74,18 @@ const FolderGridItem = ({
       </button>
 
       <DropdownMenu.Root open={isMenuOpen} onOpenChange={open => onMenuOpenChange(menuId, open)}>
-        <DropdownMenu.Trigger asChild>
-          <button
-            type="button"
-            className={cnTw(
-              'folder-grid-action absolute end-1 top-1 flex size-6 cursor-pointer items-center justify-center rounded-full bg-bg-action-secondary-hover text-fg-primary transition-opacity hover:brightness-95 focus-visible:ring-4 focus-visible:ring-stroke-tertiary/35 focus-visible:ring-offset-0 focus-visible:outline-none',
-              menuVisibilityClass,
-            )}
-            aria-label={menuLabel}
-            onClick={event => event.stopPropagation()}
-            onMouseDown={event => event.stopPropagation()}
-          >
-            <MoreHorizontal className="size-4" aria-hidden />
-          </button>
-        </DropdownMenu.Trigger>
+        <span className={cnTw('absolute end-1 top-1 flex transition-opacity', menuVisibilityClass)}>
+          <DropdownMenu.Trigger asChild>
+            <IconButton
+              size="sm"
+              label={menuLabel}
+              onClick={event => event.stopPropagation()}
+              onMouseDown={event => event.stopPropagation()}
+            >
+              <MoreHorizontal aria-hidden />
+            </IconButton>
+          </DropdownMenu.Trigger>
+        </span>
         <DropdownMenu.Content align="end">
           <div className="w-52.5">
             <DropdownMenu.Item variant="danger" onClick={handleRemoveWidget}>
