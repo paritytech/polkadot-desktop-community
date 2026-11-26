@@ -8,7 +8,7 @@ import { connectionRepository } from '../connection/repository';
 import { connectionService } from '../connection/service';
 
 import { LIGHT_CLIENT_FOLLOW_LIMIT, RPC_FOLLOW_LIMIT } from './constants';
-import { createLightClientProvider, ensureLightClientCatalog, hasLightClientSupport } from './lightClient';
+import { createLightClientProvider, ensureLightClient, hasLightClientSupport } from './lightClient';
 import { type ChainApi, type TypedClient } from './types';
 
 const metadataCache = createMetadataCache({
@@ -82,17 +82,16 @@ export const initConnectionModeSwitch = (): VoidFunction => {
     const affected = connectionService.chainsAffectedBy(previous, next);
     if (affected !== 'all' && affected.length === 0) return;
 
-    // Boot skips the light-client catalog while the preference is `rpc`, so a
-    // switch INTO the light client has to load it before the pool rebuilds —
-    // `createProvider` reads `hasLightClientSupport` synchronously, and an empty
-    // catalog would resolve every network straight back to RPC. Reconnect either
-    // way: a catalog that cannot load is a fallback to RPC, not a reason to leave
-    // the connections on the transport the user just switched away from.
-    const catalogReady = connectionService.mayUseLightClient(next) ? ensureLightClientCatalog() : Promise.resolve();
+    // Boot skips the light client while the preference is `rpc`, so a switch INTO the light client
+    // has to build it before the pool rebuilds — `createProvider` reads `hasLightClientSupport`
+    // synchronously, and an unbuilt light client would resolve every network straight back to RPC.
+    // Reconnect either way: a light client that cannot build is a fallback to RPC, not a reason to
+    // leave the connections on the transport the user just switched away from.
+    const lightClientReady = connectionService.mayUseLightClient(next) ? ensureLightClient() : Promise.resolve();
 
-    void catalogReady
+    void lightClientReady
       .catch((error: unknown) => {
-        console.error('[network] light-client catalog unavailable — the switch falls back to RPC', error);
+        console.error('[network] light client unavailable — the switch falls back to RPC', error);
       })
       .then(() => {
         chains.reconnect(affected === 'all' ? undefined : affected);

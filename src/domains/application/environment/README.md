@@ -8,8 +8,8 @@
 - **Channel / EnvironmentId** — string discriminator persisted in `localStorage` under `pb:settings.environmentId`, and the value
   set as the Firebase Remote Config `environment` custom signal to select a channel. Current values: `nightly`, `unstable`
   (console conditions "Common &lt;value&gt; - signal"). The picker (onboarding/settings) switches between these.
-- **Stack** — the signed Trinity stack descriptor a channel runs, bundled at build time in `.trinity/`; the TrUAPI core takes
-  its chains from it.
+- **Stack** — the signed Trinity stack descriptor a channel runs, bundled at build time in `.trinity/`; the TrUAPI core and the
+  network domain's light client both take their chains from it.
 
 ## Scope
 
@@ -40,9 +40,9 @@ call.
   stale environment. The app's
   async bootstrap awaits the first fetch before any config read, so the assembly only runs once values are available. There is no
   static registry of the chain catalog and no offline path — a build without Firebase credentials (e.g. CI/e2e) has no config.
-  What a build does bundle is each channel's signed Trinity stack, which the TrUAPI core takes its chains from. A channel's
-  Remote Config role chains (people, bulletin, assetHub) must have the same genesis hashes as the chains in its stack: the core
-  dials only the stack's chains, and the host's `chain.connect` rejects a genesis hash its registry does not serve. Nothing
-  enforces this, so the two sources must be kept in step by hand.
+  What a build does bundle is each channel's signed Trinity stack, which the TrUAPI core and the network domain's light client
+  take their chains from. A channel's Remote Config role chains (people, bulletin, assetHub) must have the same genesis hashes as
+  the chains in its stack: the core dials only the stack's chains, and the host's `chain.connect` rejects a genesis hash its registry
+  does not serve. Nothing enforces this, so the two sources must be kept in step by hand.
 - The `Chain` objects exposed here are produced by `chainService.fromRemoteChains` (genesis-hash–keyed, like the rest of
   `@/domains/network`); `specName` is not used.

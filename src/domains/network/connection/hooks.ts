@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import { useAction, useRead } from '@/shared/hooks';
-import { ensureLightClientCatalog, hasLightClientSupport } from '../api/lightClient';
+import { ensureLightClient, hasLightClientSupport } from '../api/lightClient';
 import { type GenesisHash } from '../chain/types';
 
 import {
@@ -20,18 +20,18 @@ export const useConnectionSettings = () => {
   });
 };
 
-// Boot loads the catalog only when a network could use it, so a screen that
+// Boot builds the light client only when a network could use it, so a screen that
 // renders availability asks for it here — `hasLightClientSupport` reads module
 // state and emits nothing, hence the `ready` flag to re-render on.
-const useLightClientCatalog = (): boolean => {
+const useLightClientReady = (): boolean => {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
     let active = true;
 
-    ensureLightClientCatalog()
+    ensureLightClient()
       .catch((error: unknown) => {
-        console.error('[network] light-client catalog unavailable — every network shows RPC only', error);
+        console.error('[network] light client unavailable — every network shows RPC only', error);
       })
       .finally(() => {
         if (active) setReady(true);
@@ -48,7 +48,7 @@ const useLightClientCatalog = (): boolean => {
 export const useChainConnectionMode = (chainId: GenesisHash): ChainConnectionMode => {
   const { data: settings } = useConnectionSettings();
   // Read for its re-render, not its value: availability is resolved below.
-  useLightClientCatalog();
+  useLightClientReady();
 
   return connectionService.describeChainMode(settings, chainId, hasLightClientSupport(chainId));
 };

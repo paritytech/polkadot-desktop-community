@@ -1,3 +1,4 @@
+import { type BundledStack } from '@parity/truapi-host';
 import init, { type ChainProviderHandle, type Connection, ChainProviderBuilder, setLogLevel } from '@parity/truapi-provider';
 import wasmUrl from '@parity/truapi-provider/truapi_provider_bg.wasm?url';
 import { type JsonRpcProvider } from '@polkadot-api/json-rpc-provider';
@@ -8,6 +9,7 @@ import { type GenesisHash } from '../chain/types';
 import { connectionRepository } from '../connection/repository';
 import { connectionService } from '../connection/service';
 
+import { lightClientGateway } from './gateway';
 import { lightClientRepository } from './repository';
 import { type ConnectionStatus } from './types';
 
@@ -17,16 +19,13 @@ import { type ConnectionStatus } from './types';
 // without shipping a new build.
 const LOG_LEVEL_OVERRIDE_KEY = 'polkadot:light-client-log';
 
-// The networks truapi-provider bundles a chain-spec catalog for. `addNetwork`
-// throws for anything else and names what it does carry, so a package bump that
-// reshapes the catalog announces itself in the log instead of silently dropping
-// light-client support.
-const BUNDLED_NETWORKS = ['previewnet', 'paseo-next-v2'];
-
-// Genesis hashes the bundled catalog can serve, lowercased. Empty until a boot
-// or the settings screen loads the catalog, so `hasLightClientSupport` reports
-// nothing supported before then.
+// Genesis hashes the stack's descriptor lists a light spec for, lowercased. Empty
+// until a boot or the settings screen builds the light client, so
+// `hasLightClientSupport` reports nothing supported before then.
 let supportedGenesisHashes: ReadonlySet<string> = new Set();
+
+let stack: BundledStack | null = null;
+let loadLightSpecs: () => Promise<void> = () => Promise.resolve();
 
 // Chains a connection has been opened for this run. Only these have a smoldot
 // database worth snapshotting — an RPC-mode chain has none at all.
@@ -52,37 +51,66 @@ function providerLogLevel(): string {
 }
 
 async function buildHandle(): Promise<ChainProviderHandle> {
+  if (!stack) {
+    throw new Error('[network] light client has no stack — initLightClient was not called');
+  }
+
   await init({ module_or_path: wasmUrl });
   setLogLevel(providerLogLevel());
 
   const builder = new ChainProviderBuilder();
+  builder.setStack(stack.pointer, stack.descriptor);
 
   // Without a store every chain syncs from its chain-spec checkpoint on every run.
-  // The provider reads at most once per chain, on that chain's first add.
-  builder.setStorage({
-    load: (genesisHash: string) => lightClientRepository.load(genesisHash),
-    save: (genesisHash: string, blob: string) => lightClientRepository.save(genesisHash, blob),
-  });
+  // The provider reads at most once per chain, on that chain's first add. Two stacks
+  // can share a genesis hash, so the store is keyed on the provider's `stack`
+  // argument too.
+  builder.setStorage(lightClientRepository);
 
-  const supported = new Set<string>();
+  const locations = builder.lightSpecs().map(({ genesisHash, url }) => ({ genesisHash, url }));
+  const handle = builder.build();
 
-  for (const name of BUNDLED_NETWORKS) {
+  // Set only after `build()` succeeds, so a build that throws leaves every chain on RPC.
+  supportedGenesisHashes = new Set(locations.map(({ genesisHash }) => genesisHash.toLowerCase()));
+  loadLightSpecs = createLightSpecLoader(locations, handle);
+  void loadLightSpecs();
+
+  return handle;
+}
+
+// Concurrent calls share one fetch, and a spec that failed to arrive or was refused
+// is fetched again on the next call. Never rejects: callers await it on the connect
+// path, where a missing spec surfaces as the provider's own `connect` rejection.
+export function createLightSpecLoader(
+  locations: readonly { genesisHash: string; url: string }[],
+  handle: Pick<ChainProviderHandle, 'addLightSpec'>,
+  fetchLightSpec: (url: string) => Promise<Uint8Array> = lightClientGateway.fetchLightSpec,
+): () => Promise<void> {
+  const added = new Set<string>();
+  let inFlight: Promise<void> | null = null;
+
+  async function addSpec(genesisHash: string, url: string): Promise<void> {
     try {
-      // Registering is what enumerates the network — the catalog has no listing
-      // API, and the returned hashes are the only honest source for "can this
-      // chain run a light client".
-      const chains = builder.addNetwork(name);
-      for (const hash of [chains.relay, chains.assethub, chains.people, chains.bulletin]) {
-        supported.add(hash.toLowerCase());
-      }
+      const bytes = await fetchLightSpec(url);
+      handle.addLightSpec(genesisHash, bytes);
+      added.add(genesisHash);
     } catch (error) {
-      console.warn(`[network] truapi-provider has no bundled network "${name}"`, error);
+      console.warn(`[network] could not add the light spec of ${genesisHash} from ${url}`, error);
     }
   }
 
-  supportedGenesisHashes = supported;
+  async function loadMissing(): Promise<void> {
+    const missing = locations.filter(({ genesisHash }) => !added.has(genesisHash));
+    await Promise.all(missing.map(({ genesisHash, url }) => addSpec(genesisHash, url)));
+  }
 
-  return builder.build();
+  return function ensure(): Promise<void> {
+    inFlight ??= loadMissing().finally(() => {
+      inFlight = null;
+    });
+
+    return inFlight;
+  };
 }
 
 function getHandle(): Promise<ChainProviderHandle> {
@@ -96,13 +124,18 @@ function getHandle(): Promise<ChainProviderHandle> {
   return handlePromise;
 }
 
-/** Load the catalog, whatever the current mode. Memoized; failure is not fatal. */
-export async function ensureLightClientCatalog(): Promise<void> {
+/** Build the light client, whatever the current mode. Memoized; failure is not fatal. */
+export async function ensureLightClient(): Promise<void> {
   await getHandle();
 }
 
-/** Boot path. Skipped on `rpc`, where availability is never consulted. */
-export async function initLightClient(): Promise<void> {
+/**
+ * Boot path. Records the stack the light client runs, then builds it — skipped on
+ * `rpc`, where availability is never consulted until a mode switch asks for it.
+ */
+export async function initLightClient(bundledStack: BundledStack): Promise<void> {
+  stack = bundledStack;
+
   if (!connectionService.mayUseLightClient(connectionRepository.getSettings())) return;
 
   await getHandle();
@@ -164,6 +197,7 @@ async function saveConnectedDatabases(): Promise<void> {
   }
 }
 
+/** Whether the stack's descriptor lists a light spec for the chain. `false` until the light client is built. */
 export function hasLightClientSupport(chainId: GenesisHash): boolean {
   return supportedGenesisHashes.has(chainId.toLowerCase());
 }
@@ -191,6 +225,11 @@ export function createLightClientProvider(
     void (async () => {
       try {
         const handle = await getHandle();
+
+        // The provider rejects `loadDatabase` and `connect` for a chain whose spec,
+        // or whose relay's spec, it has not received. A fetch that failed is retried
+        // here on the lane's next attempt.
+        await loadLightSpecs();
 
         // Seed the finalized state stored by a previous run, so this client resumes
         // instead of syncing from the chain-spec checkpoint. Best-effort: a failure

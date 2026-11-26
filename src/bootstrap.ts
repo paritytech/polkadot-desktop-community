@@ -149,8 +149,9 @@ const runBootstrap = async (): Promise<BootstrapOutcome> => {
 
   // Boot the embedded light client before any chain is locked, so the (synchronous)
   // availability check the connection layer and the settings UI both make sees the
-  // real catalog. Not fatal: on failure every chain falls back to its RPC nodes.
-  await initLightClient().catch((error: unknown) => {
+  // chains the stack serves. It runs the same stack the core gets. Not fatal: on
+  // failure every chain falls back to its RPC nodes.
+  await initLightClient(activeEnvironment.stack).catch((error: unknown) => {
     console.error('[bootstrap] light client unavailable — chains will use RPC', error);
   });
 
