@@ -1,6 +1,7 @@
 import jsQR from 'jsqr';
 import { useEffect, useRef, useState } from 'react';
 
+import { Button } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { routingUseCase } from '@/domains/input-routing';
@@ -137,22 +138,13 @@ export const QrScanner = ({ onDecoded, onCancel }: Props) => {
       )}
 
       <div className="flex justify-end gap-2">
-        <button
-          type="button"
-          className="rounded-full px-3 py-1.5 text-sm text-fg-secondary transition-colors hover:bg-bg-selection-container-hover"
-          onClick={onCancel}
-        >
+        <Button variant="ghost" onClick={onCancel}>
           {t('feature.inputModality.scanCancel')}
-        </button>
+        </Button>
         {decoded !== null && (
-          <button
-            type="button"
-            data-testid={TEST_IDS.inputModalityScanConfirm}
-            className="rounded-full bg-bg-illustration-dark px-3 py-1.5 text-sm text-fg-primary-inverted"
-            onClick={() => onDecoded(decoded)}
-          >
+          <Button variant="primary" data-testid={TEST_IDS.inputModalityScanConfirm} onClick={() => onDecoded(decoded)}>
             {t('feature.inputModality.scanConfirm')}
-          </button>
+          </Button>
         )}
       </div>
     </div>
