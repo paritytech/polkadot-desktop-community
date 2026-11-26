@@ -347,7 +347,7 @@ const InputSpotlightSurface = () => {
               floors a box's height at its own padding, so padding here would leave a
               24px strip above the viewfinder that no amount of `0fr` collapses. */}
           <div className="min-h-0 overflow-hidden">
-            <div className="flex min-h-12 items-center gap-2 px-4 py-3">
+            <div className="flex min-h-12 items-center gap-2 px-4 py-2">
               {/* PARKED — product querying: the icon pulsed while a round was pending
                   (`round.kind === 'query' && round.pending && 'animate-pulse'`). */}
               <Search aria-hidden className="size-5 shrink-0 text-fg-secondary" />
