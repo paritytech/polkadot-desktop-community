@@ -31,8 +31,8 @@ export const ChainConnectionRow = ({ chain, environment, onModeRequested }: Prop
           {roles.map(role => (
             <Badge key={role}>{t(`feature.networkConnection.role.${role}`)}</Badge>
           ))}
-          {/* A network whose Trinity stack lists no light spec for a chain cannot serve a light client — say
-              so rather than leaving an option that silently resolves to the other one. */}
+          {/* A network the active stack lists no light spec for cannot serve a light client — say so rather than leaving an option
+              that silently resolves to the other one. */}
           {!mode.lightClientAvailable && (
             <span className="truncate text-xs text-fg-tertiary">{t('feature.networkConnection.noLightClient')}</span>
           )}
