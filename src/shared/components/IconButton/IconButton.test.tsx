@@ -73,6 +73,19 @@ describe('IconButton', () => {
     expect(screen.getByRole('button', { name: 'Close' })).toHaveClass('bg-transparent');
   });
 
+  it('fills a pressed ghost button without a shadow', () => {
+    render(
+      <IconButton label="Smileys" aria-pressed>
+        <svg />
+      </IconButton>,
+    );
+
+    const button = screen.getByRole('button', { name: 'Smileys' });
+    expect(button).toHaveAttribute('aria-pressed', 'true');
+    expect(button).toHaveClass('aria-pressed:bg-chrome-fill-strong');
+    expect(button).not.toHaveClass('aria-pressed:shadow-chrome-raised');
+  });
+
   it('draws a raised disc', () => {
     render(
       <IconButton label="Remove" variant="raised">

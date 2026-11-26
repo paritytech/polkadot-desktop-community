@@ -59,8 +59,9 @@ export const EmojiPicker = ({ onSelect, onClose }: EmojiPickerProps) => {
               <SectionLabel>{category.name}</SectionLabel>
             </div>
             <div className="grid grid-cols-8 gap-0.5">
-              {category.emojis.map(emoji => (
-                <IconButton key={emoji} label={emoji} onClick={() => onSelect(emoji)}>
+              {category.emojis.map((emoji, emojiIndex) => (
+                // eslint-disable-next-line react/no-array-index-key -- a static list that repeats some emojis; the index tells the repeats apart
+                <IconButton key={`${emoji}-${emojiIndex}`} label={emoji} onClick={() => onSelect(emoji)}>
                   <span aria-hidden className="text-xl leading-none">
                     {emoji}
                   </span>

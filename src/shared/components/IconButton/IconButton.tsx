@@ -20,7 +20,7 @@ export const IconButton = ({ label, size = 'md', variant = 'ghost', type, disabl
         size === 'md' && 'size-control',
         size === 'sm' && 'size-control-sm',
         variant === 'ghost' &&
-          'bg-transparent text-chrome-text hover:bg-chrome-fill active:bg-chrome-fill-strong disabled:bg-transparent disabled:text-chrome-faint aria-expanded:bg-chrome-fill-strong aria-expanded:shadow-chrome-raised',
+          'bg-transparent text-chrome-text hover:bg-chrome-fill active:bg-chrome-fill-strong disabled:bg-transparent disabled:text-chrome-faint aria-expanded:bg-chrome-fill-strong aria-expanded:shadow-chrome-raised aria-pressed:bg-chrome-fill-strong',
         variant === 'raised' &&
           'bg-chrome-surface text-chrome-muted shadow-chrome-raised hover:text-chrome-text disabled:text-chrome-faint',
         !disabled &&
