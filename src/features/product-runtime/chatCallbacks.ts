@@ -30,8 +30,8 @@ export function createChatCallbacks(): ChatCallbacks {
     chat: {
       // The refusal is thrown before the `try` so the catch cannot re-wrap it: a
       // `PermissionDenied` must reach the product as itself, not as `Unknown`.
-      // `config` is not read: this host stores every room's messages itself, and truapi-host 0.33
-      // gives it no call to query a product's messages.
+      // TODO(chat): honour the room's config (`productSource`) when truapi-host gives the host a call to
+      // query a product's messages; until then this host stores every room's messages itself.
       createChatRoom: async (product, roomId) => {
         // TODO(chat-workers): diagnostic — remove once the worker-send break is pinned.
         console.info('[chat-worker-diag] createChatRoom', { productId: product.productId, roomId });

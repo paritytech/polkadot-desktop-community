@@ -107,8 +107,8 @@ export type ThemeSettingsRow = {
 };
 
 /**
- * One chain under one stack: its smoldot finalized-state database, so its light client resumes instead
- * of syncing from the chain-spec checkpoint on every launch.
+ * One chain under one stack: its smoldot finalized-state database, so its light client resumes
+ * instead of syncing from the chain-spec checkpoint on every launch.
  *
  * Disposable: losing a row costs a resync, never correctness.
  */

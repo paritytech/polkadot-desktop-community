@@ -20,7 +20,7 @@ export const useConnectionSettings = () => {
   });
 };
 
-// Boot loads the light client only when a network could use it, so a screen that
+// Boot builds the light client only when a network could use it, so a screen that
 // renders availability asks for it here — `hasLightClientSupport` reads module
 // state and emits nothing, hence the `ready` flag to re-render on.
 const useLightClientReady = (): boolean => {

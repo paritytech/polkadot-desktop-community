@@ -82,12 +82,11 @@ export const initConnectionModeSwitch = (): VoidFunction => {
     const affected = connectionService.chainsAffectedBy(previous, next);
     if (affected !== 'all' && affected.length === 0) return;
 
-    // Boot skips the light client while the preference is `rpc`, so a
-    // switch INTO the light client has to build it before the pool rebuilds —
-    // `createProvider` reads `hasLightClientSupport` synchronously, and an unbuilt
-    // light client would resolve every network straight back to RPC. Reconnect either
-    // way: a light client that cannot build is a fallback to RPC, not a reason to leave
-    // the connections on the transport the user just switched away from.
+    // Boot skips the light client while the preference is `rpc`, so a switch INTO the light client
+    // has to build it before the pool rebuilds — `createProvider` reads `hasLightClientSupport`
+    // synchronously, and an unbuilt light client would resolve every network straight back to RPC.
+    // Reconnect either way: a light client that cannot build is a fallback to RPC, not a reason to
+    // leave the connections on the transport the user just switched away from.
     const lightClientReady = connectionService.mayUseLightClient(next) ? ensureLightClient() : Promise.resolve();
 
     void lightClientReady

@@ -21,7 +21,7 @@ const watchProductRoomsMock = vi.spyOn(productRoomUseCase, 'watchProductRooms');
 const USER: `0x${string}` = `0x${'11'.repeat(32)}`;
 const product = { productId: asProductId('demo.dot'), executionKind: 'Worker' as const };
 const REQUEST = {
-  roomIdSource: 'r1',
+  roomIdSource: 'room-source',
   name: 'R',
   icon: '',
   config: { productSource: false, reactionDetails: false, reportSeen: false },
