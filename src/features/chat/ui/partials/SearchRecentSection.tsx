@@ -38,7 +38,7 @@ const RecentRow = ({ session, onSelect, onRemove }: { session: ChatSession; onSe
     >
       <Avatar name={name} size="chat-list" />
       <span className="min-w-0 flex-1 truncate text-base font-semibold text-fg-primary">{name}</span>
-      <span className="hidden shrink-0 group-hover:flex focus-within:flex">
+      <span className="flex shrink-0 opacity-0 transition-opacity group-hover:opacity-100 focus-within:opacity-100 motion-reduce:transition-none">
         <IconButton
           size="sm"
           label={t('feature.chat.removeRecentSearch')}

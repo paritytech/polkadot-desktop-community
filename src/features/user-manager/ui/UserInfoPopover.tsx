@@ -105,7 +105,7 @@ const ActionRow = ({ icon, label, testId, onClick }: ActionRowProps) => (
     type="button"
     data-testid={testId}
     data-no-app-focus
-    className="flex min-h-control w-full items-center gap-2 rounded-lg border-0 bg-transparent px-4 py-1 text-sm font-medium text-fg-primary transition-colors outline-none hover:bg-bg-surface-nested focus:outline-none focus-visible:outline-none"
+    className="flex min-h-control w-full items-center gap-2 rounded-lg border-0 bg-transparent px-4 text-sm font-medium text-fg-primary transition-colors outline-none hover:bg-bg-surface-nested focus:outline-none focus-visible:outline-none"
     onClick={onClick}
   >
     <span className="flex-1 text-start">{label}</span>

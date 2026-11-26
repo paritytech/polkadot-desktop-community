@@ -106,7 +106,7 @@ export const ProductItem = ({
         <span
           className={cnTw(
             'flex shrink-0 transition-opacity motion-reduce:transition-none',
-            isActive ? 'opacity-100' : 'opacity-0 group-hover:opacity-100 focus-within:opacity-100',
+            isActive ? 'opacity-100' : 'opacity-0 group-hover:opacity-100',
           )}
         >
           <IconButton size="sm" label={t('common.aria.close')} tabIndex={-1} onMouseDown={preventBlur} onClick={handleRemove}>

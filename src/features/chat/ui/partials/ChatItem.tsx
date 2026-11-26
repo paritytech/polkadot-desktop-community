@@ -85,7 +85,7 @@ export const ChatItem = ({ session, isSelected, isLast, density = 'regular', ite
           )}
         </div>
         <div className="flex w-full items-start gap-2">
-          <div className={cnTw('flex min-w-0 flex-1 flex-col items-start', !isCompact && 'max-h-9')}>
+          <div className={cnTw('flex min-w-0 flex-1 flex-col items-start', !isCompact && 'max-h-10')}>
             {hasLastMessage && isGroup && !isCompact && (
               <span className="w-full truncate text-sm text-fg-primary">{lastMessage.peer.name}</span>
             )}

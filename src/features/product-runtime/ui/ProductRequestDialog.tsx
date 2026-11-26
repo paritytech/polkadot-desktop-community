@@ -102,8 +102,8 @@ const Root = ({ onDismiss, height = 'tall', children }: RootProps) => {
 
 /** The dialog's accessible name. Every step must render exactly one. */
 const Title = ({ children }: PropsWithChildren) => (
-  <Dialog.Title asChild>
-    <h2 className="text-lg font-semibold text-fg-primary">{children}</h2>
+  <Dialog.Title>
+    <span className="text-fg-primary">{children}</span>
   </Dialog.Title>
 );
 
