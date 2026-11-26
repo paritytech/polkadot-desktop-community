@@ -1,5 +1,6 @@
 import '@testing-library/jest-dom/vitest';
 
+import { toast } from 'sonner';
 import { afterEach, vi } from 'vitest';
 
 import { resetExecutionEnvironment, setExecutionEnvironment } from '@/shared/execution-environment';
@@ -26,6 +27,9 @@ if (usesLocalStorageShim) {
 // Testing Library has already unmounted — nothing here emits into a mounted tree.
 afterEach(() => {
   resetExecutionEnvironment();
+  // sonner's store is a module singleton that replays active toasts to a Toaster that
+  // subscribes later, so a toast one test left open would show up in the next test's Toaster.
+  toast.dismiss();
   // A case may switch to 'runtime' to reach a real request; put every file back
   // on the test environment so the next case's mocks are served again.
   setExecutionEnvironment('test');

@@ -20,6 +20,12 @@ const watchProductRoomsMock = vi.spyOn(productRoomUseCase, 'watchProductRooms');
 
 const USER: `0x${string}` = `0x${'11'.repeat(32)}`;
 const product = { productId: asProductId('demo.dot'), executionKind: 'Worker' as const };
+const REQUEST = {
+  roomIdSource: 'r1',
+  name: 'R',
+  icon: '',
+  config: { productSource: false, reactionDetails: false, reportSeen: false },
+};
 
 function connect() {
   truapiRuntimeUseCase.publishAuthState({ tag: 'Connected', value: { publicKey: USER, identityAccountId: USER } });
@@ -39,9 +45,7 @@ describe('createChatCallbacks', () => {
 
     const result = { current: createChatCallbacks() };
 
-    await expect(result.current.chat.createChatRoom(product, { roomId: 'r1', name: 'R', icon: '' })).resolves.toEqual({
-      status: 'New',
-    });
+    await expect(result.current.chat.createChatRoom(product, 'r1', REQUEST)).resolves.toBe('New');
     expect(createProductRoomMock).toHaveBeenCalledWith({ roomId: 'r1', productId: 'demo.dot', userId: USER });
   });
 
@@ -50,7 +54,7 @@ describe('createChatCallbacks', () => {
 
     const result = { current: createChatCallbacks() };
 
-    await expect(result.current.chat.createChatRoom(product, { roomId: 'r1', name: 'R', icon: '' })).rejects.toEqual({
+    await expect(result.current.chat.createChatRoom(product, 'r1', REQUEST)).rejects.toEqual({
       tag: 'PermissionDenied',
     });
     expect(createProductRoomMock).not.toHaveBeenCalled();
@@ -174,7 +178,7 @@ describe('createChatCallbacks', () => {
 
     const result = { current: createChatCallbacks() };
 
-    await expect(result.current.chat.createChatRoom(product, { roomId: 'r1', name: 'R', icon: '' })).rejects.toEqual({
+    await expect(result.current.chat.createChatRoom(product, 'r1', REQUEST)).rejects.toEqual({
       tag: 'Unknown',
       value: { reason: 'Error: dexie is down' },
     });

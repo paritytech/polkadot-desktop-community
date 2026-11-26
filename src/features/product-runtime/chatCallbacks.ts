@@ -30,9 +30,11 @@ export function createChatCallbacks(): ChatCallbacks {
     chat: {
       // The refusal is thrown before the `try` so the catch cannot re-wrap it: a
       // `PermissionDenied` must reach the product as itself, not as `Unknown`.
-      createChatRoom: async (product, request) => {
+      // `config` is not read: this host stores every room's messages itself, and truapi-host 0.33
+      // gives it no call to query a product's messages.
+      createChatRoom: async (product, roomId) => {
         // TODO(chat-workers): diagnostic — remove once the worker-send break is pinned.
-        console.info('[chat-worker-diag] createChatRoom', { productId: product.productId, roomId: request.roomId });
+        console.info('[chat-worker-diag] createChatRoom', { productId: product.productId, roomId });
         const userId = await resolveUserId().catch(() => null);
         if (!userId) {
           console.info('[chat-worker-diag] createChatRoom refused — no connected session');
@@ -41,13 +43,13 @@ export function createChatCallbacks(): ChatCallbacks {
 
         try {
           const result = await productRoomUseCase.createProductRoom({
-            roomId: request.roomId,
+            roomId,
             productId: product.productId,
             userId,
           });
           if (!result) throw new Error('product commit failed');
 
-          return { status: result.status };
+          return result.status;
         } catch (reason) {
           throw { tag: 'Unknown', value: { reason: String(reason) } };
         }
