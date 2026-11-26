@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useObservable } from 'react-rx';
 import { of } from 'rxjs';
 
-import { Button, DropdownMenu, IconButton } from '@/shared/components';
+import { Button, DropdownMenu, IconButton, PaneHeader } from '@/shared/components';
 import { Slot } from '@/shared/di';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
@@ -27,6 +27,7 @@ import { ChatSearchResults } from './ChatSearchResults';
 import { MessageFlow } from './MessageFlow';
 import { MessageInput } from './MessageInput';
 import { RoomFooterCard } from './RoomFooterCard';
+import { RoomPane } from './RoomPane';
 
 type ChatConversationViewProps = {
   session: ChatSession;
@@ -257,117 +258,116 @@ export const Room = ({ session, initialSearch, onDeleted }: ChatConversationView
   );
 
   return (
-    <div className="flex min-w-111 flex-1 flex-col overflow-hidden rounded-xl border border-stroke-primary bg-bg-surface-container">
-      <Slot id={chatRoomBannerSlot} props={{ session }} />
-      <div className="h-14 shrink-0 border-b border-stroke-primary">
-        <div className="flex h-full items-center gap-2 py-2 ps-4 pe-0">
-          <Avatar name={sessionName} size="24" />
-          <div className="flex min-w-0 flex-1 items-center gap-2 pe-4">
-            <div className="flex min-w-0 flex-1 flex-col items-start justify-center">
-              <span className="w-full min-w-0 truncate text-base font-semibold text-fg-primary">{sessionName}</span>
-            </div>
-            <div className="flex shrink-0 items-center gap-2">
+    <div className="flex min-w-111 flex-1">
+      <RoomPane>
+        <Slot id={chatRoomBannerSlot} props={{ session }} />
+        <PaneHeader
+          icon={<Avatar name={sessionName} size="24" />}
+          actions={
+            <>
               <Slot id={chatRoomHeaderActionsSlot} props={{ session }} />
               <IconButton label={t('feature.chat.search')} onClick={handleOpenSearch}>
-                <Search strokeWidth={1.75} className="size-5" />
+                <Search />
               </IconButton>
               <DropdownMenu.Root>
                 <DropdownMenu.Trigger asChild>
                   <IconButton data-testid={TEST_IDS.chatRoomHeaderMenuTrigger} label={t('feature.chat.roomActions')}>
-                    <Ellipsis strokeWidth={1.75} className="size-5" />
+                    <Ellipsis />
                   </IconButton>
                 </DropdownMenu.Trigger>
                 <DropdownMenu.Content align="end">
                   {canBlock && (
                     <DropdownMenu.Item onClick={handleToggleBlocked}>
-                      {isBlocked ? <ShieldOff className="size-4" /> : <Ban className="size-4" />}
+                      {isBlocked ? <ShieldOff /> : <Ban />}
                       {isBlocked ? t('feature.chat.unblockUser') : t('feature.chat.blockUser')}
                     </DropdownMenu.Item>
                   )}
                   <DropdownMenu.Item data-testid={TEST_IDS.chatRoomHeaderMenuDelete} variant="danger" onClick={handleDelete}>
-                    <LogOut className="size-4" />
+                    <LogOut />
                     {t('feature.chat.leaveChat')}
                   </DropdownMenu.Item>
                 </DropdownMenu.Content>
               </DropdownMenu.Root>
-            </div>
-          </div>
-        </div>
-      </div>
+            </>
+          }
+        >
+          {sessionName}
+        </PaneHeader>
 
-      {searchOpen && (
-        <ChatSearchBar
-          query={searchQuery}
-          inputRef={searchInputRef}
-          resultCount={searchResults.length}
-          resultIndex={resultIndex}
-          onQueryChange={setSearchQuery}
-          onPrev={handlePrevResult}
-          onNext={handleNextResult}
-          onClose={handleCloseSearch}
-        />
-      )}
+        {searchOpen && (
+          <ChatSearchBar
+            query={searchQuery}
+            inputRef={searchInputRef}
+            resultCount={searchResults.length}
+            resultIndex={resultIndex}
+            onQueryChange={setSearchQuery}
+            onPrev={handlePrevResult}
+            onNext={handleNextResult}
+            onClose={handleCloseSearch}
+          />
+        )}
 
-      {showResults ? (
-        <ChatSearchResults
-          query={searchQuery}
-          results={searchResults}
-          activeMessageId={activeResultId}
-          peerName={sessionName}
-          currentUserName={currentUserPeer?.name ?? ''}
-          onSelect={handleSelectResult}
-        />
-      ) : (
-        <MessageFlow
-          session={session}
-          onReply={acceptsText ? handleReply : undefined}
-          onEdit={acceptsText ? handleEdit : undefined}
-        />
-      )}
+        {showResults ? (
+          <ChatSearchResults
+            query={searchQuery}
+            results={searchResults}
+            activeMessageId={activeResultId}
+            peerName={sessionName}
+            currentUserName={currentUserPeer?.name ?? ''}
+            onSelect={handleSelectResult}
+          />
+        ) : (
+          <MessageFlow
+            session={session}
+            onReply={acceptsText ? handleReply : undefined}
+            onEdit={acceptsText ? handleEdit : undefined}
+          />
+        )}
 
-      {footer.type === 'none' ? null : (
-        <div className="shrink-0 border-t border-stroke-primary">
-          {footer.type === 'card' ? (
-            <RoomFooterCard roomId={session.roomId} footer={footer} />
-          ) : isBlocked ? (
-            <div className="flex items-center justify-between gap-3 p-3">
-              <p className="text-sm text-fg-secondary">{t('feature.chat.blockedNotice', { name: sessionName })}</p>
-              <Button variant="ghost" size="sm" onClick={handleToggleBlocked}>
-                {t('feature.chat.unblock')}
-              </Button>
-            </div>
-          ) : (
-            <div className="flex flex-col gap-2 p-2">
-              {sendError && <p className="px-1 text-xs text-fg-error">{sendError}</p>}
-              <MessageInput
-                ref={inputRef}
-                initialText={editingMessage?.text}
-                preview={
-                  replyingTo
-                    ? {
-                        testId: TEST_IDS.chatReplyComposer,
-                        title:
-                          replyingTo.status.direction === 'outgoing'
-                            ? t('feature.chat.replyToYourself')
-                            : t('feature.chat.replyTo', { name: sessionName }),
-                        text: getMessagePreview(replyingTo),
-                        onClose: handleCancelReply,
-                      }
-                    : editingMessage
+        {footer.type === 'none' ? null : (
+          <div className="shrink-0 border-t border-stroke-primary">
+            {footer.type === 'card' ? (
+              <RoomFooterCard roomId={session.roomId} footer={footer} />
+            ) : isBlocked ? (
+              <div className="flex items-center justify-between gap-3 p-3">
+                <p className="text-sm text-fg-secondary">{t('feature.chat.blockedNotice', { name: sessionName })}</p>
+                <Button variant="ghost" size="sm" onClick={handleToggleBlocked}>
+                  {t('feature.chat.unblock')}
+                </Button>
+              </div>
+            ) : (
+              <div className="flex flex-col gap-2 p-2">
+                {sendError && <p className="px-1 text-xs text-fg-error">{sendError}</p>}
+                <MessageInput
+                  ref={inputRef}
+                  initialText={editingMessage?.text}
+                  preview={
+                    replyingTo
                       ? {
-                          testId: TEST_IDS.chatEditComposer,
-                          title: t('feature.chat.editingMessage'),
-                          text: editingMessage.text,
-                          onClose: handleCancelEdit,
+                          testId: TEST_IDS.chatReplyComposer,
+                          title:
+                            replyingTo.status.direction === 'outgoing'
+                              ? t('feature.chat.replyToYourself')
+                              : t('feature.chat.replyTo', { name: sessionName }),
+                          text: getMessagePreview(replyingTo),
+                          onClose: handleCancelReply,
                         }
-                      : undefined
-                }
-                submitAction={handleSendMessage}
-              />
-            </div>
-          )}
-        </div>
-      )}
+                      : editingMessage
+                        ? {
+                            testId: TEST_IDS.chatEditComposer,
+                            title: t('feature.chat.editingMessage'),
+                            text: editingMessage.text,
+                            onClose: handleCancelEdit,
+                          }
+                        : undefined
+                  }
+                  submitAction={handleSendMessage}
+                />
+              </div>
+            )}
+          </div>
+        )}
+      </RoomPane>
     </div>
   );
 };
