@@ -2,22 +2,20 @@ import { type DragEndEvent, DndContext, PointerSensor, closestCenter, useSensor,
 import { restrictToHorizontalAxis } from '@dnd-kit/modifiers';
 import { SortableContext, horizontalListSortingStrategy, useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { Pin, X } from 'lucide-react';
+import { X } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { Popover, SegmentedControl } from '@/shared/components';
 import { Slot } from '@/shared/di';
-import { isElectron } from '@/shared/env';
-import { useRxState } from '@/shared/rxstate';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { cnTw } from '@/shared/utils';
-import { useIsPinned } from '@/domains/product';
-import { type Tab, browserTabs, isSystemTabType } from '@/aggregates/browser-tabs';
-import { webviewRegistry } from '@/aggregates/webview-registry';
-import { tabContentSlot, tabHoverSlot } from '../di';
+import { type Tab, browserTabs } from '@/aggregates/browser-tabs';
+import { tabContentSlot } from '../di';
 import { useTabs } from '../hooks/useTabs';
 import { PRODUCT } from '../tabs/helpers';
+
+import { ProductTabHover } from './ProductTabHover';
 
 const FADE_PX = 48;
 
@@ -197,7 +195,10 @@ const SortableTab = ({ tab, isActive, onClose }: SortableTabProps) => {
     transition,
   };
 
+  const isProductTab = tab.type === PRODUCT;
+
   const handleMouseEnter = () => {
+    if (!isProductTab) return;
     cancelWarmCooldown();
     if (hoverCardWarm) {
       setIsHovering(true);
@@ -219,7 +220,7 @@ const SortableTab = ({ tab, isActive, onClose }: SortableTabProps) => {
     };
   }, []);
 
-  const showHoverCard = isHovering && !isDragging;
+  const showHoverCard = isProductTab && isHovering && !isDragging;
 
   // Safety net for a swallowed mouseleave: the notification toast renders fixed at
   // top-center (z-index 999999999), directly over the tab strip. When it appears,
@@ -283,69 +284,8 @@ const SortableTab = ({ tab, isActive, onClose }: SortableTabProps) => {
         </div>
       </Popover.Anchor>
       <Popover.Content side="bottom" sideOffset={4} collisionPadding={8} onOpenAutoFocus={e => e.preventDefault()}>
-        <div className="pointer-events-none flex w-max max-w-72 min-w-44 flex-col gap-2 p-3" data-testid={TEST_IDS.tabHoverCard}>
-          <Slot id={tabHoverSlot} props={{ tab }} />
-          {!isSystemTabType(tab.type) && (
-            <div className="flex items-center gap-1.5">
-              <TabRamUsageRow tabId={tab.id} />
-              {tab.type === PRODUCT && <ProductPinGlyph productId={tab.id} />}
-            </div>
-          )}
-        </div>
+        <ProductTabHover id={tab.id} />
       </Popover.Content>
     </Popover.Root>
   );
-};
-
-const ProductPinGlyph = ({ productId }: { productId: string }) => {
-  const pinned = useIsPinned(productId);
-  if (!pinned) return null;
-  return <Pin data-testid={TEST_IDS.tabHoverVersionPin} className="size-3 shrink-0 text-fg-secondary" aria-hidden />;
-};
-
-const TabRamUsageRow = ({ tabId }: { tabId: string }) => {
-  const { t } = useTranslation();
-  const memory = useTabMemory(tabId);
-  return (
-    <span className="text-sm text-fg-secondary" data-testid={TEST_IDS.tabHoverRam}>
-      {memory === null
-        ? t('feature.browser.ramUsageUnavailable')
-        : t('feature.browser.ramUsage', { value: formatMemory(memory) })}
-    </span>
-  );
-};
-
-const useTabMemory = (tabId: string): number | null => {
-  const [webContentIds] = useRxState(webviewRegistry.ids$);
-  const webContentsId = webContentIds[tabId];
-  const [memory, setMemory] = useState<number | null>(null);
-
-  useEffect(() => {
-    if (!isElectron() || !webContentsId) {
-      setMemory(null);
-      return;
-    }
-
-    let cancelled = false;
-    const fetchMemory = async () => {
-      const bytes = await window.App.getWebContentsMemory(webContentsId);
-      if (!cancelled) setMemory(bytes);
-    };
-
-    void fetchMemory();
-    const interval = setInterval(fetchMemory, 2000);
-    return () => {
-      cancelled = true;
-      clearInterval(interval);
-    };
-  }, [webContentsId]);
-
-  return memory;
-};
-
-const formatMemory = (bytes: number): string => {
-  const mb = bytes / (1024 * 1024);
-  if (mb >= 1024) return `${(mb / 1024).toFixed(1)}GB`;
-  if (mb >= 10) return `${Math.round(mb)}MB`;
-  return `${mb.toFixed(1)}MB`;
 };
