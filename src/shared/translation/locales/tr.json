@@ -1113,6 +1113,57 @@
           "subtitle": "Bu uygulamanın hesabını eşleştirilmiş cihazından alır"
         }
       }
+    },
+    "networkStatus": {
+      "title": "Ağ",
+      "health": {
+        "connected": "Bağlı",
+        "syncing": "Eşitleniyor",
+        "unstable": "Kararsız",
+        "offline": "Çevrimdışı",
+        "unused": "Kullanımda değil",
+        "unreachable": "Erişilemiyor"
+      },
+      "role": {
+        "relay": "Röle",
+        "assetHub": "Hub",
+        "bulletin": "Depolama",
+        "people": "Kimlik"
+      },
+      "status": {
+        "noInternet": "İnternet yok",
+        "noEndpoint": "Uç nokta yok",
+        "notInUse": "Kullanımda değil",
+        "disconnected": "Bağlantı kesildi",
+        "syncing": "Eşitleniyor",
+        "syncingShare": "Eşitleniyor: %{percent}",
+        "connecting": "Bağlanıyor",
+        "notProducing": "Blok üretmiyor",
+        "connected": "Bağlı",
+        "behind": "Geride",
+        "live": "{word} · Canlı %{percent} · Blok ~{duration}"
+      },
+      "duration": {
+        "seconds": "{seconds} sn",
+        "minutes": "{minutes} dk {seconds} sn"
+      },
+      "otherChains": "Diğer zincirler ({count})",
+      "lastBlocks": "Son {count} blok",
+      "separator": " · ",
+      "strip": {
+        "title": "Son {count} blok, en yenisi sağda",
+        "label": "{chain}: son {count} blok, en yenisi sağda"
+      },
+      "block": {
+        "onTime": "{gap} sn, zamanında",
+        "late": "{gap} sn, {late} sn gecikmeli",
+        "label": "Blok {number}, {delay}",
+        "newest": "#{number, number}"
+      },
+      "peers": {
+        "count": "{count, plural, one {# eş} other {# eş}}",
+        "label": "{chain}: {peers} bağlı"
+      }
     }
   },
   "widget": {

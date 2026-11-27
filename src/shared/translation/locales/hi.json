@@ -1113,6 +1113,57 @@
           "subtitle": "इस ऐप का खाता आपके जुड़े डिवाइस से लाता है"
         }
       }
+    },
+    "networkStatus": {
+      "title": "नेटवर्क",
+      "health": {
+        "connected": "कनेक्टेड",
+        "syncing": "सिंक हो रहा है",
+        "unstable": "अस्थिर",
+        "offline": "ऑफ़लाइन",
+        "unused": "उपयोग में नहीं",
+        "unreachable": "पहुँच से बाहर"
+      },
+      "role": {
+        "relay": "रिले",
+        "assetHub": "हब",
+        "bulletin": "स्टोरेज",
+        "people": "पहचान"
+      },
+      "status": {
+        "noInternet": "इंटरनेट नहीं",
+        "noEndpoint": "कोई एंडपॉइंट नहीं",
+        "notInUse": "उपयोग में नहीं",
+        "disconnected": "डिस्कनेक्ट",
+        "syncing": "सिंक हो रहा है",
+        "syncingShare": "सिंक हो रहा है: {percent}%",
+        "connecting": "कनेक्ट हो रहा है",
+        "notProducing": "ब्लॉक नहीं बना रहा",
+        "connected": "कनेक्टेड",
+        "behind": "पीछे",
+        "live": "{word} · लाइव {percent}% · ब्लॉक ~{duration}"
+      },
+      "duration": {
+        "seconds": "{seconds} से",
+        "minutes": "{minutes} मि {seconds} से"
+      },
+      "otherChains": "अन्य चेन ({count})",
+      "lastBlocks": "अंतिम {count} ब्लॉक",
+      "separator": " · ",
+      "strip": {
+        "title": "अंतिम {count} ब्लॉक, नवीनतम दाईं ओर",
+        "label": "{chain}: अंतिम {count} ब्लॉक, नवीनतम दाईं ओर"
+      },
+      "block": {
+        "onTime": "{gap} से, समय पर",
+        "late": "{gap} से, {late} से देरी",
+        "label": "ब्लॉक {number}, {delay}",
+        "newest": "#{number, number}"
+      },
+      "peers": {
+        "count": "{count, plural, one {# पीयर} other {# पीयर}}",
+        "label": "{chain}: {peers} कनेक्टेड"
+      }
     }
   },
   "widget": {

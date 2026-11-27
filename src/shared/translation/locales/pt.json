@@ -1113,6 +1113,57 @@
           "subtitle": "Busca a conta deste app no seu dispositivo pareado"
         }
       }
+    },
+    "networkStatus": {
+      "title": "Rede",
+      "health": {
+        "connected": "Conectado",
+        "syncing": "Sincronizando",
+        "unstable": "Instável",
+        "offline": "Offline",
+        "unused": "Não utilizado",
+        "unreachable": "Inacessível"
+      },
+      "role": {
+        "relay": "Relay",
+        "assetHub": "Hub",
+        "bulletin": "Armazenamento",
+        "people": "Identidade"
+      },
+      "status": {
+        "noInternet": "Sem internet",
+        "noEndpoint": "Sem endpoint",
+        "notInUse": "Não utilizado",
+        "disconnected": "Desconectado",
+        "syncing": "Sincronizando",
+        "syncingShare": "Sincronizando: {percent}%",
+        "connecting": "Conectando",
+        "notProducing": "Não está produzindo blocos",
+        "connected": "Conectado",
+        "behind": "Atrasado",
+        "live": "{word} · Ao vivo {percent}% · Bloco ~{duration}"
+      },
+      "duration": {
+        "seconds": "{seconds}s",
+        "minutes": "{minutes}min {seconds}s"
+      },
+      "otherChains": "Outras chains ({count})",
+      "lastBlocks": "Últimos {count} blocos",
+      "separator": " · ",
+      "strip": {
+        "title": "Últimos {count} blocos, o mais recente à direita",
+        "label": "{chain}: últimos {count} blocos, o mais recente à direita"
+      },
+      "block": {
+        "onTime": "{gap}s, no prazo",
+        "late": "{gap}s, {late}s de atraso",
+        "label": "Bloco {number}, {delay}",
+        "newest": "#{number, number}"
+      },
+      "peers": {
+        "count": "{count, plural, one {# peer} other {# peers}}",
+        "label": "{chain}: {peers} conectados"
+      }
     }
   },
   "widget": {

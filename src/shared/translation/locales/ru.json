@@ -1113,6 +1113,57 @@
           "subtitle": "Получает аккаунт приложения с вашего сопряжённого устройства"
         }
       }
+    },
+    "networkStatus": {
+      "title": "Сеть",
+      "health": {
+        "connected": "Подключено",
+        "syncing": "Синхронизация",
+        "unstable": "Нестабильно",
+        "offline": "Не в сети",
+        "unused": "Не используется",
+        "unreachable": "Недоступно"
+      },
+      "role": {
+        "relay": "Релей",
+        "assetHub": "Хаб",
+        "bulletin": "Хранилище",
+        "people": "Идентичность"
+      },
+      "status": {
+        "noInternet": "Нет интернета",
+        "noEndpoint": "Нет конечной точки",
+        "notInUse": "Не используется",
+        "disconnected": "Отключено",
+        "syncing": "Синхронизация",
+        "syncingShare": "Синхронизация: {percent}%",
+        "connecting": "Подключение",
+        "notProducing": "Не производит блоки",
+        "connected": "Подключено",
+        "behind": "Отстаёт",
+        "live": "{word} · В реальном времени {percent}% · Блок ~{duration}"
+      },
+      "duration": {
+        "seconds": "{seconds} с",
+        "minutes": "{minutes} мин {seconds} с"
+      },
+      "otherChains": "Другие цепочки ({count})",
+      "lastBlocks": "Последние блоки: {count}",
+      "separator": " · ",
+      "strip": {
+        "title": "Последние блоки: {count}, новейший справа",
+        "label": "{chain}: последние блоки: {count}, новейший справа"
+      },
+      "block": {
+        "onTime": "{gap} с, вовремя",
+        "late": "{gap} с, опоздание {late} с",
+        "label": "Блок {number}, {delay}",
+        "newest": "#{number, number}"
+      },
+      "peers": {
+        "count": "{count, plural, one {# пир} few {# пира} many {# пиров} other {# пира}}",
+        "label": "{chain}: подключено {peers}"
+      }
     }
   },
   "widget": {

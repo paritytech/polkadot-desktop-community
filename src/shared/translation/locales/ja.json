@@ -1113,6 +1113,57 @@
           "subtitle": "ペアリング済みのデバイスからこのアプリのアカウントを取得します"
         }
       }
+    },
+    "networkStatus": {
+      "title": "ネットワーク",
+      "health": {
+        "connected": "接続済み",
+        "syncing": "同期中",
+        "unstable": "不安定",
+        "offline": "オフライン",
+        "unused": "未使用",
+        "unreachable": "到達不可"
+      },
+      "role": {
+        "relay": "リレー",
+        "assetHub": "ハブ",
+        "bulletin": "ストレージ",
+        "people": "ID"
+      },
+      "status": {
+        "noInternet": "インターネットなし",
+        "noEndpoint": "エンドポイントなし",
+        "notInUse": "未使用",
+        "disconnected": "切断",
+        "syncing": "同期中",
+        "syncingShare": "同期中: {percent}%",
+        "connecting": "接続中",
+        "notProducing": "ブロックを生成していません",
+        "connected": "接続済み",
+        "behind": "遅延",
+        "live": "{word} · ライブ {percent}% · ブロック ~{duration}"
+      },
+      "duration": {
+        "seconds": "{seconds}秒",
+        "minutes": "{minutes}分{seconds}秒"
+      },
+      "otherChains": "その他のチェーン ({count})",
+      "lastBlocks": "直近 {count} ブロック",
+      "separator": " · ",
+      "strip": {
+        "title": "直近 {count} ブロック、右が最新",
+        "label": "{chain}: 直近 {count} ブロック、右が最新"
+      },
+      "block": {
+        "onTime": "{gap}秒、定刻",
+        "late": "{gap}秒、{late}秒遅れ",
+        "label": "ブロック {number}、{delay}",
+        "newest": "#{number, number}"
+      },
+      "peers": {
+        "count": "{count, plural, other {# ピア}}",
+        "label": "{chain}: {peers} 接続中"
+      }
     }
   },
   "widget": {

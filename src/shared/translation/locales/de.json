@@ -1113,6 +1113,57 @@
           "subtitle": "Holt das Konto dieser App von deinem gekoppelten Gerät"
         }
       }
+    },
+    "networkStatus": {
+      "title": "Netzwerk",
+      "health": {
+        "connected": "Verbunden",
+        "syncing": "Synchronisiert",
+        "unstable": "Instabil",
+        "offline": "Offline",
+        "unused": "Nicht in Gebrauch",
+        "unreachable": "Nicht erreichbar"
+      },
+      "role": {
+        "relay": "Relay",
+        "assetHub": "Hub",
+        "bulletin": "Speicher",
+        "people": "Identität"
+      },
+      "status": {
+        "noInternet": "Kein Internet",
+        "noEndpoint": "Kein Endpunkt",
+        "notInUse": "Nicht in Gebrauch",
+        "disconnected": "Getrennt",
+        "syncing": "Synchronisiert",
+        "syncingShare": "Synchronisiert: {percent} %",
+        "connecting": "Verbindet",
+        "notProducing": "Erzeugt keine Blöcke",
+        "connected": "Verbunden",
+        "behind": "Im Rückstand",
+        "live": "{word} · Live {percent} % · Block ~{duration}"
+      },
+      "duration": {
+        "seconds": "{seconds} s",
+        "minutes": "{minutes} min {seconds} s"
+      },
+      "otherChains": "Weitere Chains ({count})",
+      "lastBlocks": "Letzte {count} Blöcke",
+      "separator": " · ",
+      "strip": {
+        "title": "Letzte {count} Blöcke, neueste rechts",
+        "label": "{chain}: letzte {count} Blöcke, neueste rechts"
+      },
+      "block": {
+        "onTime": "{gap} s, pünktlich",
+        "late": "{gap} s, {late} s verspätet",
+        "label": "Block {number}, {delay}",
+        "newest": "#{number, number}"
+      },
+      "peers": {
+        "count": "{count, plural, one {# Peer} other {# Peers}}",
+        "label": "{chain}: {peers} verbunden"
+      }
     }
   },
   "widget": {

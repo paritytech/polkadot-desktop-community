@@ -1113,6 +1113,57 @@
           "subtitle": "Recupera l’account di questa app dal tuo dispositivo associato"
         }
       }
+    },
+    "networkStatus": {
+      "title": "Rete",
+      "health": {
+        "connected": "Connesso",
+        "syncing": "Sincronizzazione",
+        "unstable": "Instabile",
+        "offline": "Offline",
+        "unused": "Non in uso",
+        "unreachable": "Irraggiungibile"
+      },
+      "role": {
+        "relay": "Relay",
+        "assetHub": "Hub",
+        "bulletin": "Archiviazione",
+        "people": "Identità"
+      },
+      "status": {
+        "noInternet": "Nessuna connessione a internet",
+        "noEndpoint": "Nessun endpoint",
+        "notInUse": "Non in uso",
+        "disconnected": "Disconnesso",
+        "syncing": "Sincronizzazione",
+        "syncingShare": "Sincronizzazione: {percent}%",
+        "connecting": "Connessione",
+        "notProducing": "Non produce blocchi",
+        "connected": "Connesso",
+        "behind": "In ritardo",
+        "live": "{word} · Live {percent}% · Blocco ~{duration}"
+      },
+      "duration": {
+        "seconds": "{seconds}s",
+        "minutes": "{minutes}m {seconds}s"
+      },
+      "otherChains": "Altre chain ({count})",
+      "lastBlocks": "Ultimi {count} blocchi",
+      "separator": " · ",
+      "strip": {
+        "title": "Ultimi {count} blocchi, il più recente a destra",
+        "label": "{chain}: ultimi {count} blocchi, il più recente a destra"
+      },
+      "block": {
+        "onTime": "{gap}s, in orario",
+        "late": "{gap}s, {late}s di ritardo",
+        "label": "Blocco {number}, {delay}",
+        "newest": "#{number, number}"
+      },
+      "peers": {
+        "count": "{count, plural, one {# peer} other {# peer}}",
+        "label": "{chain}: {peers} connessi"
+      }
     }
   },
   "widget": {

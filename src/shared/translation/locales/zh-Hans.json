@@ -1113,6 +1113,57 @@
           "subtitle": "从你已配对的设备获取此应用的账户"
         }
       }
+    },
+    "networkStatus": {
+      "title": "网络",
+      "health": {
+        "connected": "已连接",
+        "syncing": "同步中",
+        "unstable": "不稳定",
+        "offline": "离线",
+        "unused": "未使用",
+        "unreachable": "无法访问"
+      },
+      "role": {
+        "relay": "中继",
+        "assetHub": "枢纽",
+        "bulletin": "存储",
+        "people": "身份"
+      },
+      "status": {
+        "noInternet": "无网络",
+        "noEndpoint": "无端点",
+        "notInUse": "未使用",
+        "disconnected": "已断开",
+        "syncing": "同步中",
+        "syncingShare": "同步中：{percent}%",
+        "connecting": "连接中",
+        "notProducing": "未出块",
+        "connected": "已连接",
+        "behind": "落后",
+        "live": "{word} · 实时 {percent}% · 区块 ~{duration}"
+      },
+      "duration": {
+        "seconds": "{seconds}秒",
+        "minutes": "{minutes}分{seconds}秒"
+      },
+      "otherChains": "其他链（{count}）",
+      "lastBlocks": "最近 {count} 个区块",
+      "separator": " · ",
+      "strip": {
+        "title": "最近 {count} 个区块，最新在右",
+        "label": "{chain}：最近 {count} 个区块，最新在右"
+      },
+      "block": {
+        "onTime": "{gap}秒，准时",
+        "late": "{gap}秒，延迟 {late}秒",
+        "label": "区块 {number}，{delay}",
+        "newest": "#{number, number}"
+      },
+      "peers": {
+        "count": "{count, plural, other {# 个节点}}",
+        "label": "{chain}：已连接 {peers}"
+      }
     }
   },
   "widget": {

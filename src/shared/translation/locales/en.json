@@ -1129,6 +1129,57 @@
           "subtitle": "Fetches this app's account from your paired device"
         }
       }
+    },
+    "networkStatus": {
+      "title": "Network",
+      "health": {
+        "connected": "Connected",
+        "syncing": "Syncing",
+        "unstable": "Unstable",
+        "offline": "Offline",
+        "unused": "Not in use",
+        "unreachable": "Unreachable"
+      },
+      "role": {
+        "relay": "Relay",
+        "assetHub": "Hub",
+        "bulletin": "Storage",
+        "people": "Identity"
+      },
+      "status": {
+        "noInternet": "No internet",
+        "noEndpoint": "No endpoint",
+        "notInUse": "Not in use",
+        "disconnected": "Disconnected",
+        "syncing": "Syncing",
+        "syncingShare": "Syncing: {percent}%",
+        "connecting": "Connecting",
+        "notProducing": "Not producing blocks",
+        "connected": "Connected",
+        "behind": "Behind",
+        "live": "{word} · Live {percent}% · Block ~{duration}"
+      },
+      "duration": {
+        "seconds": "{seconds}s",
+        "minutes": "{minutes}m {seconds}s"
+      },
+      "otherChains": "Other chains ({count})",
+      "lastBlocks": "Last {count} blocks",
+      "separator": " · ",
+      "strip": {
+        "title": "Last {count} blocks, newest on the right",
+        "label": "{chain}: last {count} blocks, newest on the right"
+      },
+      "block": {
+        "onTime": "{gap}s, on time",
+        "late": "{gap}s, {late}s late",
+        "label": "Block {number}, {delay}",
+        "newest": "#{number, number}"
+      },
+      "peers": {
+        "count": "{count, plural, one {# peer} other {# peers}}",
+        "label": "{chain}: {peers} connected"
+      }
     }
   },
   "widget": {

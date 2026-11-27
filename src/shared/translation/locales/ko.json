@@ -1113,6 +1113,57 @@
           "subtitle": "연결된 기기에서 이 앱의 계정을 가져옵니다"
         }
       }
+    },
+    "networkStatus": {
+      "title": "네트워크",
+      "health": {
+        "connected": "연결됨",
+        "syncing": "동기화 중",
+        "unstable": "불안정",
+        "offline": "오프라인",
+        "unused": "사용 안 함",
+        "unreachable": "접속 불가"
+      },
+      "role": {
+        "relay": "릴레이",
+        "assetHub": "허브",
+        "bulletin": "스토리지",
+        "people": "아이덴티티"
+      },
+      "status": {
+        "noInternet": "인터넷 없음",
+        "noEndpoint": "엔드포인트 없음",
+        "notInUse": "사용 안 함",
+        "disconnected": "연결 끊김",
+        "syncing": "동기화 중",
+        "syncingShare": "동기화 중: {percent}%",
+        "connecting": "연결 중",
+        "notProducing": "블록을 생성하지 않음",
+        "connected": "연결됨",
+        "behind": "지연",
+        "live": "{word} · 라이브 {percent}% · 블록 ~{duration}"
+      },
+      "duration": {
+        "seconds": "{seconds}초",
+        "minutes": "{minutes}분 {seconds}초"
+      },
+      "otherChains": "기타 체인 ({count})",
+      "lastBlocks": "최근 {count}개 블록",
+      "separator": " · ",
+      "strip": {
+        "title": "최근 {count}개 블록, 최신 블록이 오른쪽",
+        "label": "{chain}: 최근 {count}개 블록, 최신 블록이 오른쪽"
+      },
+      "block": {
+        "onTime": "{gap}초, 정시",
+        "late": "{gap}초, {late}초 지연",
+        "label": "블록 {number}, {delay}",
+        "newest": "#{number, number}"
+      },
+      "peers": {
+        "count": "{count, plural, other {피어 #개}}",
+        "label": "{chain}: {peers} 연결됨"
+      }
     }
   },
   "widget": {

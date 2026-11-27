@@ -1113,6 +1113,57 @@
           "subtitle": "يجلب حساب هذا التطبيق من جهازك المقترن"
         }
       }
+    },
+    "networkStatus": {
+      "title": "الشبكة",
+      "health": {
+        "connected": "متصل",
+        "syncing": "قيد المزامنة",
+        "unstable": "غير مستقر",
+        "offline": "غير متصل",
+        "unused": "غير مستخدم",
+        "unreachable": "يتعذر الوصول"
+      },
+      "role": {
+        "relay": "الترحيل",
+        "assetHub": "المحور",
+        "bulletin": "التخزين",
+        "people": "الهوية"
+      },
+      "status": {
+        "noInternet": "لا يوجد إنترنت",
+        "noEndpoint": "لا توجد نقطة اتصال",
+        "notInUse": "غير مستخدم",
+        "disconnected": "مقطوع الاتصال",
+        "syncing": "قيد المزامنة",
+        "syncingShare": "قيد المزامنة: {percent}%",
+        "connecting": "جارٍ الاتصال",
+        "notProducing": "لا تُنتج كتل",
+        "connected": "متصل",
+        "behind": "متأخر",
+        "live": "{word} · مباشر {percent}% · كتلة ~{duration}"
+      },
+      "duration": {
+        "seconds": "{seconds} ث",
+        "minutes": "{minutes} د {seconds} ث"
+      },
+      "otherChains": "سلاسل أخرى ({count})",
+      "lastBlocks": "آخر {count} كتلة",
+      "separator": " · ",
+      "strip": {
+        "title": "آخر {count} كتلة، الأحدث على اليمين",
+        "label": "{chain}: آخر {count} كتلة، الأحدث على اليمين"
+      },
+      "block": {
+        "onTime": "{gap} ث، في الوقت المحدد",
+        "late": "{gap} ث، متأخرة {late} ث",
+        "label": "الكتلة {number}، {delay}",
+        "newest": "#{number, number}"
+      },
+      "peers": {
+        "count": "{count, plural, zero {# نظير} one {نظير واحد} two {نظيران} few {# نظراء} many {# نظيرًا} other {# نظير}}",
+        "label": "{chain}: {peers} متصل"
+      }
     }
   },
   "widget": {
