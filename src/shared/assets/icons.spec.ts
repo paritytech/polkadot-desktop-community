@@ -221,12 +221,12 @@ function readGeometry(element: Element, report: (message: string) => void): Geom
       const width = readNumber('width');
       const height = readNumber('height');
       const rx = attributes['rx'];
+      const expected = Math.min(width, height) >= 6 ? 1.25 : 0.75;
 
-      if (rx !== undefined) {
-        const expected = Math.min(width, height) >= 6 ? 1.25 : 0.75;
-        if (readNumber('rx') !== expected) {
-          report(`rect rx ${rx}, want ${expected}`);
-        }
+      if (rx === undefined) {
+        report(`rect rx missing, want ${expected}`);
+      } else if (readNumber('rx') !== expected) {
+        report(`rect rx ${rx}, want ${expected}`);
       }
 
       return {
@@ -432,6 +432,12 @@ describe('findViolations', () => {
       fileName: 'icon.svg',
       svg: iconOf('<path d="M1.75 1.75"/>').replace('\n</svg>', ''),
       fragment: 'malformed svg',
+    },
+    {
+      label: 'a rect without rx',
+      fileName: 'icon.svg',
+      svg: iconOf('<rect x="2.25" y="3.75" width="11.5" height="8.5"/>'),
+      fragment: 'rx',
     },
     {
       label: 'a file name that is not kebab-case',
