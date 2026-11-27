@@ -81,7 +81,7 @@ export const ChainRow: FC<Props> = ({ chain, health }) => {
         data-testid={TEST_IDS.networkChainRowHead}
         aria-expanded={open}
         aria-controls={detailId}
-        className="col-span-full grid min-h-12 grid-cols-subgrid items-center rounded-lg py-2 text-start focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-chrome-focus"
+        className="col-span-full grid grid-cols-subgrid items-center rounded-lg py-2 text-start focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-chrome-focus"
         onClick={() => setOpen(wasOpen => !wasOpen)}
       >
         <ChainHealthMark mark={mark} role={chain.role} />

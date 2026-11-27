@@ -38,6 +38,7 @@ These are file-role rules _within_ a package — ESLint's boundaries plugin work
 
 - **major** — A stateful component exported from a feature for another feature's slot (exported feature components must stay presentational — anything stateful is a widget or its own feature).
 - **major** — A control off the control scale: a button, input, select trigger, menu or list row, segment or pill whose height is not `h-control` / `size-control` (32) or `h-control-sm` / `size-control-sm` (24), or a hand-built control where `Button`, `IconButton`, `Input` or `Select` does the job (`style.md` § Tailwind, the rhythm bullets). The named exceptions in that bullet are not findings.
+- **major** — A ported design's raw values kept off the app's grid: a type size not on its role's type step, or a vertical size, gap or padding off the 4 px rhythm, because the source (dot.li, a mockup) used it (`style.md` § Tailwind, "The app's type and spacing grid wins").
 - **minor** — Off the vertical rhythm: a `leading-*` other than `leading-none` on a glyph in a fixed box, an arbitrary `text-[…]` / `leading-[…]`, or vertical padding used to reach a control's height (`style.md` § Tailwind).
 
 ## Hygiene (`style.md`)
