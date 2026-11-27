@@ -222,6 +222,16 @@ export function createLifecycleWatches() {
   const latest = new Map<GenesisHash, ChainLifecycle>();
   const listeners = new Set<LifecycleListener>();
 
+  // A listener that throws must not end a watch, keep the other listeners from
+  // hearing, or reach the provider that opened the watch.
+  function tell(listener: LifecycleListener, genesisHash: GenesisHash, lifecycle: ChainLifecycle | null): void {
+    try {
+      listener(genesisHash, lifecycle);
+    } catch (error) {
+      console.error('[network] a light-client lifecycle listener threw', error);
+    }
+  }
+
   function report(genesisHash: GenesisHash, lifecycle: ChainLifecycle | null): void {
     if (lifecycle) {
       latest.set(genesisHash, lifecycle);
@@ -230,7 +240,7 @@ export function createLifecycleWatches() {
     }
 
     for (const listener of listeners) {
-      listener(genesisHash, lifecycle);
+      tell(listener, genesisHash, lifecycle);
     }
   }
 
@@ -296,7 +306,7 @@ export function createLifecycleWatches() {
     subscribe(listener: LifecycleListener): VoidFunction {
       listeners.add(listener);
       for (const [genesisHash, lifecycle] of latest) {
-        listener(genesisHash, lifecycle);
+        tell(listener, genesisHash, lifecycle);
       }
 
       return () => {

@@ -329,6 +329,47 @@ describe('createLifecycleWatches', () => {
     expect(fake.watch.next).toHaveBeenCalledTimes(1);
   });
 
+  it('keeps the watch and the other listeners going when a listener throws', async () => {
+    const error = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const watches = createLifecycleWatches();
+    const fake = createFakeWatch();
+    const listener = vi.fn();
+    watches.subscribe(() => {
+      throw new Error('observer bug');
+    });
+    watches.subscribe(listener);
+
+    watches.open(CHAIN, () => fake.watch);
+    await fake.emit(lifecycleAt(1));
+    await fake.emit(lifecycleAt(2));
+
+    expect(listener.mock.calls).toEqual([
+      [CHAIN, lifecycleAt(1)],
+      [CHAIN, lifecycleAt(2)],
+    ]);
+    expect(fake.watch.next).toHaveBeenCalledTimes(3);
+    expect(fake.watch.close).toHaveBeenCalledTimes(0);
+    expect(error).toHaveBeenCalledTimes(2);
+  });
+
+  it('lets nothing a listener throws escape open', () => {
+    vi.spyOn(console, 'warn').mockImplementation(() => {});
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+    const watches = createLifecycleWatches();
+    const listener = vi.fn();
+    watches.subscribe(() => {
+      throw new Error('observer bug');
+    });
+    watches.subscribe(listener);
+
+    expect(() =>
+      watches.open(CHAIN, () => {
+        throw new Error('nothing is connected');
+      }),
+    ).not.toThrow();
+    expect(listener.mock.calls).toEqual([[CHAIN, null]]);
+  });
+
   it('ignores a close for a chain with no open connection', () => {
     const watches = createLifecycleWatches();
     const fake = createFakeWatch();
