@@ -1,5 +1,4 @@
 import {
-  type LucideIcon,
   Bell,
   Bluetooth,
   Camera,
@@ -13,14 +12,17 @@ import {
   Move3d,
   Wallet,
 } from 'lucide-react';
-import { createElement } from 'react';
+import { type FC, type SVGProps, createElement } from 'react';
 
+import { cnTw } from '@/shared/utils';
 import { type PermissionId, type PermissionStatus, PERMISSION_IDS } from '@/domains/product';
 
 import { type PermissionCategory, type PermissionMetadata } from './types';
 import { PolkadotPermissionIcon } from './ui/PolkadotPermissionIcon';
 
-const icon = (Icon: LucideIcon, size = 20) => createElement(Icon, { size });
+function icon(Icon: FC<SVGProps<SVGSVGElement>>) {
+  return createElement(Icon, { className: cnTw('size-5') });
+}
 
 const ruleKeys = (id: string, count: number) =>
   Array.from({ length: count }, (_, i) => `feature.permissionSettings.permission.${id}.rule.${i + 1}`);
@@ -110,21 +112,21 @@ const PERMISSION_METADATA_BY_ID = {
   },
   ChainSubmit: {
     category: 'onchain',
-    icon: createElement(PolkadotPermissionIcon, { size: 20 }),
+    icon: createElement(PolkadotPermissionIcon),
     labelKey: 'feature.permissionSettings.permission.ChainSubmit.label',
     descriptionKey: 'feature.permissionSettings.permission.ChainSubmit.description',
     ruleKeys: ruleKeys('ChainSubmit', 4),
   },
   PreimageSubmit: {
     category: 'onchain',
-    icon: createElement(PolkadotPermissionIcon, { size: 20 }),
+    icon: createElement(PolkadotPermissionIcon),
     labelKey: 'feature.permissionSettings.permission.PreimageSubmit.label',
     descriptionKey: 'feature.permissionSettings.permission.PreimageSubmit.description',
     ruleKeys: ruleKeys('PreimageSubmit', 4),
   },
   StatementSubmit: {
     category: 'onchain',
-    icon: createElement(PolkadotPermissionIcon, { size: 20 }),
+    icon: createElement(PolkadotPermissionIcon),
     labelKey: 'feature.permissionSettings.permission.StatementSubmit.label',
     descriptionKey: 'feature.permissionSettings.permission.StatementSubmit.description',
     ruleKeys: ruleKeys('StatementSubmit', 4),
