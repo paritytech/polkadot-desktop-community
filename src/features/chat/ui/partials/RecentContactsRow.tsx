@@ -1,9 +1,8 @@
 import { useObservable } from 'react-rx';
 
+import { Avatar } from '@/shared/components';
 import { type ChatSession } from '@/domains/chat';
 import { chatService } from '../../service';
-
-import { Avatar } from './Avatar';
 
 type Props = {
   sessions: ChatSession[];
@@ -33,7 +32,7 @@ const RecentChip = ({ session, onSelect }: { session: ChatSession; onSelect: Voi
       data-no-app-focus
       onClick={onSelect}
     >
-      <Avatar name={name} size="48" />
+      <Avatar label={name} size="48" />
       <span className="w-full truncate text-center text-xs text-fg-secondary">{name}</span>
     </button>
   );

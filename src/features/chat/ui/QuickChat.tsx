@@ -5,7 +5,7 @@ import { useObservable } from 'react-rx';
 import { of } from 'rxjs';
 
 import MaximizeIcon from '@/shared/assets/images/header/maximize.svg?jsx';
-import { AppIcon, DismissOverlay, EmptyState, IconButton, PaneHeader, Popover } from '@/shared/components';
+import { AppIcon, Avatar, DismissOverlay, EmptyState, IconButton, PaneHeader, Popover } from '@/shared/components';
 import { useCloseOnWindowLeave } from '@/shared/hooks';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
@@ -18,7 +18,6 @@ import { chatService } from '../service';
 import { CHAT } from '../tabs';
 
 import { SyncStatusBanner } from './SyncStatusBanner';
-import { Avatar } from './partials/Avatar';
 import { ChatItem } from './partials/ChatItem';
 import { MessageFlow } from './partials/MessageFlow';
 import { MessageInput } from './partials/MessageInput';
@@ -167,7 +166,7 @@ const QuickChatPageHeader = ({ session, onBack, onExpand }: QuickChatPageHeaderP
       variant="list"
       icon={
         session ? (
-          <Avatar name={sessionName} size="24" />
+          <Avatar label={sessionName} size="24" />
         ) : (
           <AppIcon size="24" alt="">
             <MessageCircle className="size-4" />

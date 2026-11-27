@@ -1,12 +1,10 @@
 import { X } from 'lucide-react';
 
-import { IconButton, ListItem } from '@/shared/components';
+import { Avatar, IconButton, ListItem } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { type P2PChatRequest, p2pService } from '@/domains/chat';
 import { chatService } from '../../service';
-
-import { Avatar } from './Avatar';
 
 type RequestItemProps = {
   request: P2PChatRequest;
@@ -24,7 +22,7 @@ export const RequestItem = ({ request, selected, hideByDefault, onSelect, onDecl
 
   return (
     <ListItem
-      icon={<Avatar name={name} size="40" />}
+      icon={<Avatar label={name} size="40" />}
       label={name}
       description={<span>{preview}</span>}
       action={

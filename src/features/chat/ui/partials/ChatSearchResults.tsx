@@ -1,12 +1,10 @@
 import { SearchX } from 'lucide-react';
 
-import { EmptyState, ListItem } from '@/shared/components';
+import { Avatar, EmptyState, ListItem } from '@/shared/components';
 import { useTranslation } from '@/shared/translation';
 import { type ChatMessage, chatMessageService } from '@/domains/chat';
 import { chatService } from '../../service';
 import { highlightMatch } from '../helpers/highlight';
-
-import { Avatar } from './Avatar';
 
 type Props = {
   query: string;
@@ -32,7 +30,7 @@ export const ChatSearchResults = ({ query, results, activeMessageId, peerName, c
         return (
           <ListItem
             key={message.messageId}
-            icon={<Avatar name={name} size="40" />}
+            icon={<Avatar label={name} size="40" />}
             label={name}
             description={<span>{highlightMatch(text, query)}</span>}
             meta={chatService.formatLastMessageDate(message.timestamp)}
