@@ -40,7 +40,7 @@ export const EnableOfflineDialog = ({ productId, onClose }: Props) => {
         <Dialog.Footer>
           <div className="flex w-full gap-2">
             <div className="flex-1">
-              <Button data-testid={TEST_IDS.offlineAccessDialogCancel} block onClick={onClose}>
+              <Button data-testid={TEST_IDS.offlineAccessDialogCancel} horizontalSize="fill" onClick={onClose}>
                 {t('common.cancel')}
               </Button>
             </div>
@@ -48,7 +48,7 @@ export const EnableOfflineDialog = ({ productId, onClose }: Props) => {
               <Button
                 data-testid={TEST_IDS.offlineAccessEnableConfirm}
                 variant="primary"
-                block
+                horizontalSize="fill"
                 disabled={pending}
                 onClick={handleConfirm}
               >

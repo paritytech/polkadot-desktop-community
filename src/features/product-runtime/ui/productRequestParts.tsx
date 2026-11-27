@@ -352,7 +352,7 @@ export const RequestFooter = memo(
       <Dialog.Footer>
         <div className="flex w-full min-w-0 flex-row gap-2">
           <div className="min-w-0 flex-1">
-            <Button type="button" block data-testid={TEST_IDS.productRequestDeny} onClick={onCancel}>
+            <Button type="button" horizontalSize="fill" data-testid={TEST_IDS.productRequestDeny} onClick={onCancel}>
               {cancelLabel}
             </Button>
           </div>
@@ -360,7 +360,7 @@ export const RequestFooter = memo(
             <Button
               type="button"
               variant="primary"
-              block
+              horizontalSize="fill"
               disabled={primaryDisabled}
               data-testid={primaryTestId}
               onClick={onPrimary}

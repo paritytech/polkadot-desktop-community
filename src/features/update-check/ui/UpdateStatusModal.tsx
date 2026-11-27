@@ -109,18 +109,18 @@ export const UpdateStatusModal = memo(
             {status === 'ready-to-install' ? (
               <div className="flex w-full gap-2">
                 <div className="flex-1">
-                  <Button block onClick={onNotNow}>
+                  <Button horizontalSize="fill" onClick={onNotNow}>
                     {t('feature.updateCheck.notNow')}
                   </Button>
                 </div>
                 <div className="flex-1">
-                  <Button variant="primary" block onClick={onInstallNow}>
+                  <Button variant="primary" horizontalSize="fill" onClick={onInstallNow}>
                     {t('feature.updateCheck.installNow')}
                   </Button>
                 </div>
               </div>
             ) : status === 'up-to-date' || status === 'error' || status === 'unsupported' ? (
-              <Button block onClick={onClose}>
+              <Button horizontalSize="fill" onClick={onClose}>
                 {t('feature.updateCheck.close')}
               </Button>
             ) : null}

@@ -77,6 +77,44 @@ describe('Button', () => {
     expect(button).toHaveAttribute('aria-haspopup', 'menu');
   });
 
+  it('pads and sizes by content by default', () => {
+    render(<Button>Save</Button>);
+
+    const button = screen.getByRole('button', { name: 'Save' });
+    expect(button).toHaveClass('px-4');
+    expect(button).not.toHaveClass('w-full');
+    expect(button).not.toHaveClass('px-1.5');
+  });
+
+  it('pads a condensed button as far from its sides as from its top', () => {
+    render(
+      <>
+        <Button horizontalSize="condensed">Medium</Button>
+        <Button horizontalSize="condensed" size="sm">
+          Small
+        </Button>
+      </>,
+    );
+
+    const medium = screen.getByRole('button', { name: 'Medium' });
+    expect(medium).toHaveClass('px-1.5');
+    expect(medium).not.toHaveClass('px-4');
+    expect(medium).not.toHaveClass('has-[>svg:first-child]:ps-3');
+    expect(medium).not.toHaveClass('w-full');
+
+    const small = screen.getByRole('button', { name: 'Small' });
+    expect(small).toHaveClass('px-1');
+    expect(small).not.toHaveClass('px-3');
+    expect(small).not.toHaveClass('w-full');
+  });
+
+  it('fills its container with the normal padding', () => {
+    render(<Button horizontalSize="fill">Save</Button>);
+
+    const button = screen.getByRole('button', { name: 'Save' });
+    expect(button).toHaveClass('w-full', 'px-4');
+  });
+
   it('carries the ghost checked classes while expanded', () => {
     render(
       <Button variant="ghost" aria-expanded>

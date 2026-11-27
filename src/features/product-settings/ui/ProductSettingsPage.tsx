@@ -180,11 +180,11 @@ const ConfirmDialog = ({
         <div className="flex w-full gap-2">
           <div className="flex-1">
             <Dialog.Close asChild>
-              <Button block>{cancelLabel}</Button>
+              <Button horizontalSize="fill">{cancelLabel}</Button>
             </Dialog.Close>
           </div>
           <div className="flex-1">
-            <Button variant={confirmVariant} block onClick={onConfirm}>
+            <Button variant={confirmVariant} horizontalSize="fill" onClick={onConfirm}>
               {confirmLabel}
             </Button>
           </div>
