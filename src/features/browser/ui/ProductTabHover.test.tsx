@@ -37,7 +37,7 @@ function iconBox() {
 }
 
 describe('ProductTabHover', () => {
-  it('shows the name, the domain and the description', async () => {
+  it('shows the name, the base name and the description', async () => {
     productsResource.instead(() => of([MY_APP]));
 
     renderCard();
@@ -47,7 +47,7 @@ describe('ProductTabHover', () => {
     expect(screen.getByText('Send and receive')).toBeInTheDocument();
   });
 
-  it('names the product by its id and hides the domain line when it has no display name', async () => {
+  it('names the product by its id and hides the base name line when it has no display name', async () => {
     productsResource.instead(() => of([{ ...MY_APP, displayName: '' }]));
 
     renderCard();
@@ -78,12 +78,15 @@ describe('ProductTabHover', () => {
 
   it('shows the fallback mark when the icon does not resolve', async () => {
     productsResource.instead(() => of([MY_APP]));
+    ipfsRawResource.instead(() => null);
 
     renderCard();
 
     await screen.findByText('My App');
-    expect(iconBox().querySelector('img')).toBeNull();
-    expect(iconBox().querySelector('svg')).not.toBeNull();
+    await waitFor(() => {
+      expect(iconBox().querySelector('img')).toBeNull();
+      expect(iconBox().querySelector('svg')).not.toBeNull();
+    });
   });
 
   it('reads the RAM usage as unavailable outside Electron', async () => {

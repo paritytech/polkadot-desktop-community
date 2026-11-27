@@ -19,7 +19,7 @@ export const ProductTabHover = ({ id }: Props) => {
   // uncommitted tab still shows the product's real name, not the bare id.
   const { data: product } = useDisplayedProduct(id);
   const labels = useDotNsLabels();
-  // dot.li names a product without a display name by its domain.
+  // A product without a display name is named by its base name, as dot.li names it by its domain.
   const name = product?.displayName ? labels.displayName(product.displayName) : id;
   const description = product?.description;
 

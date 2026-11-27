@@ -54,5 +54,13 @@ describe('Tabs hover card', () => {
     hoverTab('my-app.dot', container);
 
     expect(await screen.findAllByTestId(TEST_IDS.tabHoverCard)).toHaveLength(1);
+
+    // Clear the module-level warm flag so no case depends on test order (400 ms is HOVER_CARD_WARM_MS in Tabs.tsx).
+    const tab = container.querySelector('[data-tab-id="my-app.dot"]');
+    if (!tab) throw new Error('no product tab');
+    fireEvent.mouseLeave(tab);
+    act(() => {
+      vi.advanceTimersByTime(401);
+    });
   });
 });
