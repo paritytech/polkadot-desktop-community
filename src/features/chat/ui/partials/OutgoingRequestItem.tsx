@@ -1,5 +1,4 @@
-import { Timer } from 'lucide-react';
-
+import TimerIcon from '@/shared/assets/images/icons/timer.svg?jsx';
 import { Avatar, ListItem } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
 import { type P2PChatRequest } from '@/domains/chat';
@@ -22,7 +21,7 @@ export const OutgoingRequestItem = ({ request, selected, onClick }: OutgoingRequ
       description={request.welcomeMessage ? <span>{request.welcomeMessage}</span> : null}
       meta={
         <span className="flex items-center gap-1">
-          <Timer aria-hidden className="size-3" />
+          <TimerIcon className="size-3" />
           {time}
         </span>
       }

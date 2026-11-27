@@ -1,8 +1,8 @@
-import { MessagesSquare } from 'lucide-react';
 import { type MouseEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useObservable } from 'react-rx';
 import { type Observable, of } from 'rxjs';
 
+import MessagesSquareIcon from '@/shared/assets/images/icons/messages-square.svg?jsx';
 import { EmptyState } from '@/shared/components';
 import { useWindowFocus } from '@/shared/hooks';
 import { TEST_IDS } from '@/shared/test-ids';
@@ -233,7 +233,7 @@ export const MessageFlow = ({ session, onReply, onEdit }: ChatConversationViewPr
           ) : (
             <div data-testid={TEST_IDS.chatNoMessagesPlaceholder} className="flex size-full flex-col items-center justify-center">
               <EmptyState
-                icon={<MessagesSquare />}
+                icon={<MessagesSquareIcon />}
                 title={t('feature.chat.noMessages')}
                 description={t('feature.chat.sendMessageToBegin')}
               />

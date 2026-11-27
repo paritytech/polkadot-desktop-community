@@ -1,6 +1,9 @@
-import { ChevronDown, ChevronUp, Search, X } from 'lucide-react';
 import { type KeyboardEvent, useEffect, useRef } from 'react';
 
+import ChevronDownIcon from '@/shared/assets/images/icons/chevron-down.svg?jsx';
+import ChevronUpIcon from '@/shared/assets/images/icons/chevron-up.svg?jsx';
+import SearchIcon from '@/shared/assets/images/icons/search.svg?jsx';
+import XIcon from '@/shared/assets/images/icons/x.svg?jsx';
 import { IconButton } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
@@ -58,7 +61,7 @@ export const FindOverlay = ({ tabId }: Props) => {
       className="animate-find-bar-in absolute end-3 top-3 z-50 flex h-control items-center gap-2 rounded-lg border border-stroke-primary bg-bg-surface-nested px-3 shadow-md"
       style={{ appRegion: 'no-drag' }}
     >
-      <Search className="size-5 shrink-0 text-fg-secondary" aria-hidden />
+      <SearchIcon className="size-5 shrink-0 text-fg-secondary" />
 
       <input
         ref={inputRef}
@@ -104,7 +107,7 @@ export const FindOverlay = ({ tabId }: Props) => {
             disabled={!hasMatches}
             onClick={prev}
           >
-            <ChevronUp aria-hidden />
+            <ChevronUpIcon />
           </IconButton>
           <IconButton
             size="sm"
@@ -113,12 +116,12 @@ export const FindOverlay = ({ tabId }: Props) => {
             disabled={!hasMatches}
             onClick={next}
           >
-            <ChevronDown aria-hidden />
+            <ChevronDownIcon />
           </IconButton>
         </div>
 
         <IconButton size="sm" data-testid={TEST_IDS.findClose} label={t('feature.browser.findClose')} onClick={close}>
-          <X aria-hidden />
+          <XIcon />
         </IconButton>
       </div>
     </div>

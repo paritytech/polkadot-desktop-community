@@ -1,9 +1,13 @@
 import { type DragEndEvent, DndContext, PointerSensor, closestCenter, useSensor, useSensors } from '@dnd-kit/core';
 import { SortableContext, arrayMove, rectSortingStrategy } from '@dnd-kit/sortable';
-import { Plus, Search, SearchX, Star, StarOff } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 
+import PlusIcon from '@/shared/assets/images/icons/plus.svg?jsx';
+import SearchXIcon from '@/shared/assets/images/icons/search-x.svg?jsx';
+import SearchIcon from '@/shared/assets/images/icons/search.svg?jsx';
+import StarOffIcon from '@/shared/assets/images/icons/star-off.svg?jsx';
+import StarIcon from '@/shared/assets/images/icons/star.svg?jsx';
 import { AppIcon, Button, EmptyState, IconButton, Input } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
@@ -77,7 +81,7 @@ export const FavoritesFullscreen = () => {
       onPointerDown={event => event.stopPropagation()}
       onClick={() => removeItemFromFolder(itemId)}
     >
-      <StarOff aria-hidden />
+      <StarOffIcon />
     </IconButton>
   );
 
@@ -88,7 +92,7 @@ export const FavoritesFullscreen = () => {
     >
       <div className="flex items-center gap-2 px-2">
         <AppIcon size="24" alt="">
-          <Star className="size-4" aria-hidden />
+          <StarIcon className="size-4" />
         </AppIcon>
         <span className="flex-1 text-sm font-semibold text-fg-primary">
           <FormattedMessage id="feature.favorites.title" />
@@ -99,14 +103,14 @@ export const FavoritesFullscreen = () => {
           data-testid={TEST_IDS.favoritesAddButton}
           onClick={openAddToFavoritesDialog}
         >
-          <Plus aria-hidden />
+          <PlusIcon />
         </IconButton>
       </div>
 
       <div className="pt-4">
         <div className="px-2">
           <Input
-            leading={<Search />}
+            leading={<SearchIcon />}
             type="search"
             data-testid={TEST_IDS.favoritesSearchInput}
             value={query}
@@ -120,7 +124,7 @@ export const FavoritesFullscreen = () => {
       {order.length === 0 ? (
         <EmptyState
           testId={TEST_IDS.favoritesEmptyState}
-          icon={<Star aria-hidden />}
+          icon={<StarIcon />}
           title={<FormattedMessage id="feature.favorites.emptyTitle" />}
           description={<FormattedMessage id="feature.favorites.emptyDescription" />}
           action={
@@ -132,7 +136,7 @@ export const FavoritesFullscreen = () => {
       ) : visibleIds.length === 0 ? (
         <EmptyState
           testId={TEST_IDS.favoritesSearchNoResults}
-          icon={<SearchX aria-hidden />}
+          icon={<SearchXIcon />}
           title={<FormattedMessage id="feature.favorites.searchNoResults.title" />}
           description={<FormattedMessage id="feature.favorites.searchNoResults.description" />}
         />

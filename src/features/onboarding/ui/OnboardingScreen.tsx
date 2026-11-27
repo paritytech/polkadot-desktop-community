@@ -1,7 +1,8 @@
 import { useNavigate } from '@tanstack/react-router';
-import { Loader, Smartphone } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
+import LoaderIcon from '@/shared/assets/images/icons/loader.svg?jsx';
+import SmartphoneIcon from '@/shared/assets/images/icons/smartphone.svg?jsx';
 import PolkadotLogo from '@/shared/assets/images/logo.svg?jsx';
 import { AUTOTEST_ENABLED } from '@/shared/autotest';
 import { Button, LoadingScreen, QrCode, SegmentedControl, Spinner, toast } from '@/shared/components';
@@ -158,7 +159,7 @@ export const OnboardingScreen = () => {
         </div>
       );
     }
-    return <Loader className="h-12 w-12 animate-spin text-fg-primary" />;
+    return <LoaderIcon className="h-12 w-12 animate-spin text-fg-primary" />;
   };
 
   return (
@@ -220,7 +221,7 @@ export const OnboardingScreen = () => {
             {renderQrBoxContent()}
           </div>
           <div className="mt-1 flex items-center gap-1.5 text-sm text-fg-tertiary">
-            <Smartphone size={16} />
+            <SmartphoneIcon className="size-4" />
             <span>{t('feature.onboarding.phoneHint')}</span>
           </div>
         </div>

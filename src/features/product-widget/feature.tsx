@@ -1,6 +1,7 @@
 import { useNavigate } from '@tanstack/react-router';
-import { Maximize2, RotateCw } from 'lucide-react';
 
+import Maximize2Icon from '@/shared/assets/images/icons/maximize-2.svg?jsx';
+import RotateCwIcon from '@/shared/assets/images/icons/rotate-cw.svg?jsx';
 import { DropdownMenu } from '@/shared/components';
 import { isElectron } from '@/shared/env';
 import { createFeature } from '@/shared/feature';
@@ -152,7 +153,7 @@ const WidgetMenuItems = ({ productId }: { productId: string }) => {
       data-testid={TEST_IDS.productWidgetReloadButton}
       onClick={() => void onProductRefreshRequestedSideEffect.apply({ identifier: productId })}
     >
-      <RotateCw className="size-4" />
+      <RotateCwIcon className="size-4" />
       <span className="flex-1">{t('feature.dashboard.widgetMenu.reload')}</span>
     </DropdownMenu.Item>
   );
@@ -170,7 +171,7 @@ const FullscreenAction = ({ productId }: { productId: string }) => {
       label={t('common.aria.openFullscreen')}
       onClick={() => navigate({ to: '/product/$id/{-$route}', params: { id: product.baseName } })}
     >
-      <Maximize2 aria-hidden />
+      <Maximize2Icon />
     </WidgetTopbarAction>
   );
 };

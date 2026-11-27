@@ -1,5 +1,7 @@
-import { File, Image as ImageIcon, Phone, Video } from 'lucide-react';
-
+import FileIcon from '@/shared/assets/images/icons/file.svg?jsx';
+import ImageIcon from '@/shared/assets/images/icons/image.svg?jsx';
+import PhoneIcon from '@/shared/assets/images/icons/phone.svg?jsx';
+import VideoIcon from '@/shared/assets/images/icons/video.svg?jsx';
 import { type MessagePreviewIcon } from '../helpers/message';
 
 type Props = {
@@ -12,7 +14,13 @@ export const PreviewIcon = ({ kind }: Props) => {
   if (!kind) return null;
 
   const Icon =
-    kind === 'image' ? ImageIcon : kind === 'video' || kind === 'videoCall' ? Video : kind === 'voiceCall' ? Phone : File;
+    kind === 'image'
+      ? ImageIcon
+      : kind === 'video' || kind === 'videoCall'
+        ? VideoIcon
+        : kind === 'voiceCall'
+          ? PhoneIcon
+          : FileIcon;
 
   return <Icon className="me-1 inline size-3 align-text-bottom" />;
 };

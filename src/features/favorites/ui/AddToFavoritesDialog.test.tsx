@@ -2,7 +2,7 @@
 
 import { type AppListing } from '@parity/browse-sdk';
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
-import { type ComponentProps } from 'react';
+import { type ComponentProps, type FC, type SVGProps } from 'react';
 import { IntlProvider, ReactIntlErrorCode } from 'react-intl';
 import { BehaviorSubject } from 'rxjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -21,6 +21,8 @@ const listing = (label: string): AppListing =>
     manifest: { displayName: label.replace(/\.dot$/, ''), description: '', icon: { cid: '', format: 'png' } },
   }) as unknown as AppListing;
 
+import StarOffIcon from '@/shared/assets/images/icons/star-off.svg?jsx';
+import StarIcon from '@/shared/assets/images/icons/star.svg?jsx';
 import {
   type MainDashboardLayoutSnapshot,
   FAVORITES_FOLDER_ID,
@@ -30,6 +32,8 @@ import {
 import { publishedAppListingsResource } from '@/domains/product';
 
 import { AddToFavoritesDialog } from './AddToFavoritesDialog';
+
+const markupOf = (Icon: FC<SVGProps<SVGSVGElement>>) => render(<Icon />).container.querySelector('svg')?.innerHTML;
 
 // Both folder writes are use-case methods on a plain object, spied in place: the hooks
 // the dialog calls are `useAction` wrappers over them, so the real hooks run.
@@ -88,17 +92,17 @@ describe('AddToFavoritesDialog', () => {
     renderDialog();
     await screen.findByText('coinflip');
 
-    const glyphOf = (index: number) =>
-      screen.getAllByTestId('add-to-favorites-toggle')[index]!.querySelector('svg')?.getAttribute('class') ?? '';
+    const glyphOf = (index: number) => screen.getAllByTestId('add-to-favorites-toggle')[index]!.querySelector('svg')?.innerHTML;
+    const star = markupOf(StarIcon);
+    const starOff = markupOf(StarOffIcon);
 
     // Not a favorite -> the button adds -> plain star.
-    await waitFor(() => expect(glyphOf(0)).toContain('star'));
-    expect(glyphOf(0)).not.toContain('star-off');
+    await waitFor(() => expect(glyphOf(0)).toBe(star));
 
     // Becomes a favorite while the dialog is open -> the button now removes -> crossed star.
     await act(async () => layout$.next(snapshotWith(['coinflip.dot'])));
 
-    await waitFor(() => expect(glyphOf(0)).toContain('star-off'));
+    await waitFor(() => expect(glyphOf(0)).toBe(starOff));
   });
 
   it('shows the loading spinner while the catalog is pending', async () => {

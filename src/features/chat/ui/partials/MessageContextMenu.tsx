@@ -1,7 +1,13 @@
-import { CheckCircle2, ChevronRight, Copy, Forward, Reply, SquarePen, Trash2 } from 'lucide-react';
 import { useCallback, useState } from 'react';
 import { createPortal } from 'react-dom';
 
+import ChevronRightIcon from '@/shared/assets/images/icons/chevron-right.svg?jsx';
+import CircleCheckIcon from '@/shared/assets/images/icons/circle-check.svg?jsx';
+import CopyIcon from '@/shared/assets/images/icons/copy.svg?jsx';
+import ForwardIcon from '@/shared/assets/images/icons/forward.svg?jsx';
+import ReplyIcon from '@/shared/assets/images/icons/reply.svg?jsx';
+import SquarePenIcon from '@/shared/assets/images/icons/square-pen.svg?jsx';
+import TrashIcon from '@/shared/assets/images/icons/trash.svg?jsx';
 import { DropdownMenu } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
@@ -81,18 +87,18 @@ export const MessageContextMenu = ({
             <DropdownMenu.Separator />
             {onReply ? (
               <DropdownMenu.Item data-testid={TEST_IDS.chatMessageContextMenuReply} onSelect={() => onReply(message)}>
-                <Reply />
+                <ReplyIcon />
                 {t('common.action.reply')}
               </DropdownMenu.Item>
             ) : null}
             <DropdownMenu.Item data-testid={TEST_IDS.chatMessageContextMenuCopy} onSelect={() => onCopyText(message)}>
-              <Copy />
+              <CopyIcon />
               {t('common.action.copyText')}
             </DropdownMenu.Item>
             <DropdownMenu.Separator />
             {isEditable && onEdit ? (
               <DropdownMenu.Item data-testid={TEST_IDS.chatMessageContextMenuEdit} onSelect={() => onEdit(message)}>
-                <SquarePen />
+                <SquarePenIcon />
                 {t('feature.chat.editMessage')}
               </DropdownMenu.Item>
             ) : null}
@@ -101,23 +107,23 @@ export const MessageContextMenu = ({
                 data-testid={TEST_IDS.chatMessageContextMenuEditHistory}
                 onSelect={() => onViewEditHistory?.(message)}
               >
-                <SquarePen />
+                <SquarePenIcon />
                 {t('feature.chat.viewEditHistory')}
               </DropdownMenu.Item>
             ) : null}
             {/* TODO(chat): enable Forward, Select and Delete when message forwarding, selection and deletion exist; shown disabled to match the design until then. */}
             <DropdownMenu.Item data-testid={TEST_IDS.chatMessageContextMenuForward} disabled>
-              <Forward />
+              <ForwardIcon />
               {t('common.action.forward')}
-              <ChevronRight className="ms-auto" />
+              <ChevronRightIcon className="ms-auto rtl:-scale-x-100" />
             </DropdownMenu.Item>
             <DropdownMenu.Item data-testid={TEST_IDS.chatMessageContextMenuSelect} disabled>
-              <CheckCircle2 />
+              <CircleCheckIcon />
               {t('common.action.select')}
             </DropdownMenu.Item>
             <DropdownMenu.Separator />
             <DropdownMenu.Item data-testid={TEST_IDS.chatMessageContextMenuDelete} variant="danger" disabled>
-              <Trash2 />
+              <TrashIcon />
               {t('common.action.delete')}
             </DropdownMenu.Item>
           </>

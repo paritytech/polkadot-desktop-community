@@ -1,5 +1,4 @@
-import { X } from 'lucide-react';
-
+import XIcon from '@/shared/assets/images/icons/x.svg?jsx';
 import { Avatar, IconButton, ListItem } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
@@ -27,7 +26,7 @@ export const RequestItem = ({ request, selected, hideByDefault, onSelect, onDecl
       description={<span>{preview}</span>}
       action={
         <IconButton size="sm" label={t('feature.chat.request.decline')} onClick={onDecline}>
-          <X aria-hidden />
+          <XIcon />
         </IconButton>
       }
       selected={selected}

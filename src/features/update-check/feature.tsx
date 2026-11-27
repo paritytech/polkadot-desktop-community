@@ -1,5 +1,4 @@
-import { RefreshCw } from 'lucide-react';
-
+import RefreshCwIcon from '@/shared/assets/images/icons/refresh-cw.svg?jsx';
 import { Sidebar } from '@/shared/components';
 import { createFeature } from '@/shared/feature';
 import { useTranslation } from '@/shared/translation';
@@ -15,7 +14,7 @@ updateCheckFeature.inject(settingsDevelopmentNavSlot, {
     const { t } = useTranslation();
 
     return (
-      <Sidebar.Item icon={<RefreshCw />} to="/settings/development/update-channel">
+      <Sidebar.Item icon={<RefreshCwIcon />} to="/settings/development/update-channel">
         {t('feature.updateCheck.channel.title')}
       </Sidebar.Item>
     );

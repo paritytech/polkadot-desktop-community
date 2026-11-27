@@ -1,10 +1,11 @@
 import { useNavigate } from '@tanstack/react-router';
-import { MessageCircle, MessagesSquare } from 'lucide-react';
 import { type PropsWithChildren, memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useObservable } from 'react-rx';
 import { of } from 'rxjs';
 
-import MaximizeIcon from '@/shared/assets/images/header/maximize.svg?jsx';
+import Maximize2Icon from '@/shared/assets/images/icons/maximize-2.svg?jsx';
+import MessageCircleIcon from '@/shared/assets/images/icons/message-circle.svg?jsx';
+import MessagesSquareIcon from '@/shared/assets/images/icons/messages-square.svg?jsx';
 import { AppIcon, Avatar, DismissOverlay, EmptyState, IconButton, PaneHeader, Popover } from '@/shared/components';
 import { useCloseOnWindowLeave } from '@/shared/hooks';
 import { TEST_IDS } from '@/shared/test-ids';
@@ -169,13 +170,13 @@ const QuickChatPageHeader = ({ session, onBack, onExpand }: QuickChatPageHeaderP
           <Avatar label={sessionName} size="24" />
         ) : (
           <AppIcon size="24" alt="">
-            <MessageCircle className="size-4" />
+            <MessageCircleIcon className="size-4" />
           </AppIcon>
         )
       }
       actions={
         <IconButton data-testid={TEST_IDS.quickChatExpandButton} label={t('feature.chat.viewMore')} onClick={() => onExpand()}>
-          <MaximizeIcon aria-hidden />
+          <Maximize2Icon />
         </IconButton>
       }
       onBack={onBack}
@@ -206,7 +207,7 @@ const ChatList = ({
         <SyncStatusBanner />
         {chatListEntries.length === 0 ? (
           <EmptyState
-            icon={<MessagesSquare />}
+            icon={<MessagesSquareIcon />}
             title={t('feature.chat.noChatsYet')}
             description={t('feature.chat.yourChatsWillAppear')}
           />

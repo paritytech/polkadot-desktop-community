@@ -1,5 +1,4 @@
-import { Link2 } from 'lucide-react';
-
+import Link2Icon from '@/shared/assets/images/icons/link-2.svg?jsx';
 import { Sidebar } from '@/shared/components';
 import { createFeature } from '@/shared/feature';
 import { useTranslation } from '@/shared/translation';
@@ -15,7 +14,7 @@ customChainsFeature.inject(settingsDevelopmentNavSlot, {
     const { t } = useTranslation();
 
     return (
-      <Sidebar.Item icon={<Link2 />} to="/settings/development/custom-chains">
+      <Sidebar.Item icon={<Link2Icon />} to="/settings/development/custom-chains">
         {t('feature.customChains.title')}
       </Sidebar.Item>
     );

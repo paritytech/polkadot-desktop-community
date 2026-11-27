@@ -1,4 +1,4 @@
-import AddToDashboardIcon from '@/shared/assets/images/add-to-dashboard.svg?jsx';
+import Grid2x2PlusIcon from '@/shared/assets/images/icons/grid-2x2-plus.svg?jsx';
 import LogoIcon from '@/shared/assets/images/logo.svg?jsx';
 import { Button } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
@@ -33,7 +33,7 @@ export const EmptyDashboardView = ({ onAddWidget }: EmptyDashboardViewProps) => 
           data-testid={TEST_IDS.dashboardEmptyStateAddWidget}
           onClick={onAddWidget}
         >
-          <AddToDashboardIcon className="size-2.75 shrink-0 -scale-y-100" aria-hidden />
+          <Grid2x2PlusIcon className="size-2.75 shrink-0 -scale-y-100" />
           <span>{addWidgetLabel}</span>
         </Button>
       </section>

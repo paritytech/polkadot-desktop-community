@@ -1,6 +1,8 @@
-import { AlertCircle, CheckCircle, Loader } from 'lucide-react';
 import { type ReactNode, memo } from 'react';
 
+import CircleCheckBigIcon from '@/shared/assets/images/icons/circle-check-big.svg?jsx';
+import CircleExclamationPointIcon from '@/shared/assets/images/icons/circle-exclamation-point.svg?jsx';
+import LoaderIcon from '@/shared/assets/images/icons/loader.svg?jsx';
 import { Button, Dialog } from '@/shared/components';
 import { useTranslation } from '@/shared/translation';
 
@@ -45,7 +47,7 @@ export const UpdateStatusModal = memo(
 
     switch (status) {
       case 'checking':
-        icon = <Loader className="h-8 w-8 animate-spin text-fg-secondary" />;
+        icon = <LoaderIcon className="h-8 w-8 animate-spin text-fg-secondary" />;
         title = t('feature.updateCheck.checking');
         description = t('feature.updateCheck.checkingHint');
         break;
@@ -54,7 +56,7 @@ export const UpdateStatusModal = memo(
         description = t('feature.updateCheck.downloadingHint');
         break;
       case 'up-to-date':
-        icon = <CheckCircle className="h-8 w-8 text-fg-success" />;
+        icon = <CircleCheckBigIcon className="h-8 w-8 text-fg-success" />;
         title = t('feature.updateCheck.upToDate');
         // Omit the version clause until the running version is known, to avoid "Version  installed".
         description = currentVersion
@@ -66,12 +68,12 @@ export const UpdateStatusModal = memo(
         description = t('feature.updateCheck.readyToInstallHint');
         break;
       case 'error':
-        icon = <AlertCircle className="h-8 w-8 text-fg-error" />;
+        icon = <CircleExclamationPointIcon className="h-8 w-8 text-fg-error" />;
         title = t('feature.updateCheck.error');
         description = errorMessage || t('feature.updateCheck.errorHint');
         break;
       case 'unsupported':
-        icon = <AlertCircle className="h-8 w-8 text-fg-secondary" />;
+        icon = <CircleExclamationPointIcon className="h-8 w-8 text-fg-secondary" />;
         title = t('feature.updateCheck.unsupported');
         description = t('feature.updateCheck.unsupportedHint');
         break;

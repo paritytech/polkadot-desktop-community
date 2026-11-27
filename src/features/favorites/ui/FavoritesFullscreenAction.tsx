@@ -1,5 +1,4 @@
-import { Maximize2 } from 'lucide-react';
-
+import Maximize2Icon from '@/shared/assets/images/icons/maximize-2.svg?jsx';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { WidgetTopbarAction } from '@/features/dashboard';
@@ -17,7 +16,7 @@ export const FavoritesFullscreenAction = () => {
       label={t('feature.favorites.openFullscreenAria')}
       onClick={openFavorites}
     >
-      <Maximize2 aria-hidden />
+      <Maximize2Icon />
     </WidgetTopbarAction>
   );
 };

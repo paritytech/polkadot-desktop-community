@@ -1,6 +1,7 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { GlobeIcon, TrashIcon } from 'lucide-react';
 
+import GlobeIcon from '@/shared/assets/images/icons/globe.svg?jsx';
+import TrashIcon from '@/shared/assets/images/icons/trash.svg?jsx';
 import { IconButton } from '../IconButton/IconButton';
 import { SettingsSection } from '../SettingsList/SettingsSection';
 

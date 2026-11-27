@@ -1,6 +1,6 @@
-import { ChevronRight } from 'lucide-react';
 import { type ReactNode } from 'react';
 
+import ChevronRightIcon from '@/shared/assets/images/icons/chevron-right.svg?jsx';
 import { cnTw } from '@/shared/utils';
 
 // `icon`, `description` and `meta` render inside spans (and, in the button shape, inside a <button>): pass phrasing
@@ -63,7 +63,7 @@ export const ListItem = ({
   const trailing = (
     <>
       {meta ? <span className="shrink-0 text-xs text-chrome-muted">{meta}</span> : null}
-      {chevron ? <ChevronRight aria-hidden className="size-4 shrink-0 text-chrome-muted rtl:-scale-x-100" /> : null}
+      {chevron ? <ChevronRightIcon className="size-4 shrink-0 text-chrome-muted rtl:-scale-x-100" /> : null}
     </>
   );
 

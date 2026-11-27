@@ -1,10 +1,13 @@
-import { Check, LayoutDashboard, MoreHorizontal, Trash2 } from 'lucide-react';
 import { type FC, type ReactNode, type SVGProps, useState } from 'react';
 
+import CheckIcon from '@/shared/assets/images/icons/check.svg?jsx';
+import EllipsisIcon from '@/shared/assets/images/icons/ellipsis.svg?jsx';
 import FrameBlockMediumIcon from '@/shared/assets/images/icons/frame-block-medium.svg?jsx';
 import FrameBlockSmallIcon from '@/shared/assets/images/icons/frame-block-small.svg?jsx';
 import FrameBlockTallIcon from '@/shared/assets/images/icons/frame-block-tall.svg?jsx';
 import FrameBlockWideIcon from '@/shared/assets/images/icons/frame-block-wide.svg?jsx';
+import LayoutDashboardIcon from '@/shared/assets/images/icons/layout-dashboard.svg?jsx';
+import TrashIcon from '@/shared/assets/images/icons/trash.svg?jsx';
 import { DropdownMenu } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
@@ -64,7 +67,7 @@ export const WidgetMenu = ({
     <DropdownMenu.Root open={isOpen} onOpenChange={handleOpenChange}>
       <DropdownMenu.Trigger asChild>
         <WidgetTopbarAction label={t('common.action.moreDetails')} data-testid={TEST_IDS.dashboardWidgetMenuTrigger}>
-          <MoreHorizontal aria-hidden />
+          <EllipsisIcon />
         </WidgetTopbarAction>
       </DropdownMenu.Trigger>
       <DropdownMenu.Content align="end">
@@ -88,7 +91,7 @@ export const WidgetMenu = ({
                   >
                     <SizeIcon className="size-4" />
                     <span className="flex-1">{t(labelKey)}</span>
-                    {isActive ? <Check className="size-4" /> : null}
+                    {isActive ? <CheckIcon className="size-4" /> : null}
                   </DropdownMenu.Item>
                 );
               })}
@@ -100,7 +103,7 @@ export const WidgetMenu = ({
               <DropdownMenu.Separator />
 
               <DropdownMenu.Item onClick={onCleanup}>
-                <LayoutDashboard className="size-4" />
+                <LayoutDashboardIcon className="size-4" />
                 <span className="flex-1">{t('feature.dashboard.widgetMenu.cleanup')}</span>
               </DropdownMenu.Item>
             </>
@@ -111,7 +114,7 @@ export const WidgetMenu = ({
           {menuItems}
 
           <DropdownMenu.Item data-testid={TEST_IDS.dashboardWidgetMenuRemove} variant="danger" onClick={onRemove}>
-            <Trash2 className="size-4" />
+            <TrashIcon className="size-4" />
             <span className="flex-1">{removeLabel}</span>
           </DropdownMenu.Item>
         </div>

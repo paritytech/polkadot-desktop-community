@@ -1,8 +1,10 @@
 import { type DragEndEvent, DndContext, PointerSensor, closestCenter, useSensor, useSensors } from '@dnd-kit/core';
 import { SortableContext, arrayMove, rectSortingStrategy } from '@dnd-kit/sortable';
-import { ArrowUpRight, MoreHorizontal, Trash2 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
+import ArrowUpRightIcon from '@/shared/assets/images/icons/arrow-up-right.svg?jsx';
+import EllipsisIcon from '@/shared/assets/images/icons/ellipsis.svg?jsx';
+import TrashIcon from '@/shared/assets/images/icons/trash.svg?jsx';
 import { DropdownMenu, IconButton } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
@@ -86,14 +88,14 @@ const FolderGridItem = ({
               onClick={event => event.stopPropagation()}
               onMouseDown={event => event.stopPropagation()}
             >
-              <MoreHorizontal aria-hidden />
+              <EllipsisIcon />
             </IconButton>
           </DropdownMenu.Trigger>
         </span>
         <DropdownMenu.Content align="end">
           <div className="w-52.5">
             <DropdownMenu.Item variant="danger" onClick={handleRemoveWidget}>
-              <Trash2 className="size-4" />
+              <TrashIcon className="size-4" />
               <span className="flex-1">{removeLabel}</span>
             </DropdownMenu.Item>
           </div>
@@ -115,7 +117,7 @@ const FolderViewMoreTile = ({ label, onClick }: { label: string; onClick: VoidFu
     className="flex h-full w-full cursor-pointer flex-col items-center justify-center gap-1 overflow-hidden rounded-xl border border-stroke-primary bg-bg-surface-container p-2 focus-visible:ring-4 focus-visible:ring-stroke-tertiary/35 focus-visible:ring-offset-0 focus-visible:outline-none"
     onClick={onClick}
   >
-    <ArrowUpRight className="size-7 shrink-0 text-fg-primary" aria-hidden />
+    <ArrowUpRightIcon className="size-7 shrink-0 text-fg-primary" />
     <span className="max-w-full shrink-0 truncate text-xs font-semibold text-fg-primary">{label}</span>
   </button>
 );

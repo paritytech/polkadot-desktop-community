@@ -1,5 +1,4 @@
-import { Plus } from 'lucide-react';
-
+import PlusIcon from '@/shared/assets/images/icons/plus.svg?jsx';
 import { IconButton } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
@@ -28,7 +27,7 @@ export const QuickReactionRow = ({ onSelectEmoji, onOpenFullPicker }: QuickReact
         label={t('feature.chat.moreReactions')}
         onClick={onOpenFullPicker}
       >
-        <Plus />
+        <PlusIcon />
       </IconButton>
     </div>
   );

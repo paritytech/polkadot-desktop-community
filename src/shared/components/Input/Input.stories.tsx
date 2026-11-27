@@ -1,6 +1,7 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { SearchIcon, XIcon } from 'lucide-react';
 
+import SearchIcon from '@/shared/assets/images/icons/search.svg?jsx';
+import XIcon from '@/shared/assets/images/icons/x.svg?jsx';
 import { IconButton } from '../IconButton/IconButton';
 
 import { Input } from './Input';

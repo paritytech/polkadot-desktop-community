@@ -1,5 +1,4 @@
-import { Package } from 'lucide-react';
-
+import PackageIcon from '@/shared/assets/images/icons/package.svg?jsx';
 import { cnTw } from '@/shared/utils';
 import { usePersistedProductById } from '@/domains/product';
 import { ProductIcon } from '@/widgets/ProductIcon';
@@ -41,7 +40,7 @@ export const ProductIdentity = ({ productId, prominent }: Props) => {
       <ProductIcon
         icon={product?.icon}
         className={cnTw('shrink-0 rounded-xs object-cover', iconSize)}
-        fallback={<Package className={cnTw('shrink-0', iconSize)} aria-hidden />}
+        fallback={<PackageIcon className={cnTw('shrink-0', iconSize)} />}
       />
       <span className="min-w-0 truncate">{product?.displayName ?? productId}</span>
     </span>

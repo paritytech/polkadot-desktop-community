@@ -1,6 +1,6 @@
-import { Star } from 'lucide-react';
 import { FormattedMessage } from 'react-intl';
 
+import StarIcon from '@/shared/assets/images/icons/star.svg?jsx';
 import { AppIcon } from '@/shared/components';
 import { createFeature } from '@/shared/feature';
 import { TEST_IDS } from '@/shared/test-ids';
@@ -88,7 +88,7 @@ type FolderPayload = {
 const FOLDER_METADATA: DashboardCardMetadata = {
   icon: (
     <AppIcon size="24" alt="">
-      <Star className="size-4" aria-hidden />
+      <StarIcon className="size-4" />
     </AppIcon>
   ),
   label: <FormattedMessage id="feature.dashboard.favorites.title" />,
@@ -102,7 +102,7 @@ const favoritesAddableEntry: AddableDashboardCard = {
   gridId: FAVORITES_FOLDER_ID,
   displayNameKey: 'feature.dashboard.favorites.title',
   descriptionKey: 'feature.dashboard.addWidget.cards.favorites.description',
-  icon: <Star className="size-full" aria-hidden />,
+  icon: <StarIcon className="size-full" />,
   defaultLayoutRules: FOLDER_LAYOUT_RULES,
   widgetCard: {
     titleKey: 'feature.dashboard.addWidget.cards.favorites.title',

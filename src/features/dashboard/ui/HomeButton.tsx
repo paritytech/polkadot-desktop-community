@@ -1,6 +1,6 @@
 import { useNavigate } from '@tanstack/react-router';
 
-import HomeIcon from '@/shared/assets/images/header/home.svg?jsx';
+import HouseIcon from '@/shared/assets/images/icons/house.svg?jsx';
 import { IconButton } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
@@ -27,7 +27,7 @@ export const HomeButton = () => {
           void navigate({ to: '/dashboard' });
         }}
       >
-        <HomeIcon className="size-4" aria-hidden />
+        <HouseIcon className="size-4" />
       </IconButton>
     </div>
   );

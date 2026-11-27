@@ -1,6 +1,6 @@
-import { MemoryStick } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
+import MemoryStickIcon from '@/shared/assets/images/icons/memory-stick.svg?jsx';
 import PolkadotIcon from '@/shared/assets/images/polkadot-half-logo.svg?jsx';
 import { isElectron } from '@/shared/env';
 import { useRxState } from '@/shared/rxstate';
@@ -53,7 +53,7 @@ const TabRamUsageRow = ({ tabId }: { tabId: string }) => {
   const memory = useTabMemory(tabId);
   return (
     <span className="flex items-center gap-2" data-testid={TEST_IDS.tabHoverRam}>
-      <MemoryStick className="size-4 shrink-0" aria-hidden />
+      <MemoryStickIcon className="size-4 shrink-0" />
       <span className="text-sm">
         {memory === null
           ? t('feature.browser.ramUsageUnavailable')

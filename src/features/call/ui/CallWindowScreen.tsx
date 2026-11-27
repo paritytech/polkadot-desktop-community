@@ -2,9 +2,14 @@
 // IntlProvider; all label strings are English constants below. Replace with
 // react-intl before shipping the calls feature.
 
-import { Mic, MicOff, Phone, PhoneOff, Video, VideoOff } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
+import MicOffIcon from '@/shared/assets/images/icons/mic-off.svg?jsx';
+import MicIcon from '@/shared/assets/images/icons/mic.svg?jsx';
+import PhoneOffIcon from '@/shared/assets/images/icons/phone-off.svg?jsx';
+import PhoneIcon from '@/shared/assets/images/icons/phone.svg?jsx';
+import VideoOffIcon from '@/shared/assets/images/icons/video-off.svg?jsx';
+import VideoIcon from '@/shared/assets/images/icons/video.svg?jsx';
 import {
   type CallDeviceKind,
   type CallDeviceSelection,
@@ -177,8 +182,8 @@ const LiveCall = ({ delivery }: { delivery: CallInitDelivery }) => {
         callTypeLabel={isVideo ? LABELS.incomingVideo : LABELS.incomingAudio}
         acceptLabel={LABELS.accept}
         declineLabel={LABELS.decline}
-        acceptIcon={<Phone size={24} />}
-        declineIcon={<PhoneOff size={24} />}
+        acceptIcon={<PhoneIcon className="size-6" />}
+        declineIcon={<PhoneOffIcon className="size-6" />}
         onAccept={() => controller.accept()}
         onDecline={() => controller.decline()}
       />
@@ -213,9 +218,9 @@ const LiveCall = ({ delivery }: { delivery: CallInitDelivery }) => {
         upgradeRequestTitle={`${launch.peerName} ${LABELS.upgradeRequestSuffix}`}
         upgradeCancelLabel={LABELS.upgradeCancel}
         upgradeConfirmLabel={LABELS.upgradeConfirm}
-        videoIcon={callState.media.cameraEnabled ? <Video size={28} /> : <VideoOff size={28} />}
-        muteIcon={callState.media.microphoneEnabled ? <Mic size={28} /> : <MicOff size={28} />}
-        endIcon={<PhoneOff size={28} />}
+        videoIcon={callState.media.cameraEnabled ? <VideoIcon className="size-7" /> : <VideoOffIcon className="size-7" />}
+        muteIcon={callState.media.microphoneEnabled ? <MicIcon className="size-7" /> : <MicOffIcon className="size-7" />}
+        endIcon={<PhoneOffIcon className="size-7" />}
         outputDeviceId={deviceSelection.outputId}
         settingsLabel={LABELS.settingsGear}
         onToggleCamera={() => controller.toggleCamera(!callState.media.cameraEnabled)}

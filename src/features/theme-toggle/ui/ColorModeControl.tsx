@@ -1,6 +1,8 @@
-import { Monitor, Moon, Sun } from 'lucide-react';
 import { type ComponentType } from 'react';
 
+import MonitorIcon from '@/shared/assets/images/icons/monitor.svg?jsx';
+import MoonIcon from '@/shared/assets/images/icons/moon.svg?jsx';
+import SunIcon from '@/shared/assets/images/icons/sun.svg?jsx';
 import { SegmentedControl } from '@/shared/components';
 import { useTranslation } from '@/shared/translation';
 import { type ThemePreference, useSetThemePreference, useThemePreference } from '@/domains/application';
@@ -8,9 +10,9 @@ import { type ThemePreference, useSetThemePreference, useThemePreference } from 
 type Segment = { value: ThemePreference; labelKey: string; icon: ComponentType<{ className?: string }> };
 
 const SEGMENTS: Segment[] = [
-  { value: 'system', labelKey: 'feature.themeToggle.device', icon: Monitor },
-  { value: 'light', labelKey: 'feature.themeToggle.day', icon: Sun },
-  { value: 'dark', labelKey: 'feature.themeToggle.night', icon: Moon },
+  { value: 'system', labelKey: 'feature.themeToggle.device', icon: MonitorIcon },
+  { value: 'light', labelKey: 'feature.themeToggle.day', icon: SunIcon },
+  { value: 'dark', labelKey: 'feature.themeToggle.night', icon: MoonIcon },
 ];
 
 export const ColorModeControl = () => {

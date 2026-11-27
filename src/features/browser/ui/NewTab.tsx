@@ -1,7 +1,9 @@
 import { useNavigate } from '@tanstack/react-router';
-import { BoxSelect, Check, X } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 
+import CheckIcon from '@/shared/assets/images/icons/check.svg?jsx';
+import SquareDashedIcon from '@/shared/assets/images/icons/square-dashed.svg?jsx';
+import XIcon from '@/shared/assets/images/icons/x.svg?jsx';
 import PolkadotWordmark from '@/shared/assets/images/logo.svg?jsx';
 import { Button, IconButton } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
@@ -183,7 +185,7 @@ const RecentCard = ({ product, onOpen }: RecentCardProps) => {
         <ProductIcon
           icon={product.icon}
           className="size-5"
-          fallback={<BoxSelect className="size-5 text-bg-surface-main" strokeWidth={1.5} />}
+          fallback={<SquareDashedIcon className="size-5 text-bg-surface-main" />}
         />
       </div>
       <div className="flex min-w-0 flex-col items-start">
@@ -208,7 +210,7 @@ const IconSlab = ({ icon, size }: IconSlabProps) => {
       <ProductIcon
         icon={icon}
         className={imgSize}
-        fallback={<BoxSelect className={cnTw('text-bg-surface-main', imgSize)} strokeWidth={1.5} />}
+        fallback={<SquareDashedIcon className={cnTw('text-bg-surface-main', imgSize)} />}
       />
     </div>
   );
@@ -231,13 +233,13 @@ const ClearedToast = ({ secondsLeft, onUndo, onDismiss }: ClearedToastProps) => 
         'duration-200 animate-in fade-in slide-in-from-top-2',
       )}
     >
-      <Check className="size-4 shrink-0 text-fg-success" />
+      <CheckIcon className="size-4 shrink-0 text-fg-success" />
       <div className="flex-1 text-sm text-fg-primary">{t('feature.browser.recentClearedTitle')}</div>
       <Button variant="ghost" size="sm" data-testid={TEST_IDS.newTabRecentUndo} onClick={onUndo}>
         {t('feature.browser.undoLabel', { seconds: secondsLeft })}
       </Button>
       <IconButton size="sm" label={t('common.aria.close')} onClick={onDismiss}>
-        <X />
+        <XIcon />
       </IconButton>
     </div>
   );

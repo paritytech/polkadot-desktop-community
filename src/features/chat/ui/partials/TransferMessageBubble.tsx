@@ -1,6 +1,7 @@
-import { ArrowDown, ArrowUp } from 'lucide-react';
 import { type MouseEvent } from 'react';
 
+import ArrowDownIcon from '@/shared/assets/images/icons/arrow-down.svg?jsx';
+import ArrowUpIcon from '@/shared/assets/images/icons/arrow-up.svg?jsx';
 import { useTranslation } from '@/shared/translation';
 import { amountToString, cnTw } from '@/shared/utils';
 import { type ChatMessage, type TransferContent } from '@/domains/chat';
@@ -26,7 +27,7 @@ export const TransferMessageBubble = ({ message, content, isMe, isSeen = false, 
 
   const formattedAmount = amountToString(content.amount, NATIVE_PRECISION);
   const headerLabel = isMe ? t('feature.chat.transfer.youSent') : t('feature.chat.transfer.received');
-  const DirectionIcon = isMe ? ArrowUp : ArrowDown;
+  const DirectionIcon = isMe ? ArrowUpIcon : ArrowDownIcon;
   const directionLabel = isMe ? t('feature.chat.transfer.sent') : t('feature.chat.transfer.received');
 
   return (

@@ -1,5 +1,8 @@
-import { FileText, Image, Music, Video, X } from 'lucide-react';
-
+import EighthNotesIcon from '@/shared/assets/images/icons/eighth-notes.svg?jsx';
+import FileTextIcon from '@/shared/assets/images/icons/file-text.svg?jsx';
+import ImageIcon from '@/shared/assets/images/icons/image.svg?jsx';
+import VideoIcon from '@/shared/assets/images/icons/video.svg?jsx';
+import XIcon from '@/shared/assets/images/icons/x.svg?jsx';
 import { IconButton } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
 import { formatBytes } from '@/shared/utils';
@@ -9,11 +12,11 @@ import { type DraftAttachment } from '../types';
 
 // Fallback when there is no preview to show (audio and generic files always;
 // image/video only when the loader produced no preview URL).
-const categoryIcon: Record<AttachmentCategory, typeof FileText> = {
-  image: Image,
-  audio: Music,
-  video: Video,
-  file: FileText,
+const categoryIcon: Record<AttachmentCategory, typeof FileTextIcon> = {
+  image: ImageIcon,
+  audio: EighthNotesIcon,
+  video: VideoIcon,
+  file: FileTextIcon,
 };
 
 type Props = {
@@ -43,7 +46,7 @@ export const AttachmentChip = ({ attachment, onRemove, removeLabel }: Props) => 
       <span className="shrink-0 text-xs text-fg-secondary">{formatBytes(attachment.sizeBytes)}</span>
       {onRemove && (
         <IconButton size="sm" label={removeLabel} onClick={() => onRemove(attachment.id)}>
-          <X aria-hidden />
+          <XIcon />
         </IconButton>
       )}
     </div>

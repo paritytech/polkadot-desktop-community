@@ -1,5 +1,4 @@
-import { MessagesSquare } from 'lucide-react';
-
+import MessagesSquareIcon from '@/shared/assets/images/icons/messages-square.svg?jsx';
 import { EmptyState } from '@/shared/components';
 import { useTranslation } from '@/shared/translation';
 import { type ChatSession } from '@/domains/chat';
@@ -30,7 +29,7 @@ export const RoomList = ({ sessions, selected, onSelect, hideEmpty, visibleCount
     return (
       <div className="flex h-full items-center justify-center">
         <EmptyState
-          icon={<MessagesSquare />}
+          icon={<MessagesSquareIcon />}
           title={t('feature.chat.noChatsYet')}
           description={t('feature.chat.yourChatsWillAppear')}
         />

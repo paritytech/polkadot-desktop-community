@@ -1,6 +1,9 @@
-import { Grid2x2, Import, MessageCircle, Scan } from 'lucide-react';
 import { type FC, type SVGProps } from 'react';
 
+import Grid2x2Icon from '@/shared/assets/images/icons/grid-2x2.svg?jsx';
+import ImportIcon from '@/shared/assets/images/icons/import.svg?jsx';
+import MessageCircleIcon from '@/shared/assets/images/icons/message-circle.svg?jsx';
+import ScanIcon from '@/shared/assets/images/icons/scan.svg?jsx';
 import { Button, ListItem, SettingsSection } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
@@ -19,9 +22,9 @@ function showVersion(version: SemVer) {
 // Per-modality glyph for the update rows — mirrors the Figma design (app = scan
 // viewfinder, widget = grid, background services = chat bubble).
 const MODALITY_ICON: Record<ExecutableKind, FC<SVGProps<SVGSVGElement>>> = {
-  app: Scan,
-  widget: Grid2x2,
-  worker: MessageCircle,
+  app: ScanIcon,
+  widget: Grid2x2Icon,
+  worker: MessageCircleIcon,
 };
 
 type UpdateRowProps = {
@@ -81,7 +84,7 @@ export const OfflineAccessSection = ({ productId }: Props) => {
   return (
     <SettingsSection layout="list">
       <ListItem
-        icon={<Import />}
+        icon={<ImportIcon />}
         label={t('feature.offlineAccess.section.title')}
         description={t('feature.offlineAccess.section.description')}
         action={

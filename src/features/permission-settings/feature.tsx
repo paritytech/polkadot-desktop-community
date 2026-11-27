@@ -1,5 +1,4 @@
-import { Shield } from 'lucide-react';
-
+import ShieldIcon from '@/shared/assets/images/icons/shield.svg?jsx';
 import { Sidebar } from '@/shared/components';
 import { createFeature } from '@/shared/feature';
 import { useTranslation } from '@/shared/translation';
@@ -12,7 +11,7 @@ export const permissionSettingsFeature = createFeature({
 const PermissionsNavItem = () => {
   const { t } = useTranslation();
   return (
-    <Sidebar.Item icon={<Shield size={16} />} to="/settings/privacy/permissions">
+    <Sidebar.Item icon={<ShieldIcon className="size-4" />} to="/settings/privacy/permissions">
       {t('feature.permissionSettings.navItem')}
     </Sidebar.Item>
   );

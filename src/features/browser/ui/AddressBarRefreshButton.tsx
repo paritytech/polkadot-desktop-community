@@ -1,4 +1,4 @@
-import RotateCwIcon from '@/shared/assets/images/header/rotate-cw.svg?jsx';
+import RotateCwIcon from '@/shared/assets/images/icons/rotate-cw.svg?jsx';
 import { IconButton } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
@@ -27,7 +27,7 @@ export const AddressBarRefreshButton = ({ product }: Props) => {
           void onProductRefreshRequestedSideEffect.apply({ identifier: product.baseName });
         }}
       >
-        <RotateCwIcon className={cnTw('size-3.75', isRefreshing && 'animate-spin')} aria-hidden />
+        <RotateCwIcon className={cnTw('size-3.75', isRefreshing && 'animate-spin')} />
       </IconButton>
     </span>
   );

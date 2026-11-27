@@ -1,7 +1,7 @@
 import { useLocation } from '@tanstack/react-router';
-import { LayoutDashboard } from 'lucide-react';
 
-import ChatBubbleOvalLeftIcon from '@/shared/assets/images/header/chat-bubble-oval-left.svg?jsx';
+import LayoutDashboardIcon from '@/shared/assets/images/icons/layout-dashboard.svg?jsx';
+import MessageCircleIcon from '@/shared/assets/images/icons/message-circle.svg?jsx';
 import { IconButton } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
@@ -29,7 +29,7 @@ export const ChatAddToDashboardButton = () => {
           void productAddToDashboardSideEffect.apply({ productId: CHAT });
         }}
       >
-        <LayoutDashboard aria-hidden />
+        <LayoutDashboardIcon />
       </IconButton>
     </span>
   );
@@ -38,4 +38,4 @@ export const ChatAddToDashboardButton = () => {
 // Leading address-bar identity icon for the chat SPA. Chat is native (no product
 // row → no favicon), so it supplies its own filled chat bubble, tinted with the
 // URL text color so it flips with the theme (dark in light, light in dark).
-export const ChatAddressBarIcon = () => <ChatBubbleOvalLeftIcon className="size-4 text-chrome-text" aria-hidden />;
+export const ChatAddressBarIcon = () => <MessageCircleIcon className="size-4 text-chrome-text" />;

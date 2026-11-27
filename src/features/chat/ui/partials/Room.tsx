@@ -1,8 +1,12 @@
-import { Ban, Ellipsis, LogOut, Search, ShieldOff } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useObservable } from 'react-rx';
 import { of } from 'rxjs';
 
+import BanIcon from '@/shared/assets/images/icons/ban.svg?jsx';
+import EllipsisIcon from '@/shared/assets/images/icons/ellipsis.svg?jsx';
+import LogOutIcon from '@/shared/assets/images/icons/log-out.svg?jsx';
+import SearchIcon from '@/shared/assets/images/icons/search.svg?jsx';
+import ShieldOffIcon from '@/shared/assets/images/icons/shield-off.svg?jsx';
 import { Avatar, Button, DropdownMenu, IconButton, PaneHeader } from '@/shared/components';
 import { Slot } from '@/shared/di';
 import { TEST_IDS } from '@/shared/test-ids';
@@ -266,23 +270,23 @@ export const Room = ({ session, initialSearch, onDeleted }: ChatConversationView
             <>
               <Slot id={chatRoomHeaderActionsSlot} props={{ session }} />
               <IconButton label={t('feature.chat.search')} onClick={handleOpenSearch}>
-                <Search />
+                <SearchIcon />
               </IconButton>
               <DropdownMenu.Root>
                 <DropdownMenu.Trigger asChild>
                   <IconButton data-testid={TEST_IDS.chatRoomHeaderMenuTrigger} label={t('feature.chat.roomActions')}>
-                    <Ellipsis />
+                    <EllipsisIcon />
                   </IconButton>
                 </DropdownMenu.Trigger>
                 <DropdownMenu.Content align="end">
                   {canBlock && (
                     <DropdownMenu.Item onClick={handleToggleBlocked}>
-                      {isBlocked ? <ShieldOff /> : <Ban />}
+                      {isBlocked ? <ShieldOffIcon /> : <BanIcon />}
                       {isBlocked ? t('feature.chat.unblockUser') : t('feature.chat.blockUser')}
                     </DropdownMenu.Item>
                   )}
                   <DropdownMenu.Item data-testid={TEST_IDS.chatRoomHeaderMenuDelete} variant="danger" onClick={handleDelete}>
-                    <LogOut />
+                    <LogOutIcon />
                     {t('feature.chat.leaveChat')}
                   </DropdownMenu.Item>
                 </DropdownMenu.Content>

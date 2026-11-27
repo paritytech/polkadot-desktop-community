@@ -1,5 +1,4 @@
-import { SearchX } from 'lucide-react';
-
+import SearchXIcon from '@/shared/assets/images/icons/search-x.svg?jsx';
 import { Avatar, EmptyState, ListItem } from '@/shared/components';
 import { useTranslation } from '@/shared/translation';
 import { type ChatMessage, chatMessageService } from '@/domains/chat';
@@ -19,7 +18,7 @@ export const ChatSearchResults = ({ query, results, activeMessageId, peerName, c
   const { t } = useTranslation();
 
   if (results.length === 0) {
-    return <EmptyState icon={<SearchX />} title={t('feature.chat.inChatSearch.noMatches')} />;
+    return <EmptyState icon={<SearchXIcon />} title={t('feature.chat.inChatSearch.noMatches')} />;
   }
 
   return (

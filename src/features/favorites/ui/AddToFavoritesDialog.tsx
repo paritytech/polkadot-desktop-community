@@ -1,7 +1,13 @@
-import { CircleAlert, LayoutGrid, RotateCw, Search, SearchX, Star, StarOff } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 
+import CircleExclamationPointIcon from '@/shared/assets/images/icons/circle-exclamation-point.svg?jsx';
+import LayoutGridIcon from '@/shared/assets/images/icons/layout-grid.svg?jsx';
+import RotateCwIcon from '@/shared/assets/images/icons/rotate-cw.svg?jsx';
+import SearchXIcon from '@/shared/assets/images/icons/search-x.svg?jsx';
+import SearchIcon from '@/shared/assets/images/icons/search.svg?jsx';
+import StarOffIcon from '@/shared/assets/images/icons/star-off.svg?jsx';
+import StarIcon from '@/shared/assets/images/icons/star.svg?jsx';
 import { Button, Dialog, EmptyState, Input, Spinner } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
@@ -84,7 +90,7 @@ export const AddToFavoritesDialog = ({ isOpen, onClose }: Props) => {
 
         <div className="shrink-0">
           <Input
-            leading={<Search />}
+            leading={<SearchIcon />}
             type="search"
             data-testid={TEST_IDS.addToFavoritesSearchInput}
             value={query}
@@ -109,7 +115,7 @@ export const AddToFavoritesDialog = ({ isOpen, onClose }: Props) => {
           ) : error || tldError ? (
             <EmptyState
               testId={TEST_IDS.addToFavoritesError}
-              icon={<CircleAlert aria-hidden />}
+              icon={<CircleExclamationPointIcon />}
               title={<FormattedMessage id="feature.favorites.addDialog.error.title" />}
               action={
                 <Button
@@ -120,7 +126,7 @@ export const AddToFavoritesDialog = ({ isOpen, onClose }: Props) => {
                     refreshTld();
                   }}
                 >
-                  <RotateCw className="size-4" aria-hidden />
+                  <RotateCwIcon className="size-4" />
                   <FormattedMessage id="feature.favorites.addDialog.error.retry" />
                 </Button>
               }
@@ -129,14 +135,14 @@ export const AddToFavoritesDialog = ({ isOpen, onClose }: Props) => {
             hasQuery ? (
               <EmptyState
                 testId={TEST_IDS.addToFavoritesNoResults}
-                icon={<SearchX aria-hidden />}
+                icon={<SearchXIcon />}
                 title={<FormattedMessage id="feature.favorites.addDialog.noResults.title" />}
                 description={<FormattedMessage id="feature.favorites.addDialog.noResults.description" />}
               />
             ) : (
               <EmptyState
                 testId={TEST_IDS.addToFavoritesNothingToAdd}
-                icon={<LayoutGrid aria-hidden />}
+                icon={<LayoutGridIcon />}
                 title={<FormattedMessage id="feature.favorites.addDialog.nothingToAdd.title" />}
                 description={<FormattedMessage id="feature.favorites.addDialog.nothingToAdd.description" />}
               />
@@ -164,7 +170,7 @@ export const AddToFavoritesDialog = ({ isOpen, onClose }: Props) => {
                       >
                         {/* The button is revealed on hover and toggles membership, so it shows the ACTION it
                             performs — a star to add, a crossed star to remove — not the current state. */}
-                        {isFavorite ? <StarOff className="size-4" aria-hidden /> : <Star className="size-4" aria-hidden />}
+                        {isFavorite ? <StarOffIcon className="size-4" /> : <StarIcon className="size-4" />}
                       </button>
                     }
                   />

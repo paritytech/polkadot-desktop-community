@@ -1,6 +1,6 @@
-import { MessageCircle } from 'lucide-react';
 import { useCallback } from 'react';
 
+import MessageCircleIcon from '@/shared/assets/images/icons/message-circle.svg?jsx';
 import { toast } from '@/shared/components';
 import { useTranslation } from '@/shared/translation';
 import { useProductRooms } from '@/domains/chat';
@@ -55,7 +55,7 @@ export const ProceedInChatMenuItem = ({ productId, closeMenu }: Props) => {
 
   return (
     <MenuItem
-      icon={<MessageCircle className="size-4" aria-hidden />}
+      icon={<MessageCircleIcon className="size-4" />}
       label={t('feature.chat.proceedInChat.menuItem')}
       onSelect={handleSelect}
     />

@@ -1,6 +1,8 @@
-import { Check, Copy, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
+import CheckIcon from '@/shared/assets/images/icons/check.svg?jsx';
+import CopyIcon from '@/shared/assets/images/icons/copy.svg?jsx';
+import XIcon from '@/shared/assets/images/icons/x.svg?jsx';
 import { useTranslation } from '@/shared/translation';
 import { IconButton } from '../IconButton/IconButton';
 
@@ -38,9 +40,9 @@ export const CopyButton = ({ value, label, disabled }: CopyButtonProps) => {
   };
 
   const feedback = {
-    idle: { label, icon: <Copy aria-hidden className="size-4" /> },
-    copied: { label: t('common.action.copied'), icon: <Check aria-hidden className="size-4" /> },
-    failed: { label: t('common.action.copyFailed'), icon: <X aria-hidden className="size-4" /> },
+    idle: { label, icon: <CopyIcon className="size-4" /> },
+    copied: { label: t('common.action.copied'), icon: <CheckIcon className="size-4" /> },
+    failed: { label: t('common.action.copyFailed'), icon: <XIcon className="size-4" /> },
   }[status];
 
   return (

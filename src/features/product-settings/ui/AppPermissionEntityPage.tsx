@@ -1,6 +1,7 @@
-import { Grid2X2, Link2 } from 'lucide-react';
 import { type ReactNode, useState } from 'react';
 
+import Grid2x2Icon from '@/shared/assets/images/icons/grid-2x2.svg?jsx';
+import Link2Icon from '@/shared/assets/images/icons/link-2.svg?jsx';
 import { Button, ListItem, SettingsList, SettingsSection } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
@@ -42,7 +43,7 @@ export const AppPermissionEntityPage = ({ productId, permissionId, onBack }: Pro
   const permissionLabel = isAliasPermission ? t('feature.productSettings.aliasPermission.label') : t(meta?.labelKey ?? '');
   const productName = product?.displayName ?? productId;
   const hasAliasContexts = accountAccess.length > 0;
-  const headerIcon = isAliasPermission ? <Link2 size={20} /> : meta?.icon;
+  const headerIcon = isAliasPermission ? <Link2Icon className="size-5" /> : meta?.icon;
   const title = t('feature.productSettings.appPermission.title', { productName, permission: permissionLabel });
   const description = isAliasPermission
     ? t('feature.productSettings.aliasPermission.description')
@@ -107,7 +108,7 @@ export const AppPermissionEntityPage = ({ productId, permissionId, onBack }: Pro
                   className="size-full object-cover"
                   fallback={
                     <div className="flex size-full items-center justify-center bg-bg-illustration-dark text-fg-primary-inverted">
-                      <Grid2X2 size={24} />
+                      <Grid2x2Icon className="size-6" />
                     </div>
                   }
                 />
@@ -150,7 +151,7 @@ export const AppPermissionEntityPage = ({ productId, permissionId, onBack }: Pro
               <PermissionEntry
                 label={t('feature.productSettings.aliasPermission.label')}
                 description={description}
-                icon={<Link2 />}
+                icon={<Link2Icon />}
                 status={accountAccessStatus}
                 onStatusChange={setEveryAccountAccessStatus}
               />
@@ -160,7 +161,7 @@ export const AppPermissionEntityPage = ({ productId, permissionId, onBack }: Pro
               <PermissionNavigationEntry
                 label={t('feature.productSettings.aliasPermission.contextsLabel')}
                 description={t('feature.productSettings.aliasPermission.contextsDescription')}
-                icon={<Link2 />}
+                icon={<Link2Icon />}
                 noDomainsTitle={t('feature.productSettings.aliasPermission.noContextsRequested')}
                 disabled={!hasAliasContexts}
                 onClick={() => setAliasContextsDialogOpen(true)}

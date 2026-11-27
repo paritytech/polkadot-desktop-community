@@ -1,6 +1,6 @@
-import { ChevronLeft } from 'lucide-react';
 import { type PropsWithChildren, type ReactNode } from 'react';
 
+import ChevronLeftIcon from '@/shared/assets/images/icons/chevron-left.svg?jsx';
 import { useTranslation } from '@/shared/translation';
 import { cnTw } from '@/shared/utils';
 import { IconButton } from '../IconButton/IconButton';
@@ -29,7 +29,7 @@ export const PaneHeader = ({ icon, subtitle, onBack, variant = 'page', actions, 
     >
       {onBack ? (
         <IconButton label={t('common.action.back')} onClick={onBack}>
-          <ChevronLeft />
+          <ChevronLeftIcon className="rtl:-scale-x-100" />
         </IconButton>
       ) : null}
       {icon}

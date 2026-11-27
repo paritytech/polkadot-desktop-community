@@ -1,5 +1,4 @@
-import { FileDown } from 'lucide-react';
-
+import FileDownIcon from '@/shared/assets/images/icons/file-down.svg?jsx';
 import { TEST_IDS } from '@/shared/test-ids';
 import { cnTw, formatBytes } from '@/shared/utils';
 import { type RankedCandidate } from '@/domains/input-routing';
@@ -154,7 +153,7 @@ const CandidateChunk = ({ candidate, first, last, onSelect }: ChunkProps) => {
 
       {content.type === 'file' && (
         <span className="flex items-center gap-1 text-sm text-fg-primary">
-          <FileDown className="size-3.5 shrink-0 text-fg-secondary" aria-hidden />
+          <FileDownIcon className="size-3.5 shrink-0 text-fg-secondary" />
           {content.file.fileName}
           <span className="text-xs text-fg-secondary">{formatBytes(content.file.sizeBytes)}</span>
         </span>

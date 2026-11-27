@@ -1,4 +1,4 @@
-import SettingsIcon from '@/shared/assets/images/header/cog-8-tooth.svg?jsx';
+import SettingsIcon from '@/shared/assets/images/icons/settings.svg?jsx';
 import { TabChip } from '@/shared/components';
 import { useTranslation } from '@/shared/translation';
 
@@ -6,5 +6,5 @@ type Props = { isActive: boolean };
 
 export const SettingsTabContent = ({ isActive }: Props) => {
   const { t } = useTranslation();
-  return <TabChip icon={<SettingsIcon aria-hidden />} isActive={isActive} label={t('feature.settings.title')} />;
+  return <TabChip icon={<SettingsIcon />} isActive={isActive} label={t('feature.settings.title')} />;
 };

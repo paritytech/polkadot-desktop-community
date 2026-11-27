@@ -1,5 +1,5 @@
-import { ChevronLeft, ChevronRight } from 'lucide-react';
-
+import ChevronLeftIcon from '@/shared/assets/images/icons/chevron-left.svg?jsx';
+import ChevronRightIcon from '@/shared/assets/images/icons/chevron-right.svg?jsx';
 import { TEST_IDS } from '@/shared/test-ids';
 import { cnTw } from '@/shared/utils';
 import { type SwipeIndicatorState } from '../types';
@@ -20,7 +20,7 @@ export const SwipeNavigationIndicator = ({ indicator }: Props) => {
   const edge = direction === 'back' ? 'left' : 'right';
   const travel = -HIDDEN_OFFSET + (HIDDEN_OFFSET + RESTING_INSET) * progress;
   const scale = MIN_SCALE + (1 - MIN_SCALE) * progress;
-  const Icon = direction === 'back' ? ChevronLeft : ChevronRight;
+  const Icon = direction === 'back' ? ChevronLeftIcon : ChevronRightIcon;
 
   return (
     <div
@@ -40,7 +40,11 @@ export const SwipeNavigationIndicator = ({ indicator }: Props) => {
       }}
     >
       <Icon
-        className={cnTw('size-5 transition-colors duration-100', complete ? 'text-fg-primary-inverted' : 'text-fg-secondary')}
+        className={cnTw(
+          'rtl:-scale-x-100',
+          'size-5 transition-colors duration-100',
+          complete ? 'text-fg-primary-inverted' : 'text-fg-secondary',
+        )}
       />
     </div>
   );

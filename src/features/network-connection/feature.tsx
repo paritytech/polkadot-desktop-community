@@ -1,5 +1,4 @@
-import { Globe } from 'lucide-react';
-
+import GlobeIcon from '@/shared/assets/images/icons/globe.svg?jsx';
 import { Sidebar } from '@/shared/components';
 import { createFeature } from '@/shared/feature';
 import { useTranslation } from '@/shared/translation';
@@ -22,7 +21,7 @@ networkConnectionFeature.inject(settingsPreferencesNavSlot, {
     const { t } = useTranslation();
 
     return (
-      <Sidebar.Item icon={<Globe />} to="/settings/network">
+      <Sidebar.Item icon={<GlobeIcon />} to="/settings/network">
         {t('feature.networkConnection.title')}
       </Sidebar.Item>
     );

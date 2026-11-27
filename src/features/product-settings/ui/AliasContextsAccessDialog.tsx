@@ -1,5 +1,4 @@
-import { Link2 } from 'lucide-react';
-
+import Link2Icon from '@/shared/assets/images/icons/link-2.svg?jsx';
 import { useTranslation } from '@/shared/translation';
 import { type GrantedAccountAccess, type PermissionStatus } from '@/domains/product';
 
@@ -27,7 +26,7 @@ export const AliasContextsAccessDialog = ({ productName, open, accountAccess, on
     <PermissionEntriesDialog
       open={open}
       title={t('feature.productSettings.aliasPermission.dialogTitle', { productName })}
-      icon={<Link2 size={20} />}
+      icon={<Link2Icon className="size-5" />}
       entries={entries}
       onOpenChange={onOpenChange}
       onStatusChange={onStatusChange}

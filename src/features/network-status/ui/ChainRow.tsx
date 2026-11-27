@@ -1,6 +1,6 @@
-import { ChevronDown } from 'lucide-react';
 import { type FC, useId, useState } from 'react';
 
+import ChevronDownIcon from '@/shared/assets/images/icons/chevron-down.svg?jsx';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { cnTw } from '@/shared/utils';
@@ -110,8 +110,7 @@ export const ChainRow: FC<Props> = ({ chain, health }) => {
             {translateStatus(t, line.text)}
           </span>
         </span>
-        <ChevronDown
-          aria-hidden
+        <ChevronDownIcon
           className={cnTw('size-3.5 text-chrome-muted transition-[rotate] duration-260 ease-chrome', open && 'rotate-180')}
         />
       </button>

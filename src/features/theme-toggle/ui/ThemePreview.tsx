@@ -1,6 +1,6 @@
-import { Check } from 'lucide-react';
 import { type PropsWithChildren } from 'react';
 
+import CheckIcon from '@/shared/assets/images/icons/check.svg?jsx';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 
@@ -10,7 +10,7 @@ const OutgoingBubble = ({ time, children }: PropsWithChildren<{ time: string }>)
       <span className="text-sm text-fg-primary-inverted">{children}</span>
       <span className="flex shrink-0 items-center gap-0.5 pb-0.5 text-2xs font-medium text-fg-primary-inverted/60">
         {time}
-        <Check className="size-3" />
+        <CheckIcon className="size-3" />
       </span>
     </div>
   </div>

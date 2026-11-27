@@ -1,5 +1,5 @@
-import { FileText, X } from 'lucide-react';
-
+import FileTextIcon from '@/shared/assets/images/icons/file-text.svg?jsx';
+import XIcon from '@/shared/assets/images/icons/x.svg?jsx';
 import { useTranslation } from '@/shared/translation';
 
 export type SelectedAttachment = {
@@ -32,7 +32,7 @@ export const AttachmentPreview = ({ attachments, onRemove }: Props) => {
             <img src={attachment.previewUrl} alt={attachment.file.name} className="size-16 rounded-lg object-cover" />
           ) : (
             <div className="flex size-16 flex-col items-center justify-center gap-1 rounded-xl bg-bg-surface-nested">
-              <FileText className="size-5 text-fg-tertiary" />
+              <FileTextIcon className="size-5 text-fg-tertiary" />
               <span className="max-w-14 truncate text-2xs font-medium text-fg-tertiary">
                 {formatFileSize(attachment.file.size)}
               </span>
@@ -46,7 +46,7 @@ export const AttachmentPreview = ({ attachments, onRemove }: Props) => {
               className="flex size-control-sm items-center justify-center rounded-full bg-bg-surface-container-inverted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-chrome-focus"
               onClick={() => onRemove(attachment.id)}
             >
-              <X className="size-3 text-fg-primary-inverted" />
+              <XIcon className="size-3 text-fg-primary-inverted" />
             </button>
           </span>
         </div>

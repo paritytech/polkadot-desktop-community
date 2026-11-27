@@ -1,5 +1,4 @@
-import { Palette } from 'lucide-react';
-
+import PaletteIcon from '@/shared/assets/images/icons/palette.svg?jsx';
 import { Sidebar } from '@/shared/components';
 import { createFeature } from '@/shared/feature';
 import { useTranslation } from '@/shared/translation';
@@ -14,7 +13,7 @@ themeToggleFeature.inject(settingsPreferencesNavSlot, {
   render: () => {
     const { t } = useTranslation();
     return (
-      <Sidebar.Item icon={<Palette />} to="/settings/appearance">
+      <Sidebar.Item icon={<PaletteIcon />} to="/settings/appearance">
         {t('feature.themeToggle.title')}
       </Sidebar.Item>
     );

@@ -1,7 +1,8 @@
-import { Maximize2, MessageCircle } from 'lucide-react';
 import { FormattedMessage } from 'react-intl';
 
 import LastChatsIcon from '@/shared/assets/images/header/last-chats.svg?jsx';
+import Maximize2Icon from '@/shared/assets/images/icons/maximize-2.svg?jsx';
+import MessageCircleIcon from '@/shared/assets/images/icons/message-circle.svg?jsx';
 import { Sidebar } from '@/shared/components';
 import { createFeature } from '@/shared/feature';
 import { TEST_IDS } from '@/shared/test-ids';
@@ -39,7 +40,7 @@ chatFeature.inject(settingsPreferencesNavSlot, {
     const { t } = useTranslation();
 
     return (
-      <Sidebar.Item icon={<MessageCircle />} to="/settings/chats">
+      <Sidebar.Item icon={<MessageCircleIcon />} to="/settings/chats">
         {t('feature.chat.settings.title')}
       </Sidebar.Item>
     );
@@ -62,7 +63,7 @@ chatFeature.inject(resolveAddressBarProductIconTransformer, ({ productId }) =>
 const CHAT_TOPBAR_ICON = <LastChatsIcon className="size-6 dark:invert" aria-hidden />;
 
 /** Icon slot content for add-widget sidebar/modal — parent components constrain size. */
-const CHAT_ADD_WIDGET_ICON = <MessageCircle className="size-full" aria-hidden />;
+const CHAT_ADD_WIDGET_ICON = <MessageCircleIcon className="size-full" />;
 const CHAT_LABEL = <FormattedMessage id="feature.chat.widgetTitle" />;
 
 const chatAddableEntry: AddableDashboardCard = {
@@ -97,7 +98,7 @@ const ChatFullscreenAction = () => {
       label={t('common.aria.openFullscreen')}
       onClick={openChatTab}
     >
-      <Maximize2 aria-hidden />
+      <Maximize2Icon />
     </WidgetTopbarAction>
   );
 };

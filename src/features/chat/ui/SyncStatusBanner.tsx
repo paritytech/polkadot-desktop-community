@@ -1,8 +1,7 @@
-import { RefreshCw } from 'lucide-react';
-
-import AlertCircleIcon from '@/shared/assets/images/chat/alert-circle.svg?jsx';
-import DevicePhoneMobileIcon from '@/shared/assets/images/chat/device-phone-mobile.svg?jsx';
-import DevicePhoneUnsyncIcon from '@/shared/assets/images/chat/device-phone-unsync.svg?jsx';
+import CircleExclamationPointIcon from '@/shared/assets/images/icons/circle-exclamation-point.svg?jsx';
+import RefreshCwIcon from '@/shared/assets/images/icons/refresh-cw.svg?jsx';
+import SmartphoneOffIcon from '@/shared/assets/images/icons/smartphone-off.svg?jsx';
+import SmartphoneIcon from '@/shared/assets/images/icons/smartphone.svg?jsx';
 import { isElectron } from '@/shared/env';
 import { FEATURE_FLAGS } from '@/shared/featureFlags';
 import { TEST_IDS } from '@/shared/test-ids';
@@ -46,18 +45,18 @@ const bannerCopy: Record<RenderedStatus, BannerCopy> = {
 
 const SyncStatusIcon = ({ status }: { status: RenderedStatus }) => {
   if (status === 'syncing') {
-    return <RefreshCw aria-hidden className="size-4 shrink-0 animate-spin text-fg-primary" />;
+    return <RefreshCwIcon className="size-4 shrink-0 animate-spin text-fg-primary" />;
   }
 
   if (status === 'error') {
-    return <AlertCircleIcon aria-hidden className="size-4 shrink-0 text-fg-primary" />;
+    return <CircleExclamationPointIcon className="size-4 shrink-0 text-fg-primary" />;
   }
 
   if (status === 'synced') {
-    return <DevicePhoneMobileIcon aria-hidden className="size-4 shrink-0 text-fg-primary" />;
+    return <SmartphoneIcon className="size-4 shrink-0 text-fg-primary" />;
   }
 
-  return <DevicePhoneUnsyncIcon aria-hidden className="size-4 shrink-0 text-fg-primary" />;
+  return <SmartphoneOffIcon className="size-4 shrink-0 text-fg-primary" />;
 };
 
 export const SyncStatusBanner = () => {

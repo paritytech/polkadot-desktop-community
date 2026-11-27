@@ -1,6 +1,6 @@
-import { X } from 'lucide-react';
 import { type ReactNode } from 'react';
 
+import XIcon from '@/shared/assets/images/icons/x.svg?jsx';
 import { IconButton } from '@/shared/components';
 import { useTranslation } from '@/shared/translation';
 import { cnTw } from '@/shared/utils';
@@ -33,7 +33,7 @@ export const QuotedMessage = ({ title, text, media, tone = 'default', testId, on
       </div>
       {onDismiss ? (
         <IconButton size="sm" label={t('common.aria.close')} onClick={onDismiss}>
-          <X />
+          <XIcon />
         </IconButton>
       ) : null}
     </div>

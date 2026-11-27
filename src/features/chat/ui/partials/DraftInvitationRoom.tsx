@@ -1,6 +1,7 @@
-import { MessageCircle, Trash2 } from 'lucide-react';
 import { useRef } from 'react';
 
+import MessageCircleIcon from '@/shared/assets/images/icons/message-circle.svg?jsx';
+import TrashIcon from '@/shared/assets/images/icons/trash.svg?jsx';
 import { EmptyState } from '@/shared/components';
 import { useTranslation } from '@/shared/translation';
 import { chatService } from '../../service';
@@ -26,13 +27,13 @@ export const DraftInvitationRoom = ({ name, onSend, onCancel, sendError }: Draft
       <RoomPane>
         <RequestRoomHeader
           name={displayName}
-          actionIcon={<Trash2 />}
+          actionIcon={<TrashIcon />}
           actionLabel={t('feature.chat.leaveChat')}
           onAction={onCancel}
         />
 
         <EmptyState
-          icon={<MessageCircle />}
+          icon={<MessageCircleIcon />}
           title={t('feature.chat.request.inviteTitle', { name: displayName })}
           description={t('feature.chat.request.inviteHint')}
         />

@@ -1,5 +1,4 @@
-import { LayoutDashboard } from 'lucide-react';
-
+import LayoutDashboardIcon from '@/shared/assets/images/icons/layout-dashboard.svg?jsx';
 import { useTranslation } from '@/shared/translation';
 import { openAddToDashboardDialog } from '@/features/dashboard';
 import { MenuItem } from '@/features/product-actions-menu';
@@ -14,7 +13,7 @@ export const AddToDashboardMenuItem = ({ productId, closeMenu }: Props) => {
 
   return (
     <MenuItem
-      icon={<LayoutDashboard className="size-4" aria-hidden />}
+      icon={<LayoutDashboardIcon className="size-4" />}
       label={t('feature.dashboard.addToDashboard.label')}
       onSelect={() => {
         closeMenu();

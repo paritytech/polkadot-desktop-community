@@ -1,5 +1,4 @@
-import { Star } from 'lucide-react';
-
+import StarIcon from '@/shared/assets/images/icons/star.svg?jsx';
 import { useTranslation } from '@/shared/translation';
 import { cnTw } from '@/shared/utils';
 import { useFavoriteProductIds } from '@/domains/application';
@@ -29,7 +28,7 @@ export const AddToFavoritesMenuItem = ({ product, closeMenu }: Props) => {
 
   return (
     <MenuItem
-      icon={<Star className={cnTw('size-4', isFavorite && 'fill-current')} aria-hidden strokeWidth={1.75} />}
+      icon={<StarIcon className={cnTw('size-4', isFavorite && 'fill-current')} />}
       label={isFavorite ? t('feature.dashboard.menu.removeFromFavorites') : t('feature.dashboard.menu.addToFavorites')}
       onSelect={async () => {
         closeMenu();

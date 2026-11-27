@@ -1,5 +1,4 @@
-import { Grid2x2 } from 'lucide-react';
-
+import Grid2x2Icon from '@/shared/assets/images/icons/grid-2x2.svg?jsx';
 import { Sidebar } from '@/shared/components';
 import { createFeature } from '@/shared/feature';
 import { useTranslation } from '@/shared/translation';
@@ -15,7 +14,7 @@ productSettingsFeature.inject(settingsPrivacyNavSlot, {
     const { t } = useTranslation();
 
     return (
-      <Sidebar.Item icon={<Grid2x2 />} to="/settings/privacy/apps">
+      <Sidebar.Item icon={<Grid2x2Icon />} to="/settings/privacy/apps">
         {t('feature.productSettings.title')}
       </Sidebar.Item>
     );

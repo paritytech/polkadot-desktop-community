@@ -1,7 +1,7 @@
 import { Outlet } from '@tanstack/react-router';
 import { memo } from 'react';
 
-import SettingsIcon from '@/shared/assets/images/header/cog-8-tooth.svg?jsx';
+import SettingsIcon from '@/shared/assets/images/icons/settings.svg?jsx';
 import { AppIcon, PaneHeader, Sidebar, widgetSpanWidthCss } from '@/shared/components';
 import { Slot } from '@/shared/di';
 import { isProductionBuild } from '@/shared/env';

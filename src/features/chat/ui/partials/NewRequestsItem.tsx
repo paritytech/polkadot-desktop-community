@@ -1,5 +1,4 @@
-import { MessagesSquare } from 'lucide-react';
-
+import MessagesSquareIcon from '@/shared/assets/images/icons/messages-square.svg?jsx';
 import { ListItem } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
@@ -17,7 +16,7 @@ export const NewRequestsItem = ({ count, subtitle, onClick }: NewRequestsItemPro
 
   return (
     <ListItem
-      icon={<MessagesSquare aria-hidden />}
+      icon={<MessagesSquareIcon />}
       label={t('feature.chat.request.entryTitle')}
       description={subtitle.length > 0 ? <span>{subtitle}</span> : null}
       meta={<UnreadCount count={count} />}

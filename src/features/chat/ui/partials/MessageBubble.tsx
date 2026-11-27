@@ -1,7 +1,9 @@
 import { type RenderContext } from '@parity/truapi';
-import { Check, CheckCheck, Clock } from 'lucide-react';
 import { type MouseEvent, useMemo } from 'react';
 
+import CheckCheckIcon from '@/shared/assets/images/icons/check-check.svg?jsx';
+import CheckIcon from '@/shared/assets/images/icons/check.svg?jsx';
+import ClockIcon from '@/shared/assets/images/icons/clock.svg?jsx';
 import { BlurhashCanvas } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
@@ -44,13 +46,13 @@ export const StatusIcon = ({
 }) => {
   if (status.direction === 'incoming') return null;
   // Matches the Android client: one check for sent and delivered, a double check only for Seen.
-  if (isSeen) return <CheckCheck className={className} />;
+  if (isSeen) return <CheckCheckIcon className={className} />;
   switch (status.state) {
     case 'new':
-      return <Clock className={className} />;
+      return <ClockIcon className={className} />;
     case 'sent':
     case 'delivered':
-      return <Check className={className} />;
+      return <CheckIcon className={className} />;
   }
 };
 

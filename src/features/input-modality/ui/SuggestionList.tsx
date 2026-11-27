@@ -1,6 +1,6 @@
-import { X } from 'lucide-react';
 import { type KeyboardEvent, type MouseEvent, type ReactNode, useEffect, useRef } from 'react';
 
+import XIcon from '@/shared/assets/images/icons/x.svg?jsx';
 import PolkadotIcon from '@/shared/assets/images/polkadot-half-logo.svg?jsx';
 import { Button, IconButton } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
@@ -110,7 +110,7 @@ export const ProductItem = ({
           )}
         >
           <IconButton size="sm" label={t('common.aria.close')} tabIndex={-1} onMouseDown={preventBlur} onClick={handleRemove}>
-            <X />
+            <XIcon />
           </IconButton>
         </span>
       )}

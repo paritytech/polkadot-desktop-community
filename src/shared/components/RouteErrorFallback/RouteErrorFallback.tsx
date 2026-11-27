@@ -1,7 +1,9 @@
 import { type ErrorComponentProps } from '@tanstack/react-router';
-import { Download, RefreshCw, XOctagon } from 'lucide-react';
 import { useEffect } from 'react';
 
+import DownloadIcon from '@/shared/assets/images/icons/download.svg?jsx';
+import OctagonXIcon from '@/shared/assets/images/icons/octagon-x.svg?jsx';
+import RefreshCwIcon from '@/shared/assets/images/icons/refresh-cw.svg?jsx';
 import { isElectron } from '@/shared/env';
 import { Sentry } from '@/shared/sentry';
 import { useTranslation } from '@/shared/translation';
@@ -22,7 +24,7 @@ export const RouteErrorFallback = ({ error, info, reset }: ErrorComponentProps) 
     <main className="flex h-full w-full flex-col items-center justify-center gap-6 rounded-lg bg-bg-surface-main p-12">
       <div className="flex flex-col items-center gap-2 self-stretch">
         <div className="flex flex-col items-center justify-center pb-4">
-          <XOctagon className="h-8 w-8 text-fg-primary" strokeWidth={1} />
+          <OctagonXIcon className="h-8 w-8 text-fg-primary" />
         </div>
         <h1 className="w-full text-center text-base font-medium text-fg-primary">{t('common.error.somethingWentWrong')}</h1>
         <p className="w-full text-center text-sm font-normal text-fg-secondary">{t('common.error.tryAgain')}</p>
@@ -32,12 +34,12 @@ export const RouteErrorFallback = ({ error, info, reset }: ErrorComponentProps) 
       </div>
       <div className="flex flex-col items-center gap-4 self-stretch" style={{ appRegion: 'no-drag' }}>
         <Button onClick={reset}>
-          <RefreshCw className="h-4 w-4" />
+          <RefreshCwIcon className="h-4 w-4" />
           {t('common.action.retry')}
         </Button>
         {isElectron() && (
           <Button variant="ghost" onClick={handleDownloadLogs}>
-            <Download className="h-4 w-4" />
+            <DownloadIcon className="h-4 w-4" />
             {t('common.action.downloadLogs')}
           </Button>
         )}

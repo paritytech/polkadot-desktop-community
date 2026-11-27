@@ -1,7 +1,10 @@
 import { useNavigate } from '@tanstack/react-router';
-import { Grid2X2, Link2, Paintbrush, Trash2 } from 'lucide-react';
 import { type ReactNode, useState } from 'react';
 
+import Grid2x2Icon from '@/shared/assets/images/icons/grid-2x2.svg?jsx';
+import Link2Icon from '@/shared/assets/images/icons/link-2.svg?jsx';
+import PaintbrushIcon from '@/shared/assets/images/icons/paintbrush.svg?jsx';
+import TrashIcon from '@/shared/assets/images/icons/trash.svg?jsx';
 import { Button, Dialog, ListItem, SettingsList, SettingsSection, toast } from '@/shared/components';
 import { Slot } from '@/shared/di';
 import { useTranslation } from '@/shared/translation';
@@ -74,7 +77,7 @@ export const ProductSettingsPage = ({ productId, onBack }: Props) => {
                 className="size-full object-cover"
                 fallback={
                   <div className="flex size-full items-center justify-center bg-bg-illustration-dark text-fg-primary-inverted">
-                    <Grid2X2 size={24} />
+                    <Grid2x2Icon className="size-6" />
                   </div>
                 }
               />
@@ -84,11 +87,11 @@ export const ProductSettingsPage = ({ productId, onBack }: Props) => {
 
             <div className="flex items-center gap-2">
               <Button size="sm" onClick={() => setClearCacheDialogOpen(true)}>
-                <Paintbrush size={16} />
+                <PaintbrushIcon className="size-4" />
                 {t('feature.productSettings.clearCache')}
               </Button>
               <Button size="sm" onClick={() => setForgetDialogOpen(true)}>
-                <Trash2 size={16} />
+                <TrashIcon className="size-4" />
                 {t('feature.productSettings.forgetApp')}
               </Button>
               {cacheSize > 0 ? <span className="text-xs text-chrome-muted">{formatBytes(cacheSize)}</span> : null}
@@ -228,7 +231,7 @@ function buildRequestedPermissions(
     result.push({
       id: 'Alias',
       label: t('feature.productSettings.aliasPermission.label'),
-      icon: <Link2 />,
+      icon: <Link2Icon />,
       statusText: t(STATUS_LABEL_KEYS[aliasStatus]),
     });
   }

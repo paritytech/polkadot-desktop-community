@@ -1,6 +1,9 @@
-import { ArrowDown, ArrowUp, Check, CheckCheck } from 'lucide-react';
 import { type ComponentType, type MouseEvent } from 'react';
 
+import ArrowDownIcon from '@/shared/assets/images/icons/arrow-down.svg?jsx';
+import ArrowUpIcon from '@/shared/assets/images/icons/arrow-up.svg?jsx';
+import CheckCheckIcon from '@/shared/assets/images/icons/check-check.svg?jsx';
+import CheckIcon from '@/shared/assets/images/icons/check.svg?jsx';
 import { useTranslation } from '@/shared/translation';
 import { amountToString, cnTw } from '@/shared/utils';
 import { environmentUseCase } from '@/domains/application';
@@ -32,11 +35,11 @@ type StatusRow = {
 // - delivered: double check (claim memo arrived on recipient device, not yet read).
 // - claimed: double check, green tint (recipient imported the coin keys).
 const STATUS_ROWS: Record<CoinageStatus, StatusRow> = {
-  submitting: { Icon: ArrowUp, labelKey: 'feature.chat.transfer.coinage.submitting' },
-  sending: { Icon: ArrowUp, labelKey: 'feature.chat.transfer.coinage.sending' },
-  sent: { Icon: Check, labelKey: 'feature.chat.transfer.coinage.sent' },
-  delivered: { Icon: CheckCheck, labelKey: 'feature.chat.transfer.coinage.delivered' },
-  claimed: { Icon: CheckCheck, labelKey: 'feature.chat.transfer.coinage.claimed', isClaimed: true },
+  submitting: { Icon: ArrowUpIcon, labelKey: 'feature.chat.transfer.coinage.submitting' },
+  sending: { Icon: ArrowUpIcon, labelKey: 'feature.chat.transfer.coinage.sending' },
+  sent: { Icon: CheckIcon, labelKey: 'feature.chat.transfer.coinage.sent' },
+  delivered: { Icon: CheckCheckIcon, labelKey: 'feature.chat.transfer.coinage.delivered' },
+  claimed: { Icon: CheckCheckIcon, labelKey: 'feature.chat.transfer.coinage.claimed', isClaimed: true },
 };
 
 export const CoinageTransferMessageBubble = ({ message, content, isMe, isSeen = false, onContextMenu }: Props) => {
@@ -54,7 +57,7 @@ export const CoinageTransferMessageBubble = ({ message, content, isMe, isSeen = 
   // standard "Received $X" card. The lifecycle is meaningful only on the
   // sender side.
   const status = isMe ? (content.coinageStatus ?? 'sent') : null;
-  const DirectionIcon = isMe ? ArrowUp : ArrowDown;
+  const DirectionIcon = isMe ? ArrowUpIcon : ArrowDownIcon;
   const fallbackLabel = isMe ? t('feature.chat.transfer.sent') : t('feature.chat.transfer.received');
 
   const statusRow = status ? STATUS_ROWS[status] : null;
