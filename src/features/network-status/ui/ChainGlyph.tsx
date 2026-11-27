@@ -1,3 +1,5 @@
+import { type ReactElement } from 'react';
+
 import { type KnownChainRole } from '@/domains/network';
 
 type Props = {
@@ -36,7 +38,7 @@ const IdentityGlyph = () => (
 // A diamond, for a chain outside the known roles.
 const OtherChainGlyph = () => <path d="M5 0.8L9.2 5L5 9.2L0.8 5Z" />;
 
-const GlyphShape = ({ role }: Pick<Props, 'role'>) => {
+const GlyphShape = ({ role }: Pick<Props, 'role'>): ReactElement => {
   switch (role) {
     case 'relay':
       return <RelayGlyph />;

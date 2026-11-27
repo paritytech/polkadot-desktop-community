@@ -31,8 +31,6 @@ function pickChainMark(health: ChainHealth): ChainMark {
   }
 }
 
-// Blocks a catching-up client hears back to back are not faster production, so the block time divides by the share
-// capped at 1 and never reads under the chain's own.
 function describeChainStatus(health: ChainHealth, blockTimeMs: number): ChainStatusLine {
   switch (health.kind) {
     case 'offline':
@@ -53,6 +51,8 @@ function describeChainStatus(health: ChainHealth, blockTimeMs: number): ChainSta
     case 'stalled':
       return { text: { kind: 'notProducing' }, tone: health.behind ? 'warn' : null };
     case 'producing': {
+      // Blocks a catching-up client hears back to back are not faster production, so the block time divides by a share
+      // the domain caps at 1 and never reads under the chain's own.
       const share = health.liveShare;
       const live = share === null ? null : { percent: Math.round(share * 100), block: splitDuration(blockTimeMs / share) };
       return { text: { kind: 'producing', behind: health.behind, live }, tone: health.behind ? 'warn' : null };

@@ -16,7 +16,7 @@ export const OtherChains: FC<PropsWithChildren<Props>> = ({ count, children }) =
   return (
     <details
       data-testid={TEST_IDS.networkOtherChains}
-      className="group [interpolate-size:allow-keywords] details-content:h-0 details-content:overflow-clip details-content:[overflow-clip-margin:--spacing(1)] open:details-content:h-auto motion-safe:details-content:transition-[height,content-visibility] motion-safe:details-content:transition-discrete motion-safe:details-content:duration-260 motion-safe:details-content:ease-chrome motion-safe:open:details-content:transition-[height]"
+      className="group [interpolate-size:allow-keywords] supports-[interpolate-size:allow-keywords]:details-content:h-0 supports-[interpolate-size:allow-keywords]:details-content:overflow-clip supports-[interpolate-size:allow-keywords]:details-content:[overflow-clip-margin:--spacing(1)] supports-[interpolate-size:allow-keywords]:open:details-content:h-auto supports-[interpolate-size:allow-keywords]:motion-safe:details-content:transition-[height,content-visibility] supports-[interpolate-size:allow-keywords]:motion-safe:details-content:transition-discrete supports-[interpolate-size:allow-keywords]:motion-safe:details-content:duration-260 supports-[interpolate-size:allow-keywords]:motion-safe:details-content:ease-chrome supports-[interpolate-size:allow-keywords]:motion-safe:open:details-content:transition-[height]"
     >
       <summary
         data-testid={TEST_IDS.networkOtherChainsSummary}

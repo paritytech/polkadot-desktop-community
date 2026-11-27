@@ -1125,7 +1125,7 @@
         "unreachable": "Недоступно"
       },
       "role": {
-        "relay": "Релей",
+        "relay": "Релейная",
         "assetHub": "Хаб",
         "bulletin": "Хранилище",
         "people": "Идентичность"

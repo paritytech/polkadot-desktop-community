@@ -24,6 +24,18 @@ describe('useCloseOnWindowLeave', () => {
     expect(close).not.toHaveBeenCalled();
   });
 
+  it('starts listening after opening', () => {
+    const close = vi.fn();
+    const { rerender } = renderHook(({ open }) => useCloseOnWindowLeave(open, close), {
+      initialProps: { open: false },
+    });
+
+    rerender({ open: true });
+    window.dispatchEvent(new Event('blur'));
+
+    expect(close).toHaveBeenCalledTimes(1);
+  });
+
   it('stops listening after closing', () => {
     const close = vi.fn();
     const { rerender } = renderHook(({ open }) => useCloseOnWindowLeave(open, close), {

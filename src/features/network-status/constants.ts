@@ -23,5 +23,5 @@ export const HEALTH_TONES: Record<NetworkHealth, StatusTone> = {
   unreachable: 'err',
 };
 
-// Cuts the button's corner around the badge dot.
+// Cuts the icon away around the badge, so the badge reads on any background.
 export const BADGE_CUT_MASK = 'radial-gradient(circle at calc(100% + 1px) -1px, transparent 5px, #000 5.5px)';

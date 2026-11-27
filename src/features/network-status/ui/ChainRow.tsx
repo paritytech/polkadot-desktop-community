@@ -12,7 +12,7 @@ import { type Duration, type StatusText } from '../types';
 import { BlockStrip } from './BlockStrip';
 import { ChainHealthMark } from './ChainHealthMark';
 
-type Translate = (id: string, values?: Record<string, string | number>) => string;
+type Translate = ReturnType<typeof useTranslation>['t'];
 
 type Props = {
   chain: ChainStatus;
@@ -81,8 +81,8 @@ export const ChainRow: FC<Props> = ({ chain, health }) => {
         data-testid={TEST_IDS.networkChainRowHead}
         aria-expanded={open}
         aria-controls={detailId}
-        className="col-span-full grid min-h-12 cursor-pointer grid-cols-subgrid items-center rounded-lg py-2 text-start focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-chrome-focus"
-        onClick={() => setOpen(!open)}
+        className="col-span-full grid min-h-12 grid-cols-subgrid items-center rounded-lg py-2 text-start focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-chrome-focus"
+        onClick={() => setOpen(wasOpen => !wasOpen)}
       >
         <ChainHealthMark mark={mark} role={chain.role} />
         <span className="flex min-w-0 flex-col gap-0">
@@ -144,7 +144,7 @@ export const ChainRow: FC<Props> = ({ chain, health }) => {
               </span>
             )}
           </p>
-          <BlockStrip chain={chain} label={name} pending={networkStatusService.pickPendingBar(chain, health)} />
+          <BlockStrip chain={chain} chainName={name} pending={networkStatusService.pickPendingBar(chain, health)} />
         </div>
       )}
     </div>

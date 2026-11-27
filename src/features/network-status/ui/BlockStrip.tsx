@@ -10,8 +10,7 @@ import { type PendingBar } from '../types';
 
 type Props = {
   chain: ChainStatus;
-  // The chain's display name.
-  label: string;
+  chainName: string;
   pending: PendingBar | null;
 };
 
@@ -39,7 +38,7 @@ function slideStrip(strip: HTMLElement, landed: number) {
   strip.style.transform = 'translateX(0)';
 }
 
-export const BlockStrip: FC<Props> = ({ chain, label, pending }) => {
+export const BlockStrip: FC<Props> = ({ chain, chainName, pending }) => {
   const { t } = useTranslation();
   const stripRef = useRef<HTMLDivElement>(null);
   const shownRef = useRef<readonly BlockBar[] | null>(null);
@@ -80,7 +79,7 @@ export const BlockStrip: FC<Props> = ({ chain, label, pending }) => {
         dir="ltr"
         role="group"
         title={t('feature.networkStatus.strip.title', { count: HISTORY_SLOTS })}
-        aria-label={t('feature.networkStatus.strip.label', { chain: label, count: HISTORY_SLOTS })}
+        aria-label={t('feature.networkStatus.strip.label', { chain: chainName, count: HISTORY_SLOTS })}
         data-testid={TEST_IDS.networkBlockStrip}
         className="relative flex h-3 min-w-0 items-end gap-0.5 overflow-hidden data-sliding:transition-transform data-sliding:duration-340 data-sliding:ease-strip motion-reduce:data-sliding:transition-none"
       >

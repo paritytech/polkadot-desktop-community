@@ -149,6 +149,14 @@ describe('ChainRow', () => {
     expect(screen.queryByTestId(TEST_IDS.networkBlockPending)).toBeNull();
   });
 
+  it('keeps the last bars of a chain nobody uses', () => {
+    renderRow(buildStatus({ state: 'unused' }), { kind: 'unused' });
+    openDetail();
+
+    expect(screen.getAllByTestId(TEST_IDS.networkBlockBar)).toHaveLength(3);
+    expect(screen.getAllByTestId(TEST_IDS.networkBlockStub)).toHaveLength(45);
+  });
+
   it('draws the ghost bar before the first bar of a chain still searching', () => {
     renderRow(buildStatus({ bars: [], latest: null, sinceLast: null }), {
       kind: 'producing',

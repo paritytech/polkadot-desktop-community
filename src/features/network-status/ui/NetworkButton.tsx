@@ -41,7 +41,7 @@ export const NetworkButton: FC = () => {
           />
         </IconButton>
       </Popover.Trigger>
-      <Popover.Content align="end">
+      <Popover.Content align="end" aria-label={title}>
         <NetworkPanel />
       </Popover.Content>
     </Popover.Root>
