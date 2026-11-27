@@ -1,5 +1,6 @@
 import { getSyncProvider } from '@polkadot-api/json-rpc-provider-proxy';
 import { type JsonRpcProvider, type PolkadotClient, createClient } from 'polkadot-api';
+import { type Subscription } from 'rxjs';
 
 import { createBrokerWarner } from './createBrokerWarner';
 import { type ChainLanes, createChainLanes } from './createChainLanes';
@@ -8,7 +9,7 @@ import { createRefCounter } from './createRefCounter';
 import { type RestartableJsonRpcProvider, createRestartableProvider } from './createRestartableProvider';
 import { noop } from './noop';
 import { runEvery } from './runEvery';
-import { type ChainConfig, type ConnectionStatus } from './types';
+import { type ChainActivity, type ChainConfig, type ChainPoolWatcher, type ConnectionStatus } from './types';
 
 export type ChainConnectionConfig<C extends ChainConfig, T = PolkadotClient> = {
   // A provider that cannot recover by itself calls `onHalt` once its connection is gone for good, and the pool rebuilds
@@ -28,9 +29,12 @@ export type ChainConnectionConfig<C extends ChainConfig, T = PolkadotClient> = {
   destroyDelay?: number;
 };
 
-type PoolEntry = {
+type PoolEntry<C extends ChainConfig> = {
+  chain: C;
   client: PolkadotClient;
   lanes: ChainLanes;
+  // The client's best blocks, followed while a watcher is registered.
+  blocks: Subscription | null;
 };
 
 type ChainConnection<C extends ChainConfig, T = PolkadotClient> = {
@@ -58,6 +62,12 @@ type ChainConnection<C extends ChainConfig, T = PolkadotClient> = {
   // The old transports close at once, the new ones come up on the reconnect
   // backoff; see `restart` in `createRestartableProvider`.
   reconnect(genesisHashes?: readonly string[]): void;
+  /**
+   * Replays every chain the pool holds to `watcher` during the call, then reports each later change of a chain's
+   * leases, status or entry, and each new best block of a held chain. Opens no chain and keeps none open: a chain
+   * leaves the pool on its last lease's release whether watched or not. Returns the stop function.
+   */
+  watch(watcher: ChainPoolWatcher<C>): VoidFunction;
 };
 
 /**
@@ -76,7 +86,8 @@ export function createChainConnection<C extends ChainConfig, T = PolkadotClient>
 }: ChainConnectionConfig<C, T>): ChainConnection<C, T> {
   const connections = createConnectionManager();
   const refCounter = createRefCounter<string>();
-  const entries = new Map<string, PoolEntry>();
+  const entries = new Map<string, PoolEntry<C>>();
+  const watchers = new Set<ChainPoolWatcher<C>>();
   let paused = false;
   // Names each `getProvider` session, never reused for the pool's life.
   let nextLocalSession = 0;
@@ -91,6 +102,62 @@ export function createChainConnection<C extends ChainConfig, T = PolkadotClient>
       clearTimeout(timer);
       destructionTimers.delete(genesisHash);
     }
+  };
+
+  // A watcher that throws must not keep the pool or the other watchers from going on.
+  const tellWatcher = (watcher: ChainPoolWatcher<C>, tell: (watcher: ChainPoolWatcher<C>) => void) => {
+    try {
+      tell(watcher);
+    } catch (error) {
+      console.error('[chain-connection] a pool watcher threw', error);
+    }
+  };
+
+  const tellWatchers = (tell: (watcher: ChainPoolWatcher<C>) => void) => {
+    // A copy, so a watcher that stops while it is told does not change the set being walked.
+    for (const watcher of [...watchers]) {
+      tellWatcher(watcher, tell);
+    }
+  };
+
+  const readActivity = (chain: C): ChainActivity<C> => ({
+    chain,
+    consumers: refCounter.refs(chain.genesisHash),
+    status: connections.getConnectionStatus(chain.genesisHash),
+    following: entries.has(chain.genesisHash),
+  });
+
+  const reportActivity = (chain: C) => {
+    if (watchers.size === 0) return;
+    const activity = readActivity(chain);
+    tellWatchers(watcher => {
+      watcher.onActivity(activity);
+    });
+  };
+
+  const followBlocks = (entry: PoolEntry<C>) => {
+    if (watchers.size === 0 || entry.blocks !== null) return;
+    const { genesisHash } = entry.chain;
+    const subscription = entry.client.bestBlocks$.subscribe({
+      next(blocks) {
+        const best = blocks[0];
+        if (best === undefined) return;
+        tellWatchers(watcher => {
+          watcher.onBestBlock(genesisHash, best.number);
+        });
+      },
+      error(error: unknown) {
+        console.warn(`[chain-connection] best blocks failed for ${genesisHash}`, error);
+        entry.blocks = null;
+      },
+    });
+    // A stream that ends during `subscribe` leaves nothing to hold, and a later `connected` follows it again.
+    entry.blocks = subscription.closed ? null : subscription;
+  };
+
+  const unfollowBlocks = (entry: PoolEntry<C>) => {
+    entry.blocks?.unsubscribe();
+    entry.blocks = null;
   };
 
   const createLaneTransport = (chain: C, onLaneStatus: (status: ConnectionStatus) => void): RestartableJsonRpcProvider => {
@@ -117,7 +184,7 @@ export function createChainConnection<C extends ChainConfig, T = PolkadotClient>
     });
   };
 
-  const getOrCreateEntry = (chain: C): PoolEntry => {
+  const getOrCreateEntry = (chain: C): PoolEntry<C> => {
     const existing = entries.get(chain.genesisHash);
     if (existing) return existing;
 
@@ -128,9 +195,17 @@ export function createChainConnection<C extends ChainConfig, T = PolkadotClient>
       followLimit: () => followLimit(chain),
       warn: createBrokerWarner(),
       paused,
-      onStatus: status => connections.update(chain.genesisHash, status),
+      onStatus: status => {
+        connections.update(chain.genesisHash, status);
+        // Lanes closing after their entry left report nothing: the entry's destruction reports the chain's last state.
+        const entry = entries.get(chain.genesisHash);
+        if (!entry) return;
+        reportActivity(chain);
+        if (status === 'connected') followBlocks(entry);
+      },
     });
-    // The lanes report changes only, so the status they start in is seeded here.
+    // The lanes report changes only, so the status they start in is seeded here. The lease that built the entry
+    // reports it.
     connections.update(chain.genesisHash, lanes.status());
 
     let client: PolkadotClient;
@@ -140,8 +215,9 @@ export function createChainConnection<C extends ChainConfig, T = PolkadotClient>
       lanes.disconnectAll();
       throw error;
     }
-    const entry: PoolEntry = { client, lanes };
+    const entry: PoolEntry<C> = { chain, client, lanes, blocks: null };
     entries.set(chain.genesisHash, entry);
+    followBlocks(entry);
     return entry;
   };
 
@@ -151,10 +227,12 @@ export function createChainConnection<C extends ChainConfig, T = PolkadotClient>
     const entry = entries.get(genesisHash);
     if (entry) {
       entries.delete(genesisHash);
+      unfollowBlocks(entry);
       try {
         entry.client.destroy();
       } finally {
         entry.lanes.disconnectAll();
+        reportActivity(entry.chain);
       }
     }
     resolvedApis.delete(genesisHash);
@@ -168,11 +246,14 @@ export function createChainConnection<C extends ChainConfig, T = PolkadotClient>
 
       refCounter.increment(chain.genesisHash);
       const entry = getOrCreateEntry(chain);
+      reportActivity(chain);
 
       return {
         entry,
         unlock() {
-          if (refCounter.decrement(chain.genesisHash) === 0) {
+          const consumers = refCounter.decrement(chain.genesisHash);
+          reportActivity(chain);
+          if (consumers === 0) {
             if (destroyDelay === 0) {
               destroyClient(chain.genesisHash);
             } else {
@@ -323,6 +404,25 @@ export function createChainConnection<C extends ChainConfig, T = PolkadotClient>
         });
       }
       runEvery(steps, 'reconnect failed on several chains');
+    },
+
+    watch(watcher) {
+      watchers.add(watcher);
+      for (const entry of entries.values()) {
+        const activity = readActivity(entry.chain);
+        tellWatcher(watcher, heard => {
+          heard.onActivity(activity);
+        });
+        followBlocks(entry);
+      }
+
+      return () => {
+        watchers.delete(watcher);
+        if (watchers.size > 0) return;
+        for (const entry of entries.values()) {
+          unfollowBlocks(entry);
+        }
+      };
     },
   };
 }

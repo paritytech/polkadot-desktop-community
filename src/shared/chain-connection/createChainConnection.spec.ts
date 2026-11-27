@@ -1,28 +1,36 @@
 import { type JsonRpcConnection, type JsonRpcMessage, type JsonRpcRequest } from '@polkadot-api/json-rpc-provider';
 import { type JsonRpcProvider, type PolkadotClient } from 'polkadot-api';
+import { Subject, defer } from 'rxjs';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { CHAIN_HEAD_FOLLOW, isRecord } from './brokerMessages';
 import { type ChainConnectionConfig, createChainConnection } from './createChainConnection';
 import { noop } from './noop';
-import { type ChainConfig, type ConnectionStatus } from './types';
+import { type ChainActivity, type ChainConfig, type ChainPoolWatcher, type ConnectionStatus } from './types';
 
 const FOLLOW_LIMIT = 4;
+
+type FakeClient = {
+  destroyed: number;
+  // The spec pushes best blocks here, and may replace a subject that errored.
+  bestBlocks$: Subject<{ number: number }[]>;
+};
 
 // An in-memory stand-in for polkadot-api's `createClient`: one client object per
 // call, each counting its own `destroy()`.
 function createClientFactory() {
-  const clients: { destroyed: number }[] = [];
+  const clients: FakeClient[] = [];
 
   const createClient: ChainConnectionConfig<ChainConfig>['createClient'] = provider => {
-    const client = { destroyed: 0 };
+    const client: FakeClient = { destroyed: 0, bestBlocks$: new Subject() };
     clients.push(client);
     // The real one connects up front and drops the connection on destroy; the
     // pool only builds a transport once something actually connects.
     const connection = provider(noop);
 
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions -- PolkadotClient has dozens of members; the pool only calls destroy()
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions -- PolkadotClient has dozens of members; the pool only calls destroy() and bestBlocks$
     return {
+      bestBlocks$: defer(() => client.bestBlocks$),
       destroy: () => {
         client.destroyed++;
         connection.disconnect();
@@ -892,6 +900,194 @@ describe('createChainConnection', () => {
       expect(transports.built).toHaveLength(2);
       expect(transports.built.every(transport => transport.calls.includes('disconnect'))).toBe(true);
       expect(clients.last().destroyed).toBe(1);
+    });
+  });
+
+  describe('watch', () => {
+    function createWatcher() {
+      const activities: ChainActivity<ChainConfig>[] = [];
+      const blocks: [string, number][] = [];
+      const watcher: ChainPoolWatcher<ChainConfig> = {
+        onActivity(activity) {
+          activities.push(activity);
+        },
+        onBestBlock(genesisHash, blockNumber) {
+          blocks.push([genesisHash, blockNumber]);
+        },
+      };
+
+      return { watcher, activities, blocks };
+    }
+
+    // A pool whose transport reports only the statuses the spec sends through `reportStatus`.
+    function createReportingConnection(overrides?: Partial<ChainConnectionConfig<ChainConfig>>) {
+      let report: Nullable<(status: ConnectionStatus) => void> = null;
+      const created = createTestConnection({
+        createProvider: (_chain, onStatusChanged) => {
+          report = onStatusChanged;
+          return createMockProvider().provider;
+        },
+        ...overrides,
+      });
+
+      return { ...created, reportStatus: (status: ConnectionStatus) => report?.(status) };
+    }
+
+    it('replays a held chain during the call', async () => {
+      const { connection } = createTestConnection();
+      const chain = testChain('a');
+      const { unlock } = await connection.lockApi(chain);
+      const { watcher, activities } = createWatcher();
+
+      connection.watch(watcher);
+
+      expect(activities).toEqual([{ chain, consumers: 1, status: 'connecting', following: true }]);
+      unlock();
+    });
+
+    it('hears a first lease once, as following, and follows its best blocks', async () => {
+      const { connection, clients } = createTestConnection();
+      const chain = testChain('a');
+      const { watcher, activities } = createWatcher();
+      connection.watch(watcher);
+
+      const { unlock } = await connection.lockApi(chain);
+
+      expect(activities).toEqual([{ chain, consumers: 1, status: 'connecting', following: true }]);
+      expect(clients.last().bestBlocks$.observed).toBe(true);
+      unlock();
+    });
+
+    it('hears each lease taken and returned', async () => {
+      const { connection } = createTestConnection();
+      const chain = testChain('a');
+      const { watcher, activities } = createWatcher();
+      connection.watch(watcher);
+
+      const { unlock: first } = await connection.lockApi(chain);
+      const { unlock: second } = await connection.lockApi(chain);
+      second();
+
+      expect(activities.map(activity => activity.consumers)).toEqual([1, 2, 1]);
+      first();
+    });
+
+    it('hears a status the transport reports', async () => {
+      const { connection, reportStatus } = createReportingConnection();
+      const chain = testChain('a');
+      const { watcher, activities } = createWatcher();
+      connection.watch(watcher);
+      const { unlock } = await connection.lockApi(chain);
+      await connected();
+      const heardBefore = activities.length;
+
+      reportStatus('connected');
+
+      expect(activities.slice(heardBefore)).toEqual([{ chain, consumers: 1, status: 'connected', following: true }]);
+      unlock();
+    });
+
+    it('hears the last lease returned, then the chain destroyed, and nothing else', async () => {
+      const { connection } = createTestConnection({ destroyDelay: 0 });
+      const chain = testChain('a');
+      const { watcher, activities } = createWatcher();
+      connection.watch(watcher);
+      const { unlock } = await connection.lockApi(chain);
+
+      unlock();
+
+      expect(activities).toEqual([
+        { chain, consumers: 1, status: 'connecting', following: true },
+        { chain, consumers: 0, status: 'connecting', following: true },
+        { chain, consumers: 0, status: 'disconnected', following: false },
+      ]);
+    });
+
+    it('hears the number of the first best block', async () => {
+      const { connection, clients } = createTestConnection();
+      const { watcher, blocks } = createWatcher();
+      connection.watch(watcher);
+      const { unlock } = await connection.lockApi(testChain('a'));
+
+      clients.last().bestBlocks$.next([{ number: 7 }, { number: 6 }]);
+
+      expect(blocks).toEqual([['a', 7]]);
+      unlock();
+    });
+
+    it('subscribes best blocks only while a watcher is registered', async () => {
+      const { connection, clients } = createTestConnection();
+      const { unlock } = await connection.lockApi(testChain('a'));
+      const subject = clients.last().bestBlocks$;
+      expect(subject.observed).toBe(false);
+
+      const stopFirst = connection.watch(createWatcher().watcher);
+      const stopSecond = connection.watch(createWatcher().watcher);
+      expect(subject.observed).toBe(true);
+
+      stopFirst();
+      expect(subject.observed).toBe(true);
+      stopSecond();
+      expect(subject.observed).toBe(false);
+      unlock();
+    });
+
+    it('stops following the best blocks of a destroyed chain', async () => {
+      const { connection, clients } = createTestConnection({ destroyDelay: 0 });
+      const { watcher, blocks } = createWatcher();
+      connection.watch(watcher);
+      const { unlock } = await connection.lockApi(testChain('a'));
+      const subject = clients.last().bestBlocks$;
+
+      unlock();
+      subject.next([{ number: 7 }]);
+
+      expect(subject.observed).toBe(false);
+      expect(blocks).toEqual([]);
+    });
+
+    it('tells every watcher even when one throws', async () => {
+      const error = new Error('watcher failed');
+      const consoleError = vi.spyOn(console, 'error').mockImplementation(noop);
+      const { connection } = createTestConnection();
+      const chain = testChain('a');
+      connection.watch({
+        onActivity() {
+          throw error;
+        },
+        onBestBlock: noop,
+      });
+      const { watcher, activities } = createWatcher();
+      connection.watch(watcher);
+
+      const { unlock } = await connection.lockApi(chain);
+
+      expect(activities).toEqual([{ chain, consumers: 1, status: 'connecting', following: true }]);
+      expect(consoleError).toHaveBeenCalledWith('[chain-connection] a pool watcher threw', error);
+      unlock();
+      consoleError.mockRestore();
+    });
+
+    it('follows best blocks again after an error only once the transport reports connected', async () => {
+      const error = new Error('best blocks failed');
+      const consoleWarn = vi.spyOn(console, 'warn').mockImplementation(noop);
+      const { connection, clients, reportStatus } = createReportingConnection();
+      const { watcher, blocks } = createWatcher();
+      connection.watch(watcher);
+      const { unlock } = await connection.lockApi(testChain('a'));
+      await connected();
+      const client = clients.last();
+
+      client.bestBlocks$.error(error);
+      client.bestBlocks$ = new Subject();
+      client.bestBlocks$.next([{ number: 8 }]);
+      reportStatus('connected');
+      client.bestBlocks$.next([{ number: 9 }]);
+
+      expect(consoleWarn).toHaveBeenCalledWith('[chain-connection] best blocks failed for a', error);
+      expect(blocks).toEqual([['a', 9]]);
+      unlock();
+      consoleWarn.mockRestore();
     });
   });
 });
