@@ -41,6 +41,7 @@ import { favoritesFeature } from '@/features/favorites';
 import { inputModalityFeature } from '@/features/input-modality';
 import { languageSettingsFeature } from '@/features/language-settings';
 import { networkConnectionFeature } from '@/features/network-connection';
+import { networkStatusFeature } from '@/features/network-status';
 import { bootstrapNotifications, notificationsFeature } from '@/features/notifications';
 import { offlineAccessFeature } from '@/features/offline-access';
 import { onboardingFeature } from '@/features/onboarding';
@@ -183,6 +184,7 @@ const runBootstrap = async (): Promise<BootstrapOutcome> => {
     productActionsMenuFeature,
     offlineAccessFeature,
     chatFeature,
+    networkStatusFeature,
     callFeature,
     settingsFeature,
     productWidgetFeature,
