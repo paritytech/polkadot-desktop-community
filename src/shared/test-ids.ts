@@ -246,7 +246,6 @@ export const TEST_IDS = {
   offlineAccessUpdateButton: 'offline-access-update-button',
 
   // Browser tabs
-  tabHoverVersionPin: 'tab-hover-version-pin',
   browserTabStrip: 'browser-tab-strip',
   tabHoverCard: 'tab-hover-card',
   tabHoverRam: 'tab-hover-ram',

@@ -34,7 +34,6 @@ export { Spinner } from './Spinner/Spinner';
 export { WidgetLoadingScreen } from './WidgetLoadingScreen/WidgetLoadingScreen';
 export { WidgetPlaceholder } from './WidgetPlaceholder/WidgetPlaceholder';
 export { TabChip } from './TabChip/TabChip';
-export { TabHoverTitle } from './TabHoverTitle/TabHoverTitle';
 export { WebSplashScreen } from './WebSplashScreen/WebSplashScreen';
 export { Web3SummitEndedScreen } from './Web3SummitEndedScreen/Web3SummitEndedScreen';
 export { QrCode } from './QrCode/QrCode';
