@@ -42,7 +42,7 @@ const StoryTheme = ({ mode, palette, locale, children }: StoryThemeProps) => {
 
   return (
     <TranslationProvider locale={locale}>
-      <div className="min-h-screen bg-bg-surface-main p-6 text-chrome-text">{children}</div>
+      <div className="h-screen overflow-y-auto bg-bg-surface-main p-6 text-chrome-text">{children}</div>
     </TranslationProvider>
   );
 };
