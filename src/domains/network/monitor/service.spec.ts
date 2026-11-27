@@ -135,6 +135,17 @@ describe('The network monitor tracks blocks', () => {
     expect(readStatus().some(chain => chain.genesisHash === EXTRA)).toBe(false);
   });
 
+  it('As a user of a product on another chain the network has no endpoint for, I hold that chain and see it reachable and live', () => {
+    // Given
+    unreachable.add(EXTRA);
+
+    // When
+    use(EXTRA);
+
+    // Then
+    expect(getChain(EXTRA)).toMatchObject({ reachable: true, state: 'live' });
+  });
+
   it('As a user, I release a chain never held and never see it listed', () => {
     // When
     release(EXTRA);
@@ -322,6 +333,15 @@ describe('The network monitor repaints the panel only on a change', () => {
         phase(RELAY.genesisHash, 'syncing', { phase: { kind: 'syncing', at: 40, target: 100 } });
       },
     },
+    {
+      reports: 'pool activity',
+      send() {
+        use(RELAY.genesisHash);
+      },
+      sendChanged() {
+        use(RELAY.genesisHash, { status: 'connecting' });
+      },
+    },
   ])(
     'As a user, I get $reports and see the panel repaint when one changes and stay quiet when it repeats',
     ({ send, sendChanged }) => {
@@ -339,6 +359,76 @@ describe('The network monitor repaints the panel only on a change', () => {
       expect(model).not.toBe(first);
     },
   );
+
+  it.each<{ reports: string; given: VoidFunction; send: VoidFunction }>([
+    {
+      reports: 'the release of a chain never held',
+      given() {},
+      send() {
+        release(EXTRA);
+      },
+    },
+    {
+      reports: 'a block on a chain nobody uses',
+      given() {},
+      send() {
+        block(RELAY.genesisHash, 100);
+      },
+    },
+    {
+      reports: 'a block on a chain the monitor does not know',
+      given() {},
+      send() {
+        block(EXTRA, 100);
+      },
+    },
+    {
+      reports: 'a repeated block number',
+      given() {
+        use(RELAY.genesisHash);
+        block(RELAY.genesisHash, 100);
+      },
+      send() {
+        block(RELAY.genesisHash, 100);
+      },
+    },
+    {
+      reports: 'a lower block number',
+      given() {
+        use(RELAY.genesisHash);
+        block(RELAY.genesisHash, 100);
+      },
+      send() {
+        block(RELAY.genesisHash, 99);
+      },
+    },
+  ])('As a user, I get $reports and see the panel stay quiet', ({ given, send }) => {
+    // Given
+    given();
+    const before = model;
+
+    // When
+    send();
+
+    // Then
+    expect(model).toBe(before);
+  });
+
+  it('As a user, I get a new block and see the bars already drawn kept as they were', () => {
+    // Given
+    use(RELAY.genesisHash);
+    block(RELAY.genesisHash, 100);
+    now += 6000;
+    block(RELAY.genesisHash, 101);
+    const [firstBar] = getChain(RELAY.genesisHash).bars;
+
+    // When
+    now += 6000;
+    block(RELAY.genesisHash, 102);
+
+    // Then
+    expect(getChain(RELAY.genesisHash).bars[0]).toBe(firstBar);
+  });
 });
 
 describe('The network monitor judges how each chain is used', () => {
