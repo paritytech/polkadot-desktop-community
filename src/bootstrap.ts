@@ -27,6 +27,7 @@ import {
   remoteConfigGateway,
   remoteConfigReady,
 } from '@/domains/remote-config';
+import { networkMonitorUseCase } from '@/aggregates/network-monitor';
 import { productManagementUseCase } from '@/aggregates/product-management';
 import { productWorkersUseCase } from '@/aggregates/product-workers';
 import { truapiRuntimeUseCase } from '@/aggregates/truapi-runtime';
@@ -153,6 +154,11 @@ const runBootstrap = async (): Promise<BootstrapOutcome> => {
   // failure every chain falls back to its RPC nodes.
   await initLightClient(activeEnvironment.stack).catch((error: unknown) => {
     console.error('[bootstrap] light client unavailable — chains will use RPC', error);
+  });
+
+  // The stop is discarded: the monitor lives as long as the app.
+  networkMonitorUseCase.start(activeEnvironment).catch((error: unknown) => {
+    console.error('[bootstrap] network monitor did not start', error);
   });
 
   // V2 multi-device identity is owned by the SDK (host-papp); the app reads it
