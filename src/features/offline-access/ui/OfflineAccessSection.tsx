@@ -1,4 +1,5 @@
-import { type LucideIcon, Grid2x2, Import, MessageCircle, Scan } from 'lucide-react';
+import { Grid2x2, Import, MessageCircle, Scan } from 'lucide-react';
+import { type FC, type SVGProps } from 'react';
 
 import { Button, ListItem, SettingsSection } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
@@ -17,7 +18,7 @@ function showVersion(version: SemVer) {
 
 // Per-modality glyph for the update rows — mirrors the Figma design (app = scan
 // viewfinder, widget = grid, background services = chat bubble).
-const MODALITY_ICON: Record<ExecutableKind, LucideIcon> = {
+const MODALITY_ICON: Record<ExecutableKind, FC<SVGProps<SVGSVGElement>>> = {
   app: Scan,
   widget: Grid2x2,
   worker: MessageCircle,

@@ -23,7 +23,6 @@ export { buildNativeDashboardCard } from './nativeDashboardCards';
 export { dashboardFeature } from './feature';
 
 export { AddToDashboardDialogShell } from './ui/AddToDashboardDialogShell';
-export { WidgetSizeIcon } from './ui/icons/WidgetSizeIcon';
 export { DashboardCardChrome } from './ui/DashboardCardChrome';
 export { ShortcutIcon } from './ui/ShortcutIcon';
 export { WidgetMenu } from './ui/WidgetMenu';

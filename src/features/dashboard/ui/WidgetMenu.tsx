@@ -1,6 +1,10 @@
 import { Check, LayoutDashboard, MoreHorizontal, Trash2 } from 'lucide-react';
-import { type ReactNode, useState } from 'react';
+import { type FC, type ReactNode, type SVGProps, useState } from 'react';
 
+import FrameBlockMediumIcon from '@/shared/assets/images/icons/frame-block-medium.svg?jsx';
+import FrameBlockSmallIcon from '@/shared/assets/images/icons/frame-block-small.svg?jsx';
+import FrameBlockTallIcon from '@/shared/assets/images/icons/frame-block-tall.svg?jsx';
+import FrameBlockWideIcon from '@/shared/assets/images/icons/frame-block-wide.svg?jsx';
 import { DropdownMenu } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
@@ -9,7 +13,13 @@ import { WIDGET_SIZE_CONFIG } from '../constants';
 import { type WidgetSize } from '../types';
 
 import { WidgetTopbarAction } from './WidgetTopbarAction';
-import { WidgetSizeIcon } from './icons/WidgetSizeIcon';
+
+const WIDGET_SIZE_ICON: Record<WidgetSizeIconVariant, FC<SVGProps<SVGSVGElement>>> = {
+  small: FrameBlockSmallIcon,
+  medium: FrameBlockMediumIcon,
+  large: FrameBlockTallIcon,
+  horizontal: FrameBlockWideIcon,
+};
 
 type WidgetMenuProps = {
   sizes: WidgetSizeIconVariant[];
@@ -68,6 +78,7 @@ export const WidgetMenu = ({
               {sizes.map(variant => {
                 const { size, labelKey } = WIDGET_SIZE_CONFIG[variant];
                 const isActive = currentSize.w === size.w && currentSize.h === size.h;
+                const SizeIcon = WIDGET_SIZE_ICON[variant];
 
                 return (
                   <DropdownMenu.Item
@@ -75,7 +86,7 @@ export const WidgetMenu = ({
                     disabled={isSizeLocked}
                     onClick={isSizeLocked ? undefined : handleResize(variant)}
                   >
-                    <WidgetSizeIcon variant={variant} className="size-4" />
+                    <SizeIcon className="size-4" />
                     <span className="flex-1">{t(labelKey)}</span>
                     {isActive ? <Check className="size-4" /> : null}
                   </DropdownMenu.Item>
