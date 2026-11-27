@@ -1,3 +1,5 @@
+import { type ChainHealth, type ChainStatus } from '@/domains/network';
+
 export type StatusTone = 'ok' | 'idle' | 'warn' | 'err';
 
 export type ArcBand = 'plain' | 'warn' | 'err';
@@ -31,3 +33,5 @@ export type BlockDelay = { gap: string; late: string | null };
 
 // The arc's stroke dash, in the mark's user units.
 export type ArcDash = { dash: number; gap: number; offset: number };
+
+export type ChainWithHealth = { chain: ChainStatus; health: ChainHealth };

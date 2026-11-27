@@ -10,6 +10,7 @@ import { ChainGlyph } from './ChainGlyph';
 type Props = {
   mark: ChainMark;
   role: KnownChainRole | null;
+  size?: 'md' | 'sm';
 };
 
 // A ring of radius 12.2 with ten waves of 0.9, as the mobile app draws a chain still connecting.
@@ -35,13 +36,13 @@ function pickArcStroke(mark: ChainMark): string {
 
 // Every layer stays drawn and the kind picks which show, so a change of kind morphs in CSS instead of redrawing.
 // Hidden from assistive technology, so the caller says the state in words.
-export const ChainHealthMark = ({ mark, role }: Props) => {
+export const ChainHealthMark = ({ mark, role, size = 'md' }: Props) => {
   const { kind } = mark;
   const arc = networkStatusService.traceArc(mark);
 
   return (
     <svg
-      className="size-7 flex-none text-chrome-text"
+      className={cnTw('flex-none text-chrome-text', size === 'md' && 'size-7', size === 'sm' && 'size-5')}
       viewBox="0 0 28 28"
       fill="none"
       aria-hidden
@@ -103,6 +104,8 @@ export const ChainHealthMark = ({ mark, role }: Props) => {
         <ChainGlyph
           role={role}
           className={cnTw(
+            // A host such as `Button` sizes every unsized descendant `svg`; `size-3` is the glyph's own 12 px.
+            'size-3',
             'motion-safe:transition-colors motion-safe:duration-460 motion-safe:ease-chrome',
             kind === 'healthy' && 'text-chrome-on-primary',
             (kind === 'outage' || kind === 'unavailable') && 'text-chrome-faint',
