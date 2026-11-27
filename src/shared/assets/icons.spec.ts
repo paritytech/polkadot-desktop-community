@@ -48,6 +48,7 @@ const SEPARATORS = /[\s,]/g;
 
 const EPSILON = 1e-6;
 const DOT_LENGTH = 0.01;
+const DOT_RADIUS = 0.75;
 const LIVE_AREA_START = 1.75;
 const LIVE_AREA_END = 14.25;
 
@@ -245,6 +246,21 @@ function readGeometry(element: Element, report: (message: string) => void): Geom
       const rx = readNumber(tag === 'circle' ? 'r' : 'rx');
       const ry = readNumber(tag === 'circle' ? 'r' : 'ry');
 
+      if (tag === 'circle') {
+        const isDotCircle = rx === DOT_RADIUS;
+        const isCentred = isDotCircle ? [cx, cy].every(value => isWhole(value * 2)) : [cx, cy].every(isOnLattice);
+
+        if (rx < DOT_RADIUS - EPSILON) {
+          report(`circle r ${rx}, want ${DOT_RADIUS} or more`);
+        }
+        if (!isCentred) {
+          report(`circle centre ${cx},${cy} off its grid`);
+        }
+        if (!isWhole(rx * 2) && !isDotCircle) {
+          report(`circle r ${rx} is not a multiple of 0.5`);
+        }
+      }
+
       return {
         anchors: [
           [cx - rx, cy - ry],
@@ -284,6 +300,14 @@ function findViolations(fileName: string, svg: string): string[] {
     report(`root attributes ${JSON.stringify(rootAttributes)}`);
   }
 
+  for (const node of Array.from(root.childNodes)) {
+    if (node.nodeType === Node.COMMENT_NODE) {
+      report('comment');
+    } else if (node.nodeType === Node.TEXT_NODE && (node.textContent ?? '').trim() !== '') {
+      report('text');
+    }
+  }
+
   for (const element of Array.from(root.children)) {
     const tag = element.tagName;
     const allowed = ELEMENT_ATTRIBUTES[tag];
@@ -302,6 +326,10 @@ function findViolations(fileName: string, svg: string): string[] {
     }
 
     const geometry = readGeometry(element, report);
+
+    if (geometry.segments.length === 0 && tag === 'path') {
+      report('path draws nothing');
+    }
     const dotEnds = new Set(geometry.segments.filter(isDot).map(segment => segment.to));
 
     for (const anchor of geometry.anchors) {
@@ -332,9 +360,9 @@ const icons = import.meta.glob<string>('./images/icons/*.svg', { query: '?raw', 
 
 const entries = Object.entries(icons).map(([path, svg]): [string, string] => [path.split('/').at(-1) ?? path, svg]);
 
-function iconOf(children: string, rootAttributes = ''): string {
+function iconOf(children: string): string {
   return [
-    `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"${rootAttributes}>`,
+    `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">`,
     children,
     '</svg>',
   ].join('\n');
@@ -354,7 +382,7 @@ describe('findViolations', () => {
       [
         '<circle cx="8.25" cy="8.25" r="6"/>',
         '<path d="M8.25 10.75L8.26 10.75"/>',
-        '<circle cx="5.25" cy="8.25" r="0.5"/>',
+        '<circle cx="5.5" cy="8.5" r="0.75"/>',
         '<path d="M4.25 5.75H12.25V10.25"/>',
         '<rect x="2.25" y="3.75" width="11.5" height="8.5" rx="1.25"/>',
         '<path d="M4.25 12.75C5.5 11.25 7 11.25 8.25 12.75"/>',
@@ -412,7 +440,7 @@ describe('findViolations', () => {
       label: 'a rect corner that does not match its size',
       fileName: 'icon.svg',
       svg: iconOf('<rect x="2.25" y="3.75" width="11.5" height="8.5" rx="0.75"/>'),
-      fragment: 'rx',
+      fragment: 'rx 0.75, want 1.25',
     },
     {
       label: 'a control point off the quarter pixel',
@@ -437,7 +465,37 @@ describe('findViolations', () => {
       label: 'a rect without rx',
       fileName: 'icon.svg',
       svg: iconOf('<rect x="2.25" y="3.75" width="11.5" height="8.5"/>'),
-      fragment: 'rx',
+      fragment: 'rx missing',
+    },
+    {
+      label: 'a circle smaller than a dot',
+      fileName: 'icon.svg',
+      svg: iconOf('<circle cx="8.25" cy="8.25" r="0.5"/>'),
+      fragment: 'circle r 0.5',
+    },
+    {
+      label: 'a circle centre off the lattice',
+      fileName: 'icon.svg',
+      svg: iconOf('<circle cx="8.25" cy="8.5" r="2"/>'),
+      fragment: 'off its grid',
+    },
+    {
+      label: 'a comment',
+      fileName: 'icon.svg',
+      svg: iconOf('<!-- hi -->\n<path d="M4.25 5.75H12.25"/>'),
+      fragment: 'comment',
+    },
+    {
+      label: 'stray text',
+      fileName: 'icon.svg',
+      svg: iconOf('stray text\n<path d="M4.25 5.75H12.25"/>'),
+      fragment: 'text',
+    },
+    {
+      label: 'a path with no segment',
+      fileName: 'icon.svg',
+      svg: iconOf('<path d="M4.25 5.75"/>'),
+      fragment: 'draws nothing',
     },
     {
       label: 'a file name that is not kebab-case',

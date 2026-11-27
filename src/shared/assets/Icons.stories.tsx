@@ -17,7 +17,9 @@ import {
   TicketIcon,
 } from './index';
 
-type IconSize = '12' | '16' | '20' | '24' | '28' | '32';
+const iconSizes = ['12', '16', '20', '24', '28', '32'] as const;
+
+type IconSize = (typeof iconSizes)[number];
 
 const meta: Meta<{ size: IconSize }> = {
   title: 'Design System/Icons',
@@ -57,7 +59,7 @@ const icons = Object.entries(iconModules)
 export const Set: Story = {
   args: { size: '16' },
   argTypes: {
-    size: { control: 'select', options: ['12', '16', '20', '24', '28', '32'] satisfies IconSize[] },
+    size: { control: 'select', options: iconSizes },
   },
   render: ({ size }) => (
     <div className="grid grid-cols-[repeat(auto-fill,minmax(7rem,1fr))] gap-4">
