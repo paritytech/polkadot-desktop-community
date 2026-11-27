@@ -28,8 +28,14 @@ export const NetworkButton: FC = () => {
     <Popover.Root open={open} onOpenChange={setOpen}>
       <DismissOverlay open={open} testId={TEST_IDS.dismissOverlay} onDismiss={() => setOpen(false)} />
       <Popover.Trigger asChild>
-        <Button variant="ghost" aria-label={title} title={title} data-testid={TEST_IDS.networkStatusButton}>
-          {/* Keeps the marks 4 px apart, and keeps `Button`'s narrower padding for a leading `svg` from applying. */}
+        <Button
+          variant="ghost"
+          horizontalSize="condensed"
+          aria-label={title}
+          title={title}
+          data-testid={TEST_IDS.networkStatusButton}
+        >
+          {/* Keeps the marks 4 px apart against `Button`'s `gap-1.5`. */}
           <span className="flex items-center gap-1">
             {known.map(({ chain, health }) => (
               <ChainHealthMark

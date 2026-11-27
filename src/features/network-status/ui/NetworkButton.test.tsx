@@ -132,6 +132,15 @@ describe('NetworkButton', () => {
     expect(button).toHaveClass('aria-expanded:bg-chrome-fill-strong');
   });
 
+  it('pads its marks as far from the sides as from the top', async () => {
+    networkMonitor.model.set(networkMonitorService.createModel(KNOWN));
+    renderButton();
+
+    const button = await screen.findByRole('button', { name: 'Network' });
+    expect(button).toHaveClass('px-1.5');
+    expect(button).not.toHaveClass('px-4');
+  });
+
   it('shows the network panel only once pressed', async () => {
     const user = userEvent.setup();
     networkMonitor.model.set(networkMonitorService.createModel(KNOWN));
