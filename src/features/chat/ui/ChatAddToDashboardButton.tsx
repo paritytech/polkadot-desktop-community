@@ -36,6 +36,6 @@ export const ChatAddToDashboardButton = () => {
 };
 
 // Leading address-bar identity icon for the chat SPA. Chat is native (no product
-// row → no favicon), so it supplies its own filled chat bubble, tinted with the
+// row → no favicon), so it supplies its own chat bubble, tinted with the
 // URL text color so it flips with the theme (dark in light, light in dark).
 export const ChatAddressBarIcon = () => <MessageCircleIcon className="size-4 text-chrome-text" />;

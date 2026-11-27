@@ -53,7 +53,7 @@ chatFeature.inject(addressBarProductLeadingSlot, {
 });
 
 // Chat is native (no product row → no favicon), so it supplies its own address-bar
-// leading icon: a filled chat bubble tinted with the URL text color for both themes.
+// leading icon: a chat bubble tinted with the URL text color for both themes.
 chatFeature.inject(resolveAddressBarProductIconTransformer, ({ productId }) =>
   productId === CHAT ? <ChatAddressBarIcon /> : null,
 );
