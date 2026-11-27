@@ -99,6 +99,14 @@ Not every line needs the full context of the system around it. When in doubt, le
 - The app's type and spacing grid wins over any design source. A screen ported from another product (such as dot.li) or from a mockup takes the type step its role calls for, and puts every vertical size, gap and padding on the 4 px rhythm and every control on the control scale. Never copy the source's raw pixel sizes or line heights. Check the size the source actually renders at, not its base token: dot.li steps its chrome type down one size on desktop. _Why:_ the owner, on a popover ported with dot.li's literal values: "font grid should be strict across app".
 - Reuse UI by composing components, never by sharing pieces of another component's implementation. A repeated look is a component that wants extracting: give it a name, props, and a single owner, then use it in both places. Copying its class string, importing its class constant, or passing a `className` that reproduces it spreads one visual decision across files that nothing keeps in sync.
 
+## Icons
+
+- A UI icon is its own SVG file in `src/shared/assets/images/icons/`, imported where it is used as `import XIcon from '@/shared/assets/images/icons/<name>.svg?jsx'`. Nothing lists or wraps icons except the story `src/shared/assets/Icons.stories.tsx`: no barrel, no name-to-component map, no `Icon` component, no icon props.
+- Size and colour come from `className` (`size-4`, and a text colour through `currentColor`).
+- The drawing spec: a 16 px grid, a 1.5 px line with round caps and joins and no fills, and every anchor on a quarter pixel (`k + 0.25`, `k + 0.75`) inside `1.75`–`14.25`, so the line is crisp on 2x screens at 16 px. A dot is a 0.01 segment, never a zero-length one, which svgo drops, or an `r="0.75"` circle for a larger dot. _Why:_ the owner, on the stroke width: "please try to avoid subpixel rendering as hard as possible", then "i still prefer 1.5px, it looks better for human perception".
+- A new icon from lucide is redrawn onto this grid, never copied from its 24 grid, and keeps lucide's canonical file name. `src/shared/assets/images/icons/LICENSE-lucide` stays beside the set.
+- `src/shared/assets/icons.spec.ts` enforces the drawing rules.
+
 ## i18n
 
 - No string literals in JSX. Use `react-intl`. Stories and tests are exempt.
