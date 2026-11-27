@@ -8,9 +8,9 @@ import {
   type ChainClock,
   type ChainLifecycle,
   type ChainPhase,
-  type ChainRole,
   type ChainStatus,
   type KnownChain,
+  type KnownChainRole,
   type MonitoredChain,
   type NetworkMonitorModel,
 } from './types';
@@ -131,7 +131,7 @@ function readNetworkStatus(model: NetworkMonitorModel, isReachable: (chain: Chai
   }));
 }
 
-function createMonitoredChain(chain: Chain, role: ChainRole | null, blockTimeMs: number): MonitoredChain {
+function createMonitoredChain(chain: Chain, role: KnownChainRole | null, blockTimeMs: number): MonitoredChain {
   return {
     chain,
     role,
@@ -225,7 +225,7 @@ function isChainReachable(monitored: MonitoredChain, isReachable: (chain: Chain)
 
 // Read from the pool's status and the light client's phase only. Neither the blocks nor overdue blocks are judged here.
 function judgeUse(monitored: MonitoredChain, reachable: boolean): Pick<ChainStatus, 'state' | 'alarm'> {
-  // The light client brings its chains up whether or not the app holds them, so a chain only counts once taken.
+  // A released chain stays connected through the pool's grace period with no lease, so a chain only counts while held.
   if (!reachable || monitored.consumers === 0) {
     return { state: 'unused', alarm: false };
   }

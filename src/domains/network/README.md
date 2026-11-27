@@ -19,7 +19,7 @@ It is deliberately a **read/connect** layer. It owns _how_ to reach a chain and 
 - **Sync share** — the share of its last warp sync the light client proved, kept after the sync. `syncShare` on a monitored chain.
 - **Bar** — a best block with the gap since the previous one, classified on time, late or very late against the chain's block time.
 - **Chain use** — whether the app uses a chain and how it fares: `unused`, `pending`, `down` or `live`.
-- **Role** — `relay`, `assetHub`, `bulletin` or `people`: the environment's role chains, named as the `roles` of `VITE_ENVIRONMENTS` name them, plus the people chain's relay. Not the `network-connection` feature's own `ChainRole`, which names what a chain is used for (`identity`, `apps` or `transactions`).
+- **Role** — `relay`, `assetHub`, `bulletin` or `people`: the environment's role chains, named as the `roles` of `VITE_ENVIRONMENTS` name them, plus the people chain's relay. The type is `KnownChainRole`.
 - **Network health** — the verdict over the live chains: `connected`, `syncing`, `unstable`, `offline`, `unused` or `unreachable`. The values are semantic; the words and colours belong to the feature.
 - **Known chain and extra** — a known chain is one the environment gives a role; it is always in the monitor, `unused` until held. An extra is any other chain the pool holds (role `null`); it is judged against a typical parachain's block time and leaves the monitor when released.
 - **Phase** — how a chain comes up as the light client reports it: `connecting`, `syncing`, `ready`, or `stalled` when it makes no progress. A chain can be `ready` before any block is observed.

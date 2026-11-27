@@ -3,7 +3,7 @@ import { type Chain } from '../chain/types';
 
 export type { ChainLifecycle } from '@parity/truapi-provider';
 
-export type ChainRole = 'relay' | 'assetHub' | 'bulletin' | 'people';
+export type KnownChainRole = 'relay' | 'assetHub' | 'bulletin' | 'people';
 
 export type BlockHealth = 'onTime' | 'late' | 'veryLate';
 
@@ -20,12 +20,12 @@ export type ChainUse = 'unused' | 'pending' | 'down' | 'live';
 // A chain's phase as it comes up, or `stalled` once the light client reports it making no progress.
 export type ChainPhase = 'connecting' | 'syncing' | 'ready' | 'stalled';
 
-export type KnownChain = { role: ChainRole; chain: Chain };
+export type KnownChain = { role: KnownChainRole; chain: Chain };
 
 export type MonitoredChain = {
   readonly chain: Chain;
   // Null for a chain outside the known roles.
-  readonly role: ChainRole | null;
+  readonly role: KnownChainRole | null;
   readonly blockTimeMs: number;
   // Oldest first.
   readonly bars: readonly BlockBar[];
@@ -35,8 +35,8 @@ export type MonitoredChain = {
   readonly consumers: number;
   readonly status: ConnectionStatus;
   readonly following: boolean;
-  // The light client's last report. These three outlive a release: the light client keeps its chains whether or not
-  // the app holds them.
+  // The light client's last report. These three hold it while a light-client connection is open and clear when the
+  // watch ends.
   readonly phase: ChainPhase | null;
   readonly syncShare: number | null;
   readonly peers: number | null;
@@ -50,7 +50,7 @@ export type NetworkMonitorModel = {
 
 export type ChainStatus = {
   readonly genesisHash: string;
-  readonly role: ChainRole | null;
+  readonly role: KnownChainRole | null;
   readonly name: string;
   readonly bars: readonly BlockBar[];
   readonly latest: number | null;

@@ -24,10 +24,10 @@ export type {
   ChainClock,
   ChainLifecycle,
   ChainPhase,
-  ChainRole,
   ChainStatus,
   ChainUse,
   KnownChain,
+  KnownChainRole,
   NetworkMonitorModel,
 } from './monitor/types';
 export { networkMonitorService } from './monitor/service';
