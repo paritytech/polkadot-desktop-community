@@ -212,7 +212,9 @@
         "noConnectionSubtitle": "登录以配对你的账户"
       },
       "popover": {
-        "settings": "设置"
+        "settings": "设置",
+        "signedInAs": "已登录为",
+        "signedOut": "未登录"
       }
     },
     "chat": {

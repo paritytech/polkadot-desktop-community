@@ -212,7 +212,9 @@
         "noConnectionSubtitle": "Melde dich an, um dein Konto zu koppeln"
       },
       "popover": {
-        "settings": "Einstellungen"
+        "settings": "Einstellungen",
+        "signedInAs": "Angemeldet als",
+        "signedOut": "Nicht angemeldet"
       }
     },
     "chat": {

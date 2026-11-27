@@ -212,7 +212,9 @@
         "noConnectionSubtitle": "Войдите, чтобы связать аккаунт"
       },
       "popover": {
-        "settings": "Настройки"
+        "settings": "Настройки",
+        "signedInAs": "Вы вошли как",
+        "signedOut": "Вход не выполнен"
       }
     },
     "chat": {

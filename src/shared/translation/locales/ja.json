@@ -212,7 +212,9 @@
         "noConnectionSubtitle": "ログインしてアカウントをペアリングしてください"
       },
       "popover": {
-        "settings": "設定"
+        "settings": "設定",
+        "signedInAs": "ログイン中",
+        "signedOut": "未ログイン"
       }
     },
     "chat": {

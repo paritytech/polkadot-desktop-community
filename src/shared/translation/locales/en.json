@@ -213,7 +213,9 @@
         "noConnectionSubtitle": "Log in to pair your account"
       },
       "popover": {
-        "settings": "Settings"
+        "settings": "Settings",
+        "signedInAs": "Signed in as",
+        "signedOut": "Not signed in"
       }
     },
     "chat": {

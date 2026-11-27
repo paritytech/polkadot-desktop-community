@@ -212,7 +212,9 @@
         "noConnectionSubtitle": "Inicia sesión para emparejar tu cuenta"
       },
       "popover": {
-        "settings": "Ajustes"
+        "settings": "Ajustes",
+        "signedInAs": "Sesión iniciada como",
+        "signedOut": "Sin sesión iniciada"
       }
     },
     "chat": {

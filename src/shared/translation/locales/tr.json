@@ -212,7 +212,9 @@
         "noConnectionSubtitle": "Hesabını eşleştirmek için giriş yap"
       },
       "popover": {
-        "settings": "Ayarlar"
+        "settings": "Ayarlar",
+        "signedInAs": "Giriş yapılan hesap",
+        "signedOut": "Giriş yapılmadı"
       }
     },
     "chat": {

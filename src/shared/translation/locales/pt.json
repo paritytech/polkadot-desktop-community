@@ -212,7 +212,9 @@
         "noConnectionSubtitle": "Entre para parear sua conta"
       },
       "popover": {
-        "settings": "Configurações"
+        "settings": "Configurações",
+        "signedInAs": "Sessão iniciada como",
+        "signedOut": "Sessão não iniciada"
       }
     },
     "chat": {

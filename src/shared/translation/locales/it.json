@@ -212,7 +212,9 @@
         "noConnectionSubtitle": "Accedi per abbinare il tuo account"
       },
       "popover": {
-        "settings": "Impostazioni"
+        "settings": "Impostazioni",
+        "signedInAs": "Accesso effettuato come",
+        "signedOut": "Accesso non effettuato"
       }
     },
     "chat": {

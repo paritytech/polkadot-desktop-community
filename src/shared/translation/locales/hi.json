@@ -212,7 +212,9 @@
         "noConnectionSubtitle": "अपना खाता जोड़ने के लिए लॉग इन करें"
       },
       "popover": {
-        "settings": "सेटिंग्स"
+        "settings": "सेटिंग्स",
+        "signedInAs": "इस रूप में साइन इन",
+        "signedOut": "साइन इन नहीं किया गया"
       }
     },
     "chat": {

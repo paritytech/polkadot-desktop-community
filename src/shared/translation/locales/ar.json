@@ -212,7 +212,9 @@
         "noConnectionSubtitle": "سجّل الدخول لإقران حسابك"
       },
       "popover": {
-        "settings": "الإعدادات"
+        "settings": "الإعدادات",
+        "signedInAs": "تم تسجيل الدخول باسم",
+        "signedOut": "لم يتم تسجيل الدخول"
       }
     },
     "chat": {

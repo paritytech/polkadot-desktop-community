@@ -212,7 +212,9 @@
         "noConnectionSubtitle": "Connectez-vous pour appairer votre compte"
       },
       "popover": {
-        "settings": "Paramètres"
+        "settings": "Paramètres",
+        "signedInAs": "Connecté en tant que",
+        "signedOut": "Non connecté"
       }
     },
     "chat": {

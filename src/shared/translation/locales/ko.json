@@ -212,7 +212,9 @@
         "noConnectionSubtitle": "로그인해 계정을 페어링하세요"
       },
       "popover": {
-        "settings": "설정"
+        "settings": "설정",
+        "signedInAs": "로그인 계정",
+        "signedOut": "로그인하지 않음"
       }
     },
     "chat": {
