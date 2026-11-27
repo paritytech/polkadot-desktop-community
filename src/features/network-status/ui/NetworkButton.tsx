@@ -1,7 +1,8 @@
 import { Globe } from 'lucide-react';
-import { type FC, useEffect, useState } from 'react';
+import { type FC, useState } from 'react';
 
 import { DismissOverlay, IconButton, Popover } from '@/shared/components';
+import { useCloseOnWindowLeave } from '@/shared/hooks';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { cnTw } from '@/shared/utils';
@@ -16,22 +17,7 @@ export const NetworkButton: FC = () => {
   const tone = HEALTH_TONES[health];
   const [open, setOpen] = useState(false);
 
-  // Non-modal Radix popovers detect outside clicks via document `pointerdown`, which a click inside a product iframe
-  // or on the toolbar's drag area never fires. <DismissOverlay/> covers the drag area; window blur and resize close
-  // the popover when an iframe steals focus.
-  useEffect(() => {
-    if (!open) {
-      return;
-    }
-    const close = () => setOpen(false);
-    window.addEventListener('blur', close);
-    window.addEventListener('resize', close);
-
-    return () => {
-      window.removeEventListener('blur', close);
-      window.removeEventListener('resize', close);
-    };
-  }, [open]);
+  useCloseOnWindowLeave(open, () => setOpen(false));
 
   const title = t('feature.networkStatus.title');
 

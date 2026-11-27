@@ -1,10 +1,11 @@
 import { type SessionUiInfo } from '@parity/truapi-host';
 import { useNavigate } from '@tanstack/react-router';
 import { LogIn, LogOut, Settings, WifiOff } from 'lucide-react';
-import { type PropsWithChildren, type ReactNode, memo, useEffect, useState } from 'react';
+import { type PropsWithChildren, type ReactNode, memo, useState } from 'react';
 
 import PolkadotLogo from '@/shared/assets/images/logo-icon.svg?jsx';
 import { Avatar, DismissOverlay, Popover, Spinner } from '@/shared/components';
+import { useCloseOnWindowLeave } from '@/shared/hooks';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { browserTabs } from '@/aggregates/browser-tabs';
@@ -119,20 +120,7 @@ export const UserInfoPopover = memo(({ session, username, connectionState, netwo
   const [open, setOpen] = useState(defaultOpen ?? false);
   const isConnected = session !== null;
 
-  // Non-modal Radix popovers detect outside clicks via document `pointerdown`,
-  // which doesn't fire when the click lands inside a product iframe nor on the
-  // toolbar's -webkit-app-region: drag area. The toolbar drag area is covered by
-  // <DismissOverlay/> below; window blur/resize still close on iframe focus-steal.
-  useEffect(() => {
-    if (!open) return;
-    const close = () => setOpen(false);
-    window.addEventListener('blur', close);
-    window.addEventListener('resize', close);
-    return () => {
-      window.removeEventListener('blur', close);
-      window.removeEventListener('resize', close);
-    };
-  }, [open]);
+  useCloseOnWindowLeave(open, () => setOpen(false));
 
   const openSettingsTab = () => {
     setOpen(false);

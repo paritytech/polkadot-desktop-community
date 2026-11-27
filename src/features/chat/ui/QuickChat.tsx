@@ -6,6 +6,7 @@ import { of } from 'rxjs';
 
 import MaximizeIcon from '@/shared/assets/images/header/maximize.svg?jsx';
 import { AppIcon, DismissOverlay, EmptyState, IconButton, PaneHeader, Popover } from '@/shared/components';
+import { useCloseOnWindowLeave } from '@/shared/hooks';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { type ChatSession, type RoomFooter, useProductSessions } from '@/domains/chat';
@@ -103,21 +104,7 @@ export const QuickChat = memo(({ open, onOpenChange, children }: QuickChatProps)
     setSendError(null);
   }, [open]);
 
-  // Radix's non-modal outside-click is document `pointerdown`. That never fires
-  // for clicks inside a product iframe, nor for clicks on the toolbar's
-  // -webkit-app-region: drag area (the OS steals the event for window drag).
-  // The toolbar drag area is covered by <DismissOverlay/> below; window blur and
-  // resize still close on iframe focus-steal — same defensive pattern as UserInfoPopover.
-  useEffect(() => {
-    if (!open) return;
-    const close = () => onOpenChange(false);
-    window.addEventListener('blur', close);
-    window.addEventListener('resize', close);
-    return () => {
-      window.removeEventListener('blur', close);
-      window.removeEventListener('resize', close);
-    };
-  }, [open, onOpenChange]);
+  useCloseOnWindowLeave(open, () => onOpenChange(false));
 
   return (
     <Popover.Root open={open} onOpenChange={onOpenChange}>
