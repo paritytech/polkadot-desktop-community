@@ -101,8 +101,10 @@ Not every line needs the full context of the system around it. When in doubt, le
 
 ## Icons
 
-- A UI icon is its own SVG file in `src/shared/assets/images/icons/`, imported where it is used as `import XIcon from '@/shared/assets/images/icons/<name>.svg?jsx'`. Nothing lists or wraps icons except the story `src/shared/assets/Icons.stories.tsx`: no barrel, no name-to-component map, no `Icon` component, no icon props.
+- A UI icon is its own SVG file in `src/shared/assets/images/icons/`, imported where it is used as `import XIcon from '@/shared/assets/images/icons/<name>.svg?jsx'`. Nothing lists or wraps icons except the story `src/shared/assets/Icons.stories.tsx`: no barrel, no `Icon` component, no icon props. A feature may map a value it owns to the icon that shows it (a widget size or an attachment kind to its icon); a map from icon names to components stays ruled out.
 - Size and colour come from `className` (`size-4`, and a text colour through `currentColor`).
+- An icon is decorative: every file's root carries `aria-hidden="true"`, and `icons.spec.ts` requires it. A call site that needs the icon read out passes `aria-hidden={false}` with its label.
+- An icon that points toward the start or end of the text flow (a back or forward chevron) carries `rtl:-scale-x-100` at its call site. _Why:_ `dir` mirrors layout but never the content of an SVG, so a back chevron would keep pointing left in Arabic.
 - The drawing spec: a 16 px grid, a 1.5 px line with round caps and joins and no fills, and every anchor on a quarter pixel (`k + 0.25`, `k + 0.75`) inside `1.75`–`14.25`, so the line is crisp on 2x screens at 16 px. A dot is a 0.01 segment, never a zero-length one, which svgo drops, or an `r="0.75"` circle for a larger dot. _Why:_ the owner, on the stroke width: "please try to avoid subpixel rendering as hard as possible", then "i still prefer 1.5px, it looks better for human perception".
 - A new icon from lucide is redrawn onto this grid, never copied from its 24 grid, and keeps lucide's canonical file name. `src/shared/assets/images/icons/LICENSE-lucide` stays beside the set.
 - An icon drawn in-house is named after its shape, the way lucide names its own, never after where the app uses it. _Why:_ `@/shared` is domain-agnostic, so a name like `widget-size-small` leaks dashboard vocabulary into it.

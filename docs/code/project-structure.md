@@ -470,7 +470,7 @@ parents.
 ## Shared
 
 `@/shared` is the bottom of the dependency graph — small, self-contained libraries depending on nothing above. Each subdirectory
-is one library with a single `index.ts` public surface. Consumers import from `@/shared/{library}`, never internal paths.
+is one library with a single `index.ts` public surface. Consumers import from `@/shared/{library}`, never internal paths (except the per-file `?jsx` imports of SVGs under `@/shared/assets/images/`).
 
 **Rules**:
 
@@ -506,6 +506,10 @@ is one library with a single `index.ts` public surface. Consumers import from `@
 - `@/shared/env` — environment detection (web/Electron) and build-mode detection (`isDev`, `isProductionBuild` —
   the latter reads the `BUILD_MODE` define because the renderer vite config remaps staging to Vite's
   `production` mode, so `import.meta.env.MODE` alone cannot tell the two apart).
+- `@/shared/assets` — SVG and image assets. Its SVGs under `images/` are imported per file through `?jsx`: each UI
+  icon as `@/shared/assets/images/icons/<name>.svg?jsx` (docs/code/style.md § Icons), and the brand marks the same way.
+  This is the one library consumers import by internal path. Its `index.ts` re-exports the illustrations and two of the
+  brand marks.
 - `@/shared/logger` — `silenceDebugConsole`, the app-level switch that mutes `console.debug` in production builds
   (called once from `src/index.tsx`).
 - `@/shared/statement-store` — `signAndSubmitStatement`, the domain-agnostic app-policy submit-with-retry wrapper over the
