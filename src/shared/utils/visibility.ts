@@ -12,8 +12,13 @@ const readActive = (): boolean => {
   return !document.hidden;
 };
 
-const rawActive$: Observable<boolean> = hasDom
-  ? fromEvent(document, 'visibilitychange').pipe(map(readActive), startWith(readActive()), distinctUntilChanged())
+export const appVisible$: Observable<boolean> = hasDom
+  ? fromEvent(document, 'visibilitychange').pipe(
+      map(readActive),
+      startWith(readActive()),
+      distinctUntilChanged(),
+      shareReplay({ bufferSize: 1, refCount: false }),
+    )
   : of(true);
 
 /**
@@ -23,7 +28,7 @@ const rawActive$: Observable<boolean> = hasDom
  * Used to release chain subscriptions while the app is backgrounded so stale
  * chainHead_follow state cannot accumulate across silent WebSocket reconnects.
  */
-export const appActive$: Observable<boolean> = rawActive$.pipe(
+export const appActive$: Observable<boolean> = appVisible$.pipe(
   switchMap(active => (active ? of(true) : timer(INACTIVE_THRESHOLD_MS).pipe(map(() => false)))),
   distinctUntilChanged(),
   shareReplay({ bufferSize: 1, refCount: false }),

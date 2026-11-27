@@ -111,6 +111,10 @@ const CHAIN_REQUEST_TIMEOUT_MS = 30_000;
 export const chainRegistry = {
   ...chains,
 
+  isReachable(chain: Chain): boolean {
+    return usesLightClient(chain) || chain.nodes.length > 0;
+  },
+
   // Hands back the untyped chain api (no descriptor loaded). A call site that
   // needs typed pallet access narrows `api` to its descriptor via `ChainApiFor`.
   async requestApi<Return>(chain: Chain, callback: (api: TypedClient) => Return): Promise<Awaited<Return>> {
