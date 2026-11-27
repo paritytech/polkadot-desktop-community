@@ -77,7 +77,7 @@ describe('Button', () => {
     expect(button).toHaveAttribute('aria-haspopup', 'menu');
   });
 
-  it('looks checked as a ghost while expanded or pressed', () => {
+  it('carries the ghost checked classes while expanded', () => {
     render(
       <Button variant="ghost" aria-expanded>
         Save

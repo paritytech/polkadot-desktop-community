@@ -80,8 +80,12 @@ afterEach(() => {
 });
 
 describe('NetworkButton', () => {
-  it('shows no button while no known chain is listed', async () => {
+  it('drops the button once no known chain is listed', async () => {
+    networkMonitor.model.set(networkMonitorService.createModel(KNOWN));
     renderButton();
+    await screen.findByRole('button', { name: 'Network' });
+
+    act(() => networkMonitor.model.set(networkMonitorService.createModel([])));
 
     await waitFor(() => expect(screen.queryByTestId(TEST_IDS.networkStatusButton)).toBeNull());
   });
@@ -125,6 +129,7 @@ describe('NetworkButton', () => {
 
     await screen.findByTestId(TEST_IDS.networkPanel);
     expect(button.getAttribute('aria-expanded')).toBe('true');
+    expect(button).toHaveClass('aria-expanded:bg-chrome-fill-strong');
   });
 
   it('shows the network panel only once pressed', async () => {

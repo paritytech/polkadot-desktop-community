@@ -1,4 +1,4 @@
-import { type FC } from 'react';
+import { type FC, memo } from 'react';
 
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
@@ -11,7 +11,7 @@ import { ChainRow } from './ChainRow';
 import { OtherChains } from './OtherChains';
 import { StatusDot } from './StatusDot';
 
-export const NetworkPanel: FC = () => {
+export const NetworkPanel: FC = memo(() => {
   const { t } = useTranslation();
   const { networkHealth, chains } = useChainHealth();
 
@@ -34,4 +34,4 @@ export const NetworkPanel: FC = () => {
       )}
     </section>
   );
-};
+});
