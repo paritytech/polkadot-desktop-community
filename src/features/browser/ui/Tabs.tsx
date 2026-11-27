@@ -19,26 +19,7 @@ import { ProductTabHover } from './ProductTabHover';
 
 const FADE_PX = 48;
 
-const HOVER_CARD_DELAY_MS = 500;
-const HOVER_CARD_WARM_MS = 400;
-
-let hoverCardWarm = false;
-let warmCooldownTimer: ReturnType<typeof setTimeout> | null = null;
-
-const scheduleWarmCooldown = () => {
-  if (warmCooldownTimer) clearTimeout(warmCooldownTimer);
-  warmCooldownTimer = setTimeout(() => {
-    hoverCardWarm = false;
-    warmCooldownTimer = null;
-  }, HOVER_CARD_WARM_MS);
-};
-
-const cancelWarmCooldown = () => {
-  if (warmCooldownTimer) {
-    clearTimeout(warmCooldownTimer);
-    warmCooldownTimer = null;
-  }
-};
+const HOVER_CARD_DELAY_MS = 300;
 
 const updateMask = (el: HTMLElement) => {
   const left = el.scrollLeft > 1;
@@ -124,7 +105,7 @@ export const Tabs = () => {
   };
 
   return (
-    <div className="px-2 pb-1" data-testid={TEST_IDS.browserTabStrip}>
+    <div className="px-2 pb-2" data-testid={TEST_IDS.browserTabStrip}>
       <DndContext
         sensors={sensors}
         collisionDetection={closestCenter}
@@ -183,7 +164,6 @@ const SortableTab = ({ tab, isActive, onClose }: SortableTabProps) => {
       hoverTimeoutRef.current = null;
     }
     setIsHovering(false);
-    if (hoverCardWarm) scheduleWarmCooldown();
   }, []);
 
   // Use Translate (not Transform) so dnd-kit's scaleX/scaleY adjustments — which
@@ -199,15 +179,7 @@ const SortableTab = ({ tab, isActive, onClose }: SortableTabProps) => {
 
   const handleMouseEnter = () => {
     if (!isProductTab) return;
-    cancelWarmCooldown();
-    if (hoverCardWarm) {
-      setIsHovering(true);
-      return;
-    }
-    hoverTimeoutRef.current = setTimeout(() => {
-      setIsHovering(true);
-      hoverCardWarm = true;
-    }, HOVER_CARD_DELAY_MS);
+    hoverTimeoutRef.current = setTimeout(() => setIsHovering(true), HOVER_CARD_DELAY_MS);
   };
 
   const handleMouseLeave = () => {
@@ -265,14 +237,14 @@ const SortableTab = ({ tab, isActive, onClose }: SortableTabProps) => {
           {...listeners}
         >
           <SegmentedControl.Item value={tab.id}>
-            <span className="flex min-w-0 flex-1 items-center justify-center gap-2 overflow-hidden ps-3.5">
+            <span className="flex min-w-0 flex-1 items-center justify-center gap-2 overflow-hidden">
               <Slot id={tabContentSlot} props={{ tab, setDeeplink, isActive }} />
             </span>
           </SegmentedControl.Item>
           <button
             tabIndex={-1}
             data-no-app-focus
-            className="absolute start-0.5 top-1/2 z-10 flex size-5 origin-center -translate-y-1/2 scale-75 cursor-pointer items-center justify-center rounded-full opacity-0 transition-[opacity,background-color,transform] duration-150 ease-out group-hover:scale-100 group-hover:opacity-100 hover:bg-chrome-fill-strong"
+            className="absolute start-0.75 top-1/2 z-10 flex size-5 origin-center -translate-y-1/2 scale-75 cursor-pointer items-center justify-center rounded-full bg-chrome-fill-strong opacity-0 shadow-chrome-raised backdrop-blur-sm transition-[opacity,transform] duration-150 ease-out group-hover:scale-100 group-hover:opacity-100"
             aria-label={t('feature.browser.closeTab')}
             onClick={e => {
               e.stopPropagation();

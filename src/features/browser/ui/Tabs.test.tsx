@@ -19,7 +19,7 @@ function renderStrip() {
 }
 
 // The strip's open delay. The product case waits only briefly after it, so a longer delay fails the case.
-const HOVER_DELAY_MS = 500;
+const HOVER_DELAY_MS = 300;
 
 function hoverTab(id: string, container: HTMLElement) {
   const tab = container.querySelector(`[data-tab-id="${id}"]`);
@@ -40,12 +40,6 @@ describe('Tabs hover card', () => {
   });
 
   afterEach(() => {
-    // The strip keeps a module-level warm flag for a short while after a card closes. Leave every tab and run out any
-    // cooldown, so no case opens a card early because of the case before it.
-    for (const tab of document.querySelectorAll('[data-tab-id]')) fireEvent.mouseLeave(tab);
-    act(() => {
-      vi.advanceTimersByTime(1000);
-    });
     vi.useRealTimers();
   });
 

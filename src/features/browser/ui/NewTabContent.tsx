@@ -1,4 +1,3 @@
-import PlaceholderIcon from '@/shared/assets/images/header/placeholder.svg?jsx';
 import { TabChip } from '@/shared/components';
 import { useTranslation } from '@/shared/translation';
 
@@ -6,5 +5,5 @@ type Props = { isActive: boolean };
 
 export const NewTabContent = ({ isActive }: Props) => {
   const { t } = useTranslation();
-  return <TabChip placeholder={<PlaceholderIcon aria-hidden />} isActive={isActive} label={t('feature.browser.newTab')} />;
+  return <TabChip isActive={isActive} label={t('feature.browser.newTab')} />;
 };
