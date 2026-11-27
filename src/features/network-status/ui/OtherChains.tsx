@@ -21,7 +21,7 @@ export const OtherChains: FC<PropsWithChildren<Props>> = ({ count, children }) =
       <summary
         data-testid={TEST_IDS.networkOtherChainsSummary}
         data-no-app-focus
-        className="-mx-1 flex min-h-9 w-fit cursor-pointer list-none items-center gap-1 rounded-lg px-1 py-1.5 text-base font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-chrome-focus [&::-webkit-details-marker]:hidden"
+        className="-mx-1 flex min-h-control w-fit cursor-pointer list-none items-center gap-1 rounded-lg px-1 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-chrome-focus [&::-webkit-details-marker]:hidden"
       >
         {t('feature.networkStatus.otherChains', { count })}
         <ChevronDown

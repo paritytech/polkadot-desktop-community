@@ -46,7 +46,7 @@ export const NetworkPanel: FC = () => {
 
   return (
     <section data-testid={TEST_IDS.networkPanel} className="flex w-80 flex-col gap-2 p-3">
-      <div className="flex items-center justify-between gap-2 px-1 pt-0.5">
+      <div className="flex items-center justify-between gap-2 px-1">
         <h2 className="text-lg font-semibold">{t('feature.networkStatus.title')}</h2>
         <StatusDot tone={HEALTH_TONES[health]} label={t(`feature.networkStatus.health.${health}`)} />
       </div>

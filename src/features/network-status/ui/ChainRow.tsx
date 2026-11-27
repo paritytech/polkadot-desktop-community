@@ -89,7 +89,7 @@ export const ChainRow: FC<Props> = ({ chain, health }) => {
           <span
             data-testid={TEST_IDS.networkChainRowName}
             className={cnTw(
-              'truncate text-base font-semibold motion-safe:transition-colors motion-safe:duration-460 motion-safe:ease-chrome',
+              'truncate text-sm font-semibold motion-safe:transition-colors motion-safe:duration-460 motion-safe:ease-chrome',
               setAside && 'text-chrome-muted',
             )}
           >
@@ -99,7 +99,7 @@ export const ChainRow: FC<Props> = ({ chain, health }) => {
             data-testid={TEST_IDS.networkChainRowStatus}
             data-tone={line.tone ?? undefined}
             className={cnTw(
-              'truncate text-sm tabular-nums motion-safe:transition-colors motion-safe:duration-460 motion-safe:ease-chrome',
+              'truncate text-xs tabular-nums motion-safe:transition-colors motion-safe:duration-460 motion-safe:ease-chrome',
               {
                 'text-chrome-muted': line.tone === null,
                 'text-chrome-warn-text': line.tone === 'warn',
@@ -119,7 +119,7 @@ export const ChainRow: FC<Props> = ({ chain, health }) => {
         <div
           id={detailId}
           data-testid={TEST_IDS.networkChainRowDetail}
-          className="col-span-2 col-start-2 flex flex-col gap-1.5 pb-3"
+          className="col-span-2 col-start-2 flex flex-col gap-2 pb-3"
         >
           <p className="flex items-baseline justify-between gap-2 text-xs whitespace-nowrap text-chrome-muted tabular-nums">
             <span>
