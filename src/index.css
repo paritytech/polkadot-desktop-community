@@ -30,6 +30,29 @@
   --text-3xl--line-height: 2.5rem;
   --text-4xl: 3rem;
   --text-4xl--line-height: 3.5rem;
+
+  /* The easings and motion of dot.li's network popover. */
+  --ease-chrome: cubic-bezier(0.32, 0.72, 0, 1);
+  --ease-strip: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --animate-bar-in: bar-in 340ms var(--ease-strip);
+  --animate-chain-pulse: chain-pulse 1.4s ease-in-out infinite;
+
+  @keyframes bar-in {
+    from {
+      transform: scaleY(0.3);
+      opacity: 0;
+    }
+    to {
+      transform: scaleY(1);
+      opacity: 1;
+    }
+  }
+
+  @keyframes chain-pulse {
+    50% {
+      opacity: 0.35;
+    }
+  }
 }
 
 @layer base {

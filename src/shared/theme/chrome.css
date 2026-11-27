@@ -20,6 +20,11 @@
   --chrome-ring: rgba(0, 0, 0, 0.14);
   --chrome-focus: #2f6fe4;
   --chrome-ok: #15803d;
+  --chrome-warn: #b45f06;
+  --chrome-idle: #8b8e96;
+  --chrome-action-dim: #d6d8dc;
+  --chrome-warn-text: #a15c07;
+  --chrome-err-text: #a11b1b;
   --chrome-glass: linear-gradient(180deg, var(--chrome-top) 0%, var(--chrome-bottom) 100%);
   --chrome-shadow-raised: inset 0 0 0 1px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.14);
   --chrome-shadow-inset: inset 0 1px 2px rgba(0, 0, 0, 0.06), inset 0 0 0 1px rgba(0, 0, 0, 0.03);
@@ -66,6 +71,11 @@
   --chrome-ring: rgba(255, 255, 255, 0.16);
   --chrome-focus: #78a9ff;
   --chrome-ok: #6bc880;
+  --chrome-warn: #e69f42;
+  --chrome-idle: #aaacb4;
+  --chrome-action-dim: #5f6269;
+  --chrome-warn-text: #ffd9ae;
+  --chrome-err-text: #ffd5d1;
   --chrome-shadow-raised:
     inset 0 1px 0 rgba(255, 255, 255, 0.12), inset 0 0 0 1px rgba(255, 255, 255, 0.16), 0 1px 3px rgba(0, 0, 0, 0.3);
   --chrome-shadow-inset: inset 0 1px 2px rgba(0, 0, 0, 0.35), inset 0 0 0 1px rgba(255, 255, 255, 0.06);
@@ -263,6 +273,12 @@
   --color-chrome-faint: var(--chrome-text-faint);
   --color-chrome-focus: var(--chrome-focus);
   --color-chrome-ok: var(--chrome-ok);
+  --color-chrome-warn: var(--chrome-warn);
+  --color-chrome-idle: var(--chrome-idle);
+  --color-chrome-action-dim: var(--chrome-action-dim);
+  --color-chrome-warn-text: var(--chrome-warn-text);
+  --color-chrome-err-text: var(--chrome-err-text);
+  --color-chrome-ring-strong: var(--chrome-ring-strong);
   --color-chrome-danger-fill: var(--chrome-danger-fill);
   --color-chrome-danger-fill-strong: var(--chrome-danger-fill-strong);
   --color-chrome-danger-text: var(--chrome-danger-text);
