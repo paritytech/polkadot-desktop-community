@@ -191,25 +191,9 @@
       "clearRecent": "مسح"
     },
     "userManager": {
-      "connectionStatus": {
-        "connected": "متصل",
-        "reconnecting": "جارٍ إعادة الاتصال…",
-        "offline": "أنت غير متصل بالإنترنت",
-        "noConnection": "غير متصل — انقر لتسجيل الدخول"
-      },
       "aria": {
         "account": "الحساب",
         "connectAccount": "توصيل الحساب"
-      },
-      "banner": {
-        "connectedTitle": "متصل بـ {networkName}",
-        "connectedSubtitle": "تم إقران سطح المكتب مع الهاتف",
-        "reconnectingTitle": "جارٍ إعادة الاتصال بـ {networkName}…",
-        "reconnectingSubtitle": "محاولة الوصول إلى العقدة من جديد",
-        "offlineTitle": "أنت غير متصل بالإنترنت",
-        "offlineSubtitle": "تحقق من اتصال الإنترنت وحاول مرة أخرى",
-        "noConnectionTitle": "غير متصل",
-        "noConnectionSubtitle": "سجّل الدخول لإقران حسابك"
       },
       "popover": {
         "settings": "الإعدادات",

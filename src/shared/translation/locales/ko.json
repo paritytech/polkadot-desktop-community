@@ -191,25 +191,9 @@
       "clearRecent": "지우기"
     },
     "userManager": {
-      "connectionStatus": {
-        "connected": "연결됨",
-        "reconnecting": "다시 연결하는 중…",
-        "offline": "오프라인 상태입니다",
-        "noConnection": "연결되지 않음 — 클릭해 로그인하세요"
-      },
       "aria": {
         "account": "계정",
         "connectAccount": "계정 연결"
-      },
-      "banner": {
-        "connectedTitle": "{networkName}에 연결됨",
-        "connectedSubtitle": "데스크톱이 모바일과 페어링됨",
-        "reconnectingTitle": "{networkName}에 다시 연결하는 중…",
-        "reconnectingSubtitle": "노드에 다시 연결을 시도하고 있습니다",
-        "offlineTitle": "오프라인 상태입니다",
-        "offlineSubtitle": "인터넷 연결을 확인한 뒤 다시 시도하세요",
-        "noConnectionTitle": "연결되지 않음",
-        "noConnectionSubtitle": "로그인해 계정을 페어링하세요"
       },
       "popover": {
         "settings": "설정",

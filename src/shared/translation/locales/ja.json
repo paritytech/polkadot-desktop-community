@@ -191,25 +191,9 @@
       "clearRecent": "クリア"
     },
     "userManager": {
-      "connectionStatus": {
-        "connected": "接続済み",
-        "reconnecting": "再接続中…",
-        "offline": "オフラインです",
-        "noConnection": "未接続 — クリックしてサインイン"
-      },
       "aria": {
         "account": "アカウント",
         "connectAccount": "アカウントを接続"
-      },
-      "banner": {
-        "connectedTitle": "{networkName} に接続しました",
-        "connectedSubtitle": "デスクトップとモバイルをペアリング済み",
-        "reconnectingTitle": "{networkName} に再接続中…",
-        "reconnectingSubtitle": "ノードへの接続を再試行しています",
-        "offlineTitle": "オフラインです",
-        "offlineSubtitle": "インターネット接続を確認してもう一度お試しください",
-        "noConnectionTitle": "未接続",
-        "noConnectionSubtitle": "ログインしてアカウントをペアリングしてください"
       },
       "popover": {
         "settings": "設定",

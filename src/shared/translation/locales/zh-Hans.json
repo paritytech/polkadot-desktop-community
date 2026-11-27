@@ -191,25 +191,9 @@
       "clearRecent": "清除"
     },
     "userManager": {
-      "connectionStatus": {
-        "connected": "已连接",
-        "reconnecting": "正在重新连接…",
-        "offline": "你处于离线状态",
-        "noConnection": "未连接 — 点击登录"
-      },
       "aria": {
         "account": "账户",
         "connectAccount": "连接账户"
-      },
-      "banner": {
-        "connectedTitle": "已连接到 {networkName}",
-        "connectedSubtitle": "桌面端已与手机配对",
-        "reconnectingTitle": "正在重新连接到 {networkName}…",
-        "reconnectingSubtitle": "正在再次尝试连接节点",
-        "offlineTitle": "你处于离线状态",
-        "offlineSubtitle": "请检查网络连接后重试",
-        "noConnectionTitle": "未连接",
-        "noConnectionSubtitle": "登录以配对你的账户"
       },
       "popover": {
         "settings": "设置",

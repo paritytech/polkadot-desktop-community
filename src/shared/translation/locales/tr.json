@@ -191,25 +191,9 @@
       "clearRecent": "Temizle"
     },
     "userManager": {
-      "connectionStatus": {
-        "connected": "Bağlandı",
-        "reconnecting": "Yeniden bağlanılıyor…",
-        "offline": "Çevrimdışısın",
-        "noConnection": "Bağlı değil — giriş yapmak için tıkla"
-      },
       "aria": {
         "account": "Hesap",
         "connectAccount": "Hesabı bağla"
-      },
-      "banner": {
-        "connectedTitle": "{networkName} ağına bağlanıldı",
-        "connectedSubtitle": "Masaüstü, mobil ile eşleştirildi",
-        "reconnectingTitle": "{networkName} ağına yeniden bağlanılıyor…",
-        "reconnectingSubtitle": "Düğüme yeniden ulaşılmaya çalışılıyor",
-        "offlineTitle": "Çevrimdışısın",
-        "offlineSubtitle": "İnternet bağlantını kontrol et ve yeniden dene",
-        "noConnectionTitle": "Bağlı değil",
-        "noConnectionSubtitle": "Hesabını eşleştirmek için giriş yap"
       },
       "popover": {
         "settings": "Ayarlar",

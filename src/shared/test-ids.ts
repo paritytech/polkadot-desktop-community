@@ -121,11 +121,9 @@ export const TEST_IDS = {
 
   // User Manager
   userButton: 'user-button',
-  userConnectionStatus: 'user-connection-status',
   userLogoutButton: 'user-logout-button',
   userDisplayName: 'user-display-name',
   userSettingsAction: 'user-settings-action',
-  userPopoverBanner: 'user-popover-banner',
 
   // Navigation
   homeButton: 'home-button',

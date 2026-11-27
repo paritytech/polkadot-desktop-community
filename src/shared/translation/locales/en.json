@@ -192,25 +192,9 @@
       "clearRecent": "Clear"
     },
     "userManager": {
-      "connectionStatus": {
-        "connected": "Connected",
-        "reconnecting": "Reconnecting…",
-        "offline": "You are offline",
-        "noConnection": "Not connected — click to sign in"
-      },
       "aria": {
         "account": "Account",
         "connectAccount": "Connect account"
-      },
-      "banner": {
-        "connectedTitle": "Connected to {networkName}",
-        "connectedSubtitle": "Desktop paired with Mobile",
-        "reconnectingTitle": "Reconnecting to {networkName}…",
-        "reconnectingSubtitle": "Attempting to reach the node again",
-        "offlineTitle": "You're offline",
-        "offlineSubtitle": "Check internet connection and try again",
-        "noConnectionTitle": "Not connected",
-        "noConnectionSubtitle": "Log in to pair your account"
       },
       "popover": {
         "settings": "Settings",

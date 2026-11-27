@@ -191,25 +191,9 @@
       "clearRecent": "Очистить"
     },
     "userManager": {
-      "connectionStatus": {
-        "connected": "Подключено",
-        "reconnecting": "Переподключение…",
-        "offline": "Вы не в сети",
-        "noConnection": "Нет подключения — нажмите, чтобы войти"
-      },
       "aria": {
         "account": "Аккаунт",
         "connectAccount": "Подключить аккаунт"
-      },
-      "banner": {
-        "connectedTitle": "Подключено к {networkName}",
-        "connectedSubtitle": "Компьютер связан с телефоном",
-        "reconnectingTitle": "Переподключение к {networkName}…",
-        "reconnectingSubtitle": "Пытаемся снова связаться с узлом",
-        "offlineTitle": "Вы не в сети",
-        "offlineSubtitle": "Проверьте подключение к интернету и попробуйте снова",
-        "noConnectionTitle": "Нет подключения",
-        "noConnectionSubtitle": "Войдите, чтобы связать аккаунт"
       },
       "popover": {
         "settings": "Настройки",

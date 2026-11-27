@@ -191,25 +191,9 @@
       "clearRecent": "Effacer"
     },
     "userManager": {
-      "connectionStatus": {
-        "connected": "Connecté",
-        "reconnecting": "Reconnexion…",
-        "offline": "Vous êtes hors ligne",
-        "noConnection": "Non connecté — cliquez pour vous connecter"
-      },
       "aria": {
         "account": "Compte",
         "connectAccount": "Connecter le compte"
-      },
-      "banner": {
-        "connectedTitle": "Connecté à {networkName}",
-        "connectedSubtitle": "Bureau appairé avec le mobile",
-        "reconnectingTitle": "Reconnexion à {networkName}…",
-        "reconnectingSubtitle": "Nouvelle tentative de contact du nœud",
-        "offlineTitle": "Vous êtes hors ligne",
-        "offlineSubtitle": "Vérifiez votre connexion internet et réessayez",
-        "noConnectionTitle": "Non connecté",
-        "noConnectionSubtitle": "Connectez-vous pour appairer votre compte"
       },
       "popover": {
         "settings": "Paramètres",

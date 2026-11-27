@@ -191,25 +191,9 @@
       "clearRecent": "साफ़ करें"
     },
     "userManager": {
-      "connectionStatus": {
-        "connected": "कनेक्ट है",
-        "reconnecting": "फिर से कनेक्ट हो रहा है…",
-        "offline": "आप ऑफ़लाइन हैं",
-        "noConnection": "कनेक्ट नहीं है — साइन इन करने के लिए क्लिक करें"
-      },
       "aria": {
         "account": "खाता",
         "connectAccount": "खाता कनेक्ट करें"
-      },
-      "banner": {
-        "connectedTitle": "{networkName} से कनेक्ट है",
-        "connectedSubtitle": "डेस्कटॉप मोबाइल के साथ जोड़ा गया",
-        "reconnectingTitle": "{networkName} से फिर कनेक्ट हो रहा है…",
-        "reconnectingSubtitle": "नोड तक पहुँचने की फिर कोशिश हो रही है",
-        "offlineTitle": "आप ऑफ़लाइन हैं",
-        "offlineSubtitle": "इंटरनेट कनेक्शन जाँचें और फिर कोशिश करें",
-        "noConnectionTitle": "कनेक्ट नहीं है",
-        "noConnectionSubtitle": "अपना खाता जोड़ने के लिए लॉग इन करें"
       },
       "popover": {
         "settings": "सेटिंग्स",

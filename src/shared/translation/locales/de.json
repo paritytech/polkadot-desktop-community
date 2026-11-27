@@ -191,25 +191,9 @@
       "clearRecent": "Leeren"
     },
     "userManager": {
-      "connectionStatus": {
-        "connected": "Verbunden",
-        "reconnecting": "Verbindung wird wiederhergestellt…",
-        "offline": "Du bist offline",
-        "noConnection": "Nicht verbunden — zum Anmelden klicken"
-      },
       "aria": {
         "account": "Konto",
         "connectAccount": "Konto verbinden"
-      },
-      "banner": {
-        "connectedTitle": "Verbunden mit {networkName}",
-        "connectedSubtitle": "Desktop mit Mobilgerät gekoppelt",
-        "reconnectingTitle": "Verbindung zu {networkName} wird wiederhergestellt…",
-        "reconnectingSubtitle": "Der Node wird erneut kontaktiert",
-        "offlineTitle": "Du bist offline",
-        "offlineSubtitle": "Prüfe deine Internetverbindung und versuche es erneut",
-        "noConnectionTitle": "Nicht verbunden",
-        "noConnectionSubtitle": "Melde dich an, um dein Konto zu koppeln"
       },
       "popover": {
         "settings": "Einstellungen",

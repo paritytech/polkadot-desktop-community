@@ -191,25 +191,9 @@
       "clearRecent": "Borrar"
     },
     "userManager": {
-      "connectionStatus": {
-        "connected": "Conectado",
-        "reconnecting": "Reconectando…",
-        "offline": "Estás sin conexión",
-        "noConnection": "Sin conexión: haz clic para iniciar sesión"
-      },
       "aria": {
         "account": "Cuenta",
         "connectAccount": "Conectar cuenta"
-      },
-      "banner": {
-        "connectedTitle": "Conectado a {networkName}",
-        "connectedSubtitle": "Escritorio emparejado con el móvil",
-        "reconnectingTitle": "Reconectando a {networkName}…",
-        "reconnectingSubtitle": "Intentando alcanzar el nodo de nuevo",
-        "offlineTitle": "Estás sin conexión",
-        "offlineSubtitle": "Comprueba tu conexión a internet e inténtalo de nuevo",
-        "noConnectionTitle": "Sin conexión",
-        "noConnectionSubtitle": "Inicia sesión para emparejar tu cuenta"
       },
       "popover": {
         "settings": "Ajustes",
