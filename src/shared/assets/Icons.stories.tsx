@@ -23,6 +23,13 @@ type IconSize = (typeof iconSizes)[number];
 
 const meta: Meta<{ size: IconSize }> = {
   title: 'Design System/Icons',
+  decorators: [
+    Story => (
+      <div className="fixed inset-0 overflow-y-auto bg-bg-surface-main p-6">
+        <Story />
+      </div>
+    ),
+  ],
   parameters: {
     docs: {
       description: {
