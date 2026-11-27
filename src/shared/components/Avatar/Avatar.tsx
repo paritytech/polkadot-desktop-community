@@ -1,59 +1,66 @@
+import { UserRound } from 'lucide-react';
+
 import { cnTw } from '@/shared/utils';
-
-/** Order is load-bearing: callers hash a name to an index in this list, so reordering changes the tone each name gets. */
-export const AVATAR_TONES = [
-  'amethyst',
-  'opal',
-  'turquoise',
-  'onyx',
-  'pearl',
-  'emerald',
-  'topaz',
-  'ruby',
-  'sapphire',
-  'garnet',
-] as const;
-
-export type AvatarTone = (typeof AVATAR_TONES)[number];
 
 type Props = {
   label: string;
   alt?: string;
-  tone?: AvatarTone;
-  size?: '20' | '24' | '40' | '48' | '56';
+  size?: '24' | '40' | '48' | '96' | '136';
 };
 
 const graphemes = new Intl.Segmenter();
 
-function firstGrapheme(label: string) {
-  const first = graphemes.segment(label.trim())[Symbol.iterator]().next().value?.segment;
-  return first?.toLocaleUpperCase() ?? '?';
+function leadingGraphemes(word: string, count: number) {
+  return Array.from(graphemes.segment(word), ({ segment }) => segment)
+    .slice(0, count)
+    .join('');
 }
 
-/** A letter avatar: the first grapheme of `label` on its tone. */
-export const Avatar = ({ label, alt, tone = 'amethyst', size = '40' }: Props) => (
-  <span
-    role="img"
-    aria-label={alt ?? label}
-    className={cnTw(
-      'relative flex shrink-0 items-center justify-center overflow-hidden rounded-full font-semibold shadow-chrome-line select-none',
-      size === '20' && 'size-5 text-xs leading-none',
-      size === '24' && 'size-6 text-xs leading-none',
-      size === '40' && 'size-10 text-2xl leading-none',
-      size === '48' && 'size-12 text-2xl leading-none',
-      size === '56' && 'size-14 text-2xl leading-none',
-      tone === 'amethyst' && 'bg-avatar-bg-amethyst text-avatar-fg-amethyst',
-      tone === 'opal' && 'bg-avatar-bg-opal text-avatar-fg-opal',
-      tone === 'turquoise' && 'bg-avatar-bg-turquoise text-avatar-fg-turquoise',
-      tone === 'onyx' && 'bg-avatar-bg-onyx text-avatar-fg-onyx',
-      tone === 'pearl' && 'bg-avatar-bg-pearl text-avatar-fg-pearl',
-      tone === 'emerald' && 'bg-avatar-bg-emerald text-avatar-fg-emerald',
-      tone === 'topaz' && 'bg-avatar-bg-topaz text-avatar-fg-topaz',
-      tone === 'ruby' && 'bg-avatar-bg-ruby text-avatar-fg-ruby',
-      tone === 'sapphire' && 'bg-avatar-bg-sapphire text-avatar-fg-sapphire',
-      tone === 'garnet' && 'bg-avatar-bg-garnet text-avatar-fg-garnet',
-    )}
-  >
-    {firstGrapheme(label)}
-  </span>
-);
+function getInitials(label: string): string | undefined {
+  const [first, second] = label.split(/\s+/).filter(word => word.length > 0);
+
+  if (first === undefined) {
+    return undefined;
+  }
+
+  const initials = second === undefined ? leadingGraphemes(first, 2) : leadingGraphemes(first, 1) + leadingGraphemes(second, 1);
+
+  return initials.toLocaleUpperCase();
+}
+
+/**
+ * An account avatar: up to two initials of `label`, or a person glyph when it has none. The glyph is hidden from
+ * assistive tech unless `alt` names it.
+ */
+export const Avatar = ({ label, alt, size = '40' }: Props) => {
+  const initials = getInitials(label);
+  const name = initials === undefined ? alt : (alt ?? label);
+
+  return (
+    <span
+      role={name === undefined ? undefined : 'img'}
+      aria-label={name}
+      aria-hidden={name === undefined ? true : undefined}
+      className={cnTw(
+        'relative flex shrink-0 items-center justify-center overflow-hidden rounded-full bg-(image:--chrome-avatar) font-semibold text-chrome-text shadow-chrome-raised select-none',
+        size === '24' && 'size-6 text-xs',
+        size === '40' && 'size-10 text-lg',
+        size === '48' && 'size-12 text-xl',
+        size === '96' && 'size-24 text-3xl',
+        size === '136' && 'size-34 text-4xl',
+      )}
+    >
+      {initials ?? (
+        <UserRound
+          className={cnTw(
+            size === '24' && 'size-3',
+            size === '40' && 'size-4',
+            size === '48' && 'size-5',
+            size === '96' && 'size-10',
+            size === '136' && 'size-14',
+          )}
+        />
+      )}
+    </span>
+  );
+};

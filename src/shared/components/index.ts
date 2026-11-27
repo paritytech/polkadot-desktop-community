@@ -53,5 +53,5 @@ export { Tooltip } from './Tooltip/Tooltip';
 export { Toaster } from './Toaster/Toaster';
 export { type ToastContent, toast } from './Toaster/toast';
 export { AppIcon } from './AppIcon/AppIcon';
-export { type AvatarTone, AVATAR_TONES, Avatar } from './Avatar/Avatar';
+export { Avatar } from './Avatar/Avatar';
 export { EmptyState } from './EmptyState/EmptyState';
