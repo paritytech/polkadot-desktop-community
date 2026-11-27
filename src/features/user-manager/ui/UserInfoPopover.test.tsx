@@ -19,7 +19,7 @@ import { UserInfoPopover } from './UserInfoPopover';
 const disconnectMock = vi.spyOn(truapiRuntimeUseCase, 'disconnectSession').mockResolvedValue();
 const performUserLogoutMock = vi.spyOn(sessionUseCase, 'performUserLogout').mockResolvedValue();
 
-// Stable session fixture; the popover reads only the username fields.
+// Stable session fixture; the popover only checks that a session exists.
 const fakeSession: NonNullable<Parameters<typeof UserInfoPopover>[0]['session']> = {
   publicKey: `0x${'11'.repeat(32)}`,
   fullUsername: 'Goldie.89',

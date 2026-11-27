@@ -2,8 +2,7 @@
 Feature: Session & Connection State
 
   These auth-project scenarios run a fresh Electron in autotest mode but do NOT
-  pair (no signer needed). They cover the user button
-  before sign-in.
+  pair (no signer needed). They cover the user button before sign-in.
 
   TC-2.5.1 (14703) and TC-2.5.2 (14704) covered the boot-time storage migrations in
   `src/domains/application/papp-provider/service.ts`. That file was removed with the
