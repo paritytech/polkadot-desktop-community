@@ -150,6 +150,9 @@ export function createChainConnection<C extends ChainConfig, T = PolkadotClient>
         console.warn(`[chain-connection] best blocks failed for ${genesisHash}`, error);
         entry.blocks = null;
       },
+      complete() {
+        entry.blocks = null;
+      },
     });
     // A stream that ends during `subscribe` leaves nothing to hold, and a later `connected` follows it again.
     entry.blocks = subscription.closed ? null : subscription;

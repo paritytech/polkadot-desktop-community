@@ -213,10 +213,16 @@ type LifecycleListener = (genesisHash: GenesisHash, lifecycle: ChainLifecycle | 
 
 type ChainLifecycleWatch = Pick<LifecycleWatch, 'next' | 'close'>;
 
+type LifecycleWatches = {
+  open(genesisHash: GenesisHash, watchLifecycle: () => ChainLifecycleWatch): void;
+  close(genesisHash: GenesisHash): void;
+  subscribe(listener: LifecycleListener): VoidFunction;
+};
+
 // One running watch per chain while any connection to it is open. `null` tells the
 // listeners the chain has no light-client state any more: its connections all closed,
 // or its watch ended or failed.
-export function createLifecycleWatches() {
+export function createLifecycleWatches(): LifecycleWatches {
   const openConnections = new Map<GenesisHash, number>();
   const running = new Map<GenesisHash, ChainLifecycleWatch>();
   const latest = new Map<GenesisHash, ChainLifecycle>();
@@ -337,7 +343,7 @@ type LightClientHandle = {
 type LightClientProviderDeps = {
   getHandle: () => Promise<LightClientHandle>;
   loadLightSpecs: () => Promise<void>;
-  lifecycleWatches: ReturnType<typeof createLifecycleWatches>;
+  lifecycleWatches: LifecycleWatches;
 };
 
 const lightClientProviderDeps: LightClientProviderDeps = {

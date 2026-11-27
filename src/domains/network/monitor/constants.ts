@@ -1,6 +1,6 @@
 import { type ChainRole } from './types';
 
-// Only a memory ceiling, never how many bars are drawn.
+// Only a memory ceiling, never how many bars a reader keeps.
 export const MAX_BARS = 120;
 
 // A chain outside the known roles reports no block time, so it is judged against a typical parachain's.

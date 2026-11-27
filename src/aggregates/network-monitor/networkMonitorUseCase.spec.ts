@@ -19,13 +19,7 @@ const OTHER = buildChain('Other', `0x${'05'.repeat(32)}`);
 
 const ENVIRONMENT = { peopleChain: PEOPLE, bulletinChain: BULLETIN, dotnsChain: ASSET_HUB };
 
-// Every known chain with its role's block time, as the monitor seeds them.
-const ACTIVE_CHAINS: { chain: Chain; blockTimeMs: number }[] = [
-  { chain: RELAY, blockTimeMs: 6000 },
-  { chain: ASSET_HUB, blockTimeMs: 2000 },
-  { chain: BULLETIN, blockTimeMs: 6000 },
-  { chain: PEOPLE, blockTimeMs: 2000 },
-];
+const ACTIVE_CHAINS: Chain[] = [RELAY, ASSET_HUB, BULLETIN, PEOPLE];
 
 const poolWatchers = new Set<ChainPoolWatcher<Chain>>();
 const lifecycleListeners = new Set<LifecycleListener>();
@@ -81,7 +75,7 @@ describe('The network health store', () => {
     // Given
     await startHealth();
     useAll();
-    const fastest = Math.min(...ACTIVE_CHAINS.map(active => active.blockTimeMs));
+    const fastest = Math.min(...readBlockTimes());
     const overdue = fastest * 3;
     blockAll(100);
 
@@ -141,7 +135,7 @@ describe('The network health store', () => {
     expect(networkMonitor.health.get()).toBe('offline');
   });
 
-  it('As a user leaving the page, I stop the health store and it leaves its monitor with no listener', async () => {
+  it('As a user leaving the page, I stop the health store and later activity changes nothing', async () => {
     // Given
     const stop = await startHealth();
     const listenersWhileRunning = poolWatchers.size;
@@ -150,7 +144,7 @@ describe('The network health store', () => {
     stop();
     networkMonitor.model.set(model => networkMonitorService.recordChainActivity(model, buildActivity(PEOPLE, {})));
 
-    // Then: no listener is left, and later activity changes nothing
+    // Then: the pool watch is released, and the health stays as the stopped loop left it
     expect({
       listenersWhileRunning,
       listenersAfterStop: poolWatchers.size,
@@ -333,19 +327,19 @@ async function startHealth(): Promise<VoidFunction> {
 
 // Returns a wait after a block past which every active chain's next block is overdue.
 function getEveryChainOverdueMs(): number {
-  const slowest = Math.max(...ACTIVE_CHAINS.map(active => active.blockTimeMs));
+  const slowest = Math.max(...readBlockTimes());
   return slowest * 3 + 2000;
 }
 
 // A consumer holds every active chain, connected and following, unless the test says otherwise.
 function useAll(overrides: Partial<Omit<ChainActivity<Chain>, 'chain'>> = {}): void {
-  for (const { chain } of ACTIVE_CHAINS) {
+  for (const chain of ACTIVE_CHAINS) {
     tellActivity(buildActivity(chain, overrides));
   }
 }
 
 function blockAll(blockNumber: number): void {
-  for (const { chain } of ACTIVE_CHAINS) {
+  for (const chain of ACTIVE_CHAINS) {
     tellBestBlock(chain.genesisHash, blockNumber);
   }
 }
@@ -370,6 +364,11 @@ function tellLifecycle(genesis: GenesisHash, lifecycle: ChainLifecycle | null): 
   for (const listener of lifecycleListeners) {
     listener(genesis, lifecycle);
   }
+}
+
+// The block times the monitor seeded for its known chains.
+function readBlockTimes(): number[] {
+  return readStatus().map(row => row.blockTimeMs);
 }
 
 function readStatus() {

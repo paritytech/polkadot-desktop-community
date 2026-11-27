@@ -15,11 +15,16 @@ It is deliberately a **read/connect** layer. It owns _how_ to reach a chain and 
 - **Call** — A pallet + method + arguments, as SCALE-encoded call data names them. Decoding call data needs the executing chain's own metadata, so the same bytes name different calls on different runtimes — which is why `useDecodedCall` takes a genesis hash and not just the bytes. Not to be confused with an **extrinsic** (a signed, submittable transaction wrapping a call) or a **payload** (the bytes a signer signs).
 - **Stack** — the active environment's signed Trinity stack, as `@/domains/application`'s environment module defines it. The light client runs it.
 - **Light spec** — a chain's light-client chain spec, published at the URL the stack's descriptor names for that chain.
-- **Monitor** — the live record of each chain the connection pool holds: holders, status, best blocks as bars, light-client phase, warp share and peers. It holds no chain. Only a relay the app itself holds on the light client gets a warp share, so parachain rows have none.
+- **Monitor** — the live record of each chain the connection pool holds: holders, status, best blocks as bars, light-client phase, sync share and peers. It holds no chain. Only a relay the app itself holds on the light client gets a sync share, so parachain rows have none.
+- **Sync share** — the share of its last warp sync the light client proved, kept after the sync. `syncShare` on a monitored chain.
 - **Bar** — a best block with the gap since the previous one, classified on time, late or very late against the chain's block time.
 - **Chain use** — whether the app uses a chain and how it fares: `unused`, `pending`, `down` or `live`.
 - **Role** — `relay`, `assetHub`, `bulletin` or `people`: the environment's role chains, named as the `roles` of `VITE_ENVIRONMENTS` name them, plus the people chain's relay. Not the `network-connection` feature's own `ChainRole`, which names what a chain is used for (`identity`, `apps` or `transactions`).
 - **Network health** — the verdict over the live chains: `connected`, `syncing`, `unstable`, `offline`, `unused` or `unreachable`. The values are semantic; the words and colours belong to the feature.
+- **Known chain and extra** — a known chain is one the environment gives a role; it is always in the monitor, `unused` until held. An extra is any other chain the pool holds (role `null`); it is judged against a typical parachain's block time and leaves the monitor when released.
+- **Phase** — how a chain comes up as the light client reports it: `connecting`, `syncing`, `ready`, or `stalled` when it makes no progress. A chain can be `ready` before any block is observed.
+- **Alarm** — a chain in use that the light client reports `stalled`. Never raised by overdue blocks alone.
+- **Chain health** — the per-chain reading behind the verdict, by `kind`: `offline`, `noEndpoint`, `unused`, `disconnected`, `syncing`, `connecting`, `stalled` or `producing`. A producing chain carries its **live share**, its block time over its measured one, capped at 1, and null until two intervals are measured.
 - **Overdue** — a live chain past three block times with no block.
 - **Preimage** — A content blob a product stores via the **Bulletin chain** (`TransactionStorage`), addressed by its BLAKE2b-256 hash. The bytes are retrieved from IPFS, where that hash is also the content's CID. Products submit preimage bytes and look them back up by hash. (Bulletin-chain content addressing — _not_ a governance / runtime-call preimage.)
 

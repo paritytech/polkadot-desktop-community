@@ -325,7 +325,7 @@ describe('The network monitor repaints the panel only on a change', () => {
       },
     },
     {
-      reports: 'warp shares',
+      reports: 'sync shares',
       send() {
         phase(RELAY.genesisHash, 'syncing', { phase: { kind: 'syncing', at: 20, target: 100 } });
       },
@@ -346,6 +346,7 @@ describe('The network monitor repaints the panel only on a change', () => {
     'As a user, I get $reports and see the panel repaint when one changes and stay quiet when it repeats',
     ({ send, sendChanged }) => {
       // Given
+      const before = model;
       send();
       const first = model;
 
@@ -355,6 +356,7 @@ describe('The network monitor repaints the panel only on a change', () => {
       sendChanged();
 
       // Then
+      expect(first).not.toBe(before);
       expect(repeated).toBe(first);
       expect(model).not.toBe(first);
     },
@@ -608,7 +610,7 @@ describe('The network monitor judges how each chain is used', () => {
     expect(getChain(RELAY.genesisHash)).toMatchObject({ phase: null, syncShare: null, peers: null, alarm: false });
   });
 
-  it('As a user, I see a syncing light client report its warp share and peers', () => {
+  it('As a user, I see a syncing light client report its sync share and peers', () => {
     // When
     model = networkMonitorService.recordLightClientLifecycle(model, RELAY.genesisHash, {
       phase: { kind: 'syncing', at: 50, target: 100 },

@@ -904,6 +904,13 @@ describe('createChainConnection', () => {
   });
 
   describe('watch', () => {
+    beforeEach(() => {
+      vi.spyOn(console, 'debug').mockImplementation(noop);
+    });
+    afterEach(() => {
+      vi.restoreAllMocks();
+    });
+
     function createWatcher() {
       const activities: ChainActivity<ChainConfig>[] = [];
       const blocks: [string, number][] = [];
@@ -1065,7 +1072,6 @@ describe('createChainConnection', () => {
       expect(activities).toEqual([{ chain, consumers: 1, status: 'connecting', following: true }]);
       expect(consoleError).toHaveBeenCalledWith('[chain-connection] a pool watcher threw', error);
       unlock();
-      consoleError.mockRestore();
     });
 
     it('follows best blocks again after an error only once the transport reports connected', async () => {
@@ -1087,7 +1093,6 @@ describe('createChainConnection', () => {
       expect(consoleWarn).toHaveBeenCalledWith('[chain-connection] best blocks failed for a', error);
       expect(blocks).toEqual([['a', 9]]);
       unlock();
-      consoleWarn.mockRestore();
     });
   });
 });

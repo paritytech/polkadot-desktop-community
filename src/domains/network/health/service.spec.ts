@@ -312,6 +312,45 @@ describe('describeChainHealth', () => {
     },
   );
 
+  it.each<{ reading: string; chain: HealthChain; sinceRead: number; expected: ChainHealth }>([
+    {
+      reading: 'syncing',
+      chain: { ...CHAIN, phase: 'syncing', sinceLast: 1500 },
+      sinceRead: 1000,
+      expected: { kind: 'syncing', syncShare: null, sinceLast: 2500 },
+    },
+    {
+      reading: 'connecting',
+      chain: { ...CHAIN, phase: 'connecting', sinceLast: 1500 },
+      sinceRead: 1000,
+      expected: { kind: 'connecting', sinceLast: 2500 },
+    },
+    {
+      reading: 'stalled',
+      chain: { ...CHAIN, sinceLast: 60_000 },
+      sinceRead: 1000,
+      expected: { kind: 'stalled', behind: false, sinceLast: 61_000 },
+    },
+    {
+      reading: 'producing after the clock stepped back',
+      chain: { ...CHAIN, sinceLast: 1500, phase: 'ready' },
+      sinceRead: -1000,
+      expected: { kind: 'producing', behind: false, sinceLast: 1500, liveShare: null },
+    },
+  ])(
+    'As a user of a chain $reading, I see its last block aged by the read, never made younger',
+    ({ chain, sinceRead, expected }) => {
+      // Given
+      const read = { ...FACTS, sinceRead };
+
+      // When
+      const health = networkHealthService.describeChainHealth(chain, read);
+
+      // Then
+      expect(health).toEqual(expected);
+    },
+  );
+
   it.each([{ behind: false }, { behind: true }])(
     'As a user of a chain with no block for 60 s, when the verdict names it is $behind I see it not producing blocks',
     ({ behind }) => {

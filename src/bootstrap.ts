@@ -157,7 +157,7 @@ const runBootstrap = async (): Promise<BootstrapOutcome> => {
   });
 
   // The stop is discarded: the monitor lives as long as the app.
-  networkMonitorUseCase.start(activeEnvironment).catch((error: unknown) => {
+  void networkMonitorUseCase.start(activeEnvironment).catch((error: unknown) => {
     console.error('[bootstrap] network monitor did not start', error);
   });
 

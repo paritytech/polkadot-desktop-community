@@ -54,7 +54,7 @@ function recordChainActivity(model: NetworkMonitorModel, activity: ChainActivity
     return { known: model.known, extras };
   }
   // A consumer can drop its follow and keep the chain. No block is coming then, so the clock stops rather than reading
-  // the chain as overdue, and a later follow carries the strip on from its next block. A gap across a drop, or across
+  // the chain as overdue, and a later follow carries the bars on from its next block. A gap across a drop, or across
   // the unused stretch after a release, is no measure of block production either. A released known chain keeps its
   // bars as the record of its last use.
   const stopsClock = (current.following && !activity.following) || activity.status !== 'connected' || released;
@@ -107,7 +107,7 @@ function recordLightClientLifecycle(
   const stopsClock = isPhaseDown(phase) && phase !== current.phase;
   return patchChain(model, located, {
     phase,
-    syncShare: readWarpShare(lifecycle.phase) ?? current.syncShare,
+    syncShare: readSyncShare(lifecycle.phase) ?? current.syncShare,
     peers: lifecycle.peers,
     lastAt: stopsClock ? null : current.lastAt,
   });
@@ -206,8 +206,8 @@ function isPhaseDown(phase: ChainPhase | null): boolean {
   return phase === 'connecting' || phase === 'syncing';
 }
 
-// The share of its warp a syncing chain has proven, or null when the sample has no usable target.
-function readWarpShare(phase: ChainLifecycle['phase']): number | null {
+// The share of its warp sync a syncing chain has proven, or null when the sample has no usable target.
+function readSyncShare(phase: ChainLifecycle['phase']): number | null {
   if (phase.kind === 'syncing' && phase.target > 0 && phase.at <= phase.target) {
     return phase.at / phase.target;
   }
