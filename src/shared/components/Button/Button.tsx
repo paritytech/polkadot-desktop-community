@@ -27,7 +27,9 @@ export const Button = ({ variant = 'secondary', size = 'md', block, type, disabl
         !disabled &&
           variant === 'danger' &&
           'bg-chrome-danger-fill text-chrome-danger-text shadow-chrome-danger hover:bg-chrome-danger-fill-strong',
-        !disabled && variant === 'ghost' && 'bg-transparent text-chrome-text hover:bg-chrome-fill active:bg-chrome-fill-strong',
+        !disabled &&
+          variant === 'ghost' &&
+          'bg-transparent text-chrome-text hover:bg-chrome-fill active:bg-chrome-fill-strong aria-expanded:bg-chrome-fill-strong aria-expanded:shadow-chrome-raised aria-pressed:bg-chrome-fill-strong',
         disabled && variant === 'ghost' && 'cursor-default text-chrome-faint active:scale-100',
         disabled && variant !== 'ghost' && 'cursor-default bg-chrome-well text-chrome-faint shadow-chrome-ring active:scale-100',
       )}

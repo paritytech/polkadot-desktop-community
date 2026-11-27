@@ -76,4 +76,20 @@ describe('Button', () => {
     expect(button).toHaveClass('inline-flex', 'rounded-full', 'h-control');
     expect(button).toHaveAttribute('aria-haspopup', 'menu');
   });
+
+  it('looks checked as a ghost while expanded or pressed', () => {
+    render(
+      <Button variant="ghost" aria-expanded>
+        Save
+      </Button>,
+    );
+
+    const button = screen.getByRole('button', { name: 'Save' });
+    expect(button).toHaveAttribute('aria-expanded', 'true');
+    expect(button).toHaveClass(
+      'aria-expanded:bg-chrome-fill-strong',
+      'aria-expanded:shadow-chrome-raised',
+      'aria-pressed:bg-chrome-fill-strong',
+    );
+  });
 });
