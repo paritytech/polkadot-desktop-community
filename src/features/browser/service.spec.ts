@@ -242,3 +242,17 @@ describe('browserService.splitDisplayAddress', () => {
     expect(browserService.splitDisplayAddress('localhost:50535')).toEqual({ prefix: '', name: 'localhost:50535', rest: '' });
   });
 });
+
+describe('browserService.formatMemory', () => {
+  it('keeps one decimal under 10 MB', () => {
+    expect(browserService.formatMemory(5 * 1024 * 1024)).toBe('5.0MB');
+  });
+
+  it('rounds to whole megabytes from 10 MB', () => {
+    expect(browserService.formatMemory(100 * 1024 * 1024)).toBe('100MB');
+  });
+
+  it('switches to gigabytes from 1024 MB', () => {
+    expect(browserService.formatMemory(1536 * 1024 * 1024)).toBe('1.5GB');
+  });
+});

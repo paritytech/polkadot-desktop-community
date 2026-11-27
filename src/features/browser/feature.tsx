@@ -4,7 +4,7 @@ import { BrowserTabsNavigationBinding, browserTabs } from '@/aggregates/browser-
 import { persistentSlot, tabBarSlot, topBarCenterSlot, topBarCenterTrailingSlot, topBarLeadingSlot } from '@/features/app-shell';
 import { resolveTabProductIdTransformer } from '@/features/product-worker';
 
-import { addressBarProductTrailingSlot, tabContentSlot, tabHoverSlot } from './di';
+import { addressBarProductTrailingSlot, tabContentSlot } from './di';
 import { NEW_TAB, PRODUCT } from './tabs/helpers';
 import { AddressBar } from './ui/AddressBar';
 import { AddressBarRefreshButton } from './ui/AddressBarRefreshButton';
@@ -13,9 +13,7 @@ import { BrowserTabBinding } from './ui/BrowserTabBinding';
 import { NavigationButtons } from './ui/NavigationButtons';
 import { NewTabButton } from './ui/NewTabButton';
 import { NewTabContent } from './ui/NewTabContent';
-import { NewTabHover } from './ui/NewTabHover';
 import { ProductTabContent } from './ui/ProductTabContent';
-import { ProductTabHover } from './ui/ProductTabHover';
 import { SandboxWindowOpenBinding } from './ui/SandboxWindowOpenBinding';
 import { Tabs } from './ui/Tabs';
 
@@ -46,9 +44,6 @@ browserFeature.inject(tabContentSlot, ({ tab, setDeeplink, isActive }) =>
   ) : tab.type === NEW_TAB ? (
     <NewTabContent isActive={isActive} />
   ) : null,
-);
-browserFeature.inject(tabHoverSlot, ({ tab }) =>
-  tab.type === PRODUCT ? <ProductTabHover id={tab.id} /> : tab.type === NEW_TAB ? <NewTabHover /> : null,
 );
 browserFeature.inject(persistentSlot, () => (
   <>

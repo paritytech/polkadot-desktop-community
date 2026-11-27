@@ -58,4 +58,11 @@ function splitDisplayAddress(path: string): { prefix: string; name: string; rest
   return { prefix: path.slice(0, start), name: path.slice(start, end), rest: path.slice(end) };
 }
 
-export const browserService = { reduceSwipe, toSwipeIndicator, canSwipeTo, splitDisplayAddress };
+function formatMemory(bytes: number): string {
+  const mb = bytes / (1024 * 1024);
+  if (mb >= 1024) return `${(mb / 1024).toFixed(1)}GB`;
+  if (mb >= 10) return `${Math.round(mb)}MB`;
+  return `${mb.toFixed(1)}MB`;
+}
+
+export const browserService = { reduceSwipe, toSwipeIndicator, canSwipeTo, splitDisplayAddress, formatMemory };

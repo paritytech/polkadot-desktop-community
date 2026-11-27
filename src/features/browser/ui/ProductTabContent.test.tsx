@@ -43,8 +43,6 @@ describe('ProductTabContent', () => {
 
     await screen.findByText('My App');
 
-    // No real icon: the placeholder is handed to TabChip but only surfaces in the
-    // collapsed icon-only state, so the visible tab is the label alone.
     expect(container.querySelector('img')).toBeNull();
   });
 });

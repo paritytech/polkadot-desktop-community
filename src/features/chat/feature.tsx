@@ -8,12 +8,7 @@ import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { type ContentCardPayload, cardsUseCase, foldersUseCase } from '@/domains/application';
 import { persistentSlot, topBarTrailingSlot } from '@/features/app-shell';
-import {
-  addressBarProductLeadingSlot,
-  resolveAddressBarProductIconTransformer,
-  tabContentSlot,
-  tabHoverSlot,
-} from '@/features/browser';
+import { addressBarProductLeadingSlot, resolveAddressBarProductIconTransformer, tabContentSlot } from '@/features/browser';
 import { type AddableDashboardCard, WidgetTopbarAction, buildNativeDashboardCard, dashboardCardSDK } from '@/features/dashboard';
 import { productActionsMenuItemsSlot } from '@/features/product-actions-menu';
 import { settingsPreferencesNavSlot } from '@/features/settings';
@@ -26,7 +21,6 @@ import { ChatFavoriteOpenBinding } from './ui/ChatFavoriteOpenBinding';
 import { ChatHeaderButton } from './ui/ChatHeaderButton';
 import { ChatTabBinding } from './ui/ChatTabBinding';
 import { ChatTabContent } from './ui/ChatTabContent';
-import { ChatTabHover } from './ui/ChatTabHover';
 import { ChatWidgetContent } from './ui/ChatWidgetContent';
 import { ProceedInChatMenuItem } from './ui/ProceedInChatMenuItem';
 
@@ -126,7 +120,6 @@ dashboardCardSDK(chatFeature, {
 });
 
 chatFeature.inject(tabContentSlot, ({ tab, isActive }) => (tab.type === CHAT ? <ChatTabContent isActive={isActive} /> : null));
-chatFeature.inject(tabHoverSlot, ({ tab }) => (tab.type === CHAT ? <ChatTabHover /> : null));
 chatFeature.inject(persistentSlot, () => <ChatTabBinding />);
 chatFeature.inject(persistentSlot, () => <ChatFavoriteOpenBinding />);
 chatFeature.inject(productActionsMenuItemsSlot, {
