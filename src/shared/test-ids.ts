@@ -16,6 +16,7 @@ export const TEST_IDS = {
   quickChatPopover: 'quick-chat-popover',
   quickChatExpandButton: 'quick-chat-expand-button',
   chatSyncStatusBanner: 'chat-sync-status-banner',
+  networkStatusButton: 'network-status-button',
   networkPanel: 'network-panel',
   networkStatusDot: 'network-status-dot',
   networkChainList: 'network-chain-list',
