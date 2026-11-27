@@ -19,7 +19,7 @@ import { ProductTabHover } from './ProductTabHover';
 
 const FADE_PX = 48;
 
-const HOVER_CARD_DELAY_MS = 1000;
+const HOVER_CARD_DELAY_MS = 500;
 const HOVER_CARD_WARM_MS = 400;
 
 let hoverCardWarm = false;
@@ -283,7 +283,9 @@ const SortableTab = ({ tab, isActive, onClose }: SortableTabProps) => {
           </button>
         </div>
       </Popover.Anchor>
-      <Popover.Content side="bottom" sideOffset={4} collisionPadding={8} onOpenAutoFocus={e => e.preventDefault()}>
+      {/* The tab sits 4 px inside the strip's pill, and the pill 8 px above the header's bottom edge: 16 puts the card
+          4 px below the header itself. */}
+      <Popover.Content side="bottom" sideOffset={16} collisionPadding={8} onOpenAutoFocus={e => e.preventDefault()}>
         <ProductTabHover id={tab.id} />
       </Popover.Content>
     </Popover.Root>

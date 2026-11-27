@@ -18,12 +18,15 @@ function renderStrip() {
   );
 }
 
+// The strip's open delay. The product case waits only briefly after it, so a longer delay fails the case.
+const HOVER_DELAY_MS = 500;
+
 function hoverTab(id: string, container: HTMLElement) {
   const tab = container.querySelector(`[data-tab-id="${id}"]`);
   if (!tab) throw new Error(`no tab with id ${id}`);
   fireEvent.mouseEnter(tab);
   act(() => {
-    vi.advanceTimersByTime(1001);
+    vi.advanceTimersByTime(HOVER_DELAY_MS + 1);
   });
 }
 
@@ -37,6 +40,12 @@ describe('Tabs hover card', () => {
   });
 
   afterEach(() => {
+    // The strip keeps a module-level warm flag for a short while after a card closes. Leave every tab and run out any
+    // cooldown, so no case opens a card early because of the case before it.
+    for (const tab of document.querySelectorAll('[data-tab-id]')) fireEvent.mouseLeave(tab);
+    act(() => {
+      vi.advanceTimersByTime(1000);
+    });
     vi.useRealTimers();
   });
 
@@ -53,14 +62,6 @@ describe('Tabs hover card', () => {
 
     hoverTab('my-app.dot', container);
 
-    expect(await screen.findAllByTestId(TEST_IDS.tabHoverCard)).toHaveLength(1);
-
-    // Clear the module-level warm flag so no case depends on test order (400 ms is HOVER_CARD_WARM_MS in Tabs.tsx).
-    const tab = container.querySelector('[data-tab-id="my-app.dot"]');
-    if (!tab) throw new Error('no product tab');
-    fireEvent.mouseLeave(tab);
-    act(() => {
-      vi.advanceTimersByTime(401);
-    });
+    expect(await screen.findAllByTestId(TEST_IDS.tabHoverCard, undefined, { timeout: 50 })).toHaveLength(1);
   });
 });

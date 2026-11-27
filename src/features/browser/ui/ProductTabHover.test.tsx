@@ -37,7 +37,7 @@ function iconBox() {
 }
 
 describe('ProductTabHover', () => {
-  it('shows the name, the base name and the description', async () => {
+  it('shows the name, the identifier and the description', async () => {
     productsResource.instead(() => of([MY_APP]));
 
     renderCard();
@@ -47,7 +47,7 @@ describe('ProductTabHover', () => {
     expect(screen.getByText('Send and receive')).toBeInTheDocument();
   });
 
-  it('names the product by its id and hides the base name line when it has no display name', async () => {
+  it('names the product by its id and hides the identifier line when it has no display name', async () => {
     productsResource.instead(() => of([{ ...MY_APP, displayName: '' }]));
 
     renderCard();

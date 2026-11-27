@@ -19,23 +19,23 @@ export const ProductTabHover = ({ id }: Props) => {
   // uncommitted tab still shows the product's real name, not the bare id.
   const { data: product } = useDisplayedProduct(id);
   const labels = useDotNsLabels();
-  // A product without a display name is named by its base name, as dot.li names it by its domain.
+  // A product without a display name is named by its identifier, as dot.li names it by its domain.
   const name = product?.displayName ? labels.displayName(product.displayName) : id;
   const description = product?.description;
 
   return (
-    <div data-testid={TEST_IDS.tabHoverCard} className="pointer-events-none flex w-80 items-start gap-3 p-4">
-      <span className="flex size-10 shrink-0 items-center justify-center">
+    <div data-testid={TEST_IDS.tabHoverCard} className="pointer-events-none flex w-64 items-start gap-3 p-4">
+      <span className="flex size-8 shrink-0 items-center justify-center">
         <ProductIcon
           icon={product?.icon ?? null}
-          className="size-10 rounded-xl object-cover"
-          fallback={<PolkadotIcon className="size-9" aria-hidden />}
+          className="size-8 rounded-xl object-cover"
+          fallback={<PolkadotIcon className="size-7" aria-hidden />}
         />
       </span>
       <div className="flex min-w-0 flex-1 flex-col gap-3">
         <div className="flex min-w-0 flex-col">
           <div className="flex min-w-0 items-center gap-1">
-            <span className="truncate text-lg font-semibold text-chrome-text">{name}</span>
+            <span className="truncate text-base font-semibold text-chrome-text">{name}</span>
             <PinIndicator productId={product?.baseName ?? id} />
           </div>
           {name !== id && <span className="text-xs wrap-anywhere text-chrome-muted">{id}</span>}
