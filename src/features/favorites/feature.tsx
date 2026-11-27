@@ -1,6 +1,6 @@
 import { createFeature } from '@/shared/feature';
 import { persistentSlot } from '@/features/app-shell';
-import { tabContentSlot, tabHoverSlot } from '@/features/browser';
+import { tabContentSlot } from '@/features/browser';
 import { dashboardCardActionsSlot, openAddToFavoritesSideEffect } from '@/features/dashboard';
 
 import { openAddToFavoritesDialog } from './state/addToFavoritesDialog';
@@ -10,7 +10,6 @@ import { FavoritesFullscreenAction } from './ui/FavoritesFullscreenAction';
 import { FavoritesOpenBinding } from './ui/FavoritesOpenBinding';
 import { FavoritesTabBinding } from './ui/FavoritesTabBinding';
 import { FavoritesTabContent } from './ui/FavoritesTabContent';
-import { FavoritesTabHover } from './ui/FavoritesTabHover';
 
 export const favoritesFeature = createFeature({
   name: 'application/favorites',
@@ -24,12 +23,11 @@ favoritesFeature.inject(dashboardCardActionsSlot, ({ payload }) =>
 );
 
 // System-tab wiring (mirrors chat): the Favorites SPA opens as a browser tab that
-// shows in the tab strip. Content chip + hover title are keyed on the tab type;
+// shows in the tab strip. The content chip is keyed on the tab type;
 // the route↔tab binding keeps the strip in sync with `/favorites`.
 favoritesFeature.inject(tabContentSlot, ({ tab, isActive }) =>
   tab.type === FAVORITES ? <FavoritesTabContent isActive={isActive} /> : null,
 );
-favoritesFeature.inject(tabHoverSlot, ({ tab }) => (tab.type === FAVORITES ? <FavoritesTabHover /> : null));
 favoritesFeature.inject(persistentSlot, () => <FavoritesTabBinding />);
 favoritesFeature.inject(persistentSlot, () => <FavoritesOpenBinding />);
 
