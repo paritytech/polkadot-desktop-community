@@ -26,6 +26,7 @@ const ROOT_ATTRIBUTES: Record<string, string> = {
   'stroke-width': '1.5',
   'stroke-linecap': 'round',
   'stroke-linejoin': 'round',
+  'aria-hidden': 'true',
 };
 
 const ELEMENT_ATTRIBUTES: Record<string, string[]> = {
@@ -362,7 +363,7 @@ const entries = Object.entries(icons).map(([path, svg]): [string, string] => [pa
 
 function iconOf(children: string): string {
   return [
-    `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">`,
+    `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">`,
     children,
     '</svg>',
   ].join('\n');
@@ -428,6 +429,12 @@ describe('findViolations', () => {
       label: 'a root stroke width other than 1.5',
       fileName: 'icon.svg',
       svg: iconOf('<path d="M4.25 5.75H12.25"/>').replace('stroke-width="1.5"', 'stroke-width="2"'),
+      fragment: 'root attributes',
+    },
+    {
+      label: 'a root without aria-hidden',
+      fileName: 'icon.svg',
+      svg: iconOf('<path d="M4.25 5.75H12.25"/>').replace(' aria-hidden="true"', ''),
       fragment: 'root attributes',
     },
     {
