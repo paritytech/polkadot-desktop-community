@@ -105,6 +105,7 @@ Not every line needs the full context of the system around it. When in doubt, le
 - Size and colour come from `className` (`size-4`, and a text colour through `currentColor`).
 - The drawing spec: a 16 px grid, a 1.5 px line with round caps and joins and no fills, and every anchor on a quarter pixel (`k + 0.25`, `k + 0.75`) inside `1.75`–`14.25`, so the line is crisp on 2x screens at 16 px. A dot is a 0.01 segment, never a zero-length one, which svgo drops, or an `r="0.75"` circle for a larger dot. _Why:_ the owner, on the stroke width: "please try to avoid subpixel rendering as hard as possible", then "i still prefer 1.5px, it looks better for human perception".
 - A new icon from lucide is redrawn onto this grid, never copied from its 24 grid, and keeps lucide's canonical file name. `src/shared/assets/images/icons/LICENSE-lucide` stays beside the set.
+- An icon drawn in-house is named after its shape, the way lucide names its own, never after where the app uses it. _Why:_ `@/shared` is domain-agnostic, so a name like `widget-size-small` leaks dashboard vocabulary into it.
 - `src/shared/assets/icons.spec.ts` enforces the drawing rules.
 
 ## i18n
