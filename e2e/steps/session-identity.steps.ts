@@ -8,8 +8,8 @@ const { Then } = createBdd(test);
 
 // --- TC-2.4.3 ---------------------------------------------------------------
 
-Then('the user button shows the no-connection state', async ({ electronApp }) => {
+Then('the user button offers to connect an account', async ({ electronApp }) => {
   const dashboard = new DashboardPage(electronApp.window);
   await expect(dashboard.userButton).toBeVisible({ timeout: DEFAULT_TIMEOUT });
-  await dashboard.expectConnectionState('no-connection');
+  await dashboard.expectSignedOut();
 });

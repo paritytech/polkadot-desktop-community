@@ -11,13 +11,8 @@ export class DashboardPage {
     return this.page.getByTestId(TEST_IDS.userButton);
   }
 
-  get connectionStatus() {
-    return this.page.getByTestId(TEST_IDS.userConnectionStatus);
-  }
-
-  /** The user-button badge reflects connection as a `data-state` attribute. */
-  async expectConnectionState(state: 'connected' | 'reconnecting' | 'offline' | 'no-connection') {
-    await expect(this.connectionStatus).toHaveAttribute('data-state', state, { timeout: DEFAULT_TIMEOUT });
+  async expectSignedOut() {
+    await expect(this.userButton).toHaveAccessibleName('Connect account', { timeout: DEFAULT_TIMEOUT });
   }
 
   get quickChatButton() {
@@ -60,7 +55,7 @@ export class DashboardPage {
   }
 
   async clickUserButton() {
-    await this.userButton.locator('button').click({ timeout: DEFAULT_TIMEOUT });
+    await this.userButton.click({ timeout: DEFAULT_TIMEOUT });
   }
 
   /**
