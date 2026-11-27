@@ -85,7 +85,7 @@ export const ChainRow: FC<Props> = ({ chain, health }) => {
         onClick={() => setOpen(!open)}
       >
         <ChainHealthMark mark={mark} role={chain.role} />
-        <span className="flex min-w-0 flex-col gap-0.5">
+        <span className="flex min-w-0 flex-col gap-0">
           <span
             data-testid={TEST_IDS.networkChainRowName}
             className={cnTw(
