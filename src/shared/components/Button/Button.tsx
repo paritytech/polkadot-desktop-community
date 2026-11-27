@@ -17,7 +17,8 @@ export const Button = ({
   style,
   ...rest
 }: ButtonProps) => {
-  // The reduced start padding of the normal and fill sizes assumes an icon leads the label: CSS cannot see text nodes, so a trailing icon matches too.
+  // The reduced start padding of the normal and fill sizes assumes an icon leads the label:
+  // CSS cannot see text nodes, so a trailing icon matches too.
   return (
     <button
       {...rest}

@@ -113,6 +113,7 @@ describe('Button', () => {
 
     const button = screen.getByRole('button', { name: 'Save' });
     expect(button).toHaveClass('w-full', 'px-4');
+    expect(button).toHaveClass('has-[>svg:first-child]:ps-3');
   });
 
   it('carries the ghost checked classes while expanded', () => {
