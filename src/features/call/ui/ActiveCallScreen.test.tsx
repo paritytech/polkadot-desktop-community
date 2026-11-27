@@ -74,21 +74,19 @@ describe('ActiveCallScreen', () => {
 
   it('renders avatar (not remote video) when the remote stream has no video track', () => {
     render(<ActiveCallScreen {...defaultProps} isVideo={false} remoteStream={remoteStreamStub(false)} />);
-    // Avatar shows the first char of name
-    expect(screen.getByText('B')).toBeDefined();
-    expect(screen.queryAllByRole('img').length).toBe(0);
+    expect(screen.getByRole('img', { name: 'Bob' })).toHaveTextContent('BO');
   });
 
   it('renders avatar (not remote video) when remoteStream is null', () => {
     render(<ActiveCallScreen {...defaultProps} isVideo={true} remoteStream={null} />);
-    expect(screen.getByText('B')).toBeDefined();
+    expect(screen.getByRole('img', { name: 'Bob' })).toHaveTextContent('BO');
   });
 
   it('renders the remote video when the remote stream carries a video track', () => {
     render(<ActiveCallScreen {...defaultProps} isVideo={true} remoteStream={remoteStreamStub(true)} localStream={null} />);
-    // Video stage: one visible <video> (the remote), no avatar letter.
+    // Video stage: one visible <video> (the remote), no avatar.
     expect(document.querySelectorAll('video').length).toBeGreaterThan(1); // remote + audio sink
-    expect(screen.queryByText('B')).toBeNull();
+    expect(screen.queryByRole('img', { name: 'Bob' })).toBeNull();
   });
 
   // The always-present hidden remote-audio-sink <video> is excluded — these

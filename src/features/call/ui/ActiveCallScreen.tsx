@@ -1,11 +1,10 @@
 import { MicOff, Settings } from 'lucide-react';
 import { type ReactNode, type SyntheticEvent, useCallback, useEffect, useRef, useState } from 'react';
 
-import { Button, IconButton } from '@/shared/components';
+import { Avatar, Button, IconButton } from '@/shared/components';
 import { cnTw } from '@/shared/utils';
 import { type PendingUpgrade } from '@/domains/chat';
 
-import { CallAvatar } from './CallAvatar';
 import { CallControlButton } from './CallControlButton';
 
 type ActiveCallScreenProps = {
@@ -313,7 +312,7 @@ export const ActiveCallScreen = ({
                 onLoadedMetadata={handleRemoteMeta}
               />
             ) : (
-              <CallAvatar name={name} sizePx={136} />
+              <Avatar label={name} size="136" />
             )}
           </div>
 
@@ -348,7 +347,7 @@ export const ActiveCallScreen = ({
         <>
           {/* Avatar-centered layout (audio call, or before remote video arrives). */}
           <div className="flex flex-1 flex-col items-center justify-center gap-3">
-            <CallAvatar name={name} sizePx={136} />
+            <Avatar label={name} size="136" />
             <div className="flex flex-col items-center gap-1 text-center">
               <span className="text-2xl font-semibold text-fg-primary">{name}</span>
               <span className="text-base text-fg-primary">{durationLabel}</span>
