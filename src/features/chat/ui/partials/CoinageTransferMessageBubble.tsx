@@ -1,4 +1,4 @@
-import { type ComponentType, type MouseEvent } from 'react';
+import { type FC, type MouseEvent, type SVGProps } from 'react';
 
 import ArrowDownIcon from '@/shared/assets/images/icons/arrow-down.svg?jsx';
 import ArrowUpIcon from '@/shared/assets/images/icons/arrow-up.svg?jsx';
@@ -23,7 +23,7 @@ type Props = {
 type CoinageStatus = NonNullable<TransferContent['coinageStatus']>;
 
 type StatusRow = {
-  Icon: ComponentType<{ className?: string }>;
+  Icon: FC<SVGProps<SVGSVGElement>>;
   labelKey: string;
   isClaimed?: boolean;
 };

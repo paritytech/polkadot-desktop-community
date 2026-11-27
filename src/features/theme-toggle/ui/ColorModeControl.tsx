@@ -1,4 +1,4 @@
-import { type ComponentType } from 'react';
+import { type FC, type SVGProps } from 'react';
 
 import MonitorIcon from '@/shared/assets/images/icons/monitor.svg?jsx';
 import MoonIcon from '@/shared/assets/images/icons/moon.svg?jsx';
@@ -7,7 +7,7 @@ import { SegmentedControl } from '@/shared/components';
 import { useTranslation } from '@/shared/translation';
 import { type ThemePreference, useSetThemePreference, useThemePreference } from '@/domains/application';
 
-type Segment = { value: ThemePreference; labelKey: string; icon: ComponentType<{ className?: string }> };
+type Segment = { value: ThemePreference; labelKey: string; icon: FC<SVGProps<SVGSVGElement>> };
 
 const SEGMENTS: Segment[] = [
   { value: 'system', labelKey: 'feature.themeToggle.device', icon: MonitorIcon },

@@ -1,3 +1,5 @@
+import { type FC, type SVGProps } from 'react';
+
 import EighthNotesIcon from '@/shared/assets/images/icons/eighth-notes.svg?jsx';
 import FileTextIcon from '@/shared/assets/images/icons/file-text.svg?jsx';
 import ImageIcon from '@/shared/assets/images/icons/image.svg?jsx';
@@ -12,7 +14,7 @@ import { type DraftAttachment } from '../types';
 
 // Fallback when there is no preview to show (audio and generic files always;
 // image/video only when the loader produced no preview URL).
-const categoryIcon: Record<AttachmentCategory, typeof FileTextIcon> = {
+const categoryIcon: Record<AttachmentCategory, FC<SVGProps<SVGSVGElement>>> = {
   image: ImageIcon,
   audio: EighthNotesIcon,
   video: VideoIcon,

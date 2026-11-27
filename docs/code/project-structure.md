@@ -470,7 +470,8 @@ parents.
 ## Shared
 
 `@/shared` is the bottom of the dependency graph — small, self-contained libraries depending on nothing above. Each subdirectory
-is one library with a single `index.ts` public surface. Consumers import from `@/shared/{library}`, never internal paths (except the per-file `?jsx` imports of SVGs under `@/shared/assets/images/`).
+is one library with a single `index.ts` public surface. Consumers import from `@/shared/{library}`, never internal paths (except the
+per-file `?jsx` imports of SVGs under `@/shared/assets/images/`).
 
 **Rules**:
 
