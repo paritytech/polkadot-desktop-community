@@ -49,7 +49,7 @@ export const UpdateVersionDialog = ({ productId, executableKind, onClose }: Prop
         <Dialog.Footer>
           <div className="flex w-full gap-2">
             <div className="flex-1">
-              <Button block onClick={onClose}>
+              <Button horizontalSize="fill" onClick={onClose}>
                 {t('common.cancel')}
               </Button>
             </div>
@@ -57,7 +57,7 @@ export const UpdateVersionDialog = ({ productId, executableKind, onClose }: Prop
               <Button
                 data-testid={TEST_IDS.offlineAccessUpdateConfirm}
                 variant="primary"
-                block
+                horizontalSize="fill"
                 disabled={pending}
                 onClick={handleConfirm}
               >

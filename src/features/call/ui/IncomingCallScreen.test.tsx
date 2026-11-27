@@ -23,6 +23,11 @@ describe('IncomingCallScreen', () => {
     expect(screen.getByText('Alice')).toBeDefined();
   });
 
+  it('draws the shared avatar', () => {
+    render(<IncomingCallScreen {...defaultProps} />);
+    expect(screen.getByRole('img', { name: 'Alice' })).toHaveTextContent(/^AL$/);
+  });
+
   it('renders the call type label', () => {
     render(<IncomingCallScreen {...defaultProps} />);
     expect(screen.getByText('Polkadot Audio Call')).toBeDefined();

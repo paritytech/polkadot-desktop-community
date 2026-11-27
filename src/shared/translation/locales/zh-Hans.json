@@ -191,28 +191,14 @@
       "clearRecent": "清除"
     },
     "userManager": {
-      "connectionStatus": {
-        "connected": "已连接",
-        "reconnecting": "正在重新连接…",
-        "offline": "你处于离线状态",
-        "noConnection": "未连接 — 点击登录"
-      },
       "aria": {
         "account": "账户",
         "connectAccount": "连接账户"
       },
-      "banner": {
-        "connectedTitle": "已连接到 {networkName}",
-        "connectedSubtitle": "桌面端已与手机配对",
-        "reconnectingTitle": "正在重新连接到 {networkName}…",
-        "reconnectingSubtitle": "正在再次尝试连接节点",
-        "offlineTitle": "你处于离线状态",
-        "offlineSubtitle": "请检查网络连接后重试",
-        "noConnectionTitle": "未连接",
-        "noConnectionSubtitle": "登录以配对你的账户"
-      },
       "popover": {
-        "settings": "设置"
+        "settings": "设置",
+        "signedInAs": "已登录为",
+        "signedOut": "未登录"
       }
     },
     "chat": {
@@ -1112,6 +1098,57 @@
           "title": "允许此应用访问自己的账户？",
           "subtitle": "从你已配对的设备获取此应用的账户"
         }
+      }
+    },
+    "networkStatus": {
+      "title": "网络",
+      "health": {
+        "connected": "已连接",
+        "syncing": "同步中",
+        "unstable": "不稳定",
+        "offline": "离线",
+        "unused": "未使用",
+        "unreachable": "无法访问"
+      },
+      "role": {
+        "relay": "中继",
+        "assetHub": "枢纽",
+        "bulletin": "存储",
+        "people": "身份"
+      },
+      "status": {
+        "noInternet": "无网络",
+        "noEndpoint": "无端点",
+        "notInUse": "未使用",
+        "disconnected": "已断开",
+        "syncing": "同步中",
+        "syncingShare": "同步中：{percent}%",
+        "connecting": "连接中",
+        "notProducing": "未出块",
+        "connected": "已连接",
+        "behind": "落后",
+        "live": "{word} · 实时 {percent}% · 区块 ~{duration}"
+      },
+      "duration": {
+        "seconds": "{seconds}秒",
+        "minutes": "{minutes}分{seconds}秒"
+      },
+      "otherChains": "其他链（{count}）",
+      "lastBlocks": "最近 {count} 个区块",
+      "separator": " · ",
+      "strip": {
+        "title": "最近 {count} 个区块，最新在右",
+        "label": "{chain}：最近 {count} 个区块，最新在右"
+      },
+      "block": {
+        "onTime": "{gap}秒，准时",
+        "late": "{gap}秒，延迟 {late}秒",
+        "label": "区块 {number}，{delay}",
+        "newest": "#{number, number}"
+      },
+      "peers": {
+        "count": "{count, plural, other {# 个节点}}",
+        "label": "{chain}：已连接 {peers}"
       }
     }
   },

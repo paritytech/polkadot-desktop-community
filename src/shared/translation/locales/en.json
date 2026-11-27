@@ -192,28 +192,14 @@
       "clearRecent": "Clear"
     },
     "userManager": {
-      "connectionStatus": {
-        "connected": "Connected",
-        "reconnecting": "Reconnecting…",
-        "offline": "You are offline",
-        "noConnection": "Not connected — click to sign in"
-      },
       "aria": {
         "account": "Account",
         "connectAccount": "Connect account"
       },
-      "banner": {
-        "connectedTitle": "Connected to {networkName}",
-        "connectedSubtitle": "Desktop paired with Mobile",
-        "reconnectingTitle": "Reconnecting to {networkName}…",
-        "reconnectingSubtitle": "Attempting to reach the node again",
-        "offlineTitle": "You're offline",
-        "offlineSubtitle": "Check internet connection and try again",
-        "noConnectionTitle": "Not connected",
-        "noConnectionSubtitle": "Log in to pair your account"
-      },
       "popover": {
-        "settings": "Settings"
+        "settings": "Settings",
+        "signedInAs": "Signed in as",
+        "signedOut": "Not signed in"
       }
     },
     "chat": {
@@ -1128,6 +1114,57 @@
           "title": "Allow this app to access its account?",
           "subtitle": "Fetches this app's account from your paired device"
         }
+      }
+    },
+    "networkStatus": {
+      "title": "Network",
+      "health": {
+        "connected": "Connected",
+        "syncing": "Syncing",
+        "unstable": "Unstable",
+        "offline": "Offline",
+        "unused": "Not in use",
+        "unreachable": "Unreachable"
+      },
+      "role": {
+        "relay": "Relay",
+        "assetHub": "Hub",
+        "bulletin": "Storage",
+        "people": "Identity"
+      },
+      "status": {
+        "noInternet": "No internet",
+        "noEndpoint": "No endpoint",
+        "notInUse": "Not in use",
+        "disconnected": "Disconnected",
+        "syncing": "Syncing",
+        "syncingShare": "Syncing: {percent}%",
+        "connecting": "Connecting",
+        "notProducing": "Not producing blocks",
+        "connected": "Connected",
+        "behind": "Behind",
+        "live": "{word} · Live {percent}% · Block ~{duration}"
+      },
+      "duration": {
+        "seconds": "{seconds}s",
+        "minutes": "{minutes}m {seconds}s"
+      },
+      "otherChains": "Other chains ({count})",
+      "lastBlocks": "Last {count} blocks",
+      "separator": " · ",
+      "strip": {
+        "title": "Last {count} blocks, newest on the right",
+        "label": "{chain}: last {count} blocks, newest on the right"
+      },
+      "block": {
+        "onTime": "{gap}s, on time",
+        "late": "{gap}s, {late}s late",
+        "label": "Block {number}, {delay}",
+        "newest": "#{number, number}"
+      },
+      "peers": {
+        "count": "{count, plural, one {# peer} other {# peers}}",
+        "label": "{chain}: {peers} connected"
       }
     }
   },

@@ -37,10 +37,10 @@ export const PermissionDeniedDialog = memo(({ permission, onOpenSettings, onClos
         </div>
 
         <div className="flex w-full gap-2">
-          <Button type="button" block onClick={onClose}>
+          <Button type="button" horizontalSize="fill" onClick={onClose}>
             {t('common.action.cancel')}
           </Button>
-          <Button type="button" variant="primary" block onClick={() => void handleOpenSettings()}>
+          <Button type="button" variant="primary" horizontalSize="fill" onClick={() => void handleOpenSettings()}>
             {t('feature.productRuntime.permissionDenied.systemDeviceSettings')}
           </Button>
         </div>

@@ -1,6 +1,6 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
-import { AVATAR_TONES, Avatar } from './Avatar';
+import { Avatar } from './Avatar';
 
 const meta: Meta<typeof Avatar> = {
   component: Avatar,
@@ -12,7 +12,7 @@ export default meta;
 
 type Story = StoryObj<typeof Avatar>;
 
-const sizes = ['20', '24', '40', '48', '56'] as const;
+const sizes = ['24', '40', '48', '96', '136'] as const;
 
 export const Default: Story = {};
 
@@ -26,14 +26,8 @@ export const Sizes: Story = {
   ),
 };
 
-export const Tones: Story = {
-  render: args => (
-    <div className="flex items-center gap-4">
-      {AVATAR_TONES.map(tone => (
-        <Avatar key={tone} {...args} label={tone} tone={tone} />
-      ))}
-    </div>
-  ),
+export const Glyph: Story = {
+  args: { label: '' },
 };
 
 export const EmojiLabel: Story = {

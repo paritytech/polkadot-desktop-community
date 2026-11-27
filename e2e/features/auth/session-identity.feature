@@ -2,7 +2,7 @@
 Feature: Session & Connection State
 
   These auth-project scenarios run a fresh Electron in autotest mode but do NOT
-  pair (no signer needed). They cover the pre-sign-in connection badge.
+  pair (no signer needed). They cover the user button before sign-in.
 
   TC-2.5.1 (14703) and TC-2.5.2 (14704) covered the boot-time storage migrations in
   `src/domains/application/papp-provider/service.ts`. That file was removed with the
@@ -13,4 +13,4 @@ Feature: Session & Connection State
   Scenario: TC-2.4.3 No-connection state shown before sign-in
     Given the app is launched in autotest mode
     When the user skips onboarding
-    Then the user button shows the no-connection state
+    Then the user button offers to connect an account

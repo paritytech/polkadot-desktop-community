@@ -1,6 +1,7 @@
 import { type ReactNode } from 'react';
 
-import { CallAvatar } from './CallAvatar';
+import { Avatar } from '@/shared/components';
+
 import { CallControlButton } from './CallControlButton';
 
 type IncomingCallScreenProps = {
@@ -28,7 +29,7 @@ export const IncomingCallScreen = ({
     <div className="mt-8 flex flex-col items-center gap-3">
       <span className="text-sm text-white/70">{callTypeLabel}</span>
       <span className="text-2xl font-bold">{name}</span>
-      <CallAvatar name={name} sizePx={96} />
+      <Avatar label={name} size="96" />
     </div>
 
     <div className="mb-8 flex items-center justify-center gap-16">

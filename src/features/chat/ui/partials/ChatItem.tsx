@@ -2,13 +2,12 @@ import { useMemo } from 'react';
 import { useObservable } from 'react-rx';
 import { map } from 'rxjs';
 
-import { ListItem } from '@/shared/components';
+import { Avatar, ListItem } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
 import { type ChatSession } from '@/domains/chat';
 import { useLastMessagePreview } from '../../hooks/useLastMessagePreview';
 import { type ChatItemDensity, chatService } from '../../service';
 
-import { Avatar } from './Avatar';
 import { PreviewIcon } from './PreviewIcon';
 import { UnreadCount } from './UnreadCount';
 
@@ -51,7 +50,7 @@ export const ChatItem = ({ session, isSelected, density = 'regular', itemHeight,
 
   const row = (
     <ListItem
-      icon={<Avatar name={name} size="40" />}
+      icon={<Avatar label={name} size="40" />}
       label={name}
       description={
         lastMessage ? (

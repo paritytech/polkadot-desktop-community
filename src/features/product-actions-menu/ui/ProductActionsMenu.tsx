@@ -38,7 +38,7 @@ export const ProductActionsMenu = ({ productId }: Props) => {
           <div className="px-1 pt-1">
             <Button
               data-testid={TEST_IDS.productActionsMenuOpenSettings}
-              block
+              horizontalSize="fill"
               onClick={() => {
                 setOpen(false);
                 void navigate({ to: '/settings/privacy/apps/$productId', params: { productId } });

@@ -1,99 +1,35 @@
 import { type SessionUiInfo } from '@parity/truapi-host';
 import { useNavigate } from '@tanstack/react-router';
-import { LogIn, LogOut, Settings, WifiOff } from 'lucide-react';
-import { type PropsWithChildren, type ReactNode, memo, useEffect, useState } from 'react';
+import { LogIn, LogOut, Settings } from 'lucide-react';
+import { type PropsWithChildren, type ReactNode, memo, useState } from 'react';
 
-import PolkadotLogo from '@/shared/assets/images/logo-icon.svg?jsx';
-import { Avatar, DismissOverlay, Popover, Spinner } from '@/shared/components';
+import { Avatar, DismissOverlay, Popover } from '@/shared/components';
+import { useCloseOnWindowLeave } from '@/shared/hooks';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { browserTabs } from '@/aggregates/browser-tabs';
-import { type PeopleChainStatus } from '@/aggregates/network-settings';
 import { truapiRuntimeUseCase } from '@/aggregates/truapi-runtime';
 import { SETTINGS } from '@/features/settings';
 
-// The popover banner shows the shared chain status; the signed-out case is
-// added via `| 'no-connection'` at the prop boundary below.
-export type UserPopoverConnectionState = PeopleChainStatus;
-
 type Props = PropsWithChildren<{
   session: SessionUiInfo | null;
-  username: string;
-  connectionState: UserPopoverConnectionState | 'no-connection';
-  networkName: string;
+  name: string | null;
   defaultOpen?: boolean;
 }>;
 
-const BannerIcon = ({ state }: { state: UserPopoverConnectionState | 'no-connection' }) => {
-  if (state === 'offline' || state === 'no-connection') {
-    return (
-      <span className="flex size-12 shrink-0 items-center justify-center text-fg-secondary">
-        <WifiOff className="size-10" />
-      </span>
-    );
-  }
-  if (state === 'reconnecting') {
-    return (
-      <span className="flex size-12 shrink-0 items-center justify-center text-fg-primary">
-        <Spinner size={48} />
-      </span>
-    );
-  }
-  return (
-    <span className="flex size-12 shrink-0 items-center justify-center text-fg-primary">
-      <PolkadotLogo className="size-10" />
-    </span>
-  );
-};
-
-const StatusBanner = ({ state, networkName }: { state: UserPopoverConnectionState | 'no-connection'; networkName: string }) => {
+const UserHeader = ({ session, name }: { session: SessionUiInfo | null; name: string | null }) => {
   const { t } = useTranslation();
-
-  const { title, subtitle } =
-    state === 'connected'
-      ? {
-          title: t('feature.userManager.banner.connectedTitle', { networkName }),
-          subtitle: t('feature.userManager.banner.connectedSubtitle'),
-        }
-      : state === 'reconnecting'
-        ? {
-            title: t('feature.userManager.banner.reconnectingTitle', { networkName }),
-            subtitle: t('feature.userManager.banner.reconnectingSubtitle'),
-          }
-        : state === 'offline'
-          ? {
-              title: t('feature.userManager.banner.offlineTitle'),
-              subtitle: t('feature.userManager.banner.offlineSubtitle'),
-            }
-          : {
-              title: t('feature.userManager.banner.noConnectionTitle'),
-              subtitle: t('feature.userManager.banner.noConnectionSubtitle'),
-            };
+  const displayName = session ? (name ?? t('common.status.unknownUser')) : t('feature.userManager.popover.signedOut');
 
   return (
-    <div
-      data-testid={TEST_IDS.userPopoverBanner}
-      className="flex w-full items-center gap-3 overflow-clip rounded-md bg-bg-surface-nested p-2"
-    >
-      <BannerIcon state={state} />
-      <div className="flex min-w-0 flex-1 flex-col gap-0.5">
-        <span className="truncate text-base font-medium text-fg-primary">{title}</span>
-        <span className="truncate text-xs text-fg-secondary">{subtitle}</span>
+    <div className="flex w-full items-center gap-2 p-2">
+      <Avatar size="40" label={name ?? ''} />
+      <div className="flex min-w-0 flex-col">
+        {session && <span className="text-xs text-fg-secondary">{t('feature.userManager.popover.signedInAs')}</span>}
+        <span data-testid={TEST_IDS.userDisplayName} className="line-clamp-2 text-lg font-semibold wrap-anywhere text-fg-primary">
+          {displayName}
+        </span>
       </div>
-    </div>
-  );
-};
-
-const UserHeader = ({ username }: { username: string }) => {
-  const letter = username.charAt(0).toUpperCase() || '?';
-  return (
-    <div className="flex w-full items-center gap-3 p-2">
-      <span className="select-none">
-        <Avatar size="48" tone="amethyst" label={letter} alt={username} />
-      </span>
-      <span data-testid={TEST_IDS.userDisplayName} className="truncate text-xl font-semibold text-fg-primary">
-        {username}
-      </span>
     </div>
   );
 };
@@ -113,26 +49,13 @@ const ActionRow = ({ icon, label, testId, onClick }: ActionRowProps) => (
   </button>
 );
 
-export const UserInfoPopover = memo(({ session, username, connectionState, networkName, defaultOpen, children }: Props) => {
+export const UserInfoPopover = memo(({ session, name, defaultOpen, children }: Props) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [open, setOpen] = useState(defaultOpen ?? false);
   const isConnected = session !== null;
 
-  // Non-modal Radix popovers detect outside clicks via document `pointerdown`,
-  // which doesn't fire when the click lands inside a product iframe nor on the
-  // toolbar's -webkit-app-region: drag area. The toolbar drag area is covered by
-  // <DismissOverlay/> below; window blur/resize still close on iframe focus-steal.
-  useEffect(() => {
-    if (!open) return;
-    const close = () => setOpen(false);
-    window.addEventListener('blur', close);
-    window.addEventListener('resize', close);
-    return () => {
-      window.removeEventListener('blur', close);
-      window.removeEventListener('resize', close);
-    };
-  }, [open]);
+  useCloseOnWindowLeave(open, () => setOpen(false));
 
   const openSettingsTab = () => {
     setOpen(false);
@@ -162,8 +85,7 @@ export const UserInfoPopover = memo(({ session, username, connectionState, netwo
       <Popover.Trigger asChild>{children}</Popover.Trigger>
       <Popover.Content sideOffset={8} align="end" alignOffset={8}>
         <div className="flex w-89 flex-col items-center gap-2 px-2 pt-2 pb-4">
-          <StatusBanner state={connectionState} networkName={networkName} />
-          <UserHeader username={username} />
+          <UserHeader session={session} name={name} />
           <div className="h-px w-full bg-stroke-primary" />
           <div className="flex w-full flex-col">
             <ActionRow

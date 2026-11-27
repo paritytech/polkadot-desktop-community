@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import { useObservable } from 'react-rx';
 import { combineLatest, map, of } from 'rxjs';
 
-import { EmptyState, ListItem, SectionLabel } from '@/shared/components';
+import { Avatar, EmptyState, ListItem, SectionLabel } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { type ChatMessage, type ChatSession, type MessageSearchHit, type SearchResult } from '@/domains/chat';
@@ -11,7 +11,6 @@ import { useLastMessagePreview } from '../../hooks/useLastMessagePreview';
 import { chatService } from '../../service';
 import { highlightMatch } from '../helpers/highlight';
 
-import { Avatar } from './Avatar';
 import { PreviewIcon } from './PreviewIcon';
 
 type Props = {
@@ -144,7 +143,7 @@ const SessionResultRow = ({ session, name, query, onSelect }: SessionResultRowPr
 
   return (
     <ListItem
-      icon={<Avatar name={name} size="40" />}
+      icon={<Avatar label={name} size="40" />}
       label={<span>{highlightMatch(name, query)}</span>}
       description={
         preview ? (
@@ -168,7 +167,7 @@ type ContactResultRowProps = {
 
 const ContactResultRow = ({ username, query, disabled, onSelect }: ContactResultRowProps) => (
   <ListItem
-    icon={<Avatar name={username} size="40" />}
+    icon={<Avatar label={username} size="40" />}
     label={<span>{highlightMatch(username, query)}</span>}
     chevron
     disabled={disabled}
@@ -189,7 +188,7 @@ const MessageResultRow = ({ hit, query, onSelect }: MessageResultRowProps) => {
 
   return (
     <ListItem
-      icon={<Avatar name={name} size="40" />}
+      icon={<Avatar label={name} size="40" />}
       label={name}
       description={<span>{highlightMatch(text, query)}</span>}
       meta={chatService.formatLastMessageDate(message.timestamp)}

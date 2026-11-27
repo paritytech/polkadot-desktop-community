@@ -1,11 +1,10 @@
 import { MicOff, Settings } from 'lucide-react';
 import { type ReactNode, type SyntheticEvent, useCallback, useEffect, useRef, useState } from 'react';
 
-import { Button, IconButton } from '@/shared/components';
+import { Avatar, Button, IconButton } from '@/shared/components';
 import { cnTw } from '@/shared/utils';
 import { type PendingUpgrade } from '@/domains/chat';
 
-import { CallAvatar } from './CallAvatar';
 import { CallControlButton } from './CallControlButton';
 
 type ActiveCallScreenProps = {
@@ -313,7 +312,7 @@ export const ActiveCallScreen = ({
                 onLoadedMetadata={handleRemoteMeta}
               />
             ) : (
-              <CallAvatar name={name} sizePx={136} />
+              <Avatar label={name} size="136" />
             )}
           </div>
 
@@ -348,7 +347,7 @@ export const ActiveCallScreen = ({
         <>
           {/* Avatar-centered layout (audio call, or before remote video arrives). */}
           <div className="flex flex-1 flex-col items-center justify-center gap-3">
-            <CallAvatar name={name} sizePx={136} />
+            <Avatar label={name} size="136" />
             <div className="flex flex-col items-center gap-1 text-center">
               <span className="text-2xl font-semibold text-fg-primary">{name}</span>
               <span className="text-base text-fg-primary">{durationLabel}</span>
@@ -371,12 +370,12 @@ export const ActiveCallScreen = ({
             <h2 className="mb-2 text-lg font-semibold text-fg-primary">{switchTitle}</h2>
             <p className="mb-6 text-sm text-fg-primary/70">{switchBody}</p>
             <div className="flex gap-3">
-              <Button variant="secondary" block onClick={() => setShowSwitchDialog(false)}>
+              <Button variant="secondary" horizontalSize="fill" onClick={() => setShowSwitchDialog(false)}>
                 {switchCancelLabel}
               </Button>
               <Button
                 variant="primary"
-                block
+                horizontalSize="fill"
                 onClick={() => {
                   setShowSwitchDialog(false);
                   onRequestVideoUpgrade();
@@ -397,10 +396,10 @@ export const ActiveCallScreen = ({
           <div className="w-full max-w-sm rounded-xl bg-bg-surface-container p-6 shadow-lg">
             <h2 className="mb-6 text-lg font-semibold text-fg-primary">{upgradeRequestTitle}</h2>
             <div className="flex gap-3">
-              <Button variant="secondary" block onClick={onDeclineVideoUpgrade}>
+              <Button variant="secondary" horizontalSize="fill" onClick={onDeclineVideoUpgrade}>
                 {upgradeCancelLabel}
               </Button>
-              <Button variant="primary" block onClick={onAcceptVideoUpgrade}>
+              <Button variant="primary" horizontalSize="fill" onClick={onAcceptVideoUpgrade}>
                 {upgradeConfirmLabel}
               </Button>
             </div>

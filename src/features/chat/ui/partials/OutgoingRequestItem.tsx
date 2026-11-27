@@ -1,11 +1,9 @@
 import { Timer } from 'lucide-react';
 
-import { ListItem } from '@/shared/components';
+import { Avatar, ListItem } from '@/shared/components';
 import { TEST_IDS } from '@/shared/test-ids';
 import { type P2PChatRequest } from '@/domains/chat';
 import { chatService } from '../../service';
-
-import { Avatar } from './Avatar';
 
 type OutgoingRequestItemProps = {
   request: P2PChatRequest;
@@ -19,7 +17,7 @@ export const OutgoingRequestItem = ({ request, selected, onClick }: OutgoingRequ
 
   return (
     <ListItem
-      icon={<Avatar name={name} size="40" />}
+      icon={<Avatar label={name} size="40" />}
       label={name}
       description={request.welcomeMessage ? <span>{request.welcomeMessage}</span> : null}
       meta={

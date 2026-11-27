@@ -37,12 +37,12 @@ export const RemotePermissionRequestDialog = memo(
         footer={
           <>
             <div className="min-w-0 flex-1">
-              <Button type="button" block data-testid={TEST_IDS.permissionDialogDeny} onClick={onDeny}>
+              <Button type="button" horizontalSize="fill" data-testid={TEST_IDS.permissionDialogDeny} onClick={onDeny}>
                 {t('feature.productPermissions.permissionRequest.deny')}
               </Button>
             </div>
             <div className="min-w-0 flex-1">
-              <Button type="button" block data-testid={TEST_IDS.permissionDialogAllowOnce} onClick={onAllowOnce}>
+              <Button type="button" horizontalSize="fill" data-testid={TEST_IDS.permissionDialogAllowOnce} onClick={onAllowOnce}>
                 {t('feature.productPermissions.permissionRequest.allowOnce')}
               </Button>
             </div>
@@ -50,7 +50,7 @@ export const RemotePermissionRequestDialog = memo(
               <Button
                 type="button"
                 variant="primary"
-                block
+                horizontalSize="fill"
                 data-testid={TEST_IDS.permissionDialogAllowAlways}
                 onClick={onAllowAlways}
               >

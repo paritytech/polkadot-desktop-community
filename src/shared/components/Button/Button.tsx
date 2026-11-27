@@ -5,11 +5,20 @@ import { cnTw } from '@/shared/utils';
 type ButtonProps = Omit<ComponentProps<'button'>, 'className'> & {
   variant?: 'secondary' | 'primary' | 'danger' | 'ghost';
   size?: 'md' | 'sm';
-  block?: boolean;
+  horizontalSize?: 'normal' | 'condensed' | 'fill';
 };
 
-export const Button = ({ variant = 'secondary', size = 'md', block, type, disabled, style, ...rest }: ButtonProps) => {
-  // The reduced start padding assumes an icon leads the label: CSS cannot see text nodes, so a trailing icon matches too.
+export const Button = ({
+  variant = 'secondary',
+  size = 'md',
+  horizontalSize = 'normal',
+  type,
+  disabled,
+  style,
+  ...rest
+}: ButtonProps) => {
+  // The reduced start padding of the normal and fill sizes assumes an icon leads the label:
+  // CSS cannot see text nodes, so a trailing icon matches too.
   return (
     <button
       {...rest}
@@ -17,9 +26,13 @@ export const Button = ({ variant = 'secondary', size = 'md', block, type, disabl
       disabled={disabled}
       className={cnTw(
         "inline-flex cursor-pointer items-center justify-center gap-1.5 rounded-full font-medium whitespace-nowrap transition-[background,box-shadow,scale] duration-150 select-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-chrome-focus active:scale-97 motion-reduce:transition-none motion-reduce:active:scale-100 [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
-        size === 'md' && 'h-control px-4 text-sm has-[>svg:first-child]:ps-3',
-        size === 'sm' && 'h-control-sm px-3 text-xs',
-        block && 'w-full',
+        size === 'md' && 'h-control text-sm',
+        size === 'sm' && 'h-control-sm text-xs',
+        horizontalSize !== 'condensed' && size === 'md' && 'px-4 has-[>svg:first-child]:ps-3',
+        horizontalSize !== 'condensed' && size === 'sm' && 'px-3',
+        horizontalSize === 'condensed' && size === 'md' && 'px-1.5',
+        horizontalSize === 'condensed' && size === 'sm' && 'px-1',
+        horizontalSize === 'fill' && 'w-full',
         !disabled && variant === 'secondary' && 'bg-chrome-fill text-chrome-text shadow-chrome-ring hover:bg-chrome-fill-strong',
         !disabled &&
           variant === 'primary' &&
@@ -27,7 +40,9 @@ export const Button = ({ variant = 'secondary', size = 'md', block, type, disabl
         !disabled &&
           variant === 'danger' &&
           'bg-chrome-danger-fill text-chrome-danger-text shadow-chrome-danger hover:bg-chrome-danger-fill-strong',
-        !disabled && variant === 'ghost' && 'bg-transparent text-chrome-text hover:bg-chrome-fill active:bg-chrome-fill-strong',
+        !disabled &&
+          variant === 'ghost' &&
+          'bg-transparent text-chrome-text hover:bg-chrome-fill active:bg-chrome-fill-strong aria-expanded:bg-chrome-fill-strong aria-expanded:shadow-chrome-raised aria-pressed:bg-chrome-fill-strong',
         disabled && variant === 'ghost' && 'cursor-default text-chrome-faint active:scale-100',
         disabled && variant !== 'ghost' && 'cursor-default bg-chrome-well text-chrome-faint shadow-chrome-ring active:scale-100',
       )}

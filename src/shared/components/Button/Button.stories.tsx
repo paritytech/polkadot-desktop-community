@@ -15,6 +15,7 @@ type Story = StoryObj<typeof Button>;
 
 const variants = ['secondary', 'primary', 'danger', 'ghost'] as const;
 const sizes = ['md', 'sm'] as const;
+const horizontalSizes = ['normal', 'condensed', 'fill'] as const;
 
 export const Default: Story = {};
 
@@ -34,8 +35,16 @@ export const VariantsAndSizes: Story = {
   ),
 };
 
-export const Block: Story = {
-  args: { block: true, variant: 'primary' },
+export const HorizontalSizes: Story = {
+  render: args => (
+    <div className="flex w-80 flex-col items-start gap-4">
+      {horizontalSizes.map(horizontalSize => (
+        <Button key={horizontalSize} {...args} horizontalSize={horizontalSize}>
+          {horizontalSize}
+        </Button>
+      ))}
+    </div>
+  ),
 };
 
 export const WithLeadingIcon: Story = {

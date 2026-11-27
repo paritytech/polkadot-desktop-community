@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useObservable } from 'react-rx';
 import { of } from 'rxjs';
 
-import { Button, DropdownMenu, IconButton, PaneHeader } from '@/shared/components';
+import { Avatar, Button, DropdownMenu, IconButton, PaneHeader } from '@/shared/components';
 import { Slot } from '@/shared/di';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
@@ -21,7 +21,6 @@ import { chatService } from '../../service';
 import { deriveLatestEdits, getMessagePreview, getPlainText } from '../helpers/message';
 
 import { type SelectedAttachment } from './AttachmentPreview';
-import { Avatar } from './Avatar';
 import { ChatSearchBar } from './ChatSearchBar';
 import { ChatSearchResults } from './ChatSearchResults';
 import { MessageFlow } from './MessageFlow';
@@ -262,7 +261,7 @@ export const Room = ({ session, initialSearch, onDeleted }: ChatConversationView
       <RoomPane>
         <Slot id={chatRoomBannerSlot} props={{ session }} />
         <PaneHeader
-          icon={<Avatar name={sessionName} size="24" />}
+          icon={<Avatar label={sessionName} size="24" />}
           actions={
             <>
               <Slot id={chatRoomHeaderActionsSlot} props={{ session }} />

@@ -16,7 +16,24 @@ export {
 } from './connection/hooks';
 
 export { chainRegistry, initChainConnectionLifecycle, initConnectionModeSwitch } from './api/registry';
-export { initLightClient } from './api/lightClient';
+export { initLightClient, watchLightClientLifecycles } from './api/lightClient';
+
+export type {
+  BlockBar,
+  BlockHealth,
+  ChainClock,
+  ChainLifecycle,
+  ChainPhase,
+  ChainStatus,
+  ChainUse,
+  KnownChain,
+  KnownChainRole,
+  NetworkMonitorModel,
+} from './monitor/types';
+export { networkMonitorService } from './monitor/service';
+
+export type { ChainHealth, ChainHealthFacts, LiveVerdict, NetworkHealth, NetworkStatus } from './health/types';
+export { networkHealthService } from './health/service';
 
 export type { DecodedCall } from './call/types';
 export { useDecodedCall } from './call/hooks';

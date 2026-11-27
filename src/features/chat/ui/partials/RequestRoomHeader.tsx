@@ -1,10 +1,8 @@
 import { Ellipsis } from 'lucide-react';
 import { type ReactNode } from 'react';
 
-import { DropdownMenu, IconButton, PaneHeader } from '@/shared/components';
+import { Avatar, DropdownMenu, IconButton, PaneHeader } from '@/shared/components';
 import { useTranslation } from '@/shared/translation';
-
-import { Avatar } from './Avatar';
 
 type RequestRoomHeaderProps = {
   /** Already-formatted display name (see `formatPeerName`). */
@@ -29,7 +27,7 @@ export const RequestRoomHeader = ({ name, actionIcon, actionLabel, onAction }: R
 
   return (
     <PaneHeader
-      icon={<Avatar name={name} size="24" />}
+      icon={<Avatar label={name} size="24" />}
       actions={
         onAction ? (
           <DropdownMenu.Root>

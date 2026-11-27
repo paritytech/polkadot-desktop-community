@@ -1,5 +1,12 @@
 import { type BundledStack } from '@parity/truapi-host';
-import init, { type ChainProviderHandle, type Connection, ChainProviderBuilder, setLogLevel } from '@parity/truapi-provider';
+import init, {
+  type ChainLifecycle,
+  type ChainProviderHandle,
+  type Connection,
+  type LifecycleWatch,
+  ChainProviderBuilder,
+  setLogLevel,
+} from '@parity/truapi-provider';
 import wasmUrl from '@parity/truapi-provider/truapi_provider_bg.wasm?url';
 import { type JsonRpcProvider } from '@polkadot-api/json-rpc-provider';
 
@@ -202,6 +209,150 @@ export function hasLightClientSupport(chainId: GenesisHash): boolean {
   return supportedGenesisHashes.has(chainId.toLowerCase());
 }
 
+type LifecycleListener = (genesisHash: GenesisHash, lifecycle: ChainLifecycle | null) => void;
+
+type ChainLifecycleWatch = Pick<LifecycleWatch, 'next' | 'close'>;
+
+type LifecycleWatches = {
+  open(genesisHash: GenesisHash, watchLifecycle: () => ChainLifecycleWatch): void;
+  close(genesisHash: GenesisHash): void;
+  subscribe(listener: LifecycleListener): VoidFunction;
+};
+
+// One running watch per chain while any connection to it is open. `null` tells the
+// listeners the chain has no light-client state any more: its connections all closed,
+// or its watch ended or failed.
+export function createLifecycleWatches(): LifecycleWatches {
+  const openConnections = new Map<GenesisHash, number>();
+  const running = new Map<GenesisHash, ChainLifecycleWatch>();
+  const latest = new Map<GenesisHash, ChainLifecycle>();
+  const listeners = new Set<LifecycleListener>();
+
+  // A listener that throws must not end a watch, keep the other listeners from
+  // hearing, or reach the provider that opened the watch.
+  function tell(listener: LifecycleListener, genesisHash: GenesisHash, lifecycle: ChainLifecycle | null): void {
+    try {
+      listener(genesisHash, lifecycle);
+    } catch (error) {
+      console.error('[network] a light-client lifecycle listener threw', error);
+    }
+  }
+
+  function report(genesisHash: GenesisHash, lifecycle: ChainLifecycle | null): void {
+    if (lifecycle) {
+      latest.set(genesisHash, lifecycle);
+    } else {
+      latest.delete(genesisHash);
+    }
+
+    for (const listener of listeners) {
+      tell(listener, genesisHash, lifecycle);
+    }
+  }
+
+  function end(genesisHash: GenesisHash, watch: ChainLifecycleWatch): void {
+    const current = running.get(genesisHash);
+    // A watch opened after this one was closed owns the chain's state now.
+    if (current && current !== watch) return;
+
+    running.delete(genesisHash);
+    report(genesisHash, null);
+  }
+
+  async function follow(genesisHash: GenesisHash, watch: ChainLifecycleWatch): Promise<void> {
+    try {
+      for (;;) {
+        const lifecycle = await watch.next();
+        if (lifecycle === undefined || running.get(genesisHash) !== watch) break;
+
+        report(genesisHash, lifecycle);
+      }
+    } catch (error) {
+      console.warn(`[network] the light-client lifecycle watch of ${genesisHash} failed`, error);
+    }
+
+    end(genesisHash, watch);
+  }
+
+  function start(genesisHash: GenesisHash, watchLifecycle: () => ChainLifecycleWatch): void {
+    let watch: ChainLifecycleWatch;
+    try {
+      watch = watchLifecycle();
+    } catch (error) {
+      console.warn(`[network] could not watch the light-client lifecycle of ${genesisHash}`, error);
+      report(genesisHash, null);
+      return;
+    }
+
+    running.set(genesisHash, watch);
+    void follow(genesisHash, watch);
+  }
+
+  return {
+    open(genesisHash: GenesisHash, watchLifecycle: () => ChainLifecycleWatch): void {
+      openConnections.set(genesisHash, (openConnections.get(genesisHash) ?? 0) + 1);
+
+      if (!running.has(genesisHash)) start(genesisHash, watchLifecycle);
+    },
+    close(genesisHash: GenesisHash): void {
+      const count = openConnections.get(genesisHash);
+      if (count === undefined) return;
+
+      if (count > 1) {
+        openConnections.set(genesisHash, count - 1);
+        return;
+      }
+
+      openConnections.delete(genesisHash);
+      const watch = running.get(genesisHash);
+      // Forgotten before it ends, so an `open` in the meantime starts a fresh watch.
+      running.delete(genesisHash);
+      watch?.close();
+    },
+    subscribe(listener: LifecycleListener): VoidFunction {
+      listeners.add(listener);
+      for (const [genesisHash, lifecycle] of latest) {
+        tell(listener, genesisHash, lifecycle);
+      }
+
+      return () => {
+        listeners.delete(listener);
+      };
+    },
+  };
+}
+
+const lifecycleWatches = createLifecycleWatches();
+
+/**
+ * Listen to what the light client is doing on each chain the app holds a light-client
+ * connection to. The latest state of every watched chain is replayed on subscribe;
+ * `null` means the chain has no light-client state any more.
+ */
+export function watchLightClientLifecycles(listener: LifecycleListener): VoidFunction {
+  return lifecycleWatches.subscribe(listener);
+}
+
+// What the provider uses of the light client, so a spec can hand it a fake.
+type LightClientHandle = {
+  loadDatabase(genesisHash: string): Promise<boolean>;
+  connect(genesisHash: string): Promise<Pick<Connection, 'send' | 'nextResponse' | 'close'>>;
+  lifecycle(genesisHash: string): ChainLifecycleWatch;
+};
+
+type LightClientProviderDeps = {
+  getHandle: () => Promise<LightClientHandle>;
+  loadLightSpecs: () => Promise<void>;
+  lifecycleWatches: LifecycleWatches;
+};
+
+const lightClientProviderDeps: LightClientProviderDeps = {
+  getHandle,
+  // Read at call time: building the handle replaces the loader.
+  loadLightSpecs: () => loadLightSpecs(),
+  lifecycleWatches,
+};
+
 /**
  * A `JsonRpcProvider` backed by truapi-provider's embedded smoldot, one shared
  * instance across every chain. Status is reported around `connect` rather than
@@ -213,23 +364,37 @@ export function createLightClientProvider(
   chainId: GenesisHash,
   onStatusChanged: (status: ConnectionStatus) => void,
   onHalt: (error?: unknown) => void,
+  deps: LightClientProviderDeps = lightClientProviderDeps,
 ): JsonRpcProvider {
   return onMessage => {
-    // Held on an object so control-flow analysis does not narrow the flag across
-    // the `connect` await — `disconnect` can flip it at any point.
-    const state: { connection: Connection | null; closed: boolean } = { connection: null, closed: false };
+    // Held on an object so control-flow analysis does not narrow the flags across
+    // the `connect` await — `disconnect` can flip them at any point.
+    const state: {
+      connection: Pick<Connection, 'send' | 'nextResponse' | 'close'> | null;
+      closed: boolean;
+      watching: boolean;
+    } = { connection: null, closed: false, watching: false };
     const queued: string[] = [];
+
+    // The connection ends on the drain loop's end, a failure, or `disconnect`, and
+    // `disconnect` is followed by the drain loop's end: close the watch only once.
+    function stopWatching(): void {
+      if (!state.watching) return;
+
+      state.watching = false;
+      deps.lifecycleWatches.close(chainId);
+    }
 
     onStatusChanged('connecting');
 
     void (async () => {
       try {
-        const handle = await getHandle();
+        const handle = await deps.getHandle();
 
         // The provider rejects `loadDatabase` and `connect` for a chain whose spec,
         // or whose relay's spec, it has not received. A fetch that failed is retried
         // here on the lane's next attempt.
-        await loadLightSpecs();
+        await deps.loadLightSpecs();
 
         // Seed the finalized state stored by a previous run, so this client resumes
         // instead of syncing from the chain-spec checkpoint. Best-effort: a failure
@@ -248,6 +413,9 @@ export function createLightClientProvider(
 
         state.connection = connection;
         onStatusChanged('connected');
+
+        state.watching = true;
+        deps.lifecycleWatches.open(chainId, () => handle.lifecycle(chainId));
 
         for (const message of queued) {
           connection.send(message);
@@ -276,6 +444,8 @@ export function createLightClientProvider(
         // A refused connect (such as one past the 32-connection cap) lands here. Without the
         // halt the lane would stay dead for good; `disconnect` closing the connection must not halt.
         if (!state.closed) onHalt(error);
+      } finally {
+        stopWatching();
       }
     })();
 
@@ -294,6 +464,7 @@ export function createLightClientProvider(
         state.closed = true;
         state.connection?.close();
         state.connection = null;
+        stopWatching();
       },
     };
   };

@@ -27,6 +27,7 @@ import {
   remoteConfigGateway,
   remoteConfigReady,
 } from '@/domains/remote-config';
+import { networkMonitorUseCase } from '@/aggregates/network-monitor';
 import { productManagementUseCase } from '@/aggregates/product-management';
 import { productWorkersUseCase } from '@/aggregates/product-workers';
 import { truapiRuntimeUseCase } from '@/aggregates/truapi-runtime';
@@ -40,6 +41,7 @@ import { favoritesFeature } from '@/features/favorites';
 import { inputModalityFeature } from '@/features/input-modality';
 import { languageSettingsFeature } from '@/features/language-settings';
 import { networkConnectionFeature } from '@/features/network-connection';
+import { networkStatusFeature } from '@/features/network-status';
 import { bootstrapNotifications, notificationsFeature } from '@/features/notifications';
 import { offlineAccessFeature } from '@/features/offline-access';
 import { onboardingFeature } from '@/features/onboarding';
@@ -155,6 +157,11 @@ const runBootstrap = async (): Promise<BootstrapOutcome> => {
     console.error('[bootstrap] light client unavailable — chains will use RPC', error);
   });
 
+  // The stop is discarded: the monitor lives as long as the app.
+  void networkMonitorUseCase.start(activeEnvironment).catch((error: unknown) => {
+    console.error('[bootstrap] network monitor did not start', error);
+  });
+
   // V2 multi-device identity is owned by the SDK (host-papp); the app reads it
   // back via `@/domains/application`. The device-sync/SSO stack is Electron-only.
   if (isElectron()) {
@@ -177,6 +184,7 @@ const runBootstrap = async (): Promise<BootstrapOutcome> => {
     productActionsMenuFeature,
     offlineAccessFeature,
     chatFeature,
+    networkStatusFeature,
     callFeature,
     settingsFeature,
     productWidgetFeature,

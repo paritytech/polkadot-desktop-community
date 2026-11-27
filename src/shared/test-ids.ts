@@ -16,6 +16,25 @@ export const TEST_IDS = {
   quickChatPopover: 'quick-chat-popover',
   quickChatExpandButton: 'quick-chat-expand-button',
   chatSyncStatusBanner: 'chat-sync-status-banner',
+  networkStatusButton: 'network-status-button',
+  networkPanel: 'network-panel',
+  networkStatusDot: 'network-status-dot',
+  networkChainList: 'network-chain-list',
+  networkOtherChainList: 'network-other-chain-list',
+  networkOtherChains: 'network-other-chains',
+  networkOtherChainsSummary: 'network-other-chains-summary',
+  networkChainRow: 'network-chain-row',
+  networkChainRowHead: 'network-chain-row-head',
+  networkChainRowName: 'network-chain-row-name',
+  networkChainRowStatus: 'network-chain-row-status',
+  networkChainRowDetail: 'network-chain-row-detail',
+  networkChainRowPeers: 'network-chain-row-peers',
+  networkChainRowBlock: 'network-chain-row-block',
+  networkChainMark: 'network-chain-mark',
+  networkBlockStrip: 'network-block-strip',
+  networkBlockBar: 'network-block-bar',
+  networkBlockStub: 'network-block-stub',
+  networkBlockPending: 'network-block-pending',
 
   // Input modality spotlight surface
   inputModalitySurface: 'input-modality-surface',
@@ -102,11 +121,9 @@ export const TEST_IDS = {
 
   // User Manager
   userButton: 'user-button',
-  userConnectionStatus: 'user-connection-status',
   userLogoutButton: 'user-logout-button',
   userDisplayName: 'user-display-name',
   userSettingsAction: 'user-settings-action',
-  userPopoverBanner: 'user-popover-banner',
 
   // Navigation
   homeButton: 'home-button',

@@ -13,4 +13,3 @@ export * from './strings';
 export * from './error';
 export * from './visibility';
 export * from './storage';
-export * from './avatar';

@@ -78,7 +78,7 @@ export const ReviewRequestLayout = ({
                   <div className="mt-1 w-full">
                     <Button
                       type="button"
-                      block
+                      horizontalSize="fill"
                       aria-expanded={showDetails}
                       data-testid={TEST_IDS.signReviewMoreDetails}
                       onClick={toggleDetails}

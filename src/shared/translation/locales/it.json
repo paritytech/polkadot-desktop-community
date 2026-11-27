@@ -191,28 +191,14 @@
       "clearRecent": "Cancella"
     },
     "userManager": {
-      "connectionStatus": {
-        "connected": "Connesso",
-        "reconnecting": "Riconnessione…",
-        "offline": "Sei offline",
-        "noConnection": "Non connesso — clicca per accedere"
-      },
       "aria": {
         "account": "Account",
         "connectAccount": "Connetti account"
       },
-      "banner": {
-        "connectedTitle": "Connesso a {networkName}",
-        "connectedSubtitle": "Desktop abbinato al dispositivo mobile",
-        "reconnectingTitle": "Riconnessione a {networkName}…",
-        "reconnectingSubtitle": "Nuovo tentativo di raggiungere il nodo",
-        "offlineTitle": "Sei offline",
-        "offlineSubtitle": "Controlla la connessione a internet e riprova",
-        "noConnectionTitle": "Non connesso",
-        "noConnectionSubtitle": "Accedi per abbinare il tuo account"
-      },
       "popover": {
-        "settings": "Impostazioni"
+        "settings": "Impostazioni",
+        "signedInAs": "Accesso effettuato come",
+        "signedOut": "Accesso non effettuato"
       }
     },
     "chat": {
@@ -1112,6 +1098,57 @@
           "title": "Consentire a questa app di accedere al suo account?",
           "subtitle": "Recupera l’account di questa app dal tuo dispositivo associato"
         }
+      }
+    },
+    "networkStatus": {
+      "title": "Rete",
+      "health": {
+        "connected": "Connesso",
+        "syncing": "Sincronizzazione",
+        "unstable": "Instabile",
+        "offline": "Offline",
+        "unused": "Non in uso",
+        "unreachable": "Irraggiungibile"
+      },
+      "role": {
+        "relay": "Relay",
+        "assetHub": "Hub",
+        "bulletin": "Archiviazione",
+        "people": "Identità"
+      },
+      "status": {
+        "noInternet": "Nessuna connessione a internet",
+        "noEndpoint": "Nessun endpoint",
+        "notInUse": "Non in uso",
+        "disconnected": "Disconnesso",
+        "syncing": "Sincronizzazione",
+        "syncingShare": "Sincronizzazione: {percent}%",
+        "connecting": "Connessione",
+        "notProducing": "Non produce blocchi",
+        "connected": "Connesso",
+        "behind": "In ritardo",
+        "live": "{word} · Live {percent}% · Blocco ~{duration}"
+      },
+      "duration": {
+        "seconds": "{seconds}s",
+        "minutes": "{minutes}m {seconds}s"
+      },
+      "otherChains": "Altre chain ({count})",
+      "lastBlocks": "Ultimi {count} blocchi",
+      "separator": " · ",
+      "strip": {
+        "title": "Ultimi {count} blocchi, il più recente a destra",
+        "label": "{chain}: ultimi {count} blocchi, il più recente a destra"
+      },
+      "block": {
+        "onTime": "{gap}s, in orario",
+        "late": "{gap}s, {late}s di ritardo",
+        "label": "Blocco {number}, {delay}",
+        "newest": "#{number, number}"
+      },
+      "peers": {
+        "count": "{count, plural, one {# peer} other {# peer}}",
+        "label": "{chain}: {peers} connessi"
       }
     }
   },
