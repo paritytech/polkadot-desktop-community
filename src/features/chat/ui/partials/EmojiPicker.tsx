@@ -1,7 +1,7 @@
-import { X } from 'lucide-react';
 import { useRef, useState } from 'react';
 
 import { IconButton, SectionLabel } from '@/shared/components';
+import { XIcon } from '@/shared/icons';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 
@@ -42,7 +42,7 @@ export const EmojiPicker = ({ onSelect, onClose }: EmojiPickerProps) => {
         </div>
         <span className="ms-1 flex shrink-0">
           <IconButton size="sm" label={t('common.aria.close')} onClick={onClose}>
-            <X />
+            <XIcon />
           </IconButton>
         </span>
       </div>

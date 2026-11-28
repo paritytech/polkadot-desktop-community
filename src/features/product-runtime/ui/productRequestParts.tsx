@@ -1,8 +1,8 @@
 import JsonView from '@uiw/react-json-view';
-import { AlertTriangle, ChevronLeft, Info } from 'lucide-react';
 import { type CSSProperties, type PropsWithChildren, type ReactNode, memo, useMemo } from 'react';
 
 import { Button, CopyButton, Dialog, IconButton } from '@/shared/components';
+import { ChevronLeftIcon, InfoIcon, TriangleExclamationPointIcon } from '@/shared/icons';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { cnTw } from '@/shared/utils';
@@ -158,7 +158,7 @@ export const RequestBackButton = memo(({ onClick }: { onClick: VoidFunction }) =
   return (
     <span className="absolute start-2.75 top-2.75 flex">
       <IconButton label={t('common.action.back')} onClick={onClick}>
-        <ChevronLeft />
+        <ChevronLeftIcon className="rtl:-scale-x-100" />
       </IconButton>
     </span>
   );
@@ -267,7 +267,7 @@ export const RequestSummaryNote = memo(
   ({ tone, children, testId }: PropsWithChildren<{ tone: 'info' | 'warning'; testId?: string }>) => (
     <>
       <div className="flex items-center gap-2" data-testid={testId}>
-        <Info aria-hidden className={cnTw('size-4 shrink-0', tone === 'warning' ? 'text-fg-warning' : 'text-fg-secondary')} />
+        <InfoIcon className={cnTw('size-4 shrink-0', tone === 'warning' ? 'text-fg-warning' : 'text-fg-secondary')} />
         <RequestHint>{children}</RequestHint>
       </div>
       <div className="border-t border-stroke-primary" role="separator" />
@@ -303,7 +303,7 @@ RequestContextNote.displayName = 'RequestContextNote';
 /** The standalone warning banner the permission requests end with. */
 export const RequestWarningBanner = memo(({ children }: PropsWithChildren) => (
   <div className="flex w-full items-start gap-2 rounded-lg border border-stroke-primary bg-bg-status-warning/10 p-3">
-    <AlertTriangle className="mt-0.5 size-5 shrink-0 text-fg-warning" />
+    <TriangleExclamationPointIcon className="mt-0.5 size-5 shrink-0 text-fg-warning" />
     <p className="text-sm font-medium text-fg-primary">{children}</p>
   </div>
 ));

@@ -1,6 +1,5 @@
-import { Loader2, RefreshCw } from 'lucide-react';
-
 import { Button } from '@/shared/components';
+import { LoaderCircleIcon, RefreshCwIcon } from '@/shared/icons';
 import { useTranslation } from '@/shared/translation';
 import { type WebviewUnresponsiveInfo } from '@/aggregates/webview-registry';
 
@@ -22,14 +21,14 @@ export const UnresponsiveOverlay = ({ info, onReload }: Props) => {
       >
         <div className="flex flex-col items-center gap-2 self-stretch">
           <div className="pb-2">
-            <Loader2 className="h-8 w-8 animate-spin text-fg-secondary" strokeWidth={1.5} />
+            <LoaderCircleIcon className="h-8 w-8 animate-spin text-fg-secondary" strokeWidth={1.5} />
           </div>
           <h1 className="w-full text-center text-base font-medium text-fg-primary">{t('widget.webview.unresponsive.title')}</h1>
           <p className="w-full text-center text-sm font-normal text-fg-secondary">{t('widget.webview.unresponsive.subtitle')}</p>
         </div>
 
         <Button data-testid="unresponsive-overlay-reload" onClick={onReload}>
-          <RefreshCw className="h-4 w-4" />
+          <RefreshCwIcon className="h-4 w-4" />
           {t('widget.webview.unresponsive.reload')}
         </Button>
 

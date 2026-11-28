@@ -1,9 +1,9 @@
 import { useNavigate } from '@tanstack/react-router';
-import { MoreHorizontal, Settings } from 'lucide-react';
 import { useCallback, useState } from 'react';
 
 import { Button, DropdownMenu, IconButton } from '@/shared/components';
 import { Slot } from '@/shared/di';
+import { EllipsisIcon, SettingsIcon } from '@/shared/icons';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { productActionsMenuItemsSlot } from '../di';
@@ -28,7 +28,7 @@ export const ProductActionsMenu = ({ productId }: Props) => {
             data-testid={TEST_IDS.productActionsMenuTrigger}
             onMouseDown={e => e.preventDefault()}
           >
-            <MoreHorizontal aria-hidden />
+            <EllipsisIcon />
           </IconButton>
         </DropdownMenu.Trigger>
       </span>
@@ -44,7 +44,7 @@ export const ProductActionsMenu = ({ productId }: Props) => {
                 void navigate({ to: '/settings/privacy/apps/$productId', params: { productId } });
               }}
             >
-              <Settings className="size-4" aria-hidden />
+              <SettingsIcon className="size-4" />
               {t('feature.productActionsMenu.openSettings')}
             </Button>
           </div>

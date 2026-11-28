@@ -2,11 +2,11 @@ import { type DragEndEvent, DndContext, PointerSensor, closestCenter, useSensor,
 import { restrictToHorizontalAxis } from '@dnd-kit/modifiers';
 import { SortableContext, horizontalListSortingStrategy, useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { X } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { Popover, SegmentedControl } from '@/shared/components';
 import { Slot } from '@/shared/di';
+import { XIcon } from '@/shared/icons';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { cnTw } from '@/shared/utils';
@@ -251,7 +251,7 @@ const SortableTab = ({ tab, isActive, onClose }: SortableTabProps) => {
               onClose(tab);
             }}
           >
-            <X size={12} strokeWidth={1.5} aria-hidden />
+            <XIcon className="size-3" strokeWidth={1.5} />
           </button>
         </div>
       </Popover.Anchor>

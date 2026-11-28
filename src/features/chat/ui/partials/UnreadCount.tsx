@@ -1,4 +1,4 @@
-import { Heart } from 'lucide-react';
+import { HeartIcon } from '@/shared/icons';
 
 type Props = {
   count?: number;
@@ -12,7 +12,7 @@ export const UnreadCount = ({ count = 0, reaction }: Props) => {
     <span className="flex items-center gap-1">
       {reaction ? (
         <span className="flex size-5 items-center justify-center rounded-full bg-bg-illustration-dark">
-          <Heart aria-hidden className="size-3 fill-current text-fg-primary-inverted" />
+          <HeartIcon className="size-3 fill-current text-fg-primary-inverted" />
         </span>
       ) : null}
       {count > 0 ? (

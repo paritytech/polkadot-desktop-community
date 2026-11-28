@@ -1,7 +1,7 @@
-import { AlertTriangle, RefreshCw, X } from 'lucide-react';
 import { type FC, useState } from 'react';
 
 import { Button, IconButton } from '@/shared/components';
+import { RefreshCwIcon, TriangleExclamationPointIcon, XIcon } from '@/shared/icons';
 import { useTranslation } from '@/shared/translation';
 import { type WebviewHealthReason } from '@/aggregates/webview-registry';
 
@@ -23,12 +23,12 @@ export const DegradedBanner: FC<Props> = ({ reason, onReload }) => {
       style={{ appRegion: 'no-drag' }}
     >
       <span className="flex items-center gap-2">
-        <AlertTriangle className="h-4 w-4 shrink-0" strokeWidth={1.5} />
+        <TriangleExclamationPointIcon className="h-4 w-4 shrink-0" strokeWidth={1.5} />
         <span>{t('widget.webview.degraded.title')}</span>
       </span>
       <div className="flex items-center gap-2">
         <Button data-testid="degraded-banner-reload" onClick={onReload}>
-          <RefreshCw className="size-3" />
+          <RefreshCwIcon className="size-3" />
           {t('widget.webview.degraded.reload')}
         </Button>
         <IconButton
@@ -37,7 +37,7 @@ export const DegradedBanner: FC<Props> = ({ reason, onReload }) => {
           label={t('widget.webview.degraded.dismiss')}
           onClick={() => setDismissed(true)}
         >
-          <X />
+          <XIcon />
         </IconButton>
       </div>
       <details className="sr-only" data-testid="degraded-banner-reason">

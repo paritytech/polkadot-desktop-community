@@ -1,7 +1,7 @@
-import { MessageCircle, MessagesSquare } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { AppIcon, EmptyState, PaneHeader, SectionLabel, toast, widgetSpanWidthCss } from '@/shared/components';
+import { MessageCircleIcon, MessagesSquareIcon } from '@/shared/icons';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import {
@@ -328,7 +328,7 @@ export const ChatFullscreen = ({ selected, onSelect, onDeselect }: Props) => {
                     skeleton
                   ) : chatListEntries.length === 0 ? (
                     <EmptyState
-                      icon={<MessagesSquare />}
+                      icon={<MessagesSquareIcon />}
                       title={t('feature.chat.noChatsYet')}
                       description={t('feature.chat.yourChatsWillAppear')}
                     />
@@ -401,7 +401,7 @@ export const ChatFullscreen = ({ selected, onSelect, onDeselect }: Props) => {
         />
       ) : (
         <EmptyState
-          icon={<MessagesSquare />}
+          icon={<MessagesSquareIcon />}
           title={t('feature.chat.noChatSelected')}
           description={t('feature.chat.selectChatToView')}
         />
@@ -432,7 +432,7 @@ const ListHeader = () => {
       variant="list"
       icon={
         <AppIcon size="24" alt="">
-          <MessageCircle className="size-4" />
+          <MessageCircleIcon className="size-4" />
         </AppIcon>
       }
     >

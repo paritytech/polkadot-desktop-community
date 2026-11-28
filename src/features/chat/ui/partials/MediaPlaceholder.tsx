@@ -1,5 +1,5 @@
-import MediaIcon from '@/shared/assets/images/photo.svg?jsx';
 import { BlurhashCanvas } from '@/shared/components';
+import { ImageIcon } from '@/shared/icons';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { cnTw } from '@/shared/utils';
@@ -48,7 +48,7 @@ export const MediaPlaceholder = ({ isMe, blurhash }: Props) => {
           isDarkCard ? 'bg-bg-surface-container' : 'bg-bg-surface-container-inverted',
         )}
       >
-        <MediaIcon className={cnTw('size-6', isDarkCard ? 'text-fg-tertiary' : 'text-fg-tertiary-inverted')} />
+        <ImageIcon className={cnTw('size-6', isDarkCard ? 'text-fg-tertiary' : 'text-fg-tertiary-inverted')} />
       </span>
       <span className={cnTw('relative text-sm', isDarkCard ? 'text-fg-secondary-inverted' : 'text-fg-secondary')}>
         {t('feature.chat.mediaMobileOnly')}

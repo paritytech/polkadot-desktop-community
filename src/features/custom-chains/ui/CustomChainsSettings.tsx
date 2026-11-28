@@ -1,9 +1,9 @@
-import { Trash2 } from 'lucide-react';
 import { memo, useId, useState } from 'react';
 import { firstValueFrom } from 'rxjs';
 import * as v from 'valibot';
 
 import { Button, IconButton, Input, Label, ListItem, SettingsList, SettingsSection, toast } from '@/shared/components';
+import { TrashIcon } from '@/shared/icons';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { genesisHash, useCustomChains, useDiscoverAndAddChain, useRemoveCustomChain } from '@/domains/network';
@@ -128,7 +128,7 @@ export const CustomChainsSettings = memo(() => {
                     label={t('feature.customChains.removeChainAriaLabel', { name: entry.name })}
                     onClick={() => remove.run({ chainId: v.parse(genesisHash, hash) })}
                   >
-                    <Trash2 />
+                    <TrashIcon />
                   </IconButton>
                 }
               />

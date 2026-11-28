@@ -1,7 +1,7 @@
-import { ArrowDownLeft, ArrowUpRight, Phone, Video } from 'lucide-react';
 import { type MouseEvent } from 'react';
 
 import { useAnyOf } from '@/shared/di';
+import { ArrowDownLeftIcon, ArrowUpRightIcon, PhoneIcon, VideoIcon } from '@/shared/icons';
 import { useTranslation } from '@/shared/translation';
 import { cnTw } from '@/shared/utils';
 import { type CallSignalContent, type ChatMessage } from '@/domains/chat';
@@ -29,8 +29,8 @@ export const CallMessageBubble = ({ message, content, state, isMe, isSeen = fals
   const subtitle = subtitleFor(state, isMe, canPlaceCall, t);
   const isMissedOrDeclined = state.kind === 'missed';
 
-  const CallIcon = isVideo ? Video : Phone;
-  const StatusArrow = isMissedOrDeclined ? ArrowDownLeft : ArrowUpRight;
+  const CallIcon = isVideo ? VideoIcon : PhoneIcon;
+  const StatusArrow = isMissedOrDeclined ? ArrowDownLeftIcon : ArrowUpRightIcon;
   const statusArrowColor = isMissedOrDeclined ? 'text-fg-error' : 'text-fg-success';
 
   return (

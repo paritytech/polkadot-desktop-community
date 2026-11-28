@@ -1,9 +1,9 @@
-import { Loader2, SearchX } from 'lucide-react';
 import { useMemo } from 'react';
 import { useObservable } from 'react-rx';
 import { combineLatest, map, of } from 'rxjs';
 
 import { Avatar, EmptyState, ListItem, SectionLabel } from '@/shared/components';
+import { LoaderCircleIcon, SearchXIcon } from '@/shared/icons';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { type ChatMessage, type ChatSession, type MessageSearchHit, type SearchResult } from '@/domains/chat';
@@ -79,12 +79,12 @@ export const SearchResultsPanel = ({
     if (pending) {
       return (
         <div className="flex flex-1 items-center justify-center p-8">
-          <Loader2 className="size-4 animate-spin text-fg-tertiary" />
+          <LoaderCircleIcon className="size-4 animate-spin text-fg-tertiary" />
         </div>
       );
     }
 
-    return <EmptyState icon={<SearchX />} title={searchError || t('feature.chat.noResults', { query })} />;
+    return <EmptyState icon={<SearchXIcon />} title={searchError || t('feature.chat.noResults', { query })} />;
   }
 
   return (

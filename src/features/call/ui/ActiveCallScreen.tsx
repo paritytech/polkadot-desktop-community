@@ -1,7 +1,7 @@
-import { MicOff, Settings } from 'lucide-react';
 import { type ReactNode, type SyntheticEvent, useCallback, useEffect, useRef, useState } from 'react';
 
 import { Avatar, Button, IconButton } from '@/shared/components';
+import { MicOffIcon, SettingsIcon } from '@/shared/icons';
 import { cnTw } from '@/shared/utils';
 import { type PendingUpgrade } from '@/domains/chat';
 
@@ -50,7 +50,7 @@ type ActiveCallScreenProps = {
 // Small pill shown near the controls when a participant's mic is muted.
 const MicOffPill = ({ label }: { label: string }) => (
   <div className="flex items-center gap-2 rounded-full bg-bg-surface-nested px-3 py-1.5">
-    <MicOff className="size-4 shrink-0 text-fg-primary" />
+    <MicOffIcon className="size-4 shrink-0 text-fg-primary" />
     <span className="text-sm text-fg-primary">{label}</span>
   </div>
 );
@@ -293,7 +293,7 @@ export const ActiveCallScreen = ({
           device picker. Present on both audio and video layouts. */}
       <span className="absolute end-4 top-4 z-30 flex">
         <IconButton label={settingsLabel} onClick={onOpenSettings}>
-          <Settings />
+          <SettingsIcon />
         </IconButton>
       </span>
 

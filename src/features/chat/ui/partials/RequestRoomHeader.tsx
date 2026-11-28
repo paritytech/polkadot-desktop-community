@@ -1,7 +1,7 @@
-import { Ellipsis } from 'lucide-react';
 import { type ReactNode } from 'react';
 
 import { Avatar, DropdownMenu, IconButton, PaneHeader } from '@/shared/components';
+import { EllipsisIcon } from '@/shared/icons';
 import { useTranslation } from '@/shared/translation';
 
 type RequestRoomHeaderProps = {
@@ -33,7 +33,7 @@ export const RequestRoomHeader = ({ name, actionIcon, actionLabel, onAction }: R
           <DropdownMenu.Root>
             <DropdownMenu.Trigger asChild>
               <IconButton label={t('feature.chat.roomActions')}>
-                <Ellipsis />
+                <EllipsisIcon />
               </IconButton>
             </DropdownMenu.Trigger>
             <DropdownMenu.Content align="end">

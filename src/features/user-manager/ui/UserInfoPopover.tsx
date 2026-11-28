@@ -1,10 +1,10 @@
 import { type SessionUiInfo } from '@parity/truapi-host';
 import { useNavigate } from '@tanstack/react-router';
-import { LogIn, LogOut, Settings } from 'lucide-react';
 import { type PropsWithChildren, type ReactNode, memo, useState } from 'react';
 
 import { Avatar, DismissOverlay, Popover } from '@/shared/components';
 import { useCloseOnWindowLeave } from '@/shared/hooks';
+import { LogInIcon, LogOutIcon, SettingsIcon } from '@/shared/icons';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { browserTabs } from '@/aggregates/browser-tabs';
@@ -89,13 +89,13 @@ export const UserInfoPopover = memo(({ session, name, defaultOpen, children }: P
           <div className="h-px w-full bg-stroke-primary" />
           <div className="flex w-full flex-col">
             <ActionRow
-              icon={<Settings className="size-4" />}
+              icon={<SettingsIcon className="size-4" />}
               label={t('feature.userManager.popover.settings')}
               testId={TEST_IDS.userSettingsAction}
               onClick={openSettingsTab}
             />
             <ActionRow
-              icon={isConnected ? <LogOut className="size-4" /> : <LogIn className="size-4" />}
+              icon={isConnected ? <LogOutIcon className="size-4" /> : <LogInIcon className="size-4" />}
               label={isConnected ? t('feature.user.logOut') : t('feature.user.logIn')}
               testId={TEST_IDS.userLogoutButton}
               onClick={handleAuthAction}

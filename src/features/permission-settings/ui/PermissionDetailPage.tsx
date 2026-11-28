@@ -1,8 +1,8 @@
 import { useNavigate } from '@tanstack/react-router';
-import { Grid2X2, Shield } from 'lucide-react';
 import { cloneElement, useMemo } from 'react';
 
 import { ListItem, SettingsList, SettingsSection } from '@/shared/components';
+import { Grid2x2Icon, ShieldIcon } from '@/shared/icons';
 import { useTranslation } from '@/shared/translation';
 import { type AppPermissionEntry, useDisplayedProduct, useWatchAggregatedPermissions } from '@/domains/product';
 import { getPermissionMeta } from '@/widgets/Permission';
@@ -35,7 +35,7 @@ export const PermissionDetailPage = ({ permissionId, onBack }: Props) => {
       <div className="flex flex-col gap-6">
         <div className="flex flex-col gap-4">
           <div className="flex size-16 shrink-0 items-center justify-center rounded-xl bg-bg-illustration-light text-fg-primary">
-            {cloneElement(meta.icon, { size: 40 })}
+            {cloneElement(meta.icon, { className: 'size-10' })}
           </div>
 
           <p className="text-sm text-chrome-muted">{t(meta.descriptionKey)}</p>
@@ -71,7 +71,7 @@ const RulesCard = ({ ruleKeys }: { ruleKeys: string[] }) => {
   return (
     <SettingsSection>
       <div className="mb-2 flex items-center gap-1">
-        <Shield size={16} className="text-chrome-muted" />
+        <ShieldIcon className="size-4 text-chrome-muted" />
         <span className="text-sm font-medium text-chrome-muted">{t('feature.permissionSettings.detail.rulesTitle')}</span>
       </div>
       <ol className="flex list-decimal flex-col ps-5">
@@ -90,7 +90,7 @@ const AppPermissionRow = ({ app, onNavigate }: { app: AppPermissionEntry; onNavi
 
   return (
     <ListItem
-      icon={<ProductIcon icon={product?.icon} className="size-full object-cover" fallback={<Grid2X2 />} />}
+      icon={<ProductIcon icon={product?.icon} className="size-full object-cover" fallback={<Grid2x2Icon />} />}
       label={product?.displayName ?? app.productId}
       description={product?.baseName ?? app.productId}
       chevron

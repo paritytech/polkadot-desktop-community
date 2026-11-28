@@ -1,7 +1,6 @@
-import { Languages } from 'lucide-react';
-
 import { Sidebar } from '@/shared/components';
 import { createFeature } from '@/shared/feature';
+import { LanguagesIcon } from '@/shared/icons';
 import { useTranslation } from '@/shared/translation';
 import { settingsPreferencesNavSlot } from '@/features/settings';
 
@@ -18,7 +17,7 @@ languageSettingsFeature.inject(settingsPreferencesNavSlot, {
     const { t } = useTranslation();
 
     return (
-      <Sidebar.Item icon={<Languages />} to="/settings/language">
+      <Sidebar.Item icon={<LanguagesIcon />} to="/settings/language">
         {t('feature.languageSettings.title')}
       </Sidebar.Item>
     );

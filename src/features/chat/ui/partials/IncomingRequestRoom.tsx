@@ -1,7 +1,7 @@
-import { X } from 'lucide-react';
 import { useCallback } from 'react';
 
 import { Button } from '@/shared/components';
+import { XIcon } from '@/shared/icons';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { type P2PChatRequest, p2pService } from '@/domains/chat';
@@ -37,7 +37,7 @@ export const IncomingRequestRoom = (props: IncomingRequestRoomProps) => {
         {actions ? (
           <RequestRoomHeader
             name={name}
-            actionIcon={<X />}
+            actionIcon={<XIcon />}
             actionLabel={t('feature.chat.request.decline')}
             onAction={actions.onDecline}
           />

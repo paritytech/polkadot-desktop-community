@@ -1,7 +1,7 @@
 import * as DialogPrimitive from '@radix-ui/react-dialog';
-import { X } from 'lucide-react';
 import { type ComponentProps } from 'react';
 
+import { XIcon } from '@/shared/icons';
 import { useTranslation } from '@/shared/translation';
 import { IconButton } from '../IconButton/IconButton';
 import { BodyLockSweep } from '../_helpers/BodyLockSweep';
@@ -30,7 +30,7 @@ const DialogContent = ({ width, height, showCloseButton = true, children, ...pro
             <span className="absolute end-3 top-3">
               <DialogPrimitive.Close asChild>
                 <IconButton label={t('common.aria.close')}>
-                  <X />
+                  <XIcon />
                 </IconButton>
               </DialogPrimitive.Close>
             </span>

@@ -1,5 +1,4 @@
-import { ChevronLeft, ChevronRight } from 'lucide-react';
-
+import { ChevronLeftIcon, ChevronRightIcon } from '@/shared/icons';
 import { IconButton } from '../IconButton/IconButton';
 
 type Props = {
@@ -26,10 +25,10 @@ export const HistoryNavigationButtons = ({
   return (
     <div className="flex items-center gap-1">
       <IconButton label={backAriaLabel} data-testid={backTestId} disabled={!canGoBack} onClick={goBack}>
-        <ChevronLeft size={16} aria-hidden />
+        <ChevronLeftIcon className="size-4 rtl:-scale-x-100" />
       </IconButton>
       <IconButton label={forwardAriaLabel} data-testid={forwardTestId} disabled={!canGoForward} onClick={goForward}>
-        <ChevronRight size={16} aria-hidden />
+        <ChevronRightIcon className="size-4 rtl:-scale-x-100" />
       </IconButton>
     </div>
   );

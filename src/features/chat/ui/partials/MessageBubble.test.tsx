@@ -1,12 +1,17 @@
 // @vitest-environment happy-dom
 
 import { render, screen } from '@testing-library/react';
+import { type FC, type SVGProps } from 'react';
 import { describe, expect, it } from 'vitest';
 
+import { CheckCheckIcon, CheckIcon, ClockIcon } from '@/shared/icons';
 import { TranslationProvider } from '@/shared/translation';
 import { type ChatMessage, type ChatMessageStatus } from '@/domains/chat';
 
 import { MessageBubble, StatusIcon } from './MessageBubble';
+
+const markupOf = (Icon: FC<SVGProps<SVGSVGElement>>) => render(<Icon />).container.querySelector('svg')?.innerHTML;
+const iconMarkups = (container: HTMLElement) => Array.from(container.querySelectorAll('svg'), svg => svg.innerHTML);
 
 const outgoing = (state: 'new' | 'sent' | 'delivered'): ChatMessageStatus => ({ direction: 'outgoing', state });
 
@@ -14,20 +19,20 @@ describe('StatusIcon', () => {
   it('shows a clock for an outgoing new message', () => {
     const { container } = render(<StatusIcon status={outgoing('new')} />);
 
-    expect(container.querySelector('.lucide-clock')).not.toBeNull();
+    expect(iconMarkups(container)).toContain(markupOf(ClockIcon));
   });
 
   it.each(['sent', 'delivered'] as const)('shows one check for an outgoing %s message', state => {
     const { container } = render(<StatusIcon status={outgoing(state)} />);
 
-    expect(container.querySelector('.lucide-check')).not.toBeNull();
-    expect(container.querySelector('.lucide-check-check')).toBeNull();
+    expect(iconMarkups(container)).toContain(markupOf(CheckIcon));
+    expect(iconMarkups(container)).not.toContain(markupOf(CheckCheckIcon));
   });
 
   it('shows a double check for a seen outgoing message', () => {
     const { container } = render(<StatusIcon status={outgoing('delivered')} isSeen />);
 
-    expect(container.querySelector('.lucide-check-check')).not.toBeNull();
+    expect(iconMarkups(container)).toContain(markupOf(CheckCheckIcon));
   });
 
   it('renders nothing for an incoming message', () => {
@@ -55,7 +60,7 @@ describe('MessageBubble', () => {
     );
 
     await screen.findByText('hello');
-    expect(container.querySelector('.lucide-check-check')).not.toBeNull();
+    expect(iconMarkups(container)).toContain(markupOf(CheckCheckIcon));
   });
 
   it('draws the quoted card of my reply in the inverted tone', async () => {

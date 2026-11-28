@@ -1,7 +1,6 @@
-import { CodeXml } from 'lucide-react';
-
 import { Sidebar } from '@/shared/components';
 import { createFeature } from '@/shared/feature';
+import { CodeXmlIcon } from '@/shared/icons';
 import { useTranslation } from '@/shared/translation';
 import { settingsDevelopmentNavSlot } from '@/features/settings';
 
@@ -15,7 +14,7 @@ statementStoreNetworkFeature.inject(settingsDevelopmentNavSlot, {
     const { t } = useTranslation();
 
     return (
-      <Sidebar.Item icon={<CodeXml />} to="/settings/development/network">
+      <Sidebar.Item icon={<CodeXmlIcon />} to="/settings/development/network">
         {t('feature.statementStoreNetwork.title')}
       </Sidebar.Item>
     );

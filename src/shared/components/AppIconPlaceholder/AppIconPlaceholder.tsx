@@ -1,4 +1,4 @@
-import PlaceholderGlyph from '@/shared/assets/images/app-icon-placeholder.svg?jsx';
+import { SquareDashedIcon } from '@/shared/icons';
 import { cnTw } from '@/shared/utils';
 
 type Props = {
@@ -16,5 +16,5 @@ const glyphSizeClass: Record<Props['size'], string> = {
 
 // The empty-state glyph `AppIcon` draws when it has no image and no children. Inherits the tile's text colour.
 export const AppIconPlaceholder = ({ size }: Props) => {
-  return <PlaceholderGlyph aria-hidden className={cnTw('shrink-0', glyphSizeClass[size])} />;
+  return <SquareDashedIcon className={cnTw('shrink-0', glyphSizeClass[size])} />;
 };

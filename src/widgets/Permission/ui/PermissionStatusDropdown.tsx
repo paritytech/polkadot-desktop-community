@@ -1,6 +1,5 @@
-import { Check, ChevronDown } from 'lucide-react';
-
 import { DropdownMenu } from '@/shared/components';
+import { CheckIcon, ChevronDownIcon } from '@/shared/icons';
 import { useTranslation } from '@/shared/translation';
 import { type PermissionStatus } from '@/domains/product';
 import { STATUS_LABEL_KEYS } from '../metadata';
@@ -20,14 +19,14 @@ export const PermissionStatusDropdown = ({ value, onChange }: Props) => {
       <DropdownMenu.Trigger asChild>
         <button className="flex h-control-sm shrink-0 items-center gap-1 rounded border border-stroke-primary bg-bg-action-primary-inverted px-2">
           <span className="text-xs font-medium text-fg-primary">{t(STATUS_LABEL_KEYS[value])}</span>
-          <ChevronDown size={16} className="text-fg-tertiary" />
+          <ChevronDownIcon className="size-4 text-fg-tertiary" />
         </button>
       </DropdownMenu.Trigger>
       <DropdownMenu.Content align="end">
         {STATUSES.map(option => (
           <DropdownMenu.Item key={option} onSelect={() => onChange(option)}>
             <span className="flex-1">{t(STATUS_LABEL_KEYS[option])}</span>
-            {value === option && <Check size={16} />}
+            {value === option && <CheckIcon className="size-4" />}
           </DropdownMenu.Item>
         ))}
       </DropdownMenu.Content>

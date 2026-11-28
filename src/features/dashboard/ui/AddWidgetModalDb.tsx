@@ -1,8 +1,8 @@
-import { Search } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 
 import { Dialog, Input } from '@/shared/components';
 import { useTransformer } from '@/shared/di';
+import { SearchIcon } from '@/shared/icons';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { cnTw } from '@/shared/utils';
@@ -167,7 +167,7 @@ export const AddWidgetModalDb = ({
         <div className="flex h-170">
           <div className="flex w-[320px] shrink-0 flex-col gap-4 border-e border-stroke-primary pe-6">
             <Input
-              leading={<Search />}
+              leading={<SearchIcon />}
               type="search"
               data-testid={TEST_IDS.addWidgetSearchInput}
               value={searchQuery}

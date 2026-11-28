@@ -1,9 +1,9 @@
-import { Camera, Search } from 'lucide-react';
 import { type KeyboardEvent, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 import { IconButton } from '@/shared/components';
 import { useAnimatedHeight } from '@/shared/hooks';
+import { CameraIcon, SearchIcon } from '@/shared/icons';
 import { useRxState } from '@/shared/rxstate';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
@@ -376,7 +376,7 @@ const InputSpotlightSurface = () => {
             <div className="flex min-h-12 items-center gap-2 px-4 py-2">
               {/* PARKED — product querying: the icon pulsed while a round was pending
                   (`round.kind === 'query' && round.pending && 'animate-pulse'`). */}
-              <Search aria-hidden className="size-5 shrink-0 text-fg-secondary" />
+              <SearchIcon className="size-5 shrink-0 text-fg-secondary" />
               {/* The field and the completion it would accept, stacked. An input
                   cannot style part of its own value, so the suffix is drawn by a
                   twin behind it: same box, same typography, the already-typed
@@ -431,7 +431,7 @@ const InputSpotlightSurface = () => {
                 data-testid={TEST_IDS.inputModalityScanButton}
                 onClick={() => setScanning(true)}
               >
-                <Camera aria-hidden />
+                <CameraIcon />
               </IconButton>
             </div>
           </div>

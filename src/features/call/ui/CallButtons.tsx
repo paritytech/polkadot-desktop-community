@@ -1,9 +1,9 @@
-import { Phone, Video } from 'lucide-react';
 import { useIntl } from 'react-intl';
 import { useObservable } from 'react-rx';
 
 import { IconButton } from '@/shared/components';
 import { isElectron } from '@/shared/env';
+import { PhoneIcon, VideoIcon } from '@/shared/icons';
 import { useRxState } from '@/shared/rxstate';
 import { TEST_IDS } from '@/shared/test-ids';
 import { type CallPurpose, type ChatSession } from '@/domains/chat';
@@ -43,7 +43,7 @@ export const CallButtons = ({ session }: Props) => {
         label={intl.formatMessage({ id: 'feature.call.audioCall' })}
         onClick={() => handleCall('audio')}
       >
-        <Phone strokeWidth={1.75} className="size-5" />
+        <PhoneIcon className="size-5" strokeWidth={1.75} />
       </IconButton>
       <IconButton
         disabled={inCall}
@@ -51,7 +51,7 @@ export const CallButtons = ({ session }: Props) => {
         label={intl.formatMessage({ id: 'feature.call.videoCall' })}
         onClick={() => handleCall('video')}
       >
-        <Video strokeWidth={1.75} className="size-5" />
+        <VideoIcon className="size-5" strokeWidth={1.75} />
       </IconButton>
     </>
   );

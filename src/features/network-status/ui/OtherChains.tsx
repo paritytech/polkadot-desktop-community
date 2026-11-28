@@ -1,6 +1,6 @@
-import { ChevronDown } from 'lucide-react';
 import { type FC, type PropsWithChildren } from 'react';
 
+import { ChevronDownIcon } from '@/shared/icons';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 
@@ -24,10 +24,7 @@ export const OtherChains: FC<PropsWithChildren<Props>> = ({ count, children }) =
         className="-mx-1 flex min-h-control w-fit cursor-pointer list-none items-center gap-1 rounded-lg px-1 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-chrome-focus [&::-webkit-details-marker]:hidden"
       >
         {t('feature.networkStatus.otherChains', { count })}
-        <ChevronDown
-          aria-hidden
-          className="size-3.5 flex-none group-open:rotate-180 motion-safe:transition-transform motion-safe:duration-260 motion-safe:ease-chrome"
-        />
+        <ChevronDownIcon className="size-3.5 flex-none group-open:rotate-180 motion-safe:transition-transform motion-safe:duration-260 motion-safe:ease-chrome" />
       </summary>
       <div className="pt-2">{children}</div>
     </details>

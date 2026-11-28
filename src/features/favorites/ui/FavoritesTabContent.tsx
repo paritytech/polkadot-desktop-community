@@ -1,6 +1,5 @@
-import { Star } from 'lucide-react';
-
 import { TabChip } from '@/shared/components';
+import { StarIcon } from '@/shared/icons';
 import { useTranslation } from '@/shared/translation';
 
 type Props = { isActive: boolean };
@@ -10,5 +9,5 @@ type Props = { isActive: boolean };
 export const FavoritesTabContent = ({ isActive }: Props) => {
   const { t } = useTranslation();
 
-  return <TabChip icon={<Star aria-hidden />} isActive={isActive} label={t('feature.favorites.title')} />;
+  return <TabChip icon={<StarIcon />} isActive={isActive} label={t('feature.favorites.title')} />;
 };

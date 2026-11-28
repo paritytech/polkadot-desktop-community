@@ -1,6 +1,6 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { SettingsIcon } from 'lucide-react';
 
+import { SettingsIcon } from '@/shared/icons';
 import { IconButton } from '../IconButton/IconButton';
 
 import { Tooltip } from './Tooltip';

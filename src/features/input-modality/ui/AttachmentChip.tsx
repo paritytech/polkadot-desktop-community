@@ -1,6 +1,7 @@
-import { FileText, Image, Music, Video, X } from 'lucide-react';
+import { type FC, type SVGProps } from 'react';
 
 import { IconButton } from '@/shared/components';
+import { EighthNotesIcon, FileTextIcon, ImageIcon, VideoIcon, XIcon } from '@/shared/icons';
 import { TEST_IDS } from '@/shared/test-ids';
 import { formatBytes } from '@/shared/utils';
 import { type AttachmentCategory } from '@/domains/input-routing';
@@ -9,11 +10,11 @@ import { type DraftAttachment } from '../types';
 
 // Fallback when there is no preview to show (audio and generic files always;
 // image/video only when the loader produced no preview URL).
-const categoryIcon: Record<AttachmentCategory, typeof FileText> = {
-  image: Image,
-  audio: Music,
-  video: Video,
-  file: FileText,
+const categoryIcon: Record<AttachmentCategory, FC<SVGProps<SVGSVGElement>>> = {
+  image: ImageIcon,
+  audio: EighthNotesIcon,
+  video: VideoIcon,
+  file: FileTextIcon,
 };
 
 type Props = {
@@ -43,7 +44,7 @@ export const AttachmentChip = ({ attachment, onRemove, removeLabel }: Props) => 
       <span className="shrink-0 text-xs text-fg-secondary">{formatBytes(attachment.sizeBytes)}</span>
       {onRemove && (
         <IconButton size="sm" label={removeLabel} onClick={() => onRemove(attachment.id)}>
-          <X aria-hidden />
+          <XIcon />
         </IconButton>
       )}
     </div>

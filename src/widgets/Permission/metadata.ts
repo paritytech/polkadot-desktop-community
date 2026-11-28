@@ -1,26 +1,30 @@
-import {
-  type LucideIcon,
-  Bell,
-  Bluetooth,
-  Camera,
-  Clipboard,
-  ExternalLink,
-  Fingerprint,
-  Globe,
-  IdCard,
-  MapPin,
-  Mic,
-  Move3d,
-  Wallet,
-} from 'lucide-react';
-import { createElement } from 'react';
+import { type FC, type SVGProps, createElement } from 'react';
 
+import {
+  BellIcon,
+  BlocksIcon,
+  BluetoothIcon,
+  CameraIcon,
+  ClipboardIcon,
+  ExternalLinkIcon,
+  FileUpIcon,
+  FingerprintPatternIcon,
+  GlobeIcon,
+  IdCardIcon,
+  MapPinIcon,
+  MessageSquareTextIcon,
+  MicIcon,
+  Move3dIcon,
+  WalletIcon,
+} from '@/shared/icons';
+import { cnTw } from '@/shared/utils';
 import { type PermissionId, type PermissionStatus, PERMISSION_IDS } from '@/domains/product';
 
 import { type PermissionCategory, type PermissionMetadata } from './types';
-import { PolkadotPermissionIcon } from './ui/PolkadotPermissionIcon';
 
-const icon = (Icon: LucideIcon, size = 20) => createElement(Icon, { size });
+function icon(Icon: FC<SVGProps<SVGSVGElement>>) {
+  return createElement(Icon, { className: cnTw('size-5') });
+}
 
 const ruleKeys = (id: string, count: number) =>
   Array.from({ length: count }, (_, i) => `feature.permissionSettings.permission.${id}.rule.${i + 1}`);
@@ -33,112 +37,112 @@ const ruleKeys = (id: string, count: number) =>
 const PERMISSION_METADATA_BY_ID = {
   Clipboard: {
     category: 'device',
-    icon: icon(Clipboard),
+    icon: icon(ClipboardIcon),
     labelKey: 'feature.permissionSettings.permission.Clipboard.label',
     descriptionKey: 'feature.permissionSettings.permission.Clipboard.description',
     ruleKeys: ruleKeys('Clipboard', 4),
   },
   Microphone: {
     category: 'device',
-    icon: icon(Mic),
+    icon: icon(MicIcon),
     labelKey: 'feature.permissionSettings.permission.Microphone.label',
     descriptionKey: 'feature.permissionSettings.permission.Microphone.description',
     ruleKeys: ruleKeys('Microphone', 4),
   },
   Camera: {
     category: 'device',
-    icon: icon(Camera),
+    icon: icon(CameraIcon),
     labelKey: 'feature.permissionSettings.permission.Camera.label',
     descriptionKey: 'feature.permissionSettings.permission.Camera.description',
     ruleKeys: ruleKeys('Camera', 4),
   },
   Notifications: {
     category: 'device',
-    icon: icon(Bell),
+    icon: icon(BellIcon),
     labelKey: 'feature.permissionSettings.permission.Notifications.label',
     descriptionKey: 'feature.permissionSettings.permission.Notifications.description',
     ruleKeys: ruleKeys('Notifications', 2),
   },
   Bluetooth: {
     category: 'device',
-    icon: icon(Bluetooth),
+    icon: icon(BluetoothIcon),
     labelKey: 'feature.permissionSettings.permission.Bluetooth.label',
     descriptionKey: 'feature.permissionSettings.permission.Bluetooth.description',
     ruleKeys: ruleKeys('Bluetooth', 3),
   },
   Location: {
     category: 'device',
-    icon: icon(MapPin),
+    icon: icon(MapPinIcon),
     labelKey: 'feature.permissionSettings.permission.Location.label',
     descriptionKey: 'feature.permissionSettings.permission.Location.description',
     ruleKeys: ruleKeys('Location', 3),
   },
   Biometrics: {
     category: 'device',
-    icon: icon(Fingerprint),
+    icon: icon(FingerprintPatternIcon),
     labelKey: 'feature.permissionSettings.permission.Biometrics.label',
     descriptionKey: 'feature.permissionSettings.permission.Biometrics.description',
     ruleKeys: ruleKeys('Biometrics', 4),
   },
   Motion: {
     category: 'device',
-    icon: icon(Move3d),
+    icon: icon(Move3dIcon),
     labelKey: 'feature.permissionSettings.permission.Motion.label',
     descriptionKey: 'feature.permissionSettings.permission.Motion.description',
     ruleKeys: ruleKeys('Motion', 3),
   },
   OpenExternalUrl: {
     category: 'service',
-    icon: icon(ExternalLink),
+    icon: icon(ExternalLinkIcon),
     labelKey: 'feature.permissionSettings.permission.OpenExternalUrl.label',
     descriptionKey: 'feature.permissionSettings.permission.OpenExternalUrl.description',
     ruleKeys: ruleKeys('OpenExternalUrl', 4),
   },
   ExternalRequest: {
     category: 'service',
-    icon: icon(Globe),
+    icon: icon(GlobeIcon),
     labelKey: 'feature.permissionSettings.permission.ExternalRequest.label',
     descriptionKey: 'feature.permissionSettings.permission.ExternalRequest.description',
     ruleKeys: ruleKeys('ExternalRequest', 4),
   },
   WebRtc: {
     category: 'service',
-    icon: icon(Globe),
+    icon: icon(GlobeIcon),
     labelKey: 'feature.permissionSettings.permission.WebRtc.label',
     descriptionKey: 'feature.permissionSettings.permission.WebRtc.description',
     ruleKeys: ruleKeys('WebRtc', 4),
   },
   ChainSubmit: {
     category: 'onchain',
-    icon: createElement(PolkadotPermissionIcon, { size: 20 }),
+    icon: icon(BlocksIcon),
     labelKey: 'feature.permissionSettings.permission.ChainSubmit.label',
     descriptionKey: 'feature.permissionSettings.permission.ChainSubmit.description',
     ruleKeys: ruleKeys('ChainSubmit', 4),
   },
   PreimageSubmit: {
     category: 'onchain',
-    icon: createElement(PolkadotPermissionIcon, { size: 20 }),
+    icon: icon(FileUpIcon),
     labelKey: 'feature.permissionSettings.permission.PreimageSubmit.label',
     descriptionKey: 'feature.permissionSettings.permission.PreimageSubmit.description',
     ruleKeys: ruleKeys('PreimageSubmit', 4),
   },
   StatementSubmit: {
     category: 'onchain',
-    icon: createElement(PolkadotPermissionIcon, { size: 20 }),
+    icon: icon(MessageSquareTextIcon),
     labelKey: 'feature.permissionSettings.permission.StatementSubmit.label',
     descriptionKey: 'feature.permissionSettings.permission.StatementSubmit.description',
     ruleKeys: ruleKeys('StatementSubmit', 4),
   },
   BalanceAccess: {
     category: 'onchain',
-    icon: icon(Wallet),
+    icon: icon(WalletIcon),
     labelKey: 'feature.permissionSettings.permission.BalanceAccess.label',
     descriptionKey: 'feature.permissionSettings.permission.BalanceAccess.description',
     ruleKeys: ruleKeys('BalanceAccess', 4),
   },
   UserIdentity: {
     category: 'service',
-    icon: icon(IdCard),
+    icon: icon(IdCardIcon),
     labelKey: 'feature.permissionSettings.permission.UserIdentity.label',
     descriptionKey: 'feature.permissionSettings.permission.UserIdentity.description',
     ruleKeys: ruleKeys('UserIdentity', 4),

@@ -1,8 +1,8 @@
 import { useNavigate } from '@tanstack/react-router';
-import { Grid2X2 } from 'lucide-react';
 import { useMemo, useState } from 'react';
 
 import { Input, ListItem, SettingsList, SettingsSection } from '@/shared/components';
+import { Grid2x2Icon } from '@/shared/icons';
 import { useTranslation } from '@/shared/translation';
 import {
   type Icon,
@@ -89,7 +89,7 @@ const ProductRow = ({
   onClick: VoidFunction;
 }) => (
   <ListItem
-    icon={<ProductIcon icon={icon} className="size-full rounded-xl object-cover" fallback={<Grid2X2 />} />}
+    icon={<ProductIcon icon={icon} className="size-full rounded-xl object-cover" fallback={<Grid2x2Icon />} />}
     label={label}
     description={description}
     chevron

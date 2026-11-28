@@ -1,6 +1,6 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { SendIcon } from 'lucide-react';
 
+import { SendIcon } from '@/shared/icons';
 import { IconButton } from '../IconButton/IconButton';
 
 import { TextArea } from './TextArea';

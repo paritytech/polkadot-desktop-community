@@ -1,7 +1,16 @@
-import { Check, LayoutDashboard, MoreHorizontal, Trash2 } from 'lucide-react';
-import { type ReactNode, useState } from 'react';
+import { type FC, type ReactNode, type SVGProps, useState } from 'react';
 
 import { DropdownMenu } from '@/shared/components';
+import {
+  CheckIcon,
+  EllipsisIcon,
+  FrameBlockMediumIcon16,
+  FrameBlockSmallIcon16,
+  FrameBlockTallIcon16,
+  FrameBlockWideIcon16,
+  LayoutDashboardIcon,
+  TrashIcon,
+} from '@/shared/icons';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { type WidgetSizeIconVariant } from '@/domains/application';
@@ -9,7 +18,13 @@ import { WIDGET_SIZE_CONFIG } from '../constants';
 import { type WidgetSize } from '../types';
 
 import { WidgetTopbarAction } from './WidgetTopbarAction';
-import { WidgetSizeIcon } from './icons/WidgetSizeIcon';
+
+const WIDGET_SIZE_ICON: Record<WidgetSizeIconVariant, FC<SVGProps<SVGSVGElement>>> = {
+  small: FrameBlockSmallIcon16,
+  medium: FrameBlockMediumIcon16,
+  large: FrameBlockTallIcon16,
+  horizontal: FrameBlockWideIcon16,
+};
 
 type WidgetMenuProps = {
   sizes: WidgetSizeIconVariant[];
@@ -54,7 +69,7 @@ export const WidgetMenu = ({
     <DropdownMenu.Root open={isOpen} onOpenChange={handleOpenChange}>
       <DropdownMenu.Trigger asChild>
         <WidgetTopbarAction label={t('common.action.moreDetails')} data-testid={TEST_IDS.dashboardWidgetMenuTrigger}>
-          <MoreHorizontal aria-hidden />
+          <EllipsisIcon />
         </WidgetTopbarAction>
       </DropdownMenu.Trigger>
       <DropdownMenu.Content align="end">
@@ -68,6 +83,7 @@ export const WidgetMenu = ({
               {sizes.map(variant => {
                 const { size, labelKey } = WIDGET_SIZE_CONFIG[variant];
                 const isActive = currentSize.w === size.w && currentSize.h === size.h;
+                const SizeIcon = WIDGET_SIZE_ICON[variant];
 
                 return (
                   <DropdownMenu.Item
@@ -75,9 +91,9 @@ export const WidgetMenu = ({
                     disabled={isSizeLocked}
                     onClick={isSizeLocked ? undefined : handleResize(variant)}
                   >
-                    <WidgetSizeIcon variant={variant} className="size-4" />
+                    <SizeIcon className="size-4" />
                     <span className="flex-1">{t(labelKey)}</span>
-                    {isActive ? <Check className="size-4" /> : null}
+                    {isActive ? <CheckIcon className="size-4" /> : null}
                   </DropdownMenu.Item>
                 );
               })}
@@ -89,7 +105,7 @@ export const WidgetMenu = ({
               <DropdownMenu.Separator />
 
               <DropdownMenu.Item onClick={onCleanup}>
-                <LayoutDashboard className="size-4" />
+                <LayoutDashboardIcon className="size-4" />
                 <span className="flex-1">{t('feature.dashboard.widgetMenu.cleanup')}</span>
               </DropdownMenu.Item>
             </>
@@ -100,7 +116,7 @@ export const WidgetMenu = ({
           {menuItems}
 
           <DropdownMenu.Item data-testid={TEST_IDS.dashboardWidgetMenuRemove} variant="danger" onClick={onRemove}>
-            <Trash2 className="size-4" />
+            <TrashIcon className="size-4" />
             <span className="flex-1">{removeLabel}</span>
           </DropdownMenu.Item>
         </div>

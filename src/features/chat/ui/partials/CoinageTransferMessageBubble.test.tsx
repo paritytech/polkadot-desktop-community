@@ -1,13 +1,18 @@
 // @vitest-environment happy-dom
 
 import { render, screen } from '@testing-library/react';
+import { type FC, type SVGProps } from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
+import { CheckCheckIcon } from '@/shared/icons';
 import { TranslationProvider } from '@/shared/translation';
 import { environmentUseCase } from '@/domains/application';
 import { type ChatMessage, type TransferContent } from '@/domains/chat';
 
 import { CoinageTransferMessageBubble } from './CoinageTransferMessageBubble';
+
+const markupOf = (Icon: FC<SVGProps<SVGSVGElement>>) => render(<Icon />).container.querySelector('svg')?.innerHTML;
+const iconMarkups = (container: HTMLElement) => Array.from(container.querySelectorAll('svg'), svg => svg.innerHTML);
 
 // The asset comes from the active environment's catalog; spied in place so each case
 // states the symbol and precision it renders against.
@@ -54,6 +59,6 @@ describe('CoinageTransferMessageBubble', () => {
 
     const { container } = renderBubble(true);
 
-    expect(container.querySelector('.lucide-check-check')).not.toBeNull();
+    expect(iconMarkups(container)).toContain(markupOf(CheckCheckIcon));
   });
 });

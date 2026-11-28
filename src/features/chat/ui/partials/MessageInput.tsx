@@ -1,7 +1,7 @@
-import { ArrowUp, Loader2 } from 'lucide-react';
 import { type ChangeEvent, type KeyboardEvent, type Ref, useEffect, useState, useTransition } from 'react';
 
 import { IconButton, TextArea } from '@/shared/components';
+import { ArrowUpIcon, LoaderCircleIcon } from '@/shared/icons';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 
@@ -110,7 +110,7 @@ export const MessageInput = ({ ref, initialText, preview, disabled = false, show
               aria-busy={pending}
               onClick={() => send()}
             >
-              {pending ? <Loader2 className="animate-spin" /> : <ArrowUp />}
+              {pending ? <LoaderCircleIcon className="animate-spin" /> : <ArrowUpIcon />}
             </IconButton>
           ) : null
         }

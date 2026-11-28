@@ -1,5 +1,6 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { GlobeIcon } from 'lucide-react';
+
+import { GlobeIcon } from '@/shared/icons';
 
 import { AppIcon } from './AppIcon';
 
@@ -34,7 +35,7 @@ export const WithGlyph: Story = {
     <div className="flex items-center gap-4">
       {sizes.map(size => (
         <AppIcon key={size} {...args} size={size}>
-          <GlobeIcon />
+          <GlobeIcon className="size-6" />
         </AppIcon>
       ))}
     </div>

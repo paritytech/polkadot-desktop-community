@@ -1,5 +1,4 @@
-import { UserRound } from 'lucide-react';
-
+import { UserRoundIcon } from '@/shared/icons';
 import { cnTw } from '@/shared/utils';
 
 type Props = {
@@ -51,7 +50,7 @@ export const Avatar = ({ label, alt, size = '40' }: Props) => {
       )}
     >
       {initials ?? (
-        <UserRound
+        <UserRoundIcon
           className={cnTw(
             size === '24' && 'size-3',
             size === '40' && 'size-4',

@@ -44,6 +44,7 @@ These are file-role rules _within_ a package — ESLint's boundaries plugin work
 ## Hygiene (`style.md`)
 
 - **minor** — `immer`'s `produce` used for a flat object (nested updates only).
+- **major** — An icon imported from `lucide-react` or from an icon file instead of `@/shared/icons`, outside `src/shared/icons/index.ts` (`style.md` § Icons). No lint rule checks it; the owner kept it a review rule.
 - **minor** — A producer with discrete states exposing several narrow boolean callbacks (`onIdle` + `onError` + …) instead of one `onXChange(status)` over a typed union (`style.md` § JS patterns). One callback keeps a single source of truth and surfaces every state the producer owns.
 
 ---

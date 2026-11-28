@@ -1,14 +1,19 @@
 // @vitest-environment happy-dom
 
 import { render, screen } from '@testing-library/react';
+import { type FC, type SVGProps } from 'react';
 import { afterEach, describe, expect, it } from 'vitest';
 
+import { CheckCheckIcon } from '@/shared/icons';
 import { TranslationProvider } from '@/shared/translation';
 import { type CallSignalContent, type ChatMessage } from '@/domains/chat';
 import { canPlaceCallAnyOf } from '../../di';
 import { type CallState } from '../helpers/callState';
 
 import { CallMessageBubble } from './CallMessageBubble';
+
+const markupOf = (Icon: FC<SVGProps<SVGSVGElement>>) => render(<Icon />).container.querySelector('svg')?.innerHTML;
+const iconMarkups = (container: HTMLElement) => Array.from(container.querySelectorAll('svg'), svg => svg.innerHTML);
 
 const content: CallSignalContent = { type: 'callSignal', signal: 'offer', purpose: 'audio' };
 
@@ -101,7 +106,7 @@ describe('CallMessageBubble', () => {
   it('shows a double check on my call the peer has seen', () => {
     const { container } = renderBubble({ kind: 'calling' }, true, true);
 
-    expect(container.querySelector('.lucide-check-check')).not.toBeNull();
+    expect(iconMarkups(container)).toContain(markupOf(CheckCheckIcon));
   });
 
   it('keeps showing the duration for a finished call', () => {

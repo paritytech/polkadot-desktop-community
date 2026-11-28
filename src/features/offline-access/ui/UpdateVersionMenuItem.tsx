@@ -1,5 +1,4 @@
-import { ArrowDownToLine } from 'lucide-react';
-
+import { ArrowDownToLineIcon } from '@/shared/icons';
 import { useTranslation } from '@/shared/translation';
 import { MenuItem } from '@/features/product-actions-menu';
 import { useNewerVersionAvailable } from '../hooks/useNewerVersionAvailable';
@@ -17,7 +16,7 @@ export const UpdateVersionMenuItem = ({ productId, closeMenu }: Props) => {
 
   return (
     <MenuItem
-      icon={<ArrowDownToLine className="size-4" aria-hidden />}
+      icon={<ArrowDownToLineIcon className="size-4" />}
       label={t('feature.offlineAccess.menu.update')}
       onSelect={() => {
         openOfflineAccessDialog({ kind: 'update', productId });

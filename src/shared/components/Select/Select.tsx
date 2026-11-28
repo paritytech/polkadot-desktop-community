@@ -1,7 +1,7 @@
 import * as SelectPrimitive from '@radix-ui/react-select';
-import { Check, ChevronDown } from 'lucide-react';
 import { type ComponentProps } from 'react';
 
+import { CheckIcon, ChevronDownIcon } from '@/shared/icons';
 import { FloatingSurface } from '../FloatingSurface/FloatingSurface';
 import { MenuRow } from '../MenuRow/MenuRow';
 
@@ -21,7 +21,7 @@ const SelectTrigger = ({ style, children, ...props }: SelectTriggerProps) => {
     >
       {children}
       <SelectPrimitive.Icon>
-        <ChevronDown className="size-4 text-chrome-muted" />
+        <ChevronDownIcon className="size-4 text-chrome-muted" />
       </SelectPrimitive.Icon>
     </SelectPrimitive.Trigger>
   );
@@ -58,7 +58,7 @@ const SelectItem = ({ children, ...props }: SelectItemProps) => {
       <MenuRow>
         <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
         <SelectPrimitive.ItemIndicator className="ms-auto flex">
-          <Check />
+          <CheckIcon />
         </SelectPrimitive.ItemIndicator>
       </MenuRow>
     </SelectPrimitive.Item>

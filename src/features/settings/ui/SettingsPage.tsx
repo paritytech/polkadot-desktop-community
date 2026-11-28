@@ -1,10 +1,10 @@
 import { Outlet } from '@tanstack/react-router';
 import { memo } from 'react';
 
-import SettingsIcon from '@/shared/assets/images/header/cog-8-tooth.svg?jsx';
 import { AppIcon, PaneHeader, Sidebar, widgetSpanWidthCss } from '@/shared/components';
 import { Slot } from '@/shared/di';
 import { isProductionBuild } from '@/shared/env';
+import { SettingsIcon16 } from '@/shared/icons';
 import { useTranslation } from '@/shared/translation';
 import { useSettingsHistoryTracker } from '../hooks/useSettingsHistoryTracker';
 import { settingsDevelopmentNavSlot, settingsPreferencesNavSlot, settingsPrivacyNavSlot } from '../slots';
@@ -23,7 +23,7 @@ export const SettingsPage = memo(() => {
           variant="list"
           icon={
             <AppIcon size="24" alt="">
-              <SettingsIcon className="size-4" />
+              <SettingsIcon16 className="size-4" />
             </AppIcon>
           }
         >

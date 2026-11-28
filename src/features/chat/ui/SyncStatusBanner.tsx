@@ -1,10 +1,6 @@
-import { RefreshCw } from 'lucide-react';
-
-import AlertCircleIcon from '@/shared/assets/images/chat/alert-circle.svg?jsx';
-import DevicePhoneMobileIcon from '@/shared/assets/images/chat/device-phone-mobile.svg?jsx';
-import DevicePhoneUnsyncIcon from '@/shared/assets/images/chat/device-phone-unsync.svg?jsx';
 import { isElectron } from '@/shared/env';
 import { FEATURE_FLAGS } from '@/shared/featureFlags';
+import { CircleExclamationPointIcon, RefreshCwIcon, SmartphoneIcon, SmartphoneOffIcon16 } from '@/shared/icons';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { type DeviceSyncStatus, useDeviceSyncStatus } from '@/domains/device-sync';
@@ -46,18 +42,18 @@ const bannerCopy: Record<RenderedStatus, BannerCopy> = {
 
 const SyncStatusIcon = ({ status }: { status: RenderedStatus }) => {
   if (status === 'syncing') {
-    return <RefreshCw aria-hidden className="size-4 shrink-0 animate-spin text-fg-primary" />;
+    return <RefreshCwIcon className="size-4 shrink-0 animate-spin text-fg-primary" />;
   }
 
   if (status === 'error') {
-    return <AlertCircleIcon aria-hidden className="size-4 shrink-0 text-fg-primary" />;
+    return <CircleExclamationPointIcon className="size-4 shrink-0 text-fg-primary" />;
   }
 
   if (status === 'synced') {
-    return <DevicePhoneMobileIcon aria-hidden className="size-4 shrink-0 text-fg-primary" />;
+    return <SmartphoneIcon className="size-4 shrink-0 text-fg-primary" />;
   }
 
-  return <DevicePhoneUnsyncIcon aria-hidden className="size-4 shrink-0 text-fg-primary" />;
+  return <SmartphoneOffIcon16 className="size-4 shrink-0 text-fg-primary" />;
 };
 
 export const SyncStatusBanner = () => {

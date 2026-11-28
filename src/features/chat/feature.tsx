@@ -1,9 +1,9 @@
-import { Maximize2, MessageCircle } from 'lucide-react';
 import { FormattedMessage } from 'react-intl';
 
 import LastChatsIcon from '@/shared/assets/images/header/last-chats.svg?jsx';
 import { Sidebar } from '@/shared/components';
 import { createFeature } from '@/shared/feature';
+import { Maximize2Icon, MessageCircleIcon } from '@/shared/icons';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { type ContentCardPayload, cardsUseCase, foldersUseCase } from '@/domains/application';
@@ -39,7 +39,7 @@ chatFeature.inject(settingsPreferencesNavSlot, {
     const { t } = useTranslation();
 
     return (
-      <Sidebar.Item icon={<MessageCircle />} to="/settings/chats">
+      <Sidebar.Item icon={<MessageCircleIcon />} to="/settings/chats">
         {t('feature.chat.settings.title')}
       </Sidebar.Item>
     );
@@ -52,7 +52,7 @@ chatFeature.inject(addressBarProductLeadingSlot, {
 });
 
 // Chat is native (no product row → no favicon), so it supplies its own address-bar
-// leading icon: a filled chat bubble tinted with the URL text color for both themes.
+// leading icon: a chat bubble tinted with the URL text color for both themes.
 chatFeature.inject(resolveAddressBarProductIconTransformer, ({ productId }) =>
   productId === CHAT ? <ChatAddressBarIcon /> : null,
 );
@@ -62,7 +62,7 @@ chatFeature.inject(resolveAddressBarProductIconTransformer, ({ productId }) =>
 const CHAT_TOPBAR_ICON = <LastChatsIcon className="size-6 dark:invert" aria-hidden />;
 
 /** Icon slot content for add-widget sidebar/modal — parent components constrain size. */
-const CHAT_ADD_WIDGET_ICON = <MessageCircle className="size-full" aria-hidden />;
+const CHAT_ADD_WIDGET_ICON = <MessageCircleIcon className="size-full" />;
 const CHAT_LABEL = <FormattedMessage id="feature.chat.widgetTitle" />;
 
 const chatAddableEntry: AddableDashboardCard = {
@@ -97,7 +97,7 @@ const ChatFullscreenAction = () => {
       label={t('common.aria.openFullscreen')}
       onClick={openChatTab}
     >
-      <Maximize2 aria-hidden />
+      <Maximize2Icon />
     </WidgetTopbarAction>
   );
 };

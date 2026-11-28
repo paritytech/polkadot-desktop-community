@@ -1,7 +1,7 @@
-import { Minus, Plus, RotateCcw } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
 import { IconButton } from '@/shared/components';
+import { MinusIcon, PlusIcon, RotateCcwIcon } from '@/shared/icons';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { useZoomControls, useZoomPercent } from '@/aggregates/webview-zoom';
@@ -45,7 +45,7 @@ export const ZoomIndicator = ({ tabId }: Props) => {
       style={{ appRegion: 'no-drag' }}
     >
       <IconButton size="sm" data-testid={TEST_IDS.zoomOut} label={t('feature.browser.zoomOut')} onClick={zoomOut}>
-        <Minus aria-hidden />
+        <MinusIcon />
       </IconButton>
 
       <span
@@ -58,11 +58,11 @@ export const ZoomIndicator = ({ tabId }: Props) => {
       </span>
 
       <IconButton size="sm" data-testid={TEST_IDS.zoomIn} label={t('feature.browser.zoomIn')} onClick={zoomIn}>
-        <Plus aria-hidden />
+        <PlusIcon />
       </IconButton>
 
       <IconButton size="sm" data-testid={TEST_IDS.zoomReset} label={t('feature.browser.zoomReset')} onClick={reset}>
-        <RotateCcw aria-hidden />
+        <RotateCcwIcon />
       </IconButton>
     </div>
   );

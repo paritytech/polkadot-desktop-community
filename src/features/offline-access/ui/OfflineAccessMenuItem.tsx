@@ -1,6 +1,4 @@
-import { Import } from 'lucide-react';
-
-import RemoveOfflineIcon from '@/shared/assets/images/remove-offline.svg?jsx';
+import { ImportIcon, MonitorDownOffIcon16 } from '@/shared/icons';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { useIsPinned } from '@/domains/product';
@@ -19,7 +17,7 @@ export const OfflineAccessMenuItem = ({ productId, closeMenu }: Props) => {
   return (
     <MenuItem
       testId={TEST_IDS.offlineAccessMenuItem}
-      icon={pinned ? <RemoveOfflineIcon className="size-4" aria-hidden /> : <Import className="size-4" aria-hidden />}
+      icon={pinned ? <MonitorDownOffIcon16 className="size-4" /> : <ImportIcon className="size-4" />}
       label={pinned ? t('feature.offlineAccess.menu.remove') : t('feature.offlineAccess.menu.enable')}
       onSelect={() => {
         openOfflineAccessDialog({ kind: pinned ? 'remove' : 'enable', productId });

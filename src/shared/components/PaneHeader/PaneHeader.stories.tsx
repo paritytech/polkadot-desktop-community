@@ -1,6 +1,6 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { GlobeIcon, PlusIcon } from 'lucide-react';
 
+import { GlobeIcon, PlusIcon } from '@/shared/icons';
 import { IconButton } from '../IconButton/IconButton';
 
 import { PaneHeader } from './PaneHeader';

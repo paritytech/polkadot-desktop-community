@@ -1,8 +1,7 @@
-import { LayoutDashboard } from 'lucide-react';
 import { type MouseEvent, type PropsWithChildren } from 'react';
 
-import AddToDashboardIcon from '@/shared/assets/images/add-to-dashboard.svg?jsx';
 import { ContextMenu } from '@/shared/components';
+import { Grid2x2PlusIcon, LayoutDashboardIcon } from '@/shared/icons';
 import { useTranslation } from '@/shared/translation';
 
 type DashboardContextMenuProps = PropsWithChildren<{
@@ -33,7 +32,7 @@ export const DashboardContextMenu = ({ children, showCleanup, onAddWidget, onCle
       <ContextMenu.Content>
         <div className="w-52.5">
           <ContextMenu.Item onSelect={onAddWidget}>
-            <AddToDashboardIcon className="size-4 -scale-y-100" aria-hidden />
+            <Grid2x2PlusIcon className="size-4 -scale-y-100" />
             <span className="flex-1">{t('feature.dashboard.addWidget.title')}</span>
           </ContextMenu.Item>
 
@@ -42,7 +41,7 @@ export const DashboardContextMenu = ({ children, showCleanup, onAddWidget, onCle
               <ContextMenu.Separator />
 
               <ContextMenu.Item onSelect={onCleanup}>
-                <LayoutDashboard className="size-4" />
+                <LayoutDashboardIcon className="size-4" />
                 <span className="flex-1">{t('feature.dashboard.widgetMenu.cleanup')}</span>
               </ContextMenu.Item>
             </>

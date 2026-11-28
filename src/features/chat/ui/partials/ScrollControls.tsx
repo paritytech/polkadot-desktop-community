@@ -1,7 +1,7 @@
-import { ChevronDown, Heart } from 'lucide-react';
 import { type PropsWithChildren } from 'react';
 
 import { IconButton } from '@/shared/components';
+import { ChevronDownIcon, HeartIcon } from '@/shared/icons';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 
@@ -36,7 +36,7 @@ export const ScrollControls = ({
           count={unreadReactionCount}
           onClick={onScrollToReaction}
         >
-          <Heart />
+          <HeartIcon />
         </FabButton>
       )}
       {showChevron && (
@@ -46,7 +46,7 @@ export const ScrollControls = ({
           count={unreadCount}
           onClick={onScrollToBottom}
         >
-          <ChevronDown />
+          <ChevronDownIcon />
         </FabButton>
       )}
     </div>

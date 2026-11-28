@@ -1,7 +1,7 @@
-import { Clock, WifiOff } from 'lucide-react';
 import { type ReactNode } from 'react';
 
 import { Button, Spinner } from '@/shared/components';
+import { ClockIcon, WifiOffIcon } from '@/shared/icons';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { type OnboardingConnectionState } from '../types';
@@ -14,10 +14,10 @@ type Props = {
 const spinnerIcon = <Spinner size={24} />;
 
 const ICONS: Record<Exclude<OnboardingConnectionState, 'pairing'>, ReactNode> = {
-  offline: <WifiOff className="size-6 text-fg-primary" />,
+  offline: <WifiOffIcon className="size-6 text-fg-primary" />,
   reaching: spinnerIcon,
   restored: spinnerIcon,
-  accountSetup: <Clock className="size-6 text-fg-primary" />,
+  accountSetup: <ClockIcon className="size-6 text-fg-primary" />,
 };
 
 export const OnboardingConnectionPanel = ({ state, onRetry }: Props) => {

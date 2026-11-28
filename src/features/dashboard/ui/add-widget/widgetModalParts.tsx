@@ -1,6 +1,5 @@
-import { Star } from 'lucide-react';
-
 import { Button, SegmentedControl } from '@/shared/components';
+import { StarIcon } from '@/shared/icons';
 import { useTranslation } from '@/shared/translation';
 import { cnTw } from '@/shared/utils';
 import { type WidgetSizeIconVariant } from '@/domains/application';
@@ -20,9 +19,8 @@ export const AddWidgetFavoritesButton = ({ isInFavorites, onAdd }: { isInFavorit
   return (
     <Button type="button" size="sm" disabled={isInFavorites} aria-label={label} onClick={onAdd}>
       <span className="inline-flex items-center gap-1 text-xs font-normal">
-        <Star
+        <StarIcon
           className={cnTw('size-4 shrink-0', isInFavorites ? 'fill-current text-fg-secondary' : 'text-fg-primary')}
-          aria-hidden
           strokeWidth={1.75}
         />
         {label}

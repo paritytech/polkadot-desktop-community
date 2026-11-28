@@ -1,8 +1,8 @@
-import { ChevronRight, Mic, Video, Volume2, X } from 'lucide-react';
 import { type ReactNode, useState } from 'react';
 
 import { type CallDeviceKind, type CallDeviceSelection, type CallDevices, deviceIdForKind } from '@/shared/call-media-devices';
 import { IconButton } from '@/shared/components';
+import { ChevronRightIcon, MicIcon, VideoIcon, Volume2Icon, XIcon } from '@/shared/icons';
 import { cnTw } from '@/shared/utils';
 
 export type CallSettingsLabels = {
@@ -27,9 +27,9 @@ type DeviceOption = { id: Nullable<string>; label: string };
 type Row = { kind: CallDeviceKind; label: string; icon: ReactNode; devices: MediaDeviceInfo[] };
 
 const iconFor = (kind: CallDeviceKind): ReactNode => {
-  if (kind === 'camera') return <Video className="size-5" strokeWidth={1.75} />;
-  if (kind === 'microphone') return <Mic className="size-5" strokeWidth={1.75} />;
-  return <Volume2 className="size-5" strokeWidth={1.75} />;
+  if (kind === 'camera') return <VideoIcon className="size-5" strokeWidth={1.75} />;
+  if (kind === 'microphone') return <MicIcon className="size-5" strokeWidth={1.75} />;
+  return <Volume2Icon className="size-5" strokeWidth={1.75} />;
 };
 
 export const CallSettings = ({ devices, selection, labels, onSelect, onClose }: CallSettingsProps) => {
@@ -72,7 +72,7 @@ export const CallSettings = ({ devices, selection, labels, onSelect, onClose }: 
         <h2 className="pe-10 text-lg font-semibold text-fg-primary">{labels.title}</h2>
         <span className="absolute end-3 top-3 flex">
           <IconButton label={labels.close} onClick={onClose}>
-            <X />
+            <XIcon />
           </IconButton>
         </span>
         <div className="flex flex-col gap-2">
@@ -105,7 +105,7 @@ export const CallSettings = ({ devices, selection, labels, onSelect, onClose }: 
                       openKind === row.kind && 'bg-bg-illustration-light text-fg-primary',
                     )}
                   >
-                    <ChevronRight className="size-4" />
+                    <ChevronRightIcon className="size-4 rtl:-scale-x-100" />
                   </span>
                 </button>
                 {openKind === row.kind && (

@@ -2,6 +2,7 @@ import { cloneElement, memo } from 'react';
 
 import { Button, Dialog } from '@/shared/components';
 import { useTranslation } from '@/shared/translation';
+import { cnTw } from '@/shared/utils';
 import { getPermissionMeta } from '@/widgets/Permission';
 
 type Props = {
@@ -14,7 +15,7 @@ export const PermissionDeniedDialog = memo(({ permission, onOpenSettings, onClos
   const { t } = useTranslation();
   // getPermissionMeta returns `PermissionMetadata | undefined` (it is a `.find`), so guard it.
   const meta = getPermissionMeta(permission);
-  const icon = meta ? cloneElement(meta.icon, { size: 40 }) : null;
+  const icon = meta ? cloneElement(meta.icon, { className: cnTw('size-10') }) : null;
   const keyBase = `feature.productRuntime.permissionDenied.${permission}`;
 
   const handleOpenSettings = async () => {

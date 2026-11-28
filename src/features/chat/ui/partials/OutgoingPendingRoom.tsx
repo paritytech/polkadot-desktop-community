@@ -1,7 +1,7 @@
-import { Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 
+import { TrashIcon } from '@/shared/icons';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { type P2PChatRequest } from '@/domains/chat';
@@ -38,7 +38,7 @@ export const OutgoingPendingRoom = ({ request, onCancel }: Props) => {
       <RoomPane>
         <RequestRoomHeader
           name={name}
-          actionIcon={<Trash2 />}
+          actionIcon={<TrashIcon />}
           actionLabel={t('feature.chat.request.cancelRequest')}
           onAction={() => setConfirmingCancel(true)}
         />

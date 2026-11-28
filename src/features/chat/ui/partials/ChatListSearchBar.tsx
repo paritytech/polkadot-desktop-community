@@ -1,7 +1,7 @@
-import { Search, X } from 'lucide-react';
 import { type Ref } from 'react';
 
 import { IconButton, Input } from '@/shared/components';
+import { SearchIcon, XIcon } from '@/shared/icons';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 
@@ -22,7 +22,7 @@ export const ChatListSearchBar = ({ query, active, inputRef, onQueryChange, onFo
     <div className="shrink-0 px-2 pb-2">
       <Input
         ref={inputRef}
-        leading={<Search />}
+        leading={<SearchIcon />}
         type="text"
         data-testid={TEST_IDS.contactSearchInput}
         value={query}
@@ -31,7 +31,7 @@ export const ChatListSearchBar = ({ query, active, inputRef, onQueryChange, onFo
         trailing={
           active && (
             <IconButton size="sm" label={t('common.aria.clear')} onClick={onClear}>
-              <X strokeWidth={1.75} />
+              <XIcon strokeWidth={1.75} />
             </IconButton>
           )
         }

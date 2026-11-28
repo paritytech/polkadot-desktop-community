@@ -1,7 +1,7 @@
 import { nanoid } from 'nanoid';
 
-import PlusIcon from '@/shared/assets/images/header/plus.svg?jsx';
 import { IconButton } from '@/shared/components';
+import { PlusIcon } from '@/shared/icons';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { browserTabs } from '@/aggregates/browser-tabs';
@@ -21,7 +21,7 @@ export const NewTabButton = () => {
 
   return (
     <IconButton label={t('feature.browser.newTab')} data-testid={TEST_IDS.newTabButton} onClick={handleNewTab}>
-      <PlusIcon className="size-2.75" aria-hidden />
+      <PlusIcon />
     </IconButton>
   );
 };

@@ -138,19 +138,6 @@ body {
   box-shadow: 0 0 0 var(--app-focus-ring-size) var(--app-focus-ring-color);
 }
 
-/*
- * `dir` mirrors layout but never the content of an SVG, so a back chevron keeps
- * pointing left while its button moves to the right edge — the arrow ends up
- * contradicting the direction it navigates. lucide stamps a stable per-icon
- * class on every glyph, so mirroring here covers all 42 call sites at once and
- * anything added later, instead of a `rtl:-scale-x-100` that each new usage has
- * to remember. Only icons whose meaning is "towards the start/end of the text
- * flow" belong here: up/down chevrons and non-directional glyphs must not flip.
- */
-[dir='rtl'] :is(.lucide-chevron-left, .lucide-chevron-right, .lucide-arrow-left, .lucide-arrow-right) {
-  transform: scaleX(-1);
-}
-
 /* Scrollbar for Firefox */
 * {
   scrollbar-width: thin;
