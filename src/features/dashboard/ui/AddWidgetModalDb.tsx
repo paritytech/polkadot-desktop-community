@@ -165,7 +165,7 @@ export const AddWidgetModalDb = ({
     >
       <Dialog.Content width="xl" aria-describedby={undefined}>
         <div className="flex h-170">
-          <div className="flex w-[320px] shrink-0 flex-col gap-4 border-e border-stroke-primary pe-6">
+          <div className="flex w-72 shrink-0 flex-col gap-4 border-e border-stroke-primary pe-6">
             <Input
               leading={<SearchIcon />}
               type="search"

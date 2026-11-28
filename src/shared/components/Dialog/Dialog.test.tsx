@@ -31,6 +31,14 @@ const renderDialog = ({
 };
 
 describe('Dialog', () => {
+  it('takes the narrow width by default', async () => {
+    renderDialog();
+
+    const dialog = await screen.findByRole('dialog', { name: 'Rename' });
+
+    expect(dialog).toHaveClass('max-w-100');
+  });
+
   it('is named by its title', async () => {
     renderDialog();
 
