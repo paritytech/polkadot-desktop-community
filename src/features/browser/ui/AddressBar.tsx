@@ -76,7 +76,12 @@ export const AddressBar = ({ size = 'sm' }: AddressBarProps) => {
   };
 
   return (
-    <div className={cnTw('relative w-full', size === 'sm' && 'max-w-150 min-w-80')}>
+    <div
+      className={cnTw('relative w-full', {
+        'max-w-md min-w-60': size === 'sm',
+        'max-w-200 min-w-100': size === 'md',
+      })}
+    >
       {/* The container stays a div and only the label is a button. Both slots
           inject interactive controls — the refresh button and the product actions
           menu — and a button inside a button is invalid HTML that browsers un-nest,

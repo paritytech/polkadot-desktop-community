@@ -31,30 +31,32 @@ export const Header = memo(() => {
       )}
       style={{ appRegion: 'drag' }}
     >
-      <div className="flex h-12 items-center">
-        <div className="flex h-full min-w-0 flex-1 basis-0 items-center">
+      {/* The equal 1fr side tracks keep the auto middle track window-centered. */}
+      <div className="grid h-12 grid-cols-[1fr_auto_1fr] items-center">
+        <div className="flex h-full min-w-0 items-center">
           {/* The macOS traffic lights are OS chrome pinned to the physical top-left; they do not
-              move under `dir="rtl"`. This flex row does, so the spacer that clears them is rendered
+              move under `dir="rtl"`. This row does, so the spacer that clears them is rendered
               in whichever track ends up on the physical left — the leading one in LTR, the trailing
               one in RTL — and hidden in the other. Reserving the space with physical padding on
               <header> instead would shift the centred address bar in LTR too. */}
           {macSpacer ? <div className="pointer-events-none h-full w-21.5 rtl:hidden" /> : null}
           <Slot id={topBarLeadingSlot} />
         </div>
-        {/* Three tracks: the address bar sits in the centered middle track while
-            the equal 1fr side tracks keep it window-centered regardless of what
-            the leading/trailing slots hold (e.g. the new-tab button). The middle
-            track mirrors the address bar's own min/max width (min-w-80 / max-w-150). */}
-        <div className="grid min-w-0 flex-1 basis-0 grid-cols-[1fr_minmax(20rem,37.5rem)_1fr] items-center gap-1 px-4">
-          <div className="flex min-w-0 items-center justify-end gap-1">
+        {/* The center group sizes to its content, so its own 1fr tracks come out equal, as wide as
+            the wider side, and the address bar stays centered whatever the slots hold. The bar's
+            track is a fixed width: the bar fills its track, and an auto track would follow the
+            length of the address it shows. The width steps down on narrow windows so the side
+            tracks keep room for their buttons. */}
+        <div className="grid grid-cols-[1fr_16rem_1fr] items-center gap-1 lg:grid-cols-[1fr_22rem_1fr] xl:grid-cols-[1fr_28rem_1fr]">
+          <div className="flex items-center justify-end gap-1">
             <Slot id={topBarCenterLeadingSlot} />
           </div>
           <Slot id={topBarCenterSlot} />
-          <div className="flex min-w-0 items-center justify-start gap-1">
+          <div className="flex items-center gap-1">
             <Slot id={topBarCenterTrailingSlot} />
           </div>
         </div>
-        <div className="flex h-full min-w-0 flex-1 basis-0 items-center justify-end gap-1 pe-2">
+        <div className="flex h-full min-w-0 items-center justify-end gap-1 pe-2">
           <Slot id={topBarTrailingSlot} />
           {/* Last child, so in RTL — where this track sits on the physical left — it lands against
               the window edge, under the traffic lights. See the note on the leading track. */}
