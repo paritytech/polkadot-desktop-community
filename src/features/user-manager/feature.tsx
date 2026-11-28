@@ -8,6 +8,6 @@ export const userManagerFeature = createFeature({
 });
 
 userManagerFeature.inject(topBarTrailingSlot, {
-  order: Number.MAX_SAFE_INTEGER,
+  order: 1,
   render: () => <UserButton />,
 });

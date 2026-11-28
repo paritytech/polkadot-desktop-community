@@ -7,7 +7,7 @@ import { Maximize2Icon, MessageCircleIcon } from '@/shared/icons';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { type ContentCardPayload, cardsUseCase, foldersUseCase } from '@/domains/application';
-import { persistentSlot, topBarTrailingSlot } from '@/features/app-shell';
+import { persistentSlot, topBarCenterLeadingSlot } from '@/features/app-shell';
 import { addressBarProductLeadingSlot, resolveAddressBarProductIconTransformer, tabContentSlot } from '@/features/browser';
 import { type AddableDashboardCard, WidgetTopbarAction, buildNativeDashboardCard, dashboardCardSDK } from '@/features/dashboard';
 import { productActionsMenuItemsSlot } from '@/features/product-actions-menu';
@@ -28,7 +28,7 @@ export const chatFeature = createFeature({
   name: 'chat/implementation',
 });
 
-chatFeature.inject(topBarTrailingSlot, {
+chatFeature.inject(topBarCenterLeadingSlot, {
   order: 0,
   render: () => <ChatHeaderButton />,
 });

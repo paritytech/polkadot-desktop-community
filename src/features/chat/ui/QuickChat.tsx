@@ -108,7 +108,7 @@ export const QuickChat = memo(({ open, onOpenChange, children }: QuickChatProps)
     <Popover.Root open={open} onOpenChange={onOpenChange}>
       <DismissOverlay open={open} testId={TEST_IDS.dismissOverlay} onDismiss={() => onOpenChange(false)} />
       <Popover.Trigger asChild>{children}</Popover.Trigger>
-      <Popover.Content sideOffset={8} align="end" alignOffset={8}>
+      <Popover.Content>
         <div data-testid={TEST_IDS.quickChatPopover} className="flex h-136 w-89 flex-col overflow-hidden">
           {showList ? (
             <ChatList
