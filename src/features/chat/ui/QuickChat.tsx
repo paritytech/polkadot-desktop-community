@@ -5,7 +5,7 @@ import { of } from 'rxjs';
 
 import { AppIcon, Avatar, DismissOverlay, EmptyState, IconButton, PaneHeader, Popover } from '@/shared/components';
 import { useCloseOnWindowLeave } from '@/shared/hooks';
-import { Maximize2Icon16, MessageCircleIcon, MessagesSquareIcon } from '@/shared/icons';
+import { Maximize2Icon, MessageCircleIcon, MessagesSquareIcon } from '@/shared/icons';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { type ChatSession, type RoomFooter, useProductSessions } from '@/domains/chat';
@@ -174,7 +174,7 @@ const QuickChatPageHeader = ({ session, onBack, onExpand }: QuickChatPageHeaderP
       }
       actions={
         <IconButton data-testid={TEST_IDS.quickChatExpandButton} label={t('feature.chat.viewMore')} onClick={() => onExpand()}>
-          <Maximize2Icon16 />
+          <Maximize2Icon />
         </IconButton>
       }
       onBack={onBack}

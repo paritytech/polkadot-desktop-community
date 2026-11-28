@@ -1,5 +1,5 @@
 import { IconButton } from '@/shared/components';
-import { RotateCwIcon16 } from '@/shared/icons';
+import { RotateCwIcon } from '@/shared/icons';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { cnTw } from '@/shared/utils';
@@ -27,7 +27,7 @@ export const AddressBarRefreshButton = ({ product }: Props) => {
           void onProductRefreshRequestedSideEffect.apply({ identifier: product.baseName });
         }}
       >
-        <RotateCwIcon16 className={cnTw('size-3.75', isRefreshing && 'animate-spin')} />
+        <RotateCwIcon className={cnTw('size-3.75', isRefreshing && 'animate-spin')} />
       </IconButton>
     </span>
   );

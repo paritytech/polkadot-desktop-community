@@ -1,5 +1,5 @@
 import { Button } from '@/shared/components';
-import { Grid2x2PlusIcon16 } from '@/shared/icons';
+import { Grid2x2PlusIcon } from '@/shared/icons';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 
@@ -57,7 +57,7 @@ export const DashboardToolbar = ({ pageCount, activePageIndex, onSelectPage, onA
         data-testid={TEST_IDS.dashboardAddWidgetButton}
         onClick={onAddWidget}
       >
-        <Grid2x2PlusIcon16 className="shrink-0 -scale-y-100" />
+        <Grid2x2PlusIcon className="shrink-0 -scale-y-100" />
         <span>{addWidgetLabel}</span>
       </Button>
     </div>

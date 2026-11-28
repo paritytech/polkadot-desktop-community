@@ -1,4 +1,4 @@
-import { SquareDashedIcon16 } from '@/shared/icons';
+import { SquareDashedIcon } from '@/shared/icons';
 import { cnTw } from '@/shared/utils';
 
 type Props = {
@@ -16,5 +16,5 @@ const glyphSizeClass: Record<Props['size'], string> = {
 
 // The empty-state glyph `AppIcon` draws when it has no image and no children. Inherits the tile's text colour.
 export const AppIconPlaceholder = ({ size }: Props) => {
-  return <SquareDashedIcon16 className={cnTw('shrink-0', glyphSizeClass[size])} />;
+  return <SquareDashedIcon className={cnTw('shrink-0', glyphSizeClass[size])} />;
 };

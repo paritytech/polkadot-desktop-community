@@ -1,7 +1,7 @@
 import { type MouseEvent, type PropsWithChildren } from 'react';
 
 import { ContextMenu } from '@/shared/components';
-import { Grid2x2PlusIcon16, LayoutDashboardIcon } from '@/shared/icons';
+import { Grid2x2PlusIcon, LayoutDashboardIcon } from '@/shared/icons';
 import { useTranslation } from '@/shared/translation';
 
 type DashboardContextMenuProps = PropsWithChildren<{
@@ -32,7 +32,7 @@ export const DashboardContextMenu = ({ children, showCleanup, onAddWidget, onCle
       <ContextMenu.Content>
         <div className="w-52.5">
           <ContextMenu.Item onSelect={onAddWidget}>
-            <Grid2x2PlusIcon16 className="size-4 -scale-y-100" />
+            <Grid2x2PlusIcon className="size-4 -scale-y-100" />
             <span className="flex-1">{t('feature.dashboard.addWidget.title')}</span>
           </ContextMenu.Item>
 

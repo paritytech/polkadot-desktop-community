@@ -34,7 +34,9 @@ export {
   ForwardIcon,
   GlobeIcon,
   Grid2x2Icon,
+  Grid2x2PlusIcon,
   HeartIcon,
+  HouseIcon,
   IdCardIcon,
   ImageIcon,
   ImportIcon,
@@ -97,20 +99,10 @@ export {
   XIcon,
 } from 'lucide-react';
 
-export { default as CircleExclamationPointIcon16 } from './images/circle-exclamation-point.svg?jsx';
 export { default as FrameBlockMediumIcon16 } from './images/frame-block-medium.svg?jsx';
 export { default as FrameBlockSmallIcon16 } from './images/frame-block-small.svg?jsx';
 export { default as FrameBlockTallIcon16 } from './images/frame-block-tall.svg?jsx';
 export { default as FrameBlockWideIcon16 } from './images/frame-block-wide.svg?jsx';
-export { default as Grid2x2PlusIcon16 } from './images/grid-2x2-plus.svg?jsx';
-export { default as HouseIcon16 } from './images/house.svg?jsx';
-export { default as ImageIcon16 } from './images/image.svg?jsx';
-export { default as Maximize2Icon16 } from './images/maximize-2.svg?jsx';
-export { default as MessageCircleIcon16 } from './images/message-circle.svg?jsx';
 export { default as MonitorDownOffIcon16 } from './images/monitor-down-off.svg?jsx';
-export { default as PlusIcon16 } from './images/plus.svg?jsx';
-export { default as RotateCwIcon16 } from './images/rotate-cw.svg?jsx';
 export { default as SettingsIcon16 } from './images/settings.svg?jsx';
-export { default as SmartphoneIcon16 } from './images/smartphone.svg?jsx';
 export { default as SmartphoneOffIcon16 } from './images/smartphone-off.svg?jsx';
-export { default as SquareDashedIcon16 } from './images/square-dashed.svg?jsx';

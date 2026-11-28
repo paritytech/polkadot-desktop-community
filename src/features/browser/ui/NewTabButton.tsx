@@ -1,7 +1,7 @@
 import { nanoid } from 'nanoid';
 
 import { IconButton } from '@/shared/components';
-import { PlusIcon16 } from '@/shared/icons';
+import { PlusIcon } from '@/shared/icons';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { browserTabs } from '@/aggregates/browser-tabs';
@@ -21,7 +21,7 @@ export const NewTabButton = () => {
 
   return (
     <IconButton label={t('feature.browser.newTab')} data-testid={TEST_IDS.newTabButton} onClick={handleNewTab}>
-      <PlusIcon16 />
+      <PlusIcon />
     </IconButton>
   );
 };

@@ -1,6 +1,6 @@
 import LogoIcon from '@/shared/assets/images/logo.svg?jsx';
 import { Button } from '@/shared/components';
-import { Grid2x2PlusIcon16 } from '@/shared/icons';
+import { Grid2x2PlusIcon } from '@/shared/icons';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 
@@ -33,7 +33,7 @@ export const EmptyDashboardView = ({ onAddWidget }: EmptyDashboardViewProps) => 
           data-testid={TEST_IDS.dashboardEmptyStateAddWidget}
           onClick={onAddWidget}
         >
-          <Grid2x2PlusIcon16 className="shrink-0 -scale-y-100" />
+          <Grid2x2PlusIcon className="shrink-0 -scale-y-100" />
           <span>{addWidgetLabel}</span>
         </Button>
       </section>
