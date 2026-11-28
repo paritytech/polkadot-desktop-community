@@ -84,7 +84,7 @@ export const UserInfoPopover = memo(({ session, name, defaultOpen, children }: P
       <DismissOverlay open={open} testId={TEST_IDS.dismissOverlay} onDismiss={() => setOpen(false)} />
       <Popover.Trigger asChild>{children}</Popover.Trigger>
       <Popover.Content sideOffset={8} align="end" alignOffset={8}>
-        <div className="flex w-89 flex-col items-center gap-2 px-2 pt-2 pb-4">
+        <div className="flex w-64 flex-col items-center gap-2 px-2 pt-2 pb-4">
           <UserHeader session={session} name={name} />
           <div className="h-px w-full bg-stroke-primary" />
           <div className="flex w-full flex-col">
