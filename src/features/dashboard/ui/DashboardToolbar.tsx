@@ -57,7 +57,7 @@ export const DashboardToolbar = ({ pageCount, activePageIndex, onSelectPage, onA
         data-testid={TEST_IDS.dashboardAddWidgetButton}
         onClick={onAddWidget}
       >
-        <Grid2x2PlusIcon className="size-2.75 shrink-0 -scale-y-100" />
+        <Grid2x2PlusIcon className="shrink-0 -scale-y-100" />
         <span>{addWidgetLabel}</span>
       </Button>
     </div>

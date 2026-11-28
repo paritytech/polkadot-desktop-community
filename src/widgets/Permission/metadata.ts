@@ -1,14 +1,17 @@
 import { type FC, type SVGProps, createElement } from 'react';
 
 import BellIcon from '@/shared/assets/images/icons/bell.svg?jsx';
+import BlocksIcon from '@/shared/assets/images/icons/blocks.svg?jsx';
 import BluetoothIcon from '@/shared/assets/images/icons/bluetooth.svg?jsx';
 import CameraIcon from '@/shared/assets/images/icons/camera.svg?jsx';
 import ClipboardIcon from '@/shared/assets/images/icons/clipboard.svg?jsx';
 import ExternalLinkIcon from '@/shared/assets/images/icons/external-link.svg?jsx';
+import FileUpIcon from '@/shared/assets/images/icons/file-up.svg?jsx';
 import FingerprintPatternIcon from '@/shared/assets/images/icons/fingerprint-pattern.svg?jsx';
 import GlobeIcon from '@/shared/assets/images/icons/globe.svg?jsx';
 import IdCardIcon from '@/shared/assets/images/icons/id-card.svg?jsx';
 import MapPinIcon from '@/shared/assets/images/icons/map-pin.svg?jsx';
+import MessageSquareTextIcon from '@/shared/assets/images/icons/message-square-text.svg?jsx';
 import MicIcon from '@/shared/assets/images/icons/mic.svg?jsx';
 import Move3dIcon from '@/shared/assets/images/icons/move-3d.svg?jsx';
 import WalletIcon from '@/shared/assets/images/icons/wallet.svg?jsx';
@@ -16,7 +19,6 @@ import { cnTw } from '@/shared/utils';
 import { type PermissionId, type PermissionStatus, PERMISSION_IDS } from '@/domains/product';
 
 import { type PermissionCategory, type PermissionMetadata } from './types';
-import { PolkadotPermissionIcon } from './ui/PolkadotPermissionIcon';
 
 function icon(Icon: FC<SVGProps<SVGSVGElement>>) {
   return createElement(Icon, { className: cnTw('size-5') });
@@ -110,21 +112,21 @@ const PERMISSION_METADATA_BY_ID = {
   },
   ChainSubmit: {
     category: 'onchain',
-    icon: icon(PolkadotPermissionIcon),
+    icon: icon(BlocksIcon),
     labelKey: 'feature.permissionSettings.permission.ChainSubmit.label',
     descriptionKey: 'feature.permissionSettings.permission.ChainSubmit.description',
     ruleKeys: ruleKeys('ChainSubmit', 4),
   },
   PreimageSubmit: {
     category: 'onchain',
-    icon: icon(PolkadotPermissionIcon),
+    icon: icon(FileUpIcon),
     labelKey: 'feature.permissionSettings.permission.PreimageSubmit.label',
     descriptionKey: 'feature.permissionSettings.permission.PreimageSubmit.description',
     ruleKeys: ruleKeys('PreimageSubmit', 4),
   },
   StatementSubmit: {
     category: 'onchain',
-    icon: icon(PolkadotPermissionIcon),
+    icon: icon(MessageSquareTextIcon),
     labelKey: 'feature.permissionSettings.permission.StatementSubmit.label',
     descriptionKey: 'feature.permissionSettings.permission.StatementSubmit.description',
     ruleKeys: ruleKeys('StatementSubmit', 4),

@@ -21,7 +21,7 @@ export const NewTabButton = () => {
 
   return (
     <IconButton label={t('feature.browser.newTab')} data-testid={TEST_IDS.newTabButton} onClick={handleNewTab}>
-      <PlusIcon className="size-2.75" />
+      <PlusIcon />
     </IconButton>
   );
 };

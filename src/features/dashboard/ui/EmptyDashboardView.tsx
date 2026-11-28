@@ -33,7 +33,7 @@ export const EmptyDashboardView = ({ onAddWidget }: EmptyDashboardViewProps) => 
           data-testid={TEST_IDS.dashboardEmptyStateAddWidget}
           onClick={onAddWidget}
         >
-          <Grid2x2PlusIcon className="size-2.75 shrink-0 -scale-y-100" />
+          <Grid2x2PlusIcon className="shrink-0 -scale-y-100" />
           <span>{addWidgetLabel}</span>
         </Button>
       </section>
