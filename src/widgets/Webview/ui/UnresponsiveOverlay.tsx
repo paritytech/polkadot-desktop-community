@@ -21,7 +21,7 @@ export const UnresponsiveOverlay = ({ info, onReload }: Props) => {
       >
         <div className="flex flex-col items-center gap-2 self-stretch">
           <div className="pb-2">
-            <LoaderCircleIcon className="h-8 w-8 animate-spin text-fg-secondary" />
+            <LoaderCircleIcon className="h-8 w-8 animate-spin text-fg-secondary" strokeWidth={1.5} />
           </div>
           <h1 className="w-full text-center text-base font-medium text-fg-primary">{t('widget.webview.unresponsive.title')}</h1>
           <p className="w-full text-center text-sm font-normal text-fg-secondary">{t('widget.webview.unresponsive.subtitle')}</p>

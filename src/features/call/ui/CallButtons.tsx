@@ -43,7 +43,7 @@ export const CallButtons = ({ session }: Props) => {
         label={intl.formatMessage({ id: 'feature.call.audioCall' })}
         onClick={() => handleCall('audio')}
       >
-        <PhoneIcon className="size-5" />
+        <PhoneIcon className="size-5" strokeWidth={1.75} />
       </IconButton>
       <IconButton
         disabled={inCall}
@@ -51,7 +51,7 @@ export const CallButtons = ({ session }: Props) => {
         label={intl.formatMessage({ id: 'feature.call.videoCall' })}
         onClick={() => handleCall('video')}
       >
-        <VideoIcon className="size-5" />
+        <VideoIcon className="size-5" strokeWidth={1.75} />
       </IconButton>
     </>
   );

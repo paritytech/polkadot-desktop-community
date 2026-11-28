@@ -38,7 +38,7 @@ export const ThemePicker = () => {
                 <span className="absolute inset-0 rounded-full shadow-chrome-ring" />
                 {selected && (
                   <span className="absolute top-1/2 left-1/2 flex size-6 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-chrome-top text-chrome-text shadow-chrome-ring">
-                    <CheckIcon className="size-4" />
+                    <CheckIcon className="size-4" strokeWidth={2.5} />
                   </span>
                 )}
               </span>

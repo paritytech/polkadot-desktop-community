@@ -183,7 +183,7 @@ const RecentCard = ({ product, onOpen }: RecentCardProps) => {
         <ProductIcon
           icon={product.icon}
           className="size-5"
-          fallback={<SquareDashedIcon className="size-5 text-bg-surface-main" />}
+          fallback={<SquareDashedIcon className="size-5 text-bg-surface-main" strokeWidth={1.5} />}
         />
       </div>
       <div className="flex min-w-0 flex-col items-start">
@@ -208,7 +208,7 @@ const IconSlab = ({ icon, size }: IconSlabProps) => {
       <ProductIcon
         icon={icon}
         className={imgSize}
-        fallback={<SquareDashedIcon className={cnTw('text-bg-surface-main', imgSize)} />}
+        fallback={<SquareDashedIcon className={cnTw('text-bg-surface-main', imgSize)} strokeWidth={1.5} />}
       />
     </div>
   );

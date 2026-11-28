@@ -27,9 +27,9 @@ type DeviceOption = { id: Nullable<string>; label: string };
 type Row = { kind: CallDeviceKind; label: string; icon: ReactNode; devices: MediaDeviceInfo[] };
 
 const iconFor = (kind: CallDeviceKind): ReactNode => {
-  if (kind === 'camera') return <VideoIcon className="size-5" />;
-  if (kind === 'microphone') return <MicIcon className="size-5" />;
-  return <Volume2Icon className="size-5" />;
+  if (kind === 'camera') return <VideoIcon className="size-5" strokeWidth={1.75} />;
+  if (kind === 'microphone') return <MicIcon className="size-5" strokeWidth={1.75} />;
+  return <Volume2Icon className="size-5" strokeWidth={1.75} />;
 };
 
 export const CallSettings = ({ devices, selection, labels, onSelect, onClose }: CallSettingsProps) => {

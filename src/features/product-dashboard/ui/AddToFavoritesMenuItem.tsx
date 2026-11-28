@@ -28,7 +28,7 @@ export const AddToFavoritesMenuItem = ({ product, closeMenu }: Props) => {
 
   return (
     <MenuItem
-      icon={<StarIcon className={cnTw('size-4', isFavorite && 'fill-current')} />}
+      icon={<StarIcon className={cnTw('size-4', isFavorite && 'fill-current')} strokeWidth={1.75} />}
       label={isFavorite ? t('feature.dashboard.menu.removeFromFavorites') : t('feature.dashboard.menu.addToFavorites')}
       onSelect={async () => {
         closeMenu();

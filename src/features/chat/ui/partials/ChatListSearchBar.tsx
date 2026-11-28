@@ -31,7 +31,7 @@ export const ChatListSearchBar = ({ query, active, inputRef, onQueryChange, onFo
         trailing={
           active && (
             <IconButton size="sm" label={t('common.aria.clear')} onClick={onClear}>
-              <XIcon />
+              <XIcon strokeWidth={1.75} />
             </IconButton>
           )
         }

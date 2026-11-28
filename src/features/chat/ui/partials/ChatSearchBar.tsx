@@ -40,7 +40,7 @@ export const ChatSearchBar = ({ query, inputRef, resultCount, resultIndex, onQue
                 </span>
               )}
               <IconButton size="sm" label={t('common.aria.clear')} onClick={() => onQueryChange('')}>
-                <XIcon />
+                <XIcon strokeWidth={1.75} />
               </IconButton>
             </>
           ) : null
@@ -48,13 +48,13 @@ export const ChatSearchBar = ({ query, inputRef, resultCount, resultIndex, onQue
         onChange={e => onQueryChange(e.target.value)}
       />
       <IconButton label={t('feature.chat.searchPrevious')} disabled={!canNavigate} onClick={onPrev}>
-        <ChevronUpIcon />
+        <ChevronUpIcon strokeWidth={1.75} />
       </IconButton>
       <IconButton label={t('feature.chat.searchNext')} disabled={!canNavigate} onClick={onNext}>
-        <ChevronDownIcon />
+        <ChevronDownIcon strokeWidth={1.75} />
       </IconButton>
       <IconButton label={t('common.aria.close')} onClick={onClose}>
-        <XIcon />
+        <XIcon strokeWidth={1.75} />
       </IconButton>
     </div>
   );

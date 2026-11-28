@@ -23,7 +23,7 @@ export const DegradedBanner: FC<Props> = ({ reason, onReload }) => {
       style={{ appRegion: 'no-drag' }}
     >
       <span className="flex items-center gap-2">
-        <TriangleExclamationPointIcon className="h-4 w-4 shrink-0" />
+        <TriangleExclamationPointIcon className="h-4 w-4 shrink-0" strokeWidth={1.5} />
         <span>{t('widget.webview.degraded.title')}</span>
       </span>
       <div className="flex items-center gap-2">

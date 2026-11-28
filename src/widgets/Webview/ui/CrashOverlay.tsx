@@ -18,7 +18,7 @@ export const CrashOverlay = ({ crash, onReload }: Props) => {
     <div className="absolute inset-0 flex flex-col items-center justify-center gap-6 bg-bg-surface-main p-12">
       <div className="flex flex-col items-center gap-2 self-stretch">
         <div className="pb-4">
-          <OctagonXIcon className="h-8 w-8 text-fg-primary" />
+          <OctagonXIcon className="h-8 w-8 text-fg-primary" strokeWidth={1} />
         </div>
         <h1 className="w-full text-center text-base font-medium text-fg-primary">{t('widget.webview.crash.title')}</h1>
         <p className="w-full text-center text-sm font-normal text-fg-secondary">{t('widget.webview.crash.subtitle')}</p>

@@ -19,7 +19,10 @@ export const AddWidgetFavoritesButton = ({ isInFavorites, onAdd }: { isInFavorit
   return (
     <Button type="button" size="sm" disabled={isInFavorites} aria-label={label} onClick={onAdd}>
       <span className="inline-flex items-center gap-1 text-xs font-normal">
-        <StarIcon className={cnTw('size-4 shrink-0', isInFavorites ? 'fill-current text-fg-secondary' : 'text-fg-primary')} />
+        <StarIcon
+          className={cnTw('size-4 shrink-0', isInFavorites ? 'fill-current text-fg-secondary' : 'text-fg-primary')}
+          strokeWidth={1.75}
+        />
         {label}
       </span>
     </Button>

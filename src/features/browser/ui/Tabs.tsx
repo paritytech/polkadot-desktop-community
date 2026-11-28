@@ -251,7 +251,7 @@ const SortableTab = ({ tab, isActive, onClose }: SortableTabProps) => {
               onClose(tab);
             }}
           >
-            <XIcon className="size-3" />
+            <XIcon className="size-3" strokeWidth={1.5} />
           </button>
         </div>
       </Popover.Anchor>
