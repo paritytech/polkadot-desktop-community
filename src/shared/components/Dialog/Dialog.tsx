@@ -9,6 +9,10 @@ import { BodyLockSweep } from '../_helpers/BodyLockSweep';
 import { DialogCard, DialogFooter, DialogHeader, DialogHeading, DialogScrim, DialogText } from './DialogSurface';
 
 type DialogContentProps = Omit<ComponentProps<typeof DialogPrimitive.Content>, 'className' | 'asChild'> & {
+  /**
+   * `sm` (default) a confirm, an alert or a request; `md` a picker or a list; `lg` a single-pane editor; `xl` a sidebar
+   * with a pane.
+   */
   width?: 'sm' | 'md' | 'lg' | 'xl';
   height?: 'content' | 'tall';
   showCloseButton?: boolean;

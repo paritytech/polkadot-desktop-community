@@ -28,10 +28,10 @@ export const DialogCard = ({ width = 'sm', height = 'content', style, ...rest }:
       {...rest}
       className={cnTw(
         'group/dialog fixed inset-0 z-50 m-auto flex max-h-[calc(100dvh-3rem)] w-[calc(100%-2rem)] animate-dialog-in flex-col gap-4 rounded-3xl bg-(image:--chrome-glass) p-5 text-chrome-text shadow-chrome-pop backdrop-blur-2xl backdrop-saturate-150 outline-none data-[state=closed]:animate-dialog-out motion-reduce:[animation-duration:0.01ms] motion-reduce:data-[state=closed]:[animation-duration:0.01ms]',
-        width === 'sm' && 'max-w-120',
-        width === 'md' && 'max-w-160',
-        width === 'lg' && 'max-w-200',
-        width === 'xl' && 'max-w-256',
+        width === 'sm' && 'max-w-100',
+        width === 'md' && 'max-w-140',
+        width === 'lg' && 'max-w-180',
+        width === 'xl' && 'max-w-224',
         height === 'content' && 'h-fit overflow-y-auto',
         height === 'tall' && 'h-150 overflow-hidden',
       )}
