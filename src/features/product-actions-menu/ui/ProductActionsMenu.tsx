@@ -1,7 +1,7 @@
 import { useNavigate } from '@tanstack/react-router';
 import { useCallback, useState } from 'react';
 
-import { Button, DropdownMenu, IconButton } from '@/shared/components';
+import { DropdownMenu, IconButton } from '@/shared/components';
 import { Slot } from '@/shared/di';
 import { EllipsisIcon, SettingsIcon } from '@/shared/icons';
 import { TEST_IDS } from '@/shared/test-ids';
@@ -35,19 +35,17 @@ export const ProductActionsMenu = ({ productId }: Props) => {
       <DropdownMenu.Content align="start">
         <div className="flex w-52.5 flex-col gap-0.5">
           <Slot id={productActionsMenuItemsSlot} props={{ productId, closeMenu }} />
-          <div className="px-1 pt-1">
-            <Button
-              data-testid={TEST_IDS.productActionsMenuOpenSettings}
-              horizontalSize="fill"
-              onClick={() => {
-                setOpen(false);
-                void navigate({ to: '/settings/privacy/apps/$productId', params: { productId } });
-              }}
-            >
-              <SettingsIcon className="size-4" />
-              {t('feature.productActionsMenu.openSettings')}
-            </Button>
-          </div>
+          <DropdownMenu.Separator />
+          <DropdownMenu.Item
+            data-testid={TEST_IDS.productActionsMenuOpenSettings}
+            onClick={() => {
+              setOpen(false);
+              void navigate({ to: '/settings/privacy/apps/$productId', params: { productId } });
+            }}
+          >
+            <SettingsIcon className="size-4" />
+            {t('feature.productActionsMenu.openSettings')}
+          </DropdownMenu.Item>
         </div>
       </DropdownMenu.Content>
     </DropdownMenu.Root>
