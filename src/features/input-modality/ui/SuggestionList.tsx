@@ -1,8 +1,8 @@
 import { type KeyboardEvent, type MouseEvent, type ReactNode, useEffect, useRef } from 'react';
 
-import XIcon from '@/shared/assets/images/icons/x.svg?jsx';
 import PolkadotIcon from '@/shared/assets/images/polkadot-half-logo.svg?jsx';
 import { Button, IconButton } from '@/shared/components';
+import { XIcon } from '@/shared/icons';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { cnTw } from '@/shared/utils';

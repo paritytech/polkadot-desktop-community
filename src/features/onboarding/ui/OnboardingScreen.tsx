@@ -1,12 +1,11 @@
 import { useNavigate } from '@tanstack/react-router';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import LoaderIcon from '@/shared/assets/images/icons/loader.svg?jsx';
-import SmartphoneIcon from '@/shared/assets/images/icons/smartphone.svg?jsx';
 import PolkadotLogo from '@/shared/assets/images/logo.svg?jsx';
 import { AUTOTEST_ENABLED } from '@/shared/autotest';
 import { Button, LoadingScreen, QrCode, SegmentedControl, Spinner, toast } from '@/shared/components';
 import { isProductionBuild, reloadApp } from '@/shared/env';
+import { LoaderIcon, SmartphoneIcon } from '@/shared/icons';
 import { useRxState } from '@/shared/rxstate';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';

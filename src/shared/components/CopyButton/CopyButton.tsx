@@ -1,8 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import CheckIcon from '@/shared/assets/images/icons/check.svg?jsx';
-import CopyIcon from '@/shared/assets/images/icons/copy.svg?jsx';
-import XIcon from '@/shared/assets/images/icons/x.svg?jsx';
+import { CheckIcon, CopyIcon, XIcon } from '@/shared/icons';
 import { useTranslation } from '@/shared/translation';
 import { IconButton } from '../IconButton/IconButton';
 

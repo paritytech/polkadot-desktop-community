@@ -2,9 +2,9 @@ import { type MouseEvent, useCallback, useEffect, useMemo, useRef, useState } fr
 import { useObservable } from 'react-rx';
 import { type Observable, of } from 'rxjs';
 
-import MessagesSquareIcon from '@/shared/assets/images/icons/messages-square.svg?jsx';
 import { EmptyState } from '@/shared/components';
 import { useWindowFocus } from '@/shared/hooks';
+import { MessagesSquareIcon } from '@/shared/icons';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { cnTw } from '@/shared/utils';

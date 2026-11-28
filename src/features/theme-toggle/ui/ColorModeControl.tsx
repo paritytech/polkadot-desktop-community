@@ -1,9 +1,7 @@
 import { type FC, type SVGProps } from 'react';
 
-import MonitorIcon from '@/shared/assets/images/icons/monitor.svg?jsx';
-import MoonIcon from '@/shared/assets/images/icons/moon.svg?jsx';
-import SunIcon from '@/shared/assets/images/icons/sun.svg?jsx';
 import { SegmentedControl } from '@/shared/components';
+import { MonitorIcon, MoonIcon, SunIcon } from '@/shared/icons';
 import { useTranslation } from '@/shared/translation';
 import { type ThemePreference, useSetThemePreference, useThemePreference } from '@/domains/application';
 

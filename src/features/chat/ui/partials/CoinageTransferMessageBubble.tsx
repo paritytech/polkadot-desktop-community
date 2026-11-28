@@ -1,9 +1,6 @@
 import { type FC, type MouseEvent, type SVGProps } from 'react';
 
-import ArrowDownIcon from '@/shared/assets/images/icons/arrow-down.svg?jsx';
-import ArrowUpIcon from '@/shared/assets/images/icons/arrow-up.svg?jsx';
-import CheckCheckIcon from '@/shared/assets/images/icons/check-check.svg?jsx';
-import CheckIcon from '@/shared/assets/images/icons/check.svg?jsx';
+import { ArrowDownIcon, ArrowUpIcon, CheckCheckIcon, CheckIcon } from '@/shared/icons';
 import { useTranslation } from '@/shared/translation';
 import { amountToString, cnTw } from '@/shared/utils';
 import { environmentUseCase } from '@/domains/application';

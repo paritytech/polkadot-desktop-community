@@ -1,9 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 
-import MinusIcon from '@/shared/assets/images/icons/minus.svg?jsx';
-import PlusIcon from '@/shared/assets/images/icons/plus.svg?jsx';
-import RotateCcwIcon from '@/shared/assets/images/icons/rotate-ccw.svg?jsx';
 import { IconButton } from '@/shared/components';
+import { MinusIcon, PlusIcon, RotateCcwIcon } from '@/shared/icons';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { useZoomControls, useZoomPercent } from '@/aggregates/webview-zoom';

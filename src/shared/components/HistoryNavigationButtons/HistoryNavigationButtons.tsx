@@ -1,5 +1,4 @@
-import ChevronLeftIcon from '@/shared/assets/images/icons/chevron-left.svg?jsx';
-import ChevronRightIcon from '@/shared/assets/images/icons/chevron-right.svg?jsx';
+import { ChevronLeftIcon, ChevronRightIcon } from '@/shared/icons';
 import { IconButton } from '../IconButton/IconButton';
 
 type Props = {

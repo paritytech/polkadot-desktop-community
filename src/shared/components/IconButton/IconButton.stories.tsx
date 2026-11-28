@@ -1,6 +1,6 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
-import SettingsIcon from '@/shared/assets/images/icons/settings.svg?jsx';
+import { SettingsIcon } from '@/shared/icons';
 
 import { IconButton } from './IconButton';
 

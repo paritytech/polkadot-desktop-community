@@ -1,8 +1,7 @@
 import { useRef } from 'react';
 
-import MessageCircleIcon from '@/shared/assets/images/icons/message-circle.svg?jsx';
-import TrashIcon from '@/shared/assets/images/icons/trash.svg?jsx';
 import { EmptyState } from '@/shared/components';
+import { MessageCircleIcon, TrashIcon } from '@/shared/icons';
 import { useTranslation } from '@/shared/translation';
 import { chatService } from '../../service';
 

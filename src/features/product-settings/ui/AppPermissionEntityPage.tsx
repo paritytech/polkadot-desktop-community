@@ -1,8 +1,7 @@
 import { type ReactNode, useState } from 'react';
 
-import Grid2x2Icon from '@/shared/assets/images/icons/grid-2x2.svg?jsx';
-import Link2Icon from '@/shared/assets/images/icons/link-2.svg?jsx';
 import { Button, ListItem, SettingsList, SettingsSection } from '@/shared/components';
+import { Grid2x2Icon, Link2Icon } from '@/shared/icons';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { useDisplayedProduct } from '@/domains/product';

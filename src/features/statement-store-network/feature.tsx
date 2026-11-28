@@ -1,6 +1,6 @@
-import CodeXmlIcon from '@/shared/assets/images/icons/code-xml.svg?jsx';
 import { Sidebar } from '@/shared/components';
 import { createFeature } from '@/shared/feature';
+import { CodeXmlIcon } from '@/shared/icons';
 import { useTranslation } from '@/shared/translation';
 import { settingsDevelopmentNavSlot } from '@/features/settings';
 

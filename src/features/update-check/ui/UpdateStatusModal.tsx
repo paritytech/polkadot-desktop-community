@@ -1,9 +1,7 @@
 import { type ReactNode, memo } from 'react';
 
-import CircleCheckBigIcon from '@/shared/assets/images/icons/circle-check-big.svg?jsx';
-import CircleExclamationPointIcon from '@/shared/assets/images/icons/circle-exclamation-point.svg?jsx';
-import LoaderIcon from '@/shared/assets/images/icons/loader.svg?jsx';
 import { Button, Dialog } from '@/shared/components';
+import { CircleCheckBigIcon, CircleExclamationPointIcon, LoaderIcon } from '@/shared/icons';
 import { useTranslation } from '@/shared/translation';
 
 export type UpdateStatus = 'idle' | 'checking' | 'up-to-date' | 'downloading' | 'ready-to-install' | 'error' | 'unsupported';

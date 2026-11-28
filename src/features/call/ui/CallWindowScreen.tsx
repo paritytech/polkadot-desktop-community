@@ -4,12 +4,6 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import MicOffIcon from '@/shared/assets/images/icons/mic-off.svg?jsx';
-import MicIcon from '@/shared/assets/images/icons/mic.svg?jsx';
-import PhoneOffIcon from '@/shared/assets/images/icons/phone-off.svg?jsx';
-import PhoneIcon from '@/shared/assets/images/icons/phone.svg?jsx';
-import VideoOffIcon from '@/shared/assets/images/icons/video-off.svg?jsx';
-import VideoIcon from '@/shared/assets/images/icons/video.svg?jsx';
 import {
   type CallDeviceKind,
   type CallDeviceSelection,
@@ -19,6 +13,7 @@ import {
   saveDeviceSelection,
   withDeviceForKind,
 } from '@/shared/call-media-devices';
+import { MicIcon, MicOffIcon, PhoneIcon, PhoneOffIcon, VideoIcon, VideoOffIcon } from '@/shared/icons';
 import { type CallInitDelivery, onCallInit } from '../runtime/callInitPort';
 import { type CallRuntimeState, type CallSession, createCallSession } from '../runtime/callSession';
 

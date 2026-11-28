@@ -1,10 +1,8 @@
 import JsonView from '@uiw/react-json-view';
 import { type CSSProperties, type PropsWithChildren, type ReactNode, memo, useMemo } from 'react';
 
-import ChevronLeftIcon from '@/shared/assets/images/icons/chevron-left.svg?jsx';
-import InfoIcon from '@/shared/assets/images/icons/info.svg?jsx';
-import TriangleExclamationPointIcon from '@/shared/assets/images/icons/triangle-exclamation-point.svg?jsx';
 import { Button, CopyButton, Dialog, IconButton } from '@/shared/components';
+import { ChevronLeftIcon, InfoIcon, TriangleExclamationPointIcon } from '@/shared/icons';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { cnTw } from '@/shared/utils';

@@ -1,8 +1,7 @@
 import { type ReactNode, type SyntheticEvent, useCallback, useEffect, useRef, useState } from 'react';
 
-import MicOffIcon from '@/shared/assets/images/icons/mic-off.svg?jsx';
-import SettingsIcon from '@/shared/assets/images/icons/settings.svg?jsx';
 import { Avatar, Button, IconButton } from '@/shared/components';
+import { MicOffIcon, SettingsIcon } from '@/shared/icons';
 import { cnTw } from '@/shared/utils';
 import { type PendingUpgrade } from '@/domains/chat';
 

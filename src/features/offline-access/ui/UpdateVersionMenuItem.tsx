@@ -1,4 +1,4 @@
-import ArrowDownToLineIcon from '@/shared/assets/images/icons/arrow-down-to-line.svg?jsx';
+import { ArrowDownToLineIcon } from '@/shared/icons';
 import { useTranslation } from '@/shared/translation';
 import { MenuItem } from '@/features/product-actions-menu';
 import { useNewerVersionAvailable } from '../hooks/useNewerVersionAvailable';

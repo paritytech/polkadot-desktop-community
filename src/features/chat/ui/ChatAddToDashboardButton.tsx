@@ -1,8 +1,7 @@
 import { useLocation } from '@tanstack/react-router';
 
-import LayoutDashboardIcon from '@/shared/assets/images/icons/layout-dashboard.svg?jsx';
-import MessageCircleIcon from '@/shared/assets/images/icons/message-circle.svg?jsx';
 import { IconButton } from '@/shared/components';
+import { LayoutDashboardIcon, MessageCircleIcon16 } from '@/shared/icons';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { productAddToDashboardSideEffect } from '@/features/browser';
@@ -38,4 +37,4 @@ export const ChatAddToDashboardButton = () => {
 // Leading address-bar identity icon for the chat SPA. Chat is native (no product
 // row → no favicon), so it supplies its own chat bubble, tinted with the
 // URL text color so it flips with the theme (dark in light, light in dark).
-export const ChatAddressBarIcon = () => <MessageCircleIcon className="size-4 text-chrome-text" />;
+export const ChatAddressBarIcon = () => <MessageCircleIcon16 className="size-4 text-chrome-text" />;

@@ -1,20 +1,22 @@
 import { type FC, type SVGProps, createElement } from 'react';
 
-import BellIcon from '@/shared/assets/images/icons/bell.svg?jsx';
-import BlocksIcon from '@/shared/assets/images/icons/blocks.svg?jsx';
-import BluetoothIcon from '@/shared/assets/images/icons/bluetooth.svg?jsx';
-import CameraIcon from '@/shared/assets/images/icons/camera.svg?jsx';
-import ClipboardIcon from '@/shared/assets/images/icons/clipboard.svg?jsx';
-import ExternalLinkIcon from '@/shared/assets/images/icons/external-link.svg?jsx';
-import FileUpIcon from '@/shared/assets/images/icons/file-up.svg?jsx';
-import FingerprintPatternIcon from '@/shared/assets/images/icons/fingerprint-pattern.svg?jsx';
-import GlobeIcon from '@/shared/assets/images/icons/globe.svg?jsx';
-import IdCardIcon from '@/shared/assets/images/icons/id-card.svg?jsx';
-import MapPinIcon from '@/shared/assets/images/icons/map-pin.svg?jsx';
-import MessageSquareTextIcon from '@/shared/assets/images/icons/message-square-text.svg?jsx';
-import MicIcon from '@/shared/assets/images/icons/mic.svg?jsx';
-import Move3dIcon from '@/shared/assets/images/icons/move-3d.svg?jsx';
-import WalletIcon from '@/shared/assets/images/icons/wallet.svg?jsx';
+import {
+  BellIcon,
+  BlocksIcon,
+  BluetoothIcon,
+  CameraIcon,
+  ClipboardIcon,
+  ExternalLinkIcon,
+  FileUpIcon,
+  FingerprintPatternIcon,
+  GlobeIcon,
+  IdCardIcon,
+  MapPinIcon,
+  MessageSquareTextIcon,
+  MicIcon,
+  Move3dIcon,
+  WalletIcon,
+} from '@/shared/icons';
 import { cnTw } from '@/shared/utils';
 import { type PermissionId, type PermissionStatus, PERMISSION_IDS } from '@/domains/product';
 

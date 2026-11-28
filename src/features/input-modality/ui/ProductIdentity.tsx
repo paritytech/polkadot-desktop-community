@@ -1,4 +1,4 @@
-import PackageIcon from '@/shared/assets/images/icons/package.svg?jsx';
+import { PackageIcon } from '@/shared/icons';
 import { cnTw } from '@/shared/utils';
 import { usePersistedProductById } from '@/domains/product';
 import { ProductIcon } from '@/widgets/ProductIcon';

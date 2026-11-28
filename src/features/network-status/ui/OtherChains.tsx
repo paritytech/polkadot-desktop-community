@@ -1,6 +1,6 @@
 import { type FC, type PropsWithChildren } from 'react';
 
-import ChevronDownIcon from '@/shared/assets/images/icons/chevron-down.svg?jsx';
+import { ChevronDownIcon } from '@/shared/icons';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 

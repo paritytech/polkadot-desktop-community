@@ -1,9 +1,7 @@
 import { type FC, useState } from 'react';
 
-import RefreshCwIcon from '@/shared/assets/images/icons/refresh-cw.svg?jsx';
-import TriangleExclamationPointIcon from '@/shared/assets/images/icons/triangle-exclamation-point.svg?jsx';
-import XIcon from '@/shared/assets/images/icons/x.svg?jsx';
 import { Button, IconButton } from '@/shared/components';
+import { RefreshCwIcon, TriangleExclamationPointIcon, XIcon } from '@/shared/icons';
 import { useTranslation } from '@/shared/translation';
 import { type WebviewHealthReason } from '@/aggregates/webview-registry';
 

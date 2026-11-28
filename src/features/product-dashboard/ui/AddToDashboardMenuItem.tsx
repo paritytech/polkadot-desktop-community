@@ -1,4 +1,4 @@
-import LayoutDashboardIcon from '@/shared/assets/images/icons/layout-dashboard.svg?jsx';
+import { LayoutDashboardIcon } from '@/shared/icons';
 import { useTranslation } from '@/shared/translation';
 import { openAddToDashboardDialog } from '@/features/dashboard';
 import { MenuItem } from '@/features/product-actions-menu';

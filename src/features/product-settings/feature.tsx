@@ -1,6 +1,6 @@
-import Grid2x2Icon from '@/shared/assets/images/icons/grid-2x2.svg?jsx';
 import { Sidebar } from '@/shared/components';
 import { createFeature } from '@/shared/feature';
+import { Grid2x2Icon } from '@/shared/icons';
 import { useTranslation } from '@/shared/translation';
 import { settingsPrivacyNavSlot } from '@/features/settings';
 

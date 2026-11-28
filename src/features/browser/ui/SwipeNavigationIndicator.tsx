@@ -1,5 +1,4 @@
-import ChevronLeftIcon from '@/shared/assets/images/icons/chevron-left.svg?jsx';
-import ChevronRightIcon from '@/shared/assets/images/icons/chevron-right.svg?jsx';
+import { ChevronLeftIcon, ChevronRightIcon } from '@/shared/icons';
 import { TEST_IDS } from '@/shared/test-ids';
 import { cnTw } from '@/shared/utils';
 import { type SwipeIndicatorState } from '../types';

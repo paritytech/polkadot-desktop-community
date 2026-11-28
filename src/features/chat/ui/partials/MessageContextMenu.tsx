@@ -1,14 +1,8 @@
 import { useCallback, useState } from 'react';
 import { createPortal } from 'react-dom';
 
-import ChevronRightIcon from '@/shared/assets/images/icons/chevron-right.svg?jsx';
-import CircleCheckIcon from '@/shared/assets/images/icons/circle-check.svg?jsx';
-import CopyIcon from '@/shared/assets/images/icons/copy.svg?jsx';
-import ForwardIcon from '@/shared/assets/images/icons/forward.svg?jsx';
-import ReplyIcon from '@/shared/assets/images/icons/reply.svg?jsx';
-import SquarePenIcon from '@/shared/assets/images/icons/square-pen.svg?jsx';
-import TrashIcon from '@/shared/assets/images/icons/trash.svg?jsx';
 import { DropdownMenu } from '@/shared/components';
+import { ChevronRightIcon, CircleCheckIcon, CopyIcon, ForwardIcon, ReplyIcon, SquarePenIcon, TrashIcon } from '@/shared/icons';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { type ChatMessage } from '@/domains/chat';

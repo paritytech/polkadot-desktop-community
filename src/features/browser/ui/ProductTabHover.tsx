@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 
-import MemoryStickIcon from '@/shared/assets/images/icons/memory-stick.svg?jsx';
 import PolkadotIcon from '@/shared/assets/images/polkadot-half-logo.svg?jsx';
 import { isElectron } from '@/shared/env';
+import { MemoryStickIcon } from '@/shared/icons';
 import { useRxState } from '@/shared/rxstate';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';

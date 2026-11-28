@@ -1,4 +1,4 @@
-import Link2Icon from '@/shared/assets/images/icons/link-2.svg?jsx';
+import { Link2Icon } from '@/shared/icons';
 import { useTranslation } from '@/shared/translation';
 import { type GrantedAccountAccess, type PermissionStatus } from '@/domains/product';
 

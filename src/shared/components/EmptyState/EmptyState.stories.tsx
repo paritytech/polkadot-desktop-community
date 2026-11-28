@@ -1,6 +1,6 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
-import InboxIcon from '@/shared/assets/images/icons/inbox.svg?jsx';
+import { InboxIcon } from '@/shared/icons';
 import { Button } from '../Button/Button';
 
 import { EmptyState } from './EmptyState';

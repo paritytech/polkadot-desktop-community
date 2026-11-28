@@ -1,10 +1,7 @@
 import { type Ref } from 'react';
 
-import ChevronDownIcon from '@/shared/assets/images/icons/chevron-down.svg?jsx';
-import ChevronUpIcon from '@/shared/assets/images/icons/chevron-up.svg?jsx';
-import SearchIcon from '@/shared/assets/images/icons/search.svg?jsx';
-import XIcon from '@/shared/assets/images/icons/x.svg?jsx';
 import { IconButton, Input } from '@/shared/components';
+import { ChevronDownIcon, ChevronUpIcon, SearchIcon, XIcon } from '@/shared/icons';
 import { useTranslation } from '@/shared/translation';
 
 type Props = {

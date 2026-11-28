@@ -1,6 +1,6 @@
 import { type ReactNode } from 'react';
 
-import ChevronRightIcon from '@/shared/assets/images/icons/chevron-right.svg?jsx';
+import { ChevronRightIcon } from '@/shared/icons';
 import { cnTw } from '@/shared/utils';
 
 // `icon`, `description` and `meta` render inside spans (and, in the button shape, inside a <button>): pass phrasing

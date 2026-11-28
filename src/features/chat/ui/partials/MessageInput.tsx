@@ -1,8 +1,7 @@
 import { type ChangeEvent, type KeyboardEvent, type Ref, useEffect, useState, useTransition } from 'react';
 
-import ArrowUpIcon from '@/shared/assets/images/icons/arrow-up.svg?jsx';
-import LoaderCircleIcon from '@/shared/assets/images/icons/loader-circle.svg?jsx';
 import { IconButton, TextArea } from '@/shared/components';
+import { ArrowUpIcon, LoaderCircleIcon } from '@/shared/icons';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 

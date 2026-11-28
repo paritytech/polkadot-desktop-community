@@ -1,6 +1,6 @@
 import { type PropsWithChildren, type ReactNode } from 'react';
 
-import ChevronLeftIcon from '@/shared/assets/images/icons/chevron-left.svg?jsx';
+import { ChevronLeftIcon } from '@/shared/icons';
 import { useTranslation } from '@/shared/translation';
 import { cnTw } from '@/shared/utils';
 import { IconButton } from '../IconButton/IconButton';

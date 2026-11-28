@@ -4,9 +4,9 @@ import { SortableContext, horizontalListSortingStrategy, useSortable } from '@dn
 import { CSS } from '@dnd-kit/utilities';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import XIcon from '@/shared/assets/images/icons/x.svg?jsx';
 import { Popover, SegmentedControl } from '@/shared/components';
 import { Slot } from '@/shared/di';
+import { XIcon } from '@/shared/icons';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { cnTw } from '@/shared/utils';

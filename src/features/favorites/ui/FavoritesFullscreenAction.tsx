@@ -1,4 +1,4 @@
-import Maximize2Icon from '@/shared/assets/images/icons/maximize-2.svg?jsx';
+import { Maximize2Icon } from '@/shared/icons';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { WidgetTopbarAction } from '@/features/dashboard';

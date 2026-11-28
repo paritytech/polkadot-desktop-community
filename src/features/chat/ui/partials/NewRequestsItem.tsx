@@ -1,5 +1,5 @@
-import MessagesSquareIcon from '@/shared/assets/images/icons/messages-square.svg?jsx';
 import { ListItem } from '@/shared/components';
+import { MessagesSquareIcon } from '@/shared/icons';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 

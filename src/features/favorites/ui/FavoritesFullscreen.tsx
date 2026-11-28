@@ -3,12 +3,8 @@ import { SortableContext, arrayMove, rectSortingStrategy } from '@dnd-kit/sortab
 import { useEffect, useMemo, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 
-import PlusIcon from '@/shared/assets/images/icons/plus.svg?jsx';
-import SearchXIcon from '@/shared/assets/images/icons/search-x.svg?jsx';
-import SearchIcon from '@/shared/assets/images/icons/search.svg?jsx';
-import StarOffIcon from '@/shared/assets/images/icons/star-off.svg?jsx';
-import StarIcon from '@/shared/assets/images/icons/star.svg?jsx';
 import { AppIcon, Button, EmptyState, IconButton, Input } from '@/shared/components';
+import { PlusIcon, SearchIcon, SearchXIcon, StarIcon, StarOffIcon } from '@/shared/icons';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { FAVORITES_FOLDER_ID, foldersUseCase, useFavoriteProductIds, useRemoveItemFromFolder } from '@/domains/application';

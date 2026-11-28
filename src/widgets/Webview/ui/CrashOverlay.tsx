@@ -1,7 +1,6 @@
-import OctagonXIcon from '@/shared/assets/images/icons/octagon-x.svg?jsx';
-import RefreshCwIcon from '@/shared/assets/images/icons/refresh-cw.svg?jsx';
 import { Button } from '@/shared/components';
 import { isElectron } from '@/shared/env';
+import { OctagonXIcon, RefreshCwIcon } from '@/shared/icons';
 import { useTranslation } from '@/shared/translation';
 import { type WebviewCrashInfo } from '@/aggregates/webview-registry';
 

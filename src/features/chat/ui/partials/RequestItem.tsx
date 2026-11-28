@@ -1,5 +1,5 @@
-import XIcon from '@/shared/assets/images/icons/x.svg?jsx';
 import { Avatar, IconButton, ListItem } from '@/shared/components';
+import { XIcon } from '@/shared/icons';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { type P2PChatRequest, p2pService } from '@/domains/chat';

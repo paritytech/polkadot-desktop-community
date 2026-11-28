@@ -1,5 +1,4 @@
-import FileTextIcon from '@/shared/assets/images/icons/file-text.svg?jsx';
-import XIcon from '@/shared/assets/images/icons/x.svg?jsx';
+import { FileTextIcon, XIcon } from '@/shared/icons';
 import { useTranslation } from '@/shared/translation';
 
 export type SelectedAttachment = {

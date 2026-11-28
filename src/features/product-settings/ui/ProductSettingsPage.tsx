@@ -1,12 +1,9 @@
 import { useNavigate } from '@tanstack/react-router';
 import { type ReactNode, useState } from 'react';
 
-import Grid2x2Icon from '@/shared/assets/images/icons/grid-2x2.svg?jsx';
-import Link2Icon from '@/shared/assets/images/icons/link-2.svg?jsx';
-import PaintbrushIcon from '@/shared/assets/images/icons/paintbrush.svg?jsx';
-import TrashIcon from '@/shared/assets/images/icons/trash.svg?jsx';
 import { Button, Dialog, ListItem, SettingsList, SettingsSection, toast } from '@/shared/components';
 import { Slot } from '@/shared/di';
+import { Grid2x2Icon, Link2Icon, PaintbrushIcon, TrashIcon } from '@/shared/icons';
 import { useTranslation } from '@/shared/translation';
 import { formatBytes } from '@/shared/utils';
 import {

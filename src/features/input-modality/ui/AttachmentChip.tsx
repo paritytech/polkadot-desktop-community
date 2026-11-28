@@ -1,11 +1,7 @@
 import { type FC, type SVGProps } from 'react';
 
-import EighthNotesIcon from '@/shared/assets/images/icons/eighth-notes.svg?jsx';
-import FileTextIcon from '@/shared/assets/images/icons/file-text.svg?jsx';
-import ImageIcon from '@/shared/assets/images/icons/image.svg?jsx';
-import VideoIcon from '@/shared/assets/images/icons/video.svg?jsx';
-import XIcon from '@/shared/assets/images/icons/x.svg?jsx';
 import { IconButton } from '@/shared/components';
+import { EighthNotesIcon, FileTextIcon, ImageIcon, VideoIcon, XIcon } from '@/shared/icons';
 import { TEST_IDS } from '@/shared/test-ids';
 import { formatBytes } from '@/shared/utils';
 import { type AttachmentCategory } from '@/domains/input-routing';

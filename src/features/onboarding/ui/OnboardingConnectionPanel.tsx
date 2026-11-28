@@ -1,8 +1,7 @@
 import { type ReactNode } from 'react';
 
-import ClockIcon from '@/shared/assets/images/icons/clock.svg?jsx';
-import WifiOffIcon from '@/shared/assets/images/icons/wifi-off.svg?jsx';
 import { Button, Spinner } from '@/shared/components';
+import { ClockIcon, WifiOffIcon } from '@/shared/icons';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { type OnboardingConnectionState } from '../types';

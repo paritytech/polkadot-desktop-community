@@ -1,6 +1,6 @@
 import { type FC, useId, useState } from 'react';
 
-import ChevronDownIcon from '@/shared/assets/images/icons/chevron-down.svg?jsx';
+import { ChevronDownIcon } from '@/shared/icons';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { cnTw } from '@/shared/utils';

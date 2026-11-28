@@ -2,10 +2,8 @@ import { type DragEndEvent, DndContext, PointerSensor, closestCenter, useSensor,
 import { SortableContext, arrayMove, rectSortingStrategy } from '@dnd-kit/sortable';
 import { useEffect, useRef, useState } from 'react';
 
-import ArrowUpRightIcon from '@/shared/assets/images/icons/arrow-up-right.svg?jsx';
-import EllipsisIcon from '@/shared/assets/images/icons/ellipsis.svg?jsx';
-import TrashIcon from '@/shared/assets/images/icons/trash.svg?jsx';
 import { DropdownMenu, IconButton } from '@/shared/components';
+import { ArrowUpRightIcon, EllipsisIcon, TrashIcon } from '@/shared/icons';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { cnTw } from '@/shared/utils';

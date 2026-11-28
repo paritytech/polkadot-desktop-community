@@ -21,8 +21,7 @@ const listing = (label: string): AppListing =>
     manifest: { displayName: label.replace(/\.dot$/, ''), description: '', icon: { cid: '', format: 'png' } },
   }) as unknown as AppListing;
 
-import StarOffIcon from '@/shared/assets/images/icons/star-off.svg?jsx';
-import StarIcon from '@/shared/assets/images/icons/star.svg?jsx';
+import { StarIcon, StarOffIcon } from '@/shared/icons';
 import {
   type MainDashboardLayoutSnapshot,
   FAVORITES_FOLDER_ID,

@@ -1,4 +1,4 @@
-import HeartIcon from '@/shared/assets/images/icons/heart.svg?jsx';
+import { HeartIcon } from '@/shared/icons';
 
 type Props = {
   count?: number;

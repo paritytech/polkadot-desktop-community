@@ -1,10 +1,9 @@
 import { type KeyboardEvent, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
-import CameraIcon from '@/shared/assets/images/icons/camera.svg?jsx';
-import SearchIcon from '@/shared/assets/images/icons/search.svg?jsx';
 import { IconButton } from '@/shared/components';
 import { useAnimatedHeight } from '@/shared/hooks';
+import { CameraIcon, SearchIcon } from '@/shared/icons';
 import { useRxState } from '@/shared/rxstate';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';

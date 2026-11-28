@@ -1,10 +1,9 @@
 import { useIntl } from 'react-intl';
 import { useObservable } from 'react-rx';
 
-import PhoneIcon from '@/shared/assets/images/icons/phone.svg?jsx';
-import VideoIcon from '@/shared/assets/images/icons/video.svg?jsx';
 import { IconButton } from '@/shared/components';
 import { isElectron } from '@/shared/env';
+import { PhoneIcon, VideoIcon } from '@/shared/icons';
 import { useRxState } from '@/shared/rxstate';
 import { TEST_IDS } from '@/shared/test-ids';
 import { type CallPurpose, type ChatSession } from '@/domains/chat';

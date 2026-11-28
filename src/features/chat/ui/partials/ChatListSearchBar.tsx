@@ -1,8 +1,7 @@
 import { type Ref } from 'react';
 
-import SearchIcon from '@/shared/assets/images/icons/search.svg?jsx';
-import XIcon from '@/shared/assets/images/icons/x.svg?jsx';
 import { IconButton, Input } from '@/shared/components';
+import { SearchIcon, XIcon } from '@/shared/icons';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 

@@ -1,6 +1,5 @@
-import LoaderCircleIcon from '@/shared/assets/images/icons/loader-circle.svg?jsx';
-import RefreshCwIcon from '@/shared/assets/images/icons/refresh-cw.svg?jsx';
 import { Button } from '@/shared/components';
+import { LoaderCircleIcon, RefreshCwIcon } from '@/shared/icons';
 import { useTranslation } from '@/shared/translation';
 import { type WebviewUnresponsiveInfo } from '@/aggregates/webview-registry';
 

@@ -4,9 +4,7 @@ import { render, screen } from '@testing-library/react';
 import { type FC, type SVGProps } from 'react';
 import { describe, expect, it } from 'vitest';
 
-import CheckCheckIcon from '@/shared/assets/images/icons/check-check.svg?jsx';
-import CheckIcon from '@/shared/assets/images/icons/check.svg?jsx';
-import ClockIcon from '@/shared/assets/images/icons/clock.svg?jsx';
+import { CheckCheckIcon, CheckIcon, ClockIcon } from '@/shared/icons';
 import { TranslationProvider } from '@/shared/translation';
 import { type ChatMessage, type ChatMessageStatus } from '@/domains/chat';
 

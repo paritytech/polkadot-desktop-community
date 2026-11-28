@@ -2,13 +2,9 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useObservable } from 'react-rx';
 import { of } from 'rxjs';
 
-import BanIcon from '@/shared/assets/images/icons/ban.svg?jsx';
-import EllipsisIcon from '@/shared/assets/images/icons/ellipsis.svg?jsx';
-import LogOutIcon from '@/shared/assets/images/icons/log-out.svg?jsx';
-import SearchIcon from '@/shared/assets/images/icons/search.svg?jsx';
-import ShieldOffIcon from '@/shared/assets/images/icons/shield-off.svg?jsx';
 import { Avatar, Button, DropdownMenu, IconButton, PaneHeader } from '@/shared/components';
 import { Slot } from '@/shared/di';
+import { BanIcon, EllipsisIcon, LogOutIcon, SearchIcon, ShieldOffIcon } from '@/shared/icons';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import {

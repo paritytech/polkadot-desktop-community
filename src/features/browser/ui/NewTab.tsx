@@ -1,11 +1,9 @@
 import { useNavigate } from '@tanstack/react-router';
 import { useEffect, useMemo, useState } from 'react';
 
-import CheckIcon from '@/shared/assets/images/icons/check.svg?jsx';
-import SquareDashedIcon from '@/shared/assets/images/icons/square-dashed.svg?jsx';
-import XIcon from '@/shared/assets/images/icons/x.svg?jsx';
 import PolkadotWordmark from '@/shared/assets/images/logo.svg?jsx';
 import { Button, IconButton } from '@/shared/components';
+import { CheckIcon, SquareDashedIcon, XIcon } from '@/shared/icons';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { cnTw } from '@/shared/utils';

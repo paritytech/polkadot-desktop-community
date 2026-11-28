@@ -141,6 +141,7 @@
     "ipfs-unixfs": "13.1.2",
     "jsqr": "1.4.0",
     "lodash-es": "4.18.1",
+    "lucide-react": "1.81.0",
     "mime-types": "3.0.2",
     "multiformats": "14.0.8",
     "nanoevents": "10.0.0",

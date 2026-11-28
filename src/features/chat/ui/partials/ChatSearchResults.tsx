@@ -1,5 +1,5 @@
-import SearchXIcon from '@/shared/assets/images/icons/search-x.svg?jsx';
 import { Avatar, EmptyState, ListItem } from '@/shared/components';
+import { SearchXIcon } from '@/shared/icons';
 import { useTranslation } from '@/shared/translation';
 import { type ChatMessage, chatMessageService } from '@/domains/chat';
 import { chatService } from '../../service';

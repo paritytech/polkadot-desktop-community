@@ -1,10 +1,7 @@
 import { type KeyboardEvent, useEffect, useRef } from 'react';
 
-import ChevronDownIcon from '@/shared/assets/images/icons/chevron-down.svg?jsx';
-import ChevronUpIcon from '@/shared/assets/images/icons/chevron-up.svg?jsx';
-import SearchIcon from '@/shared/assets/images/icons/search.svg?jsx';
-import XIcon from '@/shared/assets/images/icons/x.svg?jsx';
 import { IconButton } from '@/shared/components';
+import { ChevronDownIcon, ChevronUpIcon, SearchIcon, XIcon } from '@/shared/icons';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { useFindControls, useFindSession } from '@/aggregates/find-in-page';

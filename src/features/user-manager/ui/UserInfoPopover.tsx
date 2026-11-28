@@ -2,11 +2,9 @@ import { type SessionUiInfo } from '@parity/truapi-host';
 import { useNavigate } from '@tanstack/react-router';
 import { type PropsWithChildren, type ReactNode, memo, useState } from 'react';
 
-import LogInIcon from '@/shared/assets/images/icons/log-in.svg?jsx';
-import LogOutIcon from '@/shared/assets/images/icons/log-out.svg?jsx';
-import SettingsIcon from '@/shared/assets/images/icons/settings.svg?jsx';
 import { Avatar, DismissOverlay, Popover } from '@/shared/components';
 import { useCloseOnWindowLeave } from '@/shared/hooks';
+import { LogInIcon, LogOutIcon, SettingsIcon } from '@/shared/icons';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { browserTabs } from '@/aggregates/browser-tabs';

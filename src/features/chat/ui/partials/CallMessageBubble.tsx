@@ -1,10 +1,7 @@
 import { type MouseEvent } from 'react';
 
-import ArrowDownLeftIcon from '@/shared/assets/images/icons/arrow-down-left.svg?jsx';
-import ArrowUpRightIcon from '@/shared/assets/images/icons/arrow-up-right.svg?jsx';
-import PhoneIcon from '@/shared/assets/images/icons/phone.svg?jsx';
-import VideoIcon from '@/shared/assets/images/icons/video.svg?jsx';
 import { useAnyOf } from '@/shared/di';
+import { ArrowDownLeftIcon, ArrowUpRightIcon, PhoneIcon, VideoIcon } from '@/shared/icons';
 import { useTranslation } from '@/shared/translation';
 import { cnTw } from '@/shared/utils';
 import { type CallSignalContent, type ChatMessage } from '@/domains/chat';

@@ -1,4 +1,4 @@
-import StarIcon from '@/shared/assets/images/icons/star.svg?jsx';
+import { StarIcon } from '@/shared/icons';
 import { useTranslation } from '@/shared/translation';
 import { cnTw } from '@/shared/utils';
 import { useFavoriteProductIds } from '@/domains/application';

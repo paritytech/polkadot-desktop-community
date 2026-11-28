@@ -1,6 +1,6 @@
-import ShieldIcon from '@/shared/assets/images/icons/shield.svg?jsx';
 import { Sidebar } from '@/shared/components';
 import { createFeature } from '@/shared/feature';
+import { ShieldIcon } from '@/shared/icons';
 import { useTranslation } from '@/shared/translation';
 import { settingsPrivacyNavSlot } from '@/features/settings';
 

@@ -1,7 +1,6 @@
 import { type MouseEvent } from 'react';
 
-import ArrowDownIcon from '@/shared/assets/images/icons/arrow-down.svg?jsx';
-import ArrowUpIcon from '@/shared/assets/images/icons/arrow-up.svg?jsx';
+import { ArrowDownIcon, ArrowUpIcon } from '@/shared/icons';
 import { useTranslation } from '@/shared/translation';
 import { amountToString, cnTw } from '@/shared/utils';
 import { type ChatMessage, type TransferContent } from '@/domains/chat';

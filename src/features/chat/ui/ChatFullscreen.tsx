@@ -1,8 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import MessageCircleIcon from '@/shared/assets/images/icons/message-circle.svg?jsx';
-import MessagesSquareIcon from '@/shared/assets/images/icons/messages-square.svg?jsx';
 import { AppIcon, EmptyState, PaneHeader, SectionLabel, toast, widgetSpanWidthCss } from '@/shared/components';
+import { MessageCircleIcon, MessagesSquareIcon } from '@/shared/icons';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import {

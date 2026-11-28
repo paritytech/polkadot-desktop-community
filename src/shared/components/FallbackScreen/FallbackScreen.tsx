@@ -1,7 +1,5 @@
-import DownloadIcon from '@/shared/assets/images/icons/download.svg?jsx';
-import OctagonXIcon from '@/shared/assets/images/icons/octagon-x.svg?jsx';
-import RefreshCwIcon from '@/shared/assets/images/icons/refresh-cw.svg?jsx';
 import { isElectron, reloadApp } from '@/shared/env';
+import { DownloadIcon, OctagonXIcon, RefreshCwIcon } from '@/shared/icons';
 import { useTranslation } from '@/shared/translation';
 import { Button } from '../Button/Button';
 

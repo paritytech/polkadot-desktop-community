@@ -1,12 +1,8 @@
 import { type ReactNode, useState } from 'react';
 
-import ChevronRightIcon from '@/shared/assets/images/icons/chevron-right.svg?jsx';
-import MicIcon from '@/shared/assets/images/icons/mic.svg?jsx';
-import VideoIcon from '@/shared/assets/images/icons/video.svg?jsx';
-import Volume2Icon from '@/shared/assets/images/icons/volume-2.svg?jsx';
-import XIcon from '@/shared/assets/images/icons/x.svg?jsx';
 import { type CallDeviceKind, type CallDeviceSelection, type CallDevices, deviceIdForKind } from '@/shared/call-media-devices';
 import { IconButton } from '@/shared/components';
+import { ChevronRightIcon, MicIcon, VideoIcon, Volume2Icon, XIcon } from '@/shared/icons';
 import { cnTw } from '@/shared/utils';
 
 export type CallSettingsLabels = {

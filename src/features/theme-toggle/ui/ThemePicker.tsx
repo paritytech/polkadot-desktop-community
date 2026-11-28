@@ -1,4 +1,4 @@
-import CheckIcon from '@/shared/assets/images/icons/check.svg?jsx';
+import { CheckIcon } from '@/shared/icons';
 import { useTranslation } from '@/shared/translation';
 import { cnTw } from '@/shared/utils';
 import { THEME_NAMES, useSetThemeName, useThemeName } from '@/domains/application';

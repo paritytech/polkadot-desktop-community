@@ -2,8 +2,8 @@ import { memo, useId, useState } from 'react';
 import { firstValueFrom } from 'rxjs';
 import * as v from 'valibot';
 
-import TrashIcon from '@/shared/assets/images/icons/trash.svg?jsx';
 import { Button, IconButton, Input, Label, ListItem, SettingsList, SettingsSection, toast } from '@/shared/components';
+import { TrashIcon } from '@/shared/icons';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { genesisHash, useCustomChains, useDiscoverAndAddChain, useRemoveCustomChain } from '@/domains/network';

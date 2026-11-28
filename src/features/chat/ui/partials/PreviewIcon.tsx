@@ -1,7 +1,4 @@
-import FileIcon from '@/shared/assets/images/icons/file.svg?jsx';
-import ImageIcon from '@/shared/assets/images/icons/image.svg?jsx';
-import PhoneIcon from '@/shared/assets/images/icons/phone.svg?jsx';
-import VideoIcon from '@/shared/assets/images/icons/video.svg?jsx';
+import { FileIcon, ImageIcon, PhoneIcon, VideoIcon } from '@/shared/icons';
 import { type MessagePreviewIcon } from '../helpers/message';
 
 type Props = {

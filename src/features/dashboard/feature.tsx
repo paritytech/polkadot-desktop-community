@@ -1,8 +1,8 @@
 import { FormattedMessage } from 'react-intl';
 
-import StarIcon from '@/shared/assets/images/icons/star.svg?jsx';
 import { AppIcon } from '@/shared/components';
 import { createFeature } from '@/shared/feature';
+import { StarIcon } from '@/shared/icons';
 import { TEST_IDS } from '@/shared/test-ids';
 import { type DashboardCardLayoutRules, FAVORITES_FOLDER_ID, cardsUseCase, dashboardLayoutService } from '@/domains/application';
 import { DASHBOARD_TAB_ID } from '@/aggregates/browser-tabs';

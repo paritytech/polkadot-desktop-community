@@ -357,7 +357,7 @@ function findViolations(fileName: string, svg: string): string[] {
   return violations;
 }
 
-const icons = import.meta.glob<string>('./images/icons/*.svg', { query: '?raw', import: 'default', eager: true });
+const icons = import.meta.glob<string>('./images/*.svg', { query: '?raw', import: 'default', eager: true });
 
 const entries = Object.entries(icons).map(([path, svg]): [string, string] => [path.split('/').at(-1) ?? path, svg]);
 

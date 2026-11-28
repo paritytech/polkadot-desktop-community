@@ -1,10 +1,9 @@
 import { useNavigate } from '@tanstack/react-router';
 
-import Maximize2Icon from '@/shared/assets/images/icons/maximize-2.svg?jsx';
-import RotateCwIcon from '@/shared/assets/images/icons/rotate-cw.svg?jsx';
 import { DropdownMenu } from '@/shared/components';
 import { isElectron } from '@/shared/env';
 import { createFeature } from '@/shared/feature';
+import { Maximize2Icon, RotateCwIcon } from '@/shared/icons';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import {

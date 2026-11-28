@@ -1,7 +1,7 @@
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { type ComponentProps } from 'react';
 
-import XIcon from '@/shared/assets/images/icons/x.svg?jsx';
+import { XIcon } from '@/shared/icons';
 import { useTranslation } from '@/shared/translation';
 import { IconButton } from '../IconButton/IconButton';
 import { BodyLockSweep } from '../_helpers/BodyLockSweep';

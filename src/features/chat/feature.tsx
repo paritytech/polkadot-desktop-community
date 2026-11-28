@@ -1,10 +1,9 @@
 import { FormattedMessage } from 'react-intl';
 
 import LastChatsIcon from '@/shared/assets/images/header/last-chats.svg?jsx';
-import Maximize2Icon from '@/shared/assets/images/icons/maximize-2.svg?jsx';
-import MessageCircleIcon from '@/shared/assets/images/icons/message-circle.svg?jsx';
 import { Sidebar } from '@/shared/components';
 import { createFeature } from '@/shared/feature';
+import { Maximize2Icon, MessageCircleIcon } from '@/shared/icons';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { type ContentCardPayload, cardsUseCase, foldersUseCase } from '@/domains/application';

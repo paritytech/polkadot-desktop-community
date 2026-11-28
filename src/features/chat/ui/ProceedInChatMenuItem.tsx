@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 
-import MessageCircleIcon from '@/shared/assets/images/icons/message-circle.svg?jsx';
 import { toast } from '@/shared/components';
+import { MessageCircleIcon } from '@/shared/icons';
 import { useTranslation } from '@/shared/translation';
 import { useProductRooms } from '@/domains/chat';
 import { useCommitProductByIdentifier, useDisplayedProduct } from '@/domains/product';

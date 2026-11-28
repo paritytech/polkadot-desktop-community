@@ -1,9 +1,6 @@
-import CircleExclamationPointIcon from '@/shared/assets/images/icons/circle-exclamation-point.svg?jsx';
-import RefreshCwIcon from '@/shared/assets/images/icons/refresh-cw.svg?jsx';
-import SmartphoneOffIcon from '@/shared/assets/images/icons/smartphone-off.svg?jsx';
-import SmartphoneIcon from '@/shared/assets/images/icons/smartphone.svg?jsx';
 import { isElectron } from '@/shared/env';
 import { FEATURE_FLAGS } from '@/shared/featureFlags';
+import { CircleExclamationPointIcon16, RefreshCwIcon, SmartphoneIcon16, SmartphoneOffIcon16 } from '@/shared/icons';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { type DeviceSyncStatus, useDeviceSyncStatus } from '@/domains/device-sync';
@@ -49,14 +46,14 @@ const SyncStatusIcon = ({ status }: { status: RenderedStatus }) => {
   }
 
   if (status === 'error') {
-    return <CircleExclamationPointIcon className="size-4 shrink-0 text-fg-primary" />;
+    return <CircleExclamationPointIcon16 className="size-4 shrink-0 text-fg-primary" />;
   }
 
   if (status === 'synced') {
-    return <SmartphoneIcon className="size-4 shrink-0 text-fg-primary" />;
+    return <SmartphoneIcon16 className="size-4 shrink-0 text-fg-primary" />;
   }
 
-  return <SmartphoneOffIcon className="size-4 shrink-0 text-fg-primary" />;
+  return <SmartphoneOffIcon16 className="size-4 shrink-0 text-fg-primary" />;
 };
 
 export const SyncStatusBanner = () => {

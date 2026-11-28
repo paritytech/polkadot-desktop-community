@@ -1,10 +1,8 @@
 import { type RenderContext } from '@parity/truapi';
 import { type MouseEvent, useMemo } from 'react';
 
-import CheckCheckIcon from '@/shared/assets/images/icons/check-check.svg?jsx';
-import CheckIcon from '@/shared/assets/images/icons/check.svg?jsx';
-import ClockIcon from '@/shared/assets/images/icons/clock.svg?jsx';
 import { BlurhashCanvas } from '@/shared/components';
+import { CheckCheckIcon, CheckIcon, ClockIcon } from '@/shared/icons';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { cnTw } from '@/shared/utils';

@@ -1,14 +1,16 @@
 import { type FC, type ReactNode, type SVGProps, useState } from 'react';
 
-import CheckIcon from '@/shared/assets/images/icons/check.svg?jsx';
-import EllipsisIcon from '@/shared/assets/images/icons/ellipsis.svg?jsx';
-import FrameBlockMediumIcon from '@/shared/assets/images/icons/frame-block-medium.svg?jsx';
-import FrameBlockSmallIcon from '@/shared/assets/images/icons/frame-block-small.svg?jsx';
-import FrameBlockTallIcon from '@/shared/assets/images/icons/frame-block-tall.svg?jsx';
-import FrameBlockWideIcon from '@/shared/assets/images/icons/frame-block-wide.svg?jsx';
-import LayoutDashboardIcon from '@/shared/assets/images/icons/layout-dashboard.svg?jsx';
-import TrashIcon from '@/shared/assets/images/icons/trash.svg?jsx';
 import { DropdownMenu } from '@/shared/components';
+import {
+  CheckIcon,
+  EllipsisIcon,
+  FrameBlockMediumIcon16,
+  FrameBlockSmallIcon16,
+  FrameBlockTallIcon16,
+  FrameBlockWideIcon16,
+  LayoutDashboardIcon,
+  TrashIcon,
+} from '@/shared/icons';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { type WidgetSizeIconVariant } from '@/domains/application';
@@ -18,10 +20,10 @@ import { type WidgetSize } from '../types';
 import { WidgetTopbarAction } from './WidgetTopbarAction';
 
 const WIDGET_SIZE_ICON: Record<WidgetSizeIconVariant, FC<SVGProps<SVGSVGElement>>> = {
-  small: FrameBlockSmallIcon,
-  medium: FrameBlockMediumIcon,
-  large: FrameBlockTallIcon,
-  horizontal: FrameBlockWideIcon,
+  small: FrameBlockSmallIcon16,
+  medium: FrameBlockMediumIcon16,
+  large: FrameBlockTallIcon16,
+  horizontal: FrameBlockWideIcon16,
 };
 
 type WidgetMenuProps = {

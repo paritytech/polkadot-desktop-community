@@ -1,5 +1,5 @@
-import StarIcon from '@/shared/assets/images/icons/star.svg?jsx';
 import { TabChip } from '@/shared/components';
+import { StarIcon } from '@/shared/icons';
 import { useTranslation } from '@/shared/translation';
 
 type Props = { isActive: boolean };

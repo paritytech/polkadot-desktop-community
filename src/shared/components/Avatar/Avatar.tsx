@@ -1,4 +1,4 @@
-import UserRoundIcon from '@/shared/assets/images/icons/user-round.svg?jsx';
+import { UserRoundIcon } from '@/shared/icons';
 import { cnTw } from '@/shared/utils';
 
 type Props = {

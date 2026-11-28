@@ -1,8 +1,7 @@
 import * as SelectPrimitive from '@radix-ui/react-select';
 import { type ComponentProps } from 'react';
 
-import CheckIcon from '@/shared/assets/images/icons/check.svg?jsx';
-import ChevronDownIcon from '@/shared/assets/images/icons/chevron-down.svg?jsx';
+import { CheckIcon, ChevronDownIcon } from '@/shared/icons';
 import { FloatingSurface } from '../FloatingSurface/FloatingSurface';
 import { MenuRow } from '../MenuRow/MenuRow';
 

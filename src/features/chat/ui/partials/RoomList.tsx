@@ -1,5 +1,5 @@
-import MessagesSquareIcon from '@/shared/assets/images/icons/messages-square.svg?jsx';
 import { EmptyState } from '@/shared/components';
+import { MessagesSquareIcon } from '@/shared/icons';
 import { useTranslation } from '@/shared/translation';
 import { type ChatSession } from '@/domains/chat';
 import { useSortedSessions } from '../../hooks/useSortedSessions';

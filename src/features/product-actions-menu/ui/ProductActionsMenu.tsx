@@ -1,10 +1,9 @@
 import { useNavigate } from '@tanstack/react-router';
 import { useCallback, useState } from 'react';
 
-import EllipsisIcon from '@/shared/assets/images/icons/ellipsis.svg?jsx';
-import SettingsIcon from '@/shared/assets/images/icons/settings.svg?jsx';
 import { Button, DropdownMenu, IconButton } from '@/shared/components';
 import { Slot } from '@/shared/di';
+import { EllipsisIcon, SettingsIcon } from '@/shared/icons';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { productActionsMenuItemsSlot } from '../di';

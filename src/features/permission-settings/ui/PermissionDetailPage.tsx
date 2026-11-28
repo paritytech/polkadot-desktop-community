@@ -1,9 +1,8 @@
 import { useNavigate } from '@tanstack/react-router';
 import { cloneElement, useMemo } from 'react';
 
-import Grid2x2Icon from '@/shared/assets/images/icons/grid-2x2.svg?jsx';
-import ShieldIcon from '@/shared/assets/images/icons/shield.svg?jsx';
 import { ListItem, SettingsList, SettingsSection } from '@/shared/components';
+import { Grid2x2Icon, ShieldIcon } from '@/shared/icons';
 import { useTranslation } from '@/shared/translation';
 import { type AppPermissionEntry, useDisplayedProduct, useWatchAggregatedPermissions } from '@/domains/product';
 import { getPermissionMeta } from '@/widgets/Permission';

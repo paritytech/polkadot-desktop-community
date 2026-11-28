@@ -1,8 +1,8 @@
 import { useNavigate } from '@tanstack/react-router';
 import { useMemo, useState } from 'react';
 
-import Grid2x2Icon from '@/shared/assets/images/icons/grid-2x2.svg?jsx';
 import { Input, ListItem, SettingsList, SettingsSection } from '@/shared/components';
+import { Grid2x2Icon } from '@/shared/icons';
 import { useTranslation } from '@/shared/translation';
 import {
   type Icon,

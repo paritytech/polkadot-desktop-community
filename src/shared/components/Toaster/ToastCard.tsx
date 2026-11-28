@@ -1,7 +1,4 @@
-import CircleCheckIcon from '@/shared/assets/images/icons/circle-check.svg?jsx';
-import CircleExclamationPointIcon from '@/shared/assets/images/icons/circle-exclamation-point.svg?jsx';
-import InfoIcon from '@/shared/assets/images/icons/info.svg?jsx';
-import XIcon from '@/shared/assets/images/icons/x.svg?jsx';
+import { CircleCheckIcon, CircleExclamationPointIcon, InfoIcon, XIcon } from '@/shared/icons';
 import { useTranslation } from '@/shared/translation';
 import { Button } from '../Button/Button';
 import { IconButton } from '../IconButton/IconButton';

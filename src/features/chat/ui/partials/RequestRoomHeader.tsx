@@ -1,7 +1,7 @@
 import { type ReactNode } from 'react';
 
-import EllipsisIcon from '@/shared/assets/images/icons/ellipsis.svg?jsx';
 import { Avatar, DropdownMenu, IconButton, PaneHeader } from '@/shared/components';
+import { EllipsisIcon } from '@/shared/icons';
 import { useTranslation } from '@/shared/translation';
 
 type RequestRoomHeaderProps = {

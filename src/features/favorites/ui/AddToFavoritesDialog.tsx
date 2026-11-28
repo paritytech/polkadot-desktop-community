@@ -1,14 +1,16 @@
 import { useEffect, useMemo, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 
-import CircleExclamationPointIcon from '@/shared/assets/images/icons/circle-exclamation-point.svg?jsx';
-import LayoutGridIcon from '@/shared/assets/images/icons/layout-grid.svg?jsx';
-import RotateCwIcon from '@/shared/assets/images/icons/rotate-cw.svg?jsx';
-import SearchXIcon from '@/shared/assets/images/icons/search-x.svg?jsx';
-import SearchIcon from '@/shared/assets/images/icons/search.svg?jsx';
-import StarOffIcon from '@/shared/assets/images/icons/star-off.svg?jsx';
-import StarIcon from '@/shared/assets/images/icons/star.svg?jsx';
 import { Button, Dialog, EmptyState, Input, Spinner } from '@/shared/components';
+import {
+  CircleExclamationPointIcon,
+  LayoutGridIcon,
+  RotateCwIcon,
+  SearchIcon,
+  SearchXIcon,
+  StarIcon,
+  StarOffIcon,
+} from '@/shared/icons';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { cnTw } from '@/shared/utils';

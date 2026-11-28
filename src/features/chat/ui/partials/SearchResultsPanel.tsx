@@ -2,9 +2,8 @@ import { useMemo } from 'react';
 import { useObservable } from 'react-rx';
 import { combineLatest, map, of } from 'rxjs';
 
-import LoaderCircleIcon from '@/shared/assets/images/icons/loader-circle.svg?jsx';
-import SearchXIcon from '@/shared/assets/images/icons/search-x.svg?jsx';
 import { Avatar, EmptyState, ListItem, SectionLabel } from '@/shared/components';
+import { LoaderCircleIcon, SearchXIcon } from '@/shared/icons';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { type ChatMessage, type ChatSession, type MessageSearchHit, type SearchResult } from '@/domains/chat';

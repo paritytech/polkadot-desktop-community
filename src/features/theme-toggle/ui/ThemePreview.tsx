@@ -1,6 +1,6 @@
 import { type PropsWithChildren } from 'react';
 
-import CheckIcon from '@/shared/assets/images/icons/check.svg?jsx';
+import { CheckIcon } from '@/shared/icons';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 

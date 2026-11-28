@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 
-import MessageCircleIcon from '@/shared/assets/images/icons/message-circle.svg?jsx';
 import { IconButton } from '@/shared/components';
+import { MessageCircleIcon16 } from '@/shared/icons';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { useProductSessions, useTotalUnreadCount } from '@/domains/chat';
@@ -24,7 +24,7 @@ export const ChatHeaderButton = () => {
     <QuickChat open={isOpen} onOpenChange={setIsOpen}>
       {/* The dot needs `role` for its own label to apply at all — `aria-label` on a bare span is ignored. */}
       <IconButton label={t('feature.chat.quickChat')} data-testid={TEST_IDS.quickChatButton}>
-        <MessageCircleIcon className="size-4" />
+        <MessageCircleIcon16 className="size-4" />
         {totalUnread > 0 && (
           <span
             role="status"

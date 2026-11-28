@@ -1,8 +1,7 @@
 import { type PropsWithChildren } from 'react';
 
-import ChevronDownIcon from '@/shared/assets/images/icons/chevron-down.svg?jsx';
-import HeartIcon from '@/shared/assets/images/icons/heart.svg?jsx';
 import { IconButton } from '@/shared/components';
+import { ChevronDownIcon, HeartIcon } from '@/shared/icons';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 

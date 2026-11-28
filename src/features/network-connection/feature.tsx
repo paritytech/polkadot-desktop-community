@@ -1,6 +1,6 @@
-import GlobeIcon from '@/shared/assets/images/icons/globe.svg?jsx';
 import { Sidebar } from '@/shared/components';
 import { createFeature } from '@/shared/feature';
+import { GlobeIcon } from '@/shared/icons';
 import { useTranslation } from '@/shared/translation';
 import { resolveProductLoaderTransformer } from '@/features/browser';
 import { settingsPreferencesNavSlot } from '@/features/settings';

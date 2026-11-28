@@ -1,5 +1,5 @@
-import TimerIcon from '@/shared/assets/images/icons/timer.svg?jsx';
 import { Avatar, ListItem } from '@/shared/components';
+import { TimerIcon } from '@/shared/icons';
 import { TEST_IDS } from '@/shared/test-ids';
 import { type P2PChatRequest } from '@/domains/chat';
 import { chatService } from '../../service';

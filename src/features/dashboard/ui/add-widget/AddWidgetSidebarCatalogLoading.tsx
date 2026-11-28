@@ -1,4 +1,4 @@
-import LoaderCircleIcon from '@/shared/assets/images/icons/loader-circle.svg?jsx';
+import { LoaderCircleIcon } from '@/shared/icons';
 import { useTranslation } from '@/shared/translation';
 import { cnTw } from '@/shared/utils';
 

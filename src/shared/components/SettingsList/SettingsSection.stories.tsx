@@ -1,6 +1,6 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
-import GlobeIcon from '@/shared/assets/images/icons/globe.svg?jsx';
+import { GlobeIcon } from '@/shared/icons';
 import { ListItem } from '../ListItem/ListItem';
 
 import { SettingsSection } from './SettingsSection';

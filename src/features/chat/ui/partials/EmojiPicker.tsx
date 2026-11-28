@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
 
-import XIcon from '@/shared/assets/images/icons/x.svg?jsx';
 import { IconButton, SectionLabel } from '@/shared/components';
+import { XIcon } from '@/shared/icons';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 

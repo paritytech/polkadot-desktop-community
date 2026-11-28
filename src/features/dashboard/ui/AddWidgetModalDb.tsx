@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
 
-import SearchIcon from '@/shared/assets/images/icons/search.svg?jsx';
 import { Dialog, Input } from '@/shared/components';
 import { useTransformer } from '@/shared/di';
+import { SearchIcon } from '@/shared/icons';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 import { cnTw } from '@/shared/utils';

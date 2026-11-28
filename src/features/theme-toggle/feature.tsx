@@ -1,6 +1,6 @@
-import PaletteIcon from '@/shared/assets/images/icons/palette.svg?jsx';
 import { Sidebar } from '@/shared/components';
 import { createFeature } from '@/shared/feature';
+import { PaletteIcon } from '@/shared/icons';
 import { useTranslation } from '@/shared/translation';
 import { settingsPreferencesNavSlot } from '@/features/settings';
 

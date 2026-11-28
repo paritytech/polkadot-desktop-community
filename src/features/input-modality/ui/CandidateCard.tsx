@@ -1,4 +1,4 @@
-import FileDownIcon from '@/shared/assets/images/icons/file-down.svg?jsx';
+import { FileDownIcon } from '@/shared/icons';
 import { TEST_IDS } from '@/shared/test-ids';
 import { cnTw, formatBytes } from '@/shared/utils';
 import { type RankedCandidate } from '@/domains/input-routing';

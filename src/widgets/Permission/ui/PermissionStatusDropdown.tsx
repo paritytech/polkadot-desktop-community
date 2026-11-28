@@ -1,6 +1,5 @@
-import CheckIcon from '@/shared/assets/images/icons/check.svg?jsx';
-import ChevronDownIcon from '@/shared/assets/images/icons/chevron-down.svg?jsx';
 import { DropdownMenu } from '@/shared/components';
+import { CheckIcon, ChevronDownIcon } from '@/shared/icons';
 import { useTranslation } from '@/shared/translation';
 import { type PermissionStatus } from '@/domains/product';
 import { STATUS_LABEL_KEYS } from '../metadata';

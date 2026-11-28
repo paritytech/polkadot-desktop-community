@@ -1,5 +1,5 @@
-import PlusIcon from '@/shared/assets/images/icons/plus.svg?jsx';
 import { IconButton } from '@/shared/components';
+import { PlusIcon } from '@/shared/icons';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useTranslation } from '@/shared/translation';
 

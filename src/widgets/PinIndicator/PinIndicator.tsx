@@ -1,4 +1,4 @@
-import PinIcon from '@/shared/assets/images/icons/pin.svg?jsx';
+import { PinIcon } from '@/shared/icons';
 import { TEST_IDS } from '@/shared/test-ids';
 import { useIsPinned } from '@/domains/product';
 

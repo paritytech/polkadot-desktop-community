@@ -1,6 +1,6 @@
 import { type ReactNode } from 'react';
 
-import SquareDashedIcon from '@/shared/assets/images/icons/square-dashed.svg?jsx';
+import { SquareDashedIcon16 } from '@/shared/icons';
 import { cnTw } from '@/shared/utils';
 
 const iconSlotClassName = cnTw('flex size-4 shrink-0 items-center justify-center overflow-hidden rounded-sm text-fg-secondary');
@@ -35,5 +35,5 @@ export const AddWidgetSidebarIcon = ({ alt, imageUrl, children }: AddWidgetSideb
     );
   }
 
-  return <SquareDashedIcon className="size-4 shrink-0 text-fg-secondary" />;
+  return <SquareDashedIcon16 className="size-4 shrink-0 text-fg-secondary" />;
 };
